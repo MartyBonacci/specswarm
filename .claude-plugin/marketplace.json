@@ -9,10 +9,13 @@
   "plugins": [
     {
       "name": "speckit",
-      "source": "plugins/speckit",
+      "source": "./plugins/speckit",
       "description": "Spec-Driven Development workflow (adapted from GitHub spec-kit)",
       "version": "1.0.0",
-      "author": "GitHub (original), Marty Bonacci (adapter)",
+      "author": {
+        "name": "Marty Bonacci",
+        "url": "https://github.com/marty"
+      },
       "license": "MIT",
       "keywords": [
         "spec-driven-development",
