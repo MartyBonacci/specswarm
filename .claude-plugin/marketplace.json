@@ -1,0 +1,32 @@
+{
+  "name": "specswarm",
+  "description": "Specification-driven development orchestration plugins for Claude Code",
+  "owner": {
+    "name": "Marty Bonacci",
+    "url": "https://github.com/marty"
+  },
+  "repository": "https://github.com/marty/specswarm",
+  "plugins": [
+    {
+      "name": "speckit",
+      "source": "plugins/speckit",
+      "description": "Spec-Driven Development workflow (adapted from GitHub spec-kit)",
+      "version": "1.0.0",
+      "author": "GitHub (original), Marty Bonacci (adapter)",
+      "license": "MIT",
+      "keywords": [
+        "spec-driven-development",
+        "specification",
+        "requirements",
+        "planning",
+        "implementation",
+        "workflow"
+      ],
+      "attribution": {
+        "original": "https://github.com/github/spec-kit",
+        "license": "MIT",
+        "copyright": "Copyright (c) GitHub, Inc."
+      }
+    }
+  ]
+}
