@@ -2,7 +2,10 @@
   "name": "speckit",
   "version": "1.0.0",
   "description": "Spec-Driven Development workflow for Claude Code (adapted from GitHub spec-kit)",
-  "author": "GitHub (original spec-kit), Marty Bonacci (Claude Code adaptation)",
+  "author": {
+    "name": "Marty Bonacci",
+    "url": "https://github.com/marty"
+  },
   "license": "MIT",
   "homepage": "https://github.com/github/spec-kit",
   "attribution": {
