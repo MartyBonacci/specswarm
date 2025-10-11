@@ -39,9 +39,15 @@ You **MUST** consider the user input before proceeding (if not empty).
 
 ## Execution Steps
 
-1. **Setup**: Run `{SCRIPT}` from repo root and parse JSON for FEATURE_DIR and AVAILABLE_DOCS list.
-   - All file paths must be absolute.
-   - For single quotes in args like "I'm Groot", use escape syntax: e.g 'I'\''m Groot' (or double-quote if possible: "I'm Groot").
+1. **Discover Feature Context**:
+   ```bash
+   REPO_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
+   BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
+   FEATURE_NUM=$(echo "$BRANCH" | grep -oE '^[0-9]{3}')
+   [ -z "$FEATURE_NUM" ] && FEATURE_NUM=$(ls -1 features/ 2>/dev/null | grep -oE '^[0-9]{3}' | sort -nr | head -1)
+   FEATURE_DIR=$(find features -maxdepth 1 -type d -name "${FEATURE_NUM}-*" 2>/dev/null | head -1)
+   FEATURE_DIR="${REPO_ROOT}/${FEATURE_DIR}"
+   ```
 
 2. **Clarify intent (dynamic)**: Derive up to THREE initial contextual clarifying questions (no pre-baked catalog). They MUST:
    - Be generated from the user's phrasing + extracted signals from spec/plan/tasks

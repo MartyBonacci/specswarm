@@ -24,17 +24,92 @@ The text the user typed after `/speckit.specify` in the triggering message **is*
 
 Given that feature description, do this:
 
-1. Run the script `{SCRIPT}` from repo root and parse its JSON output for BRANCH_NAME and SPEC_FILE. All file paths must be absolute.
-  **IMPORTANT** You must only ever run this script once. The JSON is provided in the terminal as output - always refer to it to get the actual content you're looking for. For single quotes in args like "I'm Groot", use escape syntax: e.g 'I'\''m Groot' (or double-quote if possible: "I'm Groot").
-2. Load `templates/spec-template.md` to understand required sections.
+1. **Create New Feature Structure** (replaces script execution):
 
-3. Follow this execution flow:
+   a. **Find Repository Root**:
+   ```bash
+   REPO_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
+   ```
 
-    1. Parse user description from Input
-       If empty: ERROR "No feature description provided"
-    2. Extract key concepts from description
-       Identify: actors, actions, data, constraints
-    3. For unclear aspects:
+   b. **Determine Next Feature Number**:
+   ```bash
+   # Find existing features and get highest number
+   HIGHEST=$(find "${REPO_ROOT}/features" -maxdepth 1 -type d -name '[0-9][0-9][0-9]-*' 2>/dev/null | \
+             sed 's/.*\/\([0-9][0-9][0-9]\)-.*/\1/' | sort -nr | head -1)
+
+   # Increment or start at 001
+   if [ -z "$HIGHEST" ]; then
+     FEATURE_NUM="001"
+   else
+     FEATURE_NUM=$(printf "%03d" $((10#$HIGHEST + 1)))
+   fi
+   ```
+
+   c. **Create Feature Slug from Description**:
+   ```bash
+   # Convert description to kebab-case
+   # Example: "User Authentication System" → "user-authentication-system"
+   SLUG=$(echo "$ARGUMENTS" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | sed 's/--*/-/g' | sed 's/^-//' | sed 's/-$//')
+   ```
+
+   d. **Create Branch** (if git available):
+   ```bash
+   BRANCH_NAME="${FEATURE_NUM}-${SLUG}"
+
+   if git rev-parse --git-dir >/dev/null 2>&1; then
+     git checkout -b "$BRANCH_NAME"
+   else
+     # Non-git: use environment variable
+     export SPECIFY_FEATURE="$BRANCH_NAME"
+   fi
+   ```
+
+   e. **Create Feature Directory Structure**:
+   ```bash
+   FEATURE_DIR="${REPO_ROOT}/features/${FEATURE_NUM}-${SLUG}"
+   mkdir -p "${FEATURE_DIR}/checklists"
+   mkdir -p "${FEATURE_DIR}/contracts"
+   ```
+
+   f. **Set Path Variables** (use these for remainder of command):
+   ```bash
+   SPEC_FILE="${FEATURE_DIR}/spec.md"
+   CHECKLISTS_DIR="${FEATURE_DIR}/checklists"
+   ```
+
+2. Load spec template to understand required sections:
+   - Try to read `templates/spec-template.md` if it exists
+   - If template missing, use this embedded minimal template:
+
+   ```markdown
+   # Feature: [Feature Name]
+
+   ## Overview
+   [Brief description of the feature and its purpose]
+
+   ## User Scenarios
+   [Key user flows and scenarios]
+
+   ## Functional Requirements
+   [What the system must do]
+
+   ## Success Criteria
+   [Measurable outcomes that define success]
+
+   ## Key Entities
+   [Important data entities involved]
+
+   ## Assumptions
+   [Documented assumptions and reasonable defaults]
+   ```
+
+3. **Parse the user's feature description** from `$ARGUMENTS` and validate:
+   - If empty: ERROR "No feature description provided"
+   - Extract key concepts: actors, actions, data, constraints
+
+4. Follow this execution flow:
+
+    1. For unclear aspects:
        - Make informed guesses based on context and industry standards
        - Only mark with [NEEDS CLARIFICATION: specific question] if:
          - The choice significantly impacts feature scope or user experience
@@ -42,21 +117,21 @@ Given that feature description, do this:
          - No reasonable default exists
        - **LIMIT: Maximum 3 [NEEDS CLARIFICATION] markers total**
        - Prioritize clarifications by impact: scope > security/privacy > user experience > technical details
-    4. Fill User Scenarios & Testing section
+    2. Fill User Scenarios & Testing section
        If no clear user flow: ERROR "Cannot determine user scenarios"
-    5. Generate Functional Requirements
+    3. Generate Functional Requirements
        Each requirement must be testable
        Use reasonable defaults for unspecified details (document assumptions in Assumptions section)
-    6. Define Success Criteria
+    4. Define Success Criteria
        Create measurable, technology-agnostic outcomes
        Include both quantitative metrics (time, performance, volume) and qualitative measures (user satisfaction, task completion)
        Each criterion must be verifiable without implementation details
-    7. Identify Key Entities (if data involved)
-    8. Return: SUCCESS (spec ready for planning)
+    5. Identify Key Entities (if data involved)
+    6. Return: SUCCESS (spec ready for planning)
 
-4. Write the specification to SPEC_FILE using the template structure, replacing placeholders with concrete details derived from the feature description (arguments) while preserving section order and headings.
+5. Write the specification to SPEC_FILE using the template structure, replacing placeholders with concrete details derived from the feature description (arguments) while preserving section order and headings.
 
-5. **Specification Quality Validation**: After writing the initial spec, validate it against quality criteria:
+6. **Specification Quality Validation**: After writing the initial spec, validate it against quality criteria:
 
    a. **Create Spec Quality Checklist**: Generate a checklist file at `FEATURE_DIR/checklists/requirements.md` using the checklist template structure with these validation items:
    
@@ -148,9 +223,14 @@ Given that feature description, do this:
    
    d. **Update Checklist**: After each validation iteration, update the checklist file with current pass/fail status
 
-6. Report completion with branch name, spec file path, checklist results, and readiness for the next phase (`/speckit.clarify` or `/speckit.plan`).
+7. Report completion with:
+   - Branch name (if git repo)
+   - Feature directory path
+   - Spec file path
+   - Checklist results
+   - Readiness for next phase (`/clarify` or `/plan`)
 
-**NOTE:** The script creates and checks out the new branch and initializes the spec file before writing.
+**NOTE:** This command creates the feature branch (if git), initializes the feature directory structure, and creates the initial spec.md file.
 
 ## General Guidelines
 

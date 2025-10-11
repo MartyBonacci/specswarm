@@ -196,10 +196,25 @@ your-project/
 This Claude Code plugin adaptation differs from the original spec-kit CLI in several ways:
 
 1. **No Python CLI dependency** - Commands run directly in Claude Code
-2. **No external scripts** - Logic integrated into command definitions
-3. **Claude Code integration** - Uses Claude Code's native features and tools
+2. **No external scripts** - All logic integrated into command markdown files using bash commands and Claude Code native tools
+3. **Claude Code integration** - Uses Claude Code's native features (Read, Write, Glob, Grep, Bash)
 4. **Simplified installation** - Install via Claude Code plugin system
 5. **Same methodology** - Preserves the core Spec-Driven Development workflow
+
+### How Feature Discovery Works
+
+Commands automatically discover your feature context without external scripts:
+
+- **Git repositories**: Extracts feature number from branch name (e.g., `001-user-auth`)
+- **Non-git projects**: Finds the most recently modified feature directory
+- **Feature structure**: Automatically creates `features/{NUM}-{slug}/` directories
+- **Path resolution**: Derives all file paths from the discovered feature directory
+
+This self-contained approach means:
+- ✅ No script dependencies to install or maintain
+- ✅ Works in git and non-git repositories
+- ✅ Fully portable across different development environments
+- ✅ Commands use only bash + Claude Code native tools
 
 ## Installation
 

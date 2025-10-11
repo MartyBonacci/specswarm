@@ -26,12 +26,18 @@ Note: This clarification workflow is expected to run (and be completed) BEFORE i
 
 Execution steps:
 
-1. Run `{SCRIPT}` from repo root **once** (combined `--json --paths-only` mode / `-Json -PathsOnly`). Parse minimal JSON payload fields:
-   - `FEATURE_DIR`
-   - `FEATURE_SPEC`
-   - (Optionally capture `IMPL_PLAN`, `TASKS` for future chained flows.)
-   - If JSON parsing fails, abort and instruct user to re-run `/speckit.specify` or verify feature branch environment.
-   - For single quotes in args like "I'm Groot", use escape syntax: e.g 'I'\''m Groot' (or double-quote if possible: "I'm Groot").
+1. **Discover Feature Context**:
+   ```bash
+   REPO_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
+   BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
+   FEATURE_NUM=$(echo "$BRANCH" | grep -oE '^[0-9]{3}')
+   [ -z "$FEATURE_NUM" ] && FEATURE_NUM=$(ls -1 features/ 2>/dev/null | grep -oE '^[0-9]{3}' | sort -nr | head -1)
+   FEATURE_DIR=$(find features -maxdepth 1 -type d -name "${FEATURE_NUM}-*" 2>/dev/null | head -1)
+   FEATURE_DIR="${REPO_ROOT}/${FEATURE_DIR}"
+   FEATURE_SPEC="${FEATURE_DIR}/spec.md"
+   ```
+
+   Validate: If FEATURE_SPEC doesn't exist, ERROR: "No spec found. Run `/specify` first."
 
 2. Load the current spec file. Perform a structured ambiguity & coverage scan using this taxonomy. For each category, mark status: Clear / Partial / Missing. Produce an internal coverage map used for prioritization (do not output raw map unless no questions will be asked).
 
