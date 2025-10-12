@@ -1,0 +1,690 @@
+---
+description: Regression-test-first bug fixing workflow with smart SpecSwarm/SpecTest integration
+---
+
+<!--
+ATTRIBUTION CHAIN:
+1. Original methodology: spec-kit-extensions (https://github.com/MartyBonacci/spec-kit-extensions)
+   by Marty Bonacci (2025)
+2. Adapted: SpecLab plugin by Marty Bonacci & Claude Code (2025)
+3. Based on: GitHub spec-kit (https://github.com/github/spec-kit)
+   Copyright (c) GitHub, Inc. | MIT License
+-->
+
+## User Input
+
+```text
+$ARGUMENTS
+```
+
+You **MUST** consider the user input before proceeding (if not empty).
+
+## Goal
+
+Execute regression-test-first bug fixing workflow to ensure bugs are fixed correctly and prevent future regressions.
+
+**Key Principles**:
+1. **Test First**: Write regression test before fixing
+2. **Verify Failure**: Confirm test reproduces bug
+3. **Fix**: Implement solution
+4. **Verify Success**: Confirm test passes
+5. **No Regressions**: Validate no new bugs introduced
+
+**Coverage**: Addresses ~40% of development work (bug fixes)
+
+---
+
+## Smart Integration Detection
+
+Before starting workflow, detect available plugins for enhanced capabilities:
+
+```bash
+# Check for SpecSwarm (tech stack enforcement)
+SPECSWARM_INSTALLED=$(claude plugin list | grep -q "specswarm" && echo "true" || echo "false")
+
+# Check for SpecTest (parallel execution, hooks, metrics)
+SPECTEST_INSTALLED=$(claude plugin list | grep -q "spectest" && echo "true" || echo "false")
+
+# Configure workflow based on detection
+if [ "$SPECTEST_INSTALLED" = "true" ]; then
+  EXECUTION_MODE="parallel"
+  ENABLE_HOOKS=true
+  ENABLE_METRICS=true
+  echo "🎯 Smart Integration: SpecTest detected (parallel execution, hooks, metrics enabled)"
+elif [ "$SPECSWARM_INSTALLED" = "true" ]; then
+  EXECUTION_MODE="sequential"
+  ENABLE_TECH_VALIDATION=true
+  echo "🎯 Smart Integration: SpecSwarm detected (tech stack enforcement enabled)"
+else
+  EXECUTION_MODE="sequential"
+  echo "ℹ️  Running in basic mode (install SpecSwarm/SpecTest for enhanced capabilities)"
+fi
+```
+
+---
+
+## Pre-Workflow Hook (if SpecTest installed)
+
+```bash
+if [ "$ENABLE_HOOKS" = "true" ]; then
+  echo "🎣 Pre-Bugfix Hook"
+
+  # Validate prerequisites
+  echo "✓ Checking repository status..."
+  git status --porcelain | head -5
+
+  # Load tech stack (if SpecSwarm also installed)
+  if [ "$SPECSWARM_INSTALLED" = "true" ]; then
+    echo "✓ Loading tech stack: /memory/tech-stack.md"
+    TECH_STACK_EXISTS=$([ -f "/memory/tech-stack.md" ] && echo "true" || echo "false")
+    if [ "$TECH_STACK_EXISTS" = "true" ]; then
+      echo "✓ Tech stack validation enabled"
+    fi
+  fi
+
+  # Initialize metrics
+  WORKFLOW_START_TIME=$(date +%s)
+  echo "✓ Metrics initialized"
+  echo ""
+fi
+```
+
+---
+
+## Execution Steps
+
+### 1. Discover Bug Context
+
+```bash
+# Get repository root
+REPO_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
+
+# Detect branch
+CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
+
+# Try to extract feature number from branch name (bugfix/NNN-*)
+FEATURE_NUM=$(echo "$CURRENT_BRANCH" | grep -oE 'bugfix/([0-9]{3})' | grep -oE '[0-9]{3}')
+
+# If no feature number in branch, prompt user
+if [ -z "$FEATURE_NUM" ]; then
+  echo "🐛 Bugfix Workflow"
+  echo ""
+  echo "No bugfix branch detected. Please provide bug number:"
+  echo "Example: 042 (for bugfix/042-login-timeout)"
+  # Wait for user input
+  read -p "Bug number: " FEATURE_NUM
+
+  # Validate
+  if [ -z "$FEATURE_NUM" ]; then
+    echo "❌ Error: Bug number required"
+    exit 1
+  fi
+
+  # Pad to 3 digits
+  FEATURE_NUM=$(printf "%03d" $FEATURE_NUM)
+fi
+
+# Find or create feature directory
+FEATURE_DIR=$(find "$REPO_ROOT/features" -maxdepth 1 -type d -name "${FEATURE_NUM}-*" 2>/dev/null | head -1)
+
+if [ -z "$FEATURE_DIR" ]; then
+  echo "⚠️  Feature directory not found for bug ${FEATURE_NUM}"
+  echo ""
+  echo "Please provide bug description (kebab-case):"
+  echo "Example: login-timeout"
+  read -p "Description: " BUG_DESC
+
+  if [ -z "$BUG_DESC" ]; then
+    echo "❌ Error: Bug description required"
+    exit 1
+  fi
+
+  FEATURE_DIR="${REPO_ROOT}/features/${FEATURE_NUM}-${BUG_DESC}"
+  mkdir -p "$FEATURE_DIR"
+  echo "✓ Created: $FEATURE_DIR"
+fi
+
+BUGFIX_SPEC="${FEATURE_DIR}/bugfix.md"
+REGRESSION_TEST_SPEC="${FEATURE_DIR}/regression-test.md"
+TASKS_FILE="${FEATURE_DIR}/tasks.md"
+```
+
+Output to user:
+```
+🐛 Bugfix Workflow - Feature ${FEATURE_NUM}
+✓ Branch detected: ${CURRENT_BRANCH}
+✓ Feature directory: ${FEATURE_DIR}
+```
+
+---
+
+### 2. Create Bugfix Specification
+
+If `$BUGFIX_SPEC` doesn't exist, create it using this template:
+
+```markdown
+# Bug ${FEATURE_NUM}: [Bug Title]
+
+**Status**: Active
+**Created**: YYYY-MM-DD
+**Priority**: [High/Medium/Low]
+**Severity**: [Critical/Major/Minor]
+
+## Symptoms
+
+[What behavior is observed? What's going wrong?]
+
+- Observable symptom 1
+- Observable symptom 2
+- Observable symptom 3
+
+## Reproduction Steps
+
+1. Step 1 to reproduce
+2. Step 2 to reproduce
+3. Step 3 to reproduce
+
+**Expected Behavior**: [What should happen?]
+
+**Actual Behavior**: [What actually happens?]
+
+## Root Cause Analysis
+
+[What is causing the bug?]
+
+- Component/module affected
+- Code location (file:line)
+- Logic error or edge case missed
+- Conditions required to trigger
+
+## Impact Assessment
+
+**Affected Users**: [Who is impacted?]
+- All users / Specific user role / Edge case users
+
+**Affected Features**: [What features are broken?]
+- Feature A: Completely broken
+- Feature B: Partially degraded
+
+**Severity Justification**: [Why this priority/severity?]
+
+**Workaround Available**: [Yes/No - if yes, describe]
+
+## Regression Test Requirements
+
+[What test will prove the bug exists and validate the fix?]
+
+1. Test scenario 1
+2. Test scenario 2
+3. Test scenario 3
+
+**Test Success Criteria**:
+- ✅ Test fails before fix (proves bug exists)
+- ✅ Test passes after fix (proves bug fixed)
+- ✅ No new regressions introduced
+
+## Proposed Solution
+
+[High-level approach to fixing the bug]
+
+**Changes Required**:
+- File 1: [what needs to change]
+- File 2: [what needs to change]
+
+**Risks**: [Any risks with this fix?]
+
+**Alternative Approaches**: [Other ways to fix? Why not chosen?]
+
+---
+
+## Tech Stack Compliance
+
+[If SpecSwarm installed, validate solution against tech stack]
+
+**Tech Stack File**: /memory/tech-stack.md
+**Validation Status**: [Pending/Compliant/Non-Compliant]
+
+---
+
+## Metadata
+
+**Workflow**: Bugfix (regression-test-first)
+**Created By**: SpecLab Plugin v1.0.0
+**Smart Integration**: ${INTEGRATION_MODE}
+```
+
+Populate template by:
+1. Load user input (if provided in `$ARGUMENTS`)
+2. Analyze repository context:
+   - Search for error logs, stack traces
+   - Check recent commits for related changes
+   - Review issues/PRs mentioning bug number
+3. Prompt user for missing critical information:
+   - Bug title
+   - Symptoms (what's broken?)
+   - Reproduction steps
+   - Priority/severity
+
+Write completed specification to `$BUGFIX_SPEC`.
+
+Output to user:
+```
+📋 Bugfix Specification
+✓ Created: ${BUGFIX_SPEC}
+✓ Bug documented with symptoms, root cause, impact
+```
+
+---
+
+### 3. Create Regression Test Specification
+
+Create `$REGRESSION_TEST_SPEC` using this template:
+
+```markdown
+# Regression Test: Bug ${FEATURE_NUM}
+
+**Purpose**: Prove bug exists, validate fix, prevent future regressions
+
+**Test Type**: Regression Test
+**Created**: YYYY-MM-DD
+
+---
+
+## Test Objective
+
+Write a test that:
+1. ✅ **Fails before fix** (proves bug exists)
+2. ✅ **Passes after fix** (proves bug fixed)
+3. ✅ **Prevents regression** (catches if bug reintroduced)
+
+---
+
+## Test Specification
+
+### Test Setup
+
+[What needs to be set up before test runs?]
+
+- Initial state
+- Test data
+- Mock/stub configuration
+- Dependencies
+
+### Test Execution
+
+[What actions does the test perform?]
+
+1. Action 1
+2. Action 2
+3. Action 3
+
+### Test Assertions
+
+[What validations prove bug exists/fixed?]
+
+- ✅ Assertion 1: [expected outcome]
+- ✅ Assertion 2: [expected outcome]
+- ✅ Assertion 3: [expected outcome]
+
+### Test Teardown
+
+[Any cleanup needed?]
+
+---
+
+## Test Implementation
+
+### Test File Location
+
+[Where should this test live?]
+
+**File**: [path/to/test/file]
+**Function/Test Name**: `test_bug_${FEATURE_NUM}_[description]`
+
+### Test Validation Criteria
+
+**Before Fix**:
+- ❌ Test MUST fail (proves bug reproduction)
+- If test passes before fix, test is invalid
+
+**After Fix**:
+- ✅ Test MUST pass (proves bug fixed)
+- ✅ All existing tests still pass (no regressions)
+
+---
+
+## Edge Cases to Test
+
+[Related scenarios that should also be tested]
+
+1. Edge case 1
+2. Edge case 2
+3. Edge case 3
+
+---
+
+## Metadata
+
+**Workflow**: Bugfix (regression-test-first)
+**Created By**: SpecLab Plugin v1.0.0
+```
+
+Write regression test specification to `$REGRESSION_TEST_SPEC`.
+
+Output to user:
+```
+📋 Regression Test Specification
+✓ Created: ${REGRESSION_TEST_SPEC}
+✓ Test must fail before fix, pass after fix
+```
+
+---
+
+### 4. Generate Tasks
+
+Create `$TASKS_FILE` with regression-test-first methodology:
+
+```markdown
+# Tasks: Bug ${FEATURE_NUM} - [Bug Title]
+
+**Workflow**: Bugfix (Regression-Test-First)
+**Status**: Active
+**Created**: YYYY-MM-DD
+
+---
+
+## Execution Strategy
+
+**Mode**: ${EXECUTION_MODE}
+**Smart Integration**:
+${INTEGRATION_SUMMARY}
+
+---
+
+## Phase 1: Regression Test Creation
+
+### T001: Write Regression Test
+**Description**: Implement test specified in regression-test.md
+**File**: [test file path]
+**Validation**: Test code follows test specification
+**Parallel**: No (foundational)
+
+### T002: Verify Test Fails
+**Description**: Run regression test and confirm it fails (proves bug exists)
+**Command**: [test command]
+**Expected**: Test fails with error matching bug symptoms
+**Validation**: Test failure proves bug reproduction
+**Parallel**: No (depends on T001)
+
+---
+
+## Phase 2: Bug Fix Implementation
+
+### T003: Implement Fix
+**Description**: Apply solution from bugfix.md
+**Files**: [list files to modify]
+**Changes**: [high-level change description]
+**Tech Stack Validation**: ${TECH_VALIDATION_ENABLED}
+**Parallel**: No (core fix)
+
+[If multiple independent fixes needed, mark additional tasks with [P]]
+
+### T004: Verify Test Passes
+**Description**: Run regression test and confirm it passes (proves bug fixed)
+**Command**: [test command]
+**Expected**: Test passes
+**Validation**: Test success proves bug fixed
+**Parallel**: No (depends on T003)
+
+---
+
+## Phase 3: Regression Validation
+
+### T005: Run Full Test Suite
+**Description**: Verify no new regressions introduced
+**Command**: [full test suite command]
+**Expected**: All tests pass (existing + new regression test)
+**Validation**: 100% test pass rate
+**Parallel**: No (final validation)
+
+[If SpecSwarm installed, add tech stack validation task]
+${TECH_STACK_VALIDATION_TASK}
+
+---
+
+## Summary
+
+**Total Tasks**: 5 (minimum)
+**Estimated Time**: 1-3 hours (varies by bug complexity)
+**Parallel Opportunities**: Limited (regression-test-first is sequential by nature)
+
+**Success Criteria**:
+- ✅ Regression test created
+- ✅ Test failed before fix (proved bug)
+- ✅ Fix implemented
+- ✅ Test passed after fix (proved solution)
+- ✅ No new regressions
+${TECH_COMPLIANCE_CRITERION}
+```
+
+Write tasks to `$TASKS_FILE`.
+
+Output to user:
+```
+📊 Tasks Generated
+✓ Created: ${TASKS_FILE}
+✓ 5 tasks (regression-test-first methodology)
+✓ Phase 1: Create regression test (T001-T002)
+✓ Phase 2: Implement fix (T003-T004)
+✓ Phase 3: Validate no regressions (T005)
+```
+
+---
+
+### 5. Execute Workflow
+
+Now execute the tasks using the appropriate mode:
+
+#### If SpecTest Installed (Parallel + Hooks):
+
+```
+⚡ Executing Bugfix Workflow with SpecTest Integration
+
+🎣 Pre-Task Hook
+✓ Validating prerequisites
+✓ Environment ready
+
+Phase 1: Regression Test Creation (T001-T002)
+→ T001: Write Regression Test
+  [execute task]
+→ T002: Verify Test Fails
+  [execute task, confirm failure]
+  ✅ Test failed as expected (bug reproduced)
+
+Phase 2: Bug Fix Implementation (T003-T004)
+→ T003: Implement Fix
+  [execute task]
+  [if SpecSwarm installed, validate against tech stack]
+→ T004: Verify Test Passes
+  [execute task]
+  ✅ Test passed (bug fixed!)
+
+Phase 3: Regression Validation (T005)
+→ T005: Run Full Test Suite
+  [execute task]
+  ✅ All tests pass (no regressions)
+
+🎣 Post-Workflow Hook
+✓ All tasks completed
+✓ Bug fixed successfully
+✓ Regression test added
+✓ No new regressions
+📊 Metrics updated
+```
+
+#### If Only SpecSwarm Installed (Sequential + Tech Validation):
+
+```
+🔧 Executing Bugfix Workflow with SpecSwarm Integration
+
+Phase 1: Regression Test Creation
+T001: Write Regression Test
+  [execute task]
+T002: Verify Test Fails
+  [execute task]
+  ✅ Test failed (bug reproduced)
+
+Phase 2: Bug Fix Implementation
+T003: Implement Fix
+  [execute task]
+  🔍 Tech Stack Validation
+  ✓ Loading tech stack: /memory/tech-stack.md
+  ✓ Validating fix against tech stack
+  ✓ Compliant: All changes follow tech stack
+T004: Verify Test Passes
+  [execute task]
+  ✅ Test passed (bug fixed!)
+
+Phase 3: Regression Validation
+T005: Run Full Test Suite
+  [execute task]
+  ✅ All tests pass (no regressions)
+```
+
+#### Basic Mode (No Plugins):
+
+```
+🐛 Executing Bugfix Workflow
+
+Phase 1: Regression Test Creation
+T001-T002: [execute sequentially]
+
+Phase 2: Bug Fix Implementation
+T003-T004: [execute sequentially]
+
+Phase 3: Regression Validation
+T005: [execute]
+
+✅ Workflow Complete
+```
+
+---
+
+## Post-Workflow Hook (if SpecTest installed)
+
+```bash
+if [ "$ENABLE_HOOKS" = "true" ]; then
+  echo ""
+  echo "🎣 Post-Bugfix Hook"
+
+  # Calculate metrics
+  WORKFLOW_END_TIME=$(date +%s)
+  WORKFLOW_DURATION=$((WORKFLOW_END_TIME - WORKFLOW_START_TIME))
+  WORKFLOW_HOURS=$(echo "scale=1; $WORKFLOW_DURATION / 3600" | bc)
+
+  # Validate completion
+  echo "✓ Bug fixed successfully"
+  echo "✓ Regression test added"
+  echo "✓ No new regressions introduced"
+
+  # Tech stack compliance
+  if [ "$SPECSWARM_INSTALLED" = "true" ]; then
+    echo "✓ Tech stack compliant"
+  fi
+
+  # Update metrics file
+  METRICS_FILE="/memory/workflow-metrics.json"
+  # [Update JSON with bugfix metrics]
+  echo "📊 Metrics saved: ${METRICS_FILE}"
+
+  echo ""
+  echo "⏱️  Time to Fix: ${WORKFLOW_HOURS}h"
+  echo ""
+  echo "✅ Bugfix Workflow Complete"
+  echo ""
+  echo "📈 Next Steps:"
+  echo "- Review: ${BUGFIX_SPEC}"
+  echo "- Commit changes with regression test"
+  echo "- View metrics: /speclab:workflow-metrics ${FEATURE_NUM}"
+fi
+```
+
+---
+
+## Final Output
+
+```
+✅ Bugfix Workflow Complete - Feature ${FEATURE_NUM}
+
+📋 Artifacts Created:
+- ${BUGFIX_SPEC}
+- ${REGRESSION_TEST_SPEC}
+- ${TASKS_FILE}
+
+📊 Results:
+- Bug fixed successfully
+- Regression test created and passing
+- No new regressions introduced
+${TECH_STACK_COMPLIANCE_RESULT}
+
+⏱️  Time to Fix: ${WORKFLOW_DURATION}
+${PARALLEL_SPEEDUP_RESULT}
+
+📈 Next Steps:
+1. Review artifacts in: ${FEATURE_DIR}
+2. Commit changes: git add . && git commit -m "fix: bug ${FEATURE_NUM}"
+3. View metrics: /speclab:workflow-metrics ${FEATURE_NUM}
+4. ${SUGGEST_NEXT_COMMAND}
+```
+
+---
+
+## Error Handling
+
+**If branch detection fails**:
+- Prompt user for bug number
+- Offer to create bugfix branch
+
+**If feature directory missing**:
+- Prompt for bug description
+- Create feature directory
+
+**If regression test fails to fail**:
+- ❌ Error: "Regression test must fail before fix (proves bug exists)"
+- Prompt user to review test or bug specification
+
+**If test suite has regressions**:
+- ❌ Error: "New regressions detected. Fix must not break existing tests."
+- List failed tests
+- Suggest investigating breaking changes
+
+---
+
+## Operating Principles
+
+1. **Test First**: Always write regression test before fixing
+2. **Verify Reproduction**: Test must fail to prove bug exists
+3. **Single Responsibility**: Each task has one clear goal
+4. **No Regressions**: Full test suite must pass
+5. **Tech Compliance**: Validate fix against tech stack (if SpecSwarm installed)
+6. **Metrics Tracking**: Record time-to-fix, regression coverage
+7. **Smart Integration**: Leverage SpecSwarm/SpecTest when available
+
+---
+
+## Success Criteria
+
+✅ Bugfix specification documents bug thoroughly
+✅ Regression test created
+✅ Test failed before fix (proved bug reproduction)
+✅ Fix implemented
+✅ Test passed after fix (proved bug fixed)
+✅ No new regressions introduced
+✅ Tech stack compliant (if SpecSwarm installed)
+✅ Metrics tracked (if SpecTest installed)
+
+---
+
+**Workflow Coverage**: Addresses ~40% of development work (bug fixes)
+**Integration**: Smart detection of SpecSwarm (tech enforcement) and SpecTest (parallel/hooks)
+**Graduation Path**: Proven workflow will graduate to SpecSwarm stable

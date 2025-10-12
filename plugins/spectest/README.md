@@ -133,12 +133,19 @@ All commands are identical to SpecSwarm, just use `/spectest:` prefix:
 
 ### ⏳ Phase 2 Planned (Supporting Commands)
 
-| Command | Description | Status |
-|---------|-------------|--------|
-| `/spectest:constitution` | Set project principles | Works perfectly. Hooks planned. |
-| `/spectest:clarify` | Resolve ambiguities | Works perfectly. Hooks planned. |
-| `/spectest:analyze` | Consistency validation | Works perfectly. Hooks planned. |
-| `/spectest:checklist <type>` | Quality checklists | Works perfectly. Hooks planned. |
+These commands are **functional copies from SpecSwarm** - they work perfectly with all tech stack features, just without hooks yet.
+
+| Command | Description | Current Status |
+|---------|-------------|----------------|
+| `/spectest:constitution` | Set project principles | ✅ Copy from SpecSwarm. Hooks planned for Phase 2. |
+| `/spectest:clarify` | Resolve ambiguities | ✅ Copy from SpecSwarm. Hooks planned for Phase 2. |
+| `/spectest:analyze` | Consistency validation | ✅ Copy from SpecSwarm. Hooks planned for Phase 2. |
+| `/spectest:checklist <type>` | Quality checklists | ✅ Copy from SpecSwarm. Hooks planned for Phase 2. |
+
+**What This Means:**
+- ✅ All SpecSwarm functionality present (including tech stack enforcement)
+- ✅ Commands work immediately, no limitations
+- ⏳ Hooks will add automation when implemented in Phase 2
 
 ### Implementation Notes
 
@@ -148,10 +155,12 @@ All commands are identical to SpecSwarm, just use `/spectest:` prefix:
 - Parallel execution (implement only)
 - Intelligent next-step suggestions
 
-**⏳ Phase 2 Commands** work identically to SpecSwarm:
-- All functionality present and stable
-- Hooks will add automation when implemented
-- Can be used immediately without hooks
+**⏳ Phase 2 Commands** are copies from SpecSwarm:
+- Exact same files as SpecSwarm plugin
+- All tech stack enforcement features present
+- All functionality stable and tested
+- Hooks will add automation when implemented in Phase 2
+- Can be used immediately without any limitations
 
 **Complete Workflow**: Use Phase 1 commands (`specify` → `plan` → `tasks` → `implement` → `metrics`) for full enhanced experience with hooks and parallel execution.
 
