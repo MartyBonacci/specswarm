@@ -409,6 +409,23 @@ Individual plugins may have their own attributions and licenses. See each plugin
 - **Anthropic** for [Claude Code](https://docs.claude.com/en/docs/claude-code) and the plugin system
 - All contributors to Spec-Driven Development methodology
 
+## 🧪 Testing
+
+**Want to validate the plugins yourself?** Complete testing workflows available:
+
+- **[Testing Quick Start](docs/testing/QUICK-START.md)** ⭐ - Start here for testing overview
+- **[Plugin Testing Guide](docs/testing/plugin-testing-guide.md)** - Comprehensive testing methodology
+- **[Test 3: SpecTest Workflow](docs/testing/test-3-spectest.md)** - Complete workflow with prompts (paste into Claude Code)
+
+**Test Project**: Build "Tweeter" (simplified Twitter clone) to validate:
+- **Phase 1**: Feature development (SpecKit, SpecSwarm, SpecTest)
+- **Phase 2A**: Lifecycle workflows (SpecLab on SpecTest)
+- **Phase 2B**: Integration validation (optional)
+
+**Expected Timeline**: 10-14 hours (quick) or 26-34 hours (comprehensive)
+
+---
+
 ## 📚 Documentation
 
 ### Quick Start Guides
