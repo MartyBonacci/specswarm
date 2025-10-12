@@ -30,6 +30,37 @@
         "license": "MIT",
         "copyright": "Copyright (c) GitHub, Inc."
       }
+    },
+    {
+      "name": "specswarm",
+      "source": "./plugins/specswarm",
+      "description": "Spec-Driven Development with intelligent tech stack management (forked from SpecKit)",
+      "version": "1.0.0",
+      "author": {
+        "name": "Marty Bonacci",
+        "url": "https://github.com/marty"
+      },
+      "license": "MIT",
+      "keywords": [
+        "spec-driven-development",
+        "specification",
+        "requirements",
+        "planning",
+        "implementation",
+        "workflow",
+        "tech-stack",
+        "drift-prevention",
+        "architecture",
+        "validation"
+      ],
+      "attribution": {
+        "forked_from": "speckit@specswarm",
+        "original_project": "https://github.com/github/spec-kit",
+        "original_license": "MIT",
+        "original_copyright": "Copyright (c) GitHub, Inc.",
+        "speckit_adaptation": "SpecKit plugin by Marty Bonacci (2025)",
+        "specswarm_enhancements": "Tech stack management by Marty Bonacci & Claude Code (2025)"
+      }
     }
   ]
 }
