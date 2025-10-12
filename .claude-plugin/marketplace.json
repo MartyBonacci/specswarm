@@ -72,13 +72,7 @@
         "url": "https://github.com/marty"
       },
       "license": "MIT",
-      "experimental": true,
-      "based_on": "specswarm@1.0.0",
-      "enhancements": [
-        "Parallel task execution (2-4x faster implementation)",
-        "Pre/post operation hooks for extensibility",
-        "Performance metrics and analytics dashboard"
-      ],
+      "homepage": "https://github.com/marty/specswarm",
       "keywords": [
         "spec-driven-development",
         "specification",
@@ -93,16 +87,7 @@
         "performance-metrics",
         "hooks",
         "experimental"
-      ],
-      "attribution": {
-        "forked_from": "specswarm@specswarm",
-        "original_project": "https://github.com/github/spec-kit",
-        "original_license": "MIT",
-        "original_copyright": "Copyright (c) GitHub, Inc.",
-        "speckit_adaptation": "SpecKit plugin by Marty Bonacci (2025)",
-        "specswarm_enhancements": "Tech stack management by Marty Bonacci & Claude Code (2025)",
-        "spectest_enhancements": "Parallel execution, hooks, metrics by Marty Bonacci & Claude Code (2025)"
-      }
+      ]
     },
     {
       "name": "speclab",
@@ -114,26 +99,7 @@
         "url": "https://github.com/marty"
       },
       "license": "MIT",
-      "experimental": true,
-      "based_on": "spec-kit-extensions proven methodologies",
-      "enhancements": [
-        "Bugfix workflow (regression-test-first methodology)",
-        "Modify workflow (impact analysis and backward compatibility)",
-        "Hotfix workflow (expedited emergency response)",
-        "Refactor workflow (metrics-driven quality improvement)",
-        "Deprecate workflow (phased feature sunset)",
-        "Smart integration with SpecSwarm (tech enforcement) and SpecTest (parallel/hooks)"
-      ],
-      "coverage": {
-        "bugfix_modify": "70% of non-feature development work",
-        "all_workflows": "95% of complete development lifecycle"
-      },
-      "graduation_path": {
-        "note": "SpecLab is an experimental laboratory. Proven workflows will graduate to SpecSwarm stable.",
-        "test_phase": "Validate workflows, collect metrics, gather user feedback",
-        "production_phase": "Graduate successful workflows to SpecSwarm plugin",
-        "sunset": "SpecLab will be sunset once workflows are in SpecSwarm"
-      },
+      "homepage": "https://github.com/marty/specswarm",
       "keywords": [
         "spec-driven-development",
         "lifecycle-workflows",
@@ -149,17 +115,7 @@
         "code-quality",
         "feature-sunset",
         "experimental"
-      ],
-      "attribution": {
-        "inspired_by": "spec-kit-extensions by Marty Bonacci",
-        "methodologies_from": "https://github.com/MartyBonacci/spec-kit-extensions",
-        "original_project": "https://github.com/github/spec-kit",
-        "original_license": "MIT",
-        "original_copyright": "Copyright (c) GitHub, Inc.",
-        "speckit_adaptation": "SpecKit plugin by Marty Bonacci (2025)",
-        "specswarm_enhancements": "Tech stack management by Marty Bonacci & Claude Code (2025)",
-        "speclab_workflows": "Lifecycle workflows by Marty Bonacci & Claude Code (2025)"
-      }
+      ]
     }
   ]
 }
