@@ -121,17 +121,39 @@ vs. Sequential: 2.8x faster ⚡
 
 All commands are identical to SpecSwarm, just use `/spectest:` prefix:
 
+### ✅ Phase 1 Complete (Core Workflow with Hooks)
+
 | Command | Description | Enhancements |
 |---------|-------------|--------------|
-| `/spectest:constitution` | Set project principles | + Pre/post hooks |
-| `/spectest:specify <desc>` | Create feature spec | + Quality hooks, auto-metrics |
-| `/spectest:clarify` | Resolve ambiguities | + Pre/post hooks |
-| `/spectest:plan` | Technical planning | + Hooks, metrics tracking |
-| `/spectest:tasks` | Generate task breakdown | + Parallel detection, hooks |
-| `/spectest:implement` | **Execute with parallel** | + **Parallel batching**, hooks, metrics |
-| `/spectest:analyze` | Consistency validation | + Hooks, metrics |
-| `/spectest:checklist <type>` | Quality checklists | + Pre/post hooks |
-| `/spectest:metrics [feature]` | **📊 NEW: Performance dashboard** | **New command** |
+| `/spectest:specify <desc>` | Create feature spec | ✅ **Pre/post hooks**, quality validation, metrics |
+| `/spectest:plan` | Technical planning | ✅ **Pre/post hooks**, tech stack summary, metrics |
+| `/spectest:tasks` | Generate task breakdown | ✅ **Pre/post hooks**, parallel detection, execution preview |
+| `/spectest:implement` | **Execute with parallel** | ✅ **Pre/post hooks**, **parallel batching**, metrics |
+| `/spectest:metrics [feature]` | **📊 Performance dashboard** | ✅ **NEW command** - full analytics |
+
+### ⏳ Phase 2 Planned (Supporting Commands)
+
+| Command | Description | Status |
+|---------|-------------|--------|
+| `/spectest:constitution` | Set project principles | Works perfectly. Hooks planned. |
+| `/spectest:clarify` | Resolve ambiguities | Works perfectly. Hooks planned. |
+| `/spectest:analyze` | Consistency validation | Works perfectly. Hooks planned. |
+| `/spectest:checklist <type>` | Quality checklists | Works perfectly. Hooks planned. |
+
+### Implementation Notes
+
+**✅ Phase 1 Commands** provide the complete enhanced workflow:
+- Pre/post hooks for automatic validation
+- Performance metrics tracking
+- Parallel execution (implement only)
+- Intelligent next-step suggestions
+
+**⏳ Phase 2 Commands** work identically to SpecSwarm:
+- All functionality present and stable
+- Hooks will add automation when implemented
+- Can be used immediately without hooks
+
+**Complete Workflow**: Use Phase 1 commands (`specify` → `plan` → `tasks` → `implement` → `metrics`) for full enhanced experience with hooks and parallel execution.
 
 ---
 
