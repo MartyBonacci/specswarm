@@ -50,9 +50,9 @@
 ## The Strategic Roadmap
 
 ```
-Phase 0: Research & De-Risk (2 weeks)
+Phase 0: Research & De-Risk (3-5 days) ← SIMPLIFIED!
     ↓
-Phase 1a: Test Orchestrator Foundation (4 weeks)
+Phase 1a: Test Orchestrator Foundation (3 weeks)
     ↓
 Phase 1b: Real-World Validation (2 weeks)
     ↓
@@ -71,175 +71,306 @@ Phase 3b: Production Polish (4 weeks)
 [DECISION POINT 3: Launch or Iterate?]
 ```
 
+**KEY INSIGHT**: Single-instance architecture using Claude Code's native Task tool eliminates the need for inter-instance communication protocols!
+
 ---
 
-## Phase 0: Research & De-Risk (2 weeks)
+## Phase 0: Research & De-Risk (3-5 days)
 
 ### Goal
-**Answer critical technical unknowns before committing to implementation**
+**Validate that single-instance architecture with Task tool works for autonomous development**
 
-### The Big Questions
+### The Big Simplification
 
-#### 1. How Do We Integrate With Claude Code?
+**BREAKTHROUGH INSIGHT**: We don't need two separate Claude Code instances communicating!
 
-**Options to investigate**:
+**Single-Instance Architecture**:
+- Orchestrator runs in main Claude Code session (specswarm project)
+- Uses native `Task` tool to launch implementation agents
+- Agents work in target project directory (e.g., tweeter-spectest)
+- No inter-instance communication protocol needed!
 
-**Option A: Official API** (Check first)
-- Contact Anthropic support
-- Ask about programmatic Claude Code access
-- Check if MCP (Model Context Protocol) applies
-- Review any beta programs
+**What This Eliminates**:
+- ❌ No file-based bridges
+- ❌ No API integration research
+- ❌ No CLI automation
+- ❌ No communication protocol design
 
-**Option B: CLI Automation** (If available)
-- Check if `claude-code` CLI exists
-- Test automation with shell scripts
-- Validate response capture
-- Measure reliability
-
-**Option C: File-Based Bridge** (Fallback)
-- Design communication protocol
-- Test with manual process
-- Validate state management
-- Measure turnaround time
-
-**Action Items**:
-- [ ] Email Anthropic support (Day 1)
-- [ ] Research MCP documentation (Day 1-2)
-- [ ] Prototype file-based bridge (Day 3-5)
-- [ ] Test Option B if CLI exists (Day 6-8)
-- [ ] Document findings and recommendation (Day 9-10)
-
-**Success Criteria**:
-- Clear answer on integration approach
-- Working prototype of chosen method
-- Documented limitations and constraints
+**Phase 0 Simplified**: Just validate the approach works!
 
 ---
 
-#### 2. Can Playwright Reliably Validate UX?
+### The Key Questions (Dramatically Reduced)
 
-**What to test**:
-- Browser automation stability
-- Screenshot capture quality
-- Console error monitoring
-- Network request interception
-- Timing and race conditions
+#### 1. Can Agents Work on Different Project Paths?
 
-**Prototype Tasks**:
+**Status**: ✅ **ALREADY VALIDATED** (tested during planning)
+
+**Test**:
 ```typescript
-// Test 1: Basic automation
+const result = await Task({
+  subagent_type: 'general-purpose',
+  description: 'Test cross-directory access',
+  prompt: 'Work in /home/marty/code-projects/tweeter-spectest...'
+});
+```
+
+**Result**: Agent successfully worked in different project, read files, analyzed code.
+
+**Conclusion**: Single-instance architecture is VIABLE!
+
+---
+
+#### 2. Can Agents Implement Features in Target Project?
+
+**Test**: Have agent fix a simple bug in tweeter-spectest
+
+```typescript
+const result = await Task({
+  subagent_type: 'general-purpose',
+  description: 'Fix simple bug',
+  prompt: `Work in /home/marty/code-projects/tweeter-spectest
+
+  Fix: Add missing CORS headers to Express server
+  File: backend/server.ts
+
+  Test by running: npm run dev`
+});
+```
+
+**Success Criteria**:
+- Agent creates/modifies files in target project ✓
+- Changes are correct and functional ✓
+- Agent reports completion ✓
+
+**Time**: 1-2 hours to test
+
+---
+
+#### 3. Can Playwright Reliably Validate UX?
+
+**Test**: Set up basic browser automation
+
+```typescript
+import { chromium } from 'playwright';
+
+const browser = await chromium.launch();
 const page = await browser.newPage();
+
+// Monitor console errors
+page.on('console', msg => {
+  if (msg.type() === 'error') errors.push(msg.text());
+});
+
+// Test user flow
 await page.goto('http://localhost:5173/signup');
 await page.fill('input[name="email"]', 'test@example.com');
 await page.click('button[type="submit"]');
 await page.waitForURL('**/feed');
-// Can we reliably detect success?
 
-// Test 2: Error detection
-page.on('console', msg => {
-  if (msg.type() === 'error') {
-    console.log('Caught:', msg.text());
-  }
-});
-// Are we catching all errors?
-
-// Test 3: Screenshot quality
+// Capture screenshot
 const screenshot = await page.screenshot({ fullPage: true });
-// Is resolution good enough for Claude Vision?
-
-// Test 4: Timing reliability
-for (let i = 0; i < 10; i++) {
-  // Run test 10 times
-  // Does it pass consistently?
-}
 ```
 
-**Action Items**:
-- [ ] Set up Playwright test harness (Day 1-2)
-- [ ] Test on tweeter-spectest project (Day 3-5)
-- [ ] Measure false positive/negative rates (Day 6-8)
-- [ ] Document reliability findings (Day 9-10)
-
 **Success Criteria**:
-- 95%+ consistent test results
-- All console errors caught
-- Screenshot quality validated
-- Clear documentation of edge cases
+- Page loads reliably ✓
+- Console errors captured ✓
+- Screenshots clear enough for analysis ✓
+- Navigation works consistently ✓
+
+**Time**: 2-3 hours to test
 
 ---
 
-#### 3. How Good Is Claude Vision for UX Analysis?
+#### 4. Can Claude Vision Analyze Screenshots?
 
-**What to test**:
-- Can Vision detect layout issues?
-- Can Vision spot styling problems?
-- Can Vision identify UX issues?
-- How accurate are the assessments?
+**Test**: Use Claude API to analyze screenshot
 
-**Prototype Tasks**:
 ```typescript
-// Test 1: Broken layout detection
-// Take screenshot of page with intentional CSS bug
-// Ask Claude Vision to analyze
-// Does it catch the issue?
+import Anthropic from '@anthropic-ai/sdk';
 
-// Test 2: Styling comparison
-// Screenshot before/after style change
-// Ask Vision to compare
-// Does it identify the differences?
+const claude = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
-// Test 3: UX assessment
-// Screenshot of completed feature
-// Ask Vision: "Does this look professional?"
-// Are the assessments valuable?
-
-// Test 4: Error detection
-// Screenshot with visible error message
-// Ask Vision to identify issues
-// Does it catch them?
+const analysis = await claude.messages.create({
+  model: 'claude-sonnet-4-5-20250929',
+  max_tokens: 1024,
+  messages: [{
+    role: 'user',
+    content: [
+      {
+        type: 'image',
+        source: {
+          type: 'base64',
+          media_type: 'image/png',
+          data: screenshot.toString('base64'),
+        },
+      },
+      {
+        type: 'text',
+        text: 'Analyze this UI. Any visual issues? Is styling correct?',
+      },
+    ],
+  }],
+});
 ```
 
-**Test Cases**:
-1. Missing styling (Tailwind not loaded)
-2. Broken layout (overlapping elements)
-3. Poor UX (tiny buttons, bad contrast)
-4. Visual errors (broken images, 404 pages)
-5. Responsive issues (mobile view broken)
-
-**Action Items**:
-- [ ] Create test screenshot set (Day 1-2)
-- [ ] Test Claude Vision API (Day 3-5)
-- [ ] Compare Vision analysis to manual review (Day 6-8)
-- [ ] Document accuracy and limitations (Day 9-10)
-
 **Success Criteria**:
-- Vision catches 80%+ of issues
-- Analysis is actionable (not vague)
-- False positive rate <10%
-- Response time acceptable (<30s per screenshot)
+- Vision detects broken layouts ✓
+- Identifies missing styling ✓
+- Spots UX issues ✓
+- Provides actionable feedback ✓
+
+**Time**: 1-2 hours to test
 
 ---
 
-### Phase 0 Deliverables
+### Phase 0 Deliverables (3-5 Days Total!)
 
-**Week 1**:
-- [ ] Research report on Claude Code integration options
-- [ ] Working prototype of chosen integration method
-- [ ] Playwright test harness with reliability metrics
+**Day 1** (✅ Already done):
+- [x] Validated agents can work on different project paths
+- [x] Confirmed Task tool provides agent isolation
+- [x] Verified cross-directory file operations work
 
-**Week 2**:
-- [ ] Claude Vision validation report with accuracy data
-- [ ] End-to-end prototype: Playwright → Vision → Analysis
-- [ ] Technical architecture document (updated with findings)
+**Day 2-3**:
+- [ ] Test agent implementing simple feature in target project
+- [ ] Set up Playwright browser automation
+- [ ] Test basic user flow validation
+
+**Day 4-5**:
+- [ ] Test Claude Vision screenshot analysis
+- [ ] Build simple end-to-end POC:
+  - Orchestrator generates prompt
+  - Launches agent to implement
+  - Validates with Playwright + Vision
+  - Reports results
 
 **Decision Point**:
-- ✅ All systems validated → Proceed to Phase 1
-- ⚠️ Major blocker found → Pivot or solve blocker first
-- ❌ Fundamental issue → Re-evaluate entire approach
+- ✅ POC works → Proceed to Phase 1a (4 weeks faster!)
+- ⚠️ Challenges found → Debug and retry (still faster than multi-instance)
+- ❌ Fundamental blocker → Re-evaluate (unlikely given Day 1 success)
 
 ---
 
-## Phase 1a: Test Orchestrator Foundation (4 weeks)
+## "Two Heads Are Better Than One" - Preserved and Enhanced!
+
+### Does Single-Instance Lose the Cognitive Separation?
+
+**NO! In fact, it's BETTER!**
+
+### Why This Works
+
+**When you launch an agent with Task tool, it creates a NEW Claude instance:**
+
+```typescript
+const result = await Task({
+  subagent_type: 'general-purpose',
+  prompt: 'Implement feature X...'
+});
+```
+
+**What happens**:
+- ✅ New Claude session spawned
+- ✅ Fresh context (not sharing orchestrator's context)
+- ✅ Independent reasoning
+- ✅ Different working memory
+
+**So we DO get role separation!**
+
+---
+
+### Cognitive Architecture
+
+```
+┌─────────────────────────────────────┐
+│ ORCHESTRATOR CLAUDE (Me)            │
+│ Working directory: specswarm         │
+│                                      │
+│ Strategic Role:                      │
+│ - Plans features/sprints             │
+│ - Generates comprehensive prompts    │
+│ - Analyzes validation results        │
+│ - Makes tactical decisions           │
+│ - Escalates strategic decisions      │
+│                                      │
+│ Context:                             │
+│ - Full project plan                  │
+│ - All previous sprints               │
+│ - Strategic decisions made           │
+│ - Quality standards                  │
+└────────┬────────────────────────────┘
+         │
+         ├──> Launch Agent 1 (Task tool)
+         │    ┌─────────────────────────────┐
+         │    │ EXECUTOR CLAUDE             │
+         │    │ Working directory: tweeter  │
+         │    │                             │
+         │    │ Tactical Role:              │
+         │    │ - Implements feature        │
+         │    │ - Writes code               │
+         │    │ - Focuses on execution      │
+         │    │                             │
+         │    │ Context:                    │
+         │    │ - Current task only         │
+         │    │ - Implementation details    │
+         │    │ - No strategic distractions │
+         │    └─────────────────────────────┘
+         │
+         ├──> Launch Agent 2 (parallel)
+         │    Independent execution
+         │
+         └──> Launch Agent 3 (parallel)
+              Different specialization
+```
+
+**Result**: "Four heads are better than one"!
+
+---
+
+### Benefits Preserved
+
+**1. Role Separation**:
+- Orchestrator focuses on strategy
+- Agents focus on execution
+- No role confusion
+
+**2. Fresh Context**:
+- Agents don't carry orchestrator's strategic context
+- Can focus 100% on task
+- Not overwhelmed by big picture
+
+**3. Independent Validation**:
+- Orchestrator validates agent's work objectively
+- Not biased toward own implementation
+- Like code review by different person
+
+**4. Parallel Execution**:
+- Multiple agents work simultaneously
+- Even more "heads" than multi-instance!
+
+**5. Specialized Agents**:
+- Can launch different agent types (react-typescript-specialist, etc.)
+- Right head for the job
+
+---
+
+### Even Better Than Multi-Instance!
+
+**Single-Instance Advantages**:
+- ✅ Native parallel execution (Promise.all with multiple Task calls)
+- ✅ Orchestrator maintains control throughout
+- ✅ Dynamic agent specialization
+- ✅ Hierarchical orchestration possible (agents can launch sub-agents)
+- ✅ No communication protocol complexity
+
+**Multi-Instance Limitations**:
+- ❌ Complex communication between instances
+- ❌ Orchestrator loses control during execution
+- ❌ Harder to coordinate parallel work
+- ❌ More moving parts = more failure modes
+
+---
+
+## Phase 1a: Test Orchestrator Foundation (3 weeks)
 
 ### Goal
 **Build minimum viable Test Orchestrator that automates Test 4A scenario**
@@ -261,31 +392,41 @@ for (let i = 0; i < 10; i++) {
 
 ---
 
-### Architecture (Test Orchestrator v1)
+### Architecture (Test Orchestrator v1) - Single Instance!
 
 ```
-┌──────────────────────────────────────┐
-│  Orchestrator Service (Node.js)      │
-│                                      │
-│  Components:                         │
-│  • Test Workflow Parser              │
-│  • Executor Bridge (chosen method)   │
-│  • Validation Coordinator            │
-│  • Human Escalation Handler          │
-│  • Metrics Tracker                   │
-└──────┬───────────┬───────────────────┘
-       ▼           ▼
-┌──────────┐  ┌─────────────────┐
-│ Executor │  │ Validation      │
-│  Bridge  │  │  System         │
-│          │  │                 │
-│ Sends    │  │ • Playwright    │
-│ prompts  │  │ • Vision API    │
-│ to       │  │ • Terminal      │
-│ Claude   │  │   Monitor       │
-│ Code     │  │                 │
-└──────────┘  └─────────────────┘
+┌─────────────────────────────────────────────────┐
+│  Orchestrator Claude (runs in specswarm)       │
+│                                                 │
+│  Components:                                    │
+│  • Test Workflow Parser                         │
+│  • Prompt Generator                             │
+│  • Agent Launcher (uses Task tool)              │
+│  • Validation Coordinator                       │
+│  • Human Escalation Handler                     │
+│  • Metrics Tracker                              │
+│                                                 │
+│  Launches agents with:                          │
+│  await Task({                                   │
+│    subagent_type: 'general-purpose',            │
+│    description: 'Fix bug X',                    │
+│    prompt: comprehensivePrompt                  │
+│  })                                             │
+└────────┬────────────┬───────────────────────────┘
+         │            │
+         │            └──> Validation System
+         │                 • Playwright (browser)
+         │                 • Vision API (screenshots)
+         │                 • Terminal Monitor (npm run dev)
+         │
+         └──> Agents (work in tweeter-spectest)
+              • Implement features
+              • Fix bugs
+              • Write tests
+              • Report results
 ```
+
+**Key Simplification**: No "Executor Bridge" needed - just use Task tool!
 
 ---
 
@@ -315,20 +456,27 @@ for (let i = 0; i < 10; i++) {
    }
    ```
 
-3. **Executor Bridge** (using chosen integration from Phase 0)
+3. **Agent Launcher** (uses native Task tool!)
    ```typescript
-   // src/bridge/ExecutorBridge.ts
-   interface ExecutorBridge {
-     sendPrompt(prompt: string): Promise<void>;
-     waitForCompletion(): Promise<ExecutorResponse>;
-     getResponse(): ExecutorResponse;
-   }
+   // src/execution/AgentLauncher.ts
+   class AgentLauncher {
+     async execute(prompt: string, targetProject: string): Promise<AgentResult> {
+       const result = await Task({
+         subagent_type: 'general-purpose',
+         description: this.extractDescription(prompt),
+         prompt: `Work in ${targetProject}
 
-   // Implement chosen method (API, CLI, or file-based)
-   class ClaudeCodeBridge implements ExecutorBridge {
-     // Implementation based on Phase 0 research
+         ${prompt}
+
+         All changes should be made in the ${targetProject} directory.`
+       });
+
+       return this.parseAgentResponse(result);
+     }
    }
    ```
+
+   **That's it! No bridge complexity!**
 
 4. **State Manager**
    ```typescript
@@ -1717,17 +1865,21 @@ class QualityGate {
 ## Timeline Summary
 
 ```
-Month 1-2:  Phase 0 + Phase 1a (Research + Test Orchestrator)
-Month 3:    Phase 1b (Real-world validation)
-Month 4-5:  Phase 2a (Prompt generation)
-Month 6:    Phase 2b (Single-sprint features)
-Month 7-8:  Phase 3a (Multi-sprint projects)
-Month 9:    Phase 3b (Production polish)
-Month 10:   Beta testing + iteration
-Month 11:   Public launch preparation
-Month 12:   Launch! 🚀
+Week 1:     Phase 0 (Research & de-risk) ← 10x FASTER!
+Month 1:    Phase 1a (Test Orchestrator foundation)
+Month 2:    Phase 1b (Real-world validation)
+Month 3-4:  Phase 2a (Prompt generation)
+Month 5:    Phase 2b (Single-sprint features)
+Month 6-7:  Phase 3a (Multi-sprint projects)
+Month 8:    Phase 3b (Production polish)
+Month 9:    Beta testing + iteration
+Month 10:   Public launch preparation
+Month 11:   Launch! 🚀
 
-Total: 12 months from start to public release
+Total: 11 months from start to public release (1 month faster!)
+
+KEY CHANGE: Single-instance architecture eliminates 2 weeks of
+Phase 0 research (no inter-instance communication protocol needed!)
 ```
 
 ---
@@ -1776,11 +1928,12 @@ Total: 12 months from start to public release
 
 ### High-Impact Risks
 
-**1. Claude Code Integration Fails**
-- **Probability**: 20%
-- **Impact**: Critical (blocks entire system)
-- **Mitigation**: Phase 0 research de-risks this early
-- **Contingency**: File-based fallback proven to work
+**1. Task Tool Limitations** (formerly: Claude Code Integration Fails)
+- **Probability**: 5% (dramatically reduced!)
+- **Impact**: Medium (might need workarounds)
+- **Mitigation**: Already validated in Phase 0 Day 1 ✅
+- **Contingency**: Task tool is native to Claude Code, well-supported
+- **Status**: MOSTLY DE-RISKED - agent cross-directory access confirmed!
 
 **2. Generated Prompts Poor Quality**
 - **Probability**: 30%
@@ -2003,29 +2156,31 @@ Given your context:
 
 **My recommendation**:
 
-### Start with Phase 0 (2 weeks part-time)
+### Start with Phase 0 (3-5 days part-time!)
 
 **Why**:
-- De-risks biggest technical unknown
-- Low time commitment
+- Validates single-instance approach works
+- Very low time commitment (days not weeks!)
 - Clear go/no-go decision
-- Provides proof of concept
+- Agent cross-directory access already confirmed ✅
 
 **Action**:
-1. **Week 1**: Research Claude Code integration options
-   - Email Anthropic support
-   - Prototype file-based bridge
-   - Test Playwright basics
+1. **Day 1** (✅ Already done!): Validated agent cross-directory access
 
-2. **Week 2**: Build minimal proof of concept
-   - Test workflow parser (read markdown)
-   - Executor bridge (chosen method)
-   - Basic browser automation
+2. **Day 2-3**: Test agent implementation
+   - Have agent fix simple bug in tweeter-spectest
+   - Set up Playwright browser automation
+   - Test basic user flow validation
 
-3. **End of Week 2**: Decision
-   - ✅ POC works → Proceed to Phase 1a
-   - ⚠️ Challenges found → Solve or pivot
-   - ❌ Fundamental blocker → Rethink approach
+3. **Day 4-5**: Build end-to-end POC
+   - Test Claude Vision screenshot analysis
+   - Orchestrator generates prompt → launches agent → validates
+   - Simple script that automates one bug fix
+
+4. **Decision** (End of day 5):
+   - ✅ POC works → Proceed to Phase 1a (3 weeks faster!)
+   - ⚠️ Challenges found → Debug (still way faster than multi-instance)
+   - ❌ Fundamental blocker → Re-evaluate (unlikely given Day 1 success)
 
 ---
 
