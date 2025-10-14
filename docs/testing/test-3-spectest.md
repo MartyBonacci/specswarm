@@ -25,6 +25,12 @@
 - 🎯 Hooks execute at appropriate phases
 - ✅ Full app functional
 
+**⚠️ Feature Scope Guidance:**
+- **Target**: Each feature should be 8-12 hours of implementation work
+- **If scope is too large**: Accept MVP approach (partial feature implementation)
+- **Document**: Record scope issues in test-3-results.md under "Issues Encountered"
+- **Learning**: This is valuable test feedback about feature sizing
+
 ---
 
 ## 🚀 Setup
@@ -217,6 +223,11 @@ Key principles:
 ## 📝 Phase 2: Feature Specifications
 
 Build Tweeter incrementally with these features:
+
+**💡 Feature Sizing Tip:**
+When specifying features, aim for **8-12 hours of implementation work** per feature. If Claude indicates scope is too large (>15 hours), accept an MVP approach or split the feature. This is a normal part of testing and provides valuable feedback.
+
+---
 
 ### Feature 001: Authentication System
 
@@ -432,6 +443,14 @@ Let's build the authentication system first.
 /spectest:implement features/001-authentication
 ```
 
+**⚠️ If Scope is Too Large:**
+
+If Claude indicates the feature has too many tasks (>40 tasks or >15 hours):
+1. **Accept the MVP approach** Claude suggests (e.g., "Phase 1-3 only")
+2. **Document in test-3-results.md** under "Issues Encountered"
+3. **Continue with reduced scope** - this validates the workflow with realistic constraints
+4. **Learning**: Feature specs should target 8-12 hour implementations
+
 **Expected Outcome:**
 ```
 🎣 Pre-Implement Hook
@@ -491,6 +510,25 @@ Phase 3: Integration (sequential)
 
 **Expected parallel execution in tweet implementation phase**
 
+---
+
+**💡 Consider /compact (Midpoint):**
+
+If your conversation has been running for ~2 hours with many messages, consider running:
+```
+/compact
+```
+
+This will:
+- ✅ Preserve all project files and state
+- ✅ Summarize conversation history
+- ✅ Keep Claude responsive for remaining features
+- ✅ Maintain context for Features 3 & 4
+
+**Continue after compact (if used):**
+
+---
+
 ```
 /spectest:implement features/003-likes
 ```
@@ -510,6 +548,17 @@ Phase 3: Integration (sequential)
 - Average parallel speedup: ________x
 - Longest parallel batch: ________ tasks
 - Total implementation time vs estimated sequential: ________
+
+---
+
+**💡 Consider /compact (After All Features):**
+
+If you haven't compacted yet and your conversation is long (>150 messages), consider running:
+```
+/compact
+```
+
+This will prepare Claude for the final testing and validation phases with a fresh context window.
 
 ---
 
@@ -731,7 +780,11 @@ npm run dev
    git add .
    git commit -m "test: complete SpecTest validation"
    ```
-4. **Proceed to Phase 2A:**
+4. **💡 /compact before Test 4A:**
+   - **Strongly recommended:** Run `/compact` to summarize Test 3
+   - This gives you a fresh start for Test 4A lifecycle workflows
+   - Your Test 3 project state is fully preserved
+5. **Proceed to Phase 2A:**
    - [Test 4A: SpecLab on SpecTest](test-4a-speclab-spectest.md)
    - Use this build as base for lifecycle workflows
 

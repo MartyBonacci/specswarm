@@ -305,6 +305,51 @@ Post-Hook:
 
 ---
 
+## 💡 Best Practices
+
+### Feature Scope Sizing
+
+**Optimal Scope**: Target **8-12 hours of implementation work** per feature
+
+**Why?**
+- Fits comfortably in a single Claude Code session
+- Allows for parallel execution benefits
+- Maintains context and momentum
+- Enables proper testing and validation
+
+**If Scope is Too Large (>15 hours or >40 tasks):**
+
+1. **Accept MVP Approach**: Implement core functionality first (e.g., "Phase 1-3 only")
+2. **Split the Feature**: Break into multiple smaller features
+3. **Document the Decision**: Note in project documentation
+4. **Create Follow-up Features**: Plan additional features for remaining functionality
+
+**Example**:
+```
+Original: "Complete authentication system" (42 tasks, 18-24h)
+MVP: "User signup flow" (Phase 1-3, ~7-9h)
+Follow-up: "User signin and session management" (Phase 4-5, ~8-10h)
+Follow-up: "Password reset and account recovery" (Phase 6, ~4-6h)
+```
+
+### Parallel Task Marking
+
+**Guidelines for [P] markers in tasks.md:**
+
+✅ **Mark as [P] (Parallel)**:
+- Independent model/schema files
+- Separate UI components
+- Non-overlapping test files
+- Independent API endpoints
+
+❌ **Keep Sequential**:
+- Setup/configuration tasks
+- Tasks with file dependencies
+- Tasks requiring previous outputs
+- Integration/wiring tasks
+
+---
+
 ## ⚠️ Known Limitations
 
 1. **Experimental Status**: This is alpha software, bugs expected
