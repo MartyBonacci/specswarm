@@ -561,6 +561,155 @@ Once workflows prove successful:
 
 ---
 
+## 🔬 Alpha Testing Insights (October 2025)
+
+**Status**: Test 4A (SpecLab on SpecTest) is providing valuable real-world validation
+
+### Critical Discoveries
+
+#### 1. Functional Validation Gaps ⚠️ HIGH PRIORITY
+
+**Problem**: Regression tests validate code structure but not actual behavior.
+
+**Test 4A Examples**:
+- **Bug 902 (Tailwind)**: Test passed (links export exists ✅) but styles didn't load (❌)
+  - Fix 1: Added links export → Test passed, but still broken
+  - Fix 2: Added postcss.config.js → Actually fixed
+- **Bug 904 (Tweet posting)**: Test passed (action exists ✅) but posting failed (❌)
+  - Fix 1: Added action function → Test passed, but still broken
+  - Fix 2: Added CORS handling → Test passed, still broken
+  - Fix 3: Fixed error property → Test passed, still broken
+  - Fix 4: Cookie forwarding → Still debugging...
+
+**Root Cause**: Regression tests check "does code exist?" not "does it work?"
+
+**Planned Fix** (Phase 1):
+```markdown
+Add to bugfix workflow:
+
+Phase 4: Functional Validation (NEW)
+- [ ] Regression test passes (structure valid)
+- [ ] Manual functional test passes (behavior valid)
+- [ ] End-to-end flow works
+- [ ] No related functionality broken
+```
+
+**Impact**: Critical for preventing false sense of completion
+
+---
+
+#### 2. Multi-Iteration Bug Complexity ⚠️ MEDIUM PRIORITY
+
+**Problem**: Complex bugs require 2-4+ fix attempts but workflow doesn't guide iteration.
+
+**Test 4A Data**:
+- Simple bugs (901, 903): 1 iteration, 15-25 minutes ✅
+- Complex bugs (902, 904): 2-4+ iterations, 40+ minutes ⚠️
+
+**Complex Bug Pattern**:
+1. First fix addresses symptoms, not root cause
+2. Tests pass but functionality still broken
+3. Requires deeper investigation
+4. Multiple layered issues (Bug 904: action → CORS → error handling → cookies)
+
+**Planned Fix** (Phase 2):
+- Add iteration guidance to bugfix workflow
+- Document expected complexity ranges
+- Add "deep debugging" checklist for complex bugs
+
+---
+
+#### 3. Framework-Specific SSR Patterns ⚠️ MEDIUM PRIORITY
+
+**Problem**: React Router v7 SSR patterns not documented (cookie forwarding in server actions).
+
+**Bug 904 Details**:
+```typescript
+// ❌ Doesn't work in SSR actions
+await fetch(url, {
+  credentials: 'include' // Only works in browser context
+});
+
+// ✅ Works in SSR actions
+const cookie = request.headers.get('Cookie');
+await fetch(url, {
+  headers: { 'Cookie': cookie } // Manually forward cookies
+});
+```
+
+**Planned Fix** (Phase 2):
+- Create React Router v7 SSR pattern guide
+- Add framework detection to suggest appropriate patterns
+- Expand to Next.js, Remix, other SSR frameworks
+
+---
+
+#### 4. Workflow Classification Clarity ✅ RESOLVED
+
+**Problem**: Initial confusion about bugfix vs modify for missing features.
+
+**Test 4A Learning**:
+- Missing signin treated as "Bug 905" → ❌ Wrong
+- Correctly reclassified as "missing feature" → ✅ Use modify
+
+**Decision Tree Added**:
+| Scenario | Workflow | Why |
+|----------|----------|-----|
+| Broken functionality | `/speclab:bugfix` | Was working, now broken |
+| Missing critical config | `/speclab:bugfix` | Prevents functionality |
+| Deferred feature | `/speclab:modify` | Incomplete by design |
+| New capability | `/speclab:modify` | Adding functionality |
+
+**Status**: Documentation to be added to workflow commands
+
+---
+
+### Positive Validations ✅
+
+**What Worked Excellently**:
+1. **Real bugs >> artificial bugs** - Found 5 real bugs vs 1 planned, much better testing
+2. **Regression-test-first methodology** - Tests proved bugs existed before fixes
+3. **Documentation generation** - Comprehensive feature folders created automatically
+4. **Multi-iteration support** - Workflow handled 2-4 fix attempts gracefully
+5. **Modify workflow classification** - Successfully distinguished features from bugs
+
+**Test Metrics So Far** (Test 4A, 1.75h):
+- Bugs fixed: 3 complete, 1 in progress
+- Average time (simple): 15-25 minutes
+- Average time (complex): 40+ minutes
+- Iterations per bug: 1-4
+- Regression tests created: 4/4 ✅
+
+---
+
+### Improvement Roadmap
+
+**Phase 1 (Critical - Before Beta)**:
+1. ✅ Add functional validation phase to bugfix workflow
+2. ✅ Improve regression test templates (test behavior, not just structure)
+3. ✅ Add completion criteria (tests + functional validation)
+4. ⏳ Create React Router v7 SSR pattern guide
+
+**Phase 2 (Enhancements - Beta Phase)**:
+1. Multi-iteration debugging guidance
+2. Workflow classification decision tree
+3. Complexity estimation guide
+4. Framework pattern library expansion
+
+**Testing Timeline**:
+- October 2025: Test 4A in progress (SpecLab + SpecTest)
+- November 2025: Implement Phase 1 improvements
+- December 2025: Second alpha tester validation
+- Q1 2026: Beta release with improvements
+
+---
+
+**Alpha Testing Appreciation**: Marty's real-world testing has identified issues that no artificial test would catch. This validation is making SpecLab production-ready. 🙏
+
+For complete testing insights, see: [docs/INSIGHTS.md](../../docs/INSIGHTS.md)
+
+---
+
 ## 🤝 Contributing
 
 Found a bug? Have an enhancement idea?
