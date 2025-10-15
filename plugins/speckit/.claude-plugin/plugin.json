@@ -1,17 +1,16 @@
 {
   "name": "speckit",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Spec-Driven Development workflow for Claude Code (adapted from GitHub spec-kit)",
   "author": {
     "name": "Marty Bonacci",
-    "url": "https://github.com/marty"
+    "url": "https://github.com/MartyBonacci"
   },
   "license": "MIT",
-  "homepage": "https://github.com/github/spec-kit",
-  "attribution": {
-    "original": "https://github.com/github/spec-kit",
-    "license": "MIT",
-    "copyright": "Copyright (c) GitHub, Inc."
+  "homepage": "https://github.com/MartyBonacci/specswarm",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MartyBonacci/specswarm.git"
   },
   "keywords": [
     "spec-driven-development",

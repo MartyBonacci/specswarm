@@ -1,29 +1,18 @@
 {
   "name": "spectest",
-  "version": "1.0.0-alpha",
-  "description": "Experimental: SpecSwarm enhanced with parallel execution, hooks, and performance metrics",
+  "version": "1.0.1",
+  "description": "Experimental: SpecSwarm enhanced with parallel execution, hooks, performance metrics, and quality validation",
   "author": {
     "name": "Marty Bonacci",
-    "url": "https://github.com/marty"
+    "url": "https://github.com/MartyBonacci"
   },
   "license": "MIT",
-  "homepage": "https://github.com/marty/specswarm",
-  "experimental": true,
-  "based_on": "specswarm@1.0.0",
-  "enhancements": [
-    "Parallel task execution (2-4x faster implementation)",
-    "Pre/post operation hooks for extensibility",
-    "Performance metrics and analytics dashboard"
-  ],
-  "attribution": {
-    "forked_from": "specswarm@specswarm",
-    "original_project": "https://github.com/github/spec-kit",
-    "original_license": "MIT",
-    "original_copyright": "Copyright (c) GitHub, Inc.",
-    "speckit_adaptation": "SpecKit plugin by Marty Bonacci (2025)",
-    "specswarm_enhancements": "Tech stack management by Marty Bonacci & Claude Code (2025)",
-    "spectest_enhancements": "Parallel execution, hooks, metrics by Marty Bonacci & Claude Code (2025)"
+  "homepage": "https://github.com/MartyBonacci/specswarm",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MartyBonacci/specswarm.git"
   },
+  "experimental": true,
   "keywords": [
     "spec-driven-development",
     "specification",
@@ -37,6 +26,8 @@
     "parallel-execution",
     "performance-metrics",
     "hooks",
+    "quality-validation",
+    "testing",
     "experimental"
   ]
 }

@@ -1,42 +1,18 @@
 {
   "name": "project-orchestrator",
-  "version": "0.1.0-alpha.1",
-  "description": "Autonomous development orchestrator for building features and projects with multi-agent coordination",
+  "version": "0.1.1",
+  "description": "Autonomous development orchestrator for building features and projects with multi-agent coordination (Phase 0)",
   "author": {
     "name": "Marty Bonacci",
-    "url": "https://github.com/marty"
+    "url": "https://github.com/MartyBonacci"
   },
   "license": "MIT",
-  "homepage": "https://github.com/marty/specswarm",
+  "homepage": "https://github.com/MartyBonacci/specswarm",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MartyBonacci/specswarm.git"
+  },
   "experimental": true,
-  "phase": "Phase 0: Research & De-Risk",
-  "enhancements": [
-    "Autonomous test orchestration with validation",
-    "Prompt generation for agent execution",
-    "Browser automation with Playwright",
-    "Visual validation with Claude Vision API",
-    "Multi-layer validation pipeline"
-  ],
-  "roadmap": {
-    "phase_0": "Research & De-Risk (3-5 days) - Current",
-    "phase_1a": "Test Orchestrator Foundation (3 weeks)",
-    "phase_1b": "Real-World Validation (2 weeks)",
-    "phase_2a": "Prompt Generation Core (6 weeks)",
-    "phase_2b": "Single-Sprint Projects (4 weeks)",
-    "phase_3a": "Multi-Sprint Coordination (8 weeks)",
-    "phase_3b": "Production Polish (4 weeks)"
-  },
-  "architecture": {
-    "approach": "Single-instance with native Task tool",
-    "orchestrator_role": "Strategic planning and validation",
-    "agent_role": "Tactical implementation",
-    "validation": "Multi-layer (browser, vision, terminal)"
-  },
-  "attribution": {
-    "inspired_by": "Test 4A results and Test Orchestrator Agent concept",
-    "methodology": "Batch sizing strategy and vertical slices",
-    "created_by": "Marty Bonacci & Claude Code (2025)"
-  },
   "keywords": [
     "autonomous-development",
     "orchestration",
