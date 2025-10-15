@@ -8,11 +8,7 @@
   },
   "license": "MIT",
   "homepage": "https://github.com/MartyBonacci/specswarm",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/MartyBonacci/specswarm.git"
-  },
-  "experimental": true,
+  "repository": "https://github.com/MartyBonacci/specswarm",
   "keywords": [
     "autonomous-development",
     "orchestration",
