@@ -1,121 +1,48 @@
 {
-  "name": "specswarm",
-  "description": "Specification-driven development orchestration plugins for Claude Code",
-  "owner": {
+  "name": "specswarm-marketplace",
+  "owner": "MartyBonacci",
+  "description": "Spec-Driven Development plugins with tech stack management and quality validation",
+  "author": {
     "name": "Marty Bonacci",
-    "url": "https://github.com/marty"
+    "url": "https://github.com/MartyBonacci"
   },
-  "repository": "https://github.com/marty/specswarm",
+  "homepage": "https://github.com/MartyBonacci/specswarm",
   "plugins": [
     {
-      "name": "speckit",
-      "source": "./plugins/speckit",
-      "description": "Spec-Driven Development workflow (adapted from GitHub spec-kit)",
-      "version": "1.0.0",
-      "author": {
-        "name": "Marty Bonacci",
-        "url": "https://github.com/marty"
-      },
-      "license": "MIT",
-      "keywords": [
-        "spec-driven-development",
-        "specification",
-        "requirements",
-        "planning",
-        "implementation",
-        "workflow"
-      ],
-      "attribution": {
-        "original": "https://github.com/github/spec-kit",
-        "license": "MIT",
-        "copyright": "Copyright (c) GitHub, Inc."
-      }
-    },
-    {
       "name": "specswarm",
-      "source": "./plugins/specswarm",
-      "description": "Spec-Driven Development with intelligent tech stack management (forked from SpecKit)",
-      "version": "1.0.0",
-      "author": {
-        "name": "Marty Bonacci",
-        "url": "https://github.com/marty"
-      },
-      "license": "MIT",
-      "keywords": [
-        "spec-driven-development",
-        "specification",
-        "requirements",
-        "planning",
-        "implementation",
-        "workflow",
-        "tech-stack",
-        "drift-prevention",
-        "architecture",
-        "validation"
-      ],
-      "attribution": {
-        "forked_from": "speckit@specswarm",
-        "original_project": "https://github.com/github/spec-kit",
-        "original_license": "MIT",
-        "original_copyright": "Copyright (c) GitHub, Inc.",
-        "speckit_adaptation": "SpecKit plugin by Marty Bonacci (2025)",
-        "specswarm_enhancements": "Tech stack management by Marty Bonacci & Claude Code (2025)"
-      }
+      "source": "plugins/specswarm",
+      "version": "1.1.0",
+      "description": "Spec-Driven Development with intelligent tech stack management and quality validation"
     },
     {
       "name": "spectest",
-      "source": "./plugins/spectest",
-      "description": "Experimental: SpecSwarm enhanced with parallel execution, hooks, and performance metrics",
-      "version": "1.0.0-alpha",
-      "author": {
-        "name": "Marty Bonacci",
-        "url": "https://github.com/marty"
-      },
-      "license": "MIT",
-      "homepage": "https://github.com/marty/specswarm",
-      "keywords": [
-        "spec-driven-development",
-        "specification",
-        "requirements",
-        "planning",
-        "implementation",
-        "workflow",
-        "tech-stack",
-        "drift-prevention",
-        "architecture",
-        "parallel-execution",
-        "performance-metrics",
-        "hooks",
-        "experimental"
-      ]
+      "source": "plugins/spectest",
+      "version": "1.0.1",
+      "description": "Experimental: SpecSwarm enhanced with parallel execution, hooks, performance metrics, and quality validation"
     },
     {
       "name": "speclab",
-      "source": "./plugins/speclab",
-      "description": "Experimental: Lifecycle workflow laboratory for bugfix, modify, hotfix, refactor, and deprecate workflows",
+      "source": "plugins/speclab",
+      "version": "1.1.0",
+      "description": "Experimental: Lifecycle workflow laboratory for bugfix, modify, hotfix, refactor, and deprecate workflows"
+    },
+    {
+      "name": "speckit",
+      "source": "plugins/speckit",
+      "version": "1.0.1",
+      "description": "Spec-Driven Development workflow for Claude Code (adapted from GitHub spec-kit)"
+    },
+    {
+      "name": "project-orchestrator",
+      "source": "plugins/project-orchestrator",
+      "version": "0.1.1",
+      "description": "Autonomous development orchestrator for building features and projects with multi-agent coordination (Phase 0)"
+    },
+    {
+      "name": "debug-coordinate",
+      "source": "plugins/debug-coordinate",
       "version": "1.0.0",
-      "author": {
-        "name": "Marty Bonacci",
-        "url": "https://github.com/marty"
-      },
-      "license": "MIT",
-      "homepage": "https://github.com/marty/specswarm",
-      "keywords": [
-        "spec-driven-development",
-        "lifecycle-workflows",
-        "bugfix",
-        "modify",
-        "hotfix",
-        "refactor",
-        "deprecate",
-        "regression-testing",
-        "impact-analysis",
-        "backward-compatibility",
-        "emergency-response",
-        "code-quality",
-        "feature-sunset",
-        "experimental"
-      ]
+      "description": "Systematic debugging coordination for multi-bug scenarios"
     }
   ]
 }
