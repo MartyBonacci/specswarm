@@ -479,6 +479,149 @@ Execute the following after all tasks are completed:
    📋 Analyze quality: /spectest:analyze
    ```
 
+<!-- ========== QUALITY VALIDATION (SpecTest Phase 1) ========== -->
+
+7. **Quality Validation** (if quality-standards.md exists):
+
+   **Purpose**: Automated quality assurance before merge
+
+   See SpecSwarm quality validation implementation (same code)
+
+   This step runs automated tests, measures coverage, executes browser tests,
+   analyzes screenshots, and validates against quality gates.
+
+   [IMPLEMENTATION NOTE: Use identical logic from SpecSwarm Step 10]
+
+<!-- ========== END QUALITY VALIDATION ========== -->
+
+8. **Git Workflow Completion** (if git repository):
+
+   **Purpose**: Handle feature branch merge and cleanup
+
+   ```bash
+   # Check if we're in a git repository
+   if git rev-parse --git-dir >/dev/null 2>&1; then
+     CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
+     MAIN_BRANCH=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@' || echo "main")
+
+     # Only show workflow if on a feature branch
+     if [ "$CURRENT_BRANCH" != "$MAIN_BRANCH" ] && [ "$CURRENT_BRANCH" != "master" ]; then
+       echo ""
+       echo "🌳 Git Workflow"
+       echo "==============="
+       echo ""
+       echo "Current branch: $CURRENT_BRANCH"
+       echo "Main branch: $MAIN_BRANCH"
+       echo ""
+       echo "Feature implementation complete! What would you like to do?"
+       echo ""
+       echo "  1. Merge to $MAIN_BRANCH and delete feature branch (recommended)"
+       echo "  2. Stay on $CURRENT_BRANCH for additional work"
+       echo "  3. Switch to $MAIN_BRANCH without merging (keep branch)"
+       echo ""
+       read -p "Choose (1/2/3): " GIT_CHOICE
+
+       case $GIT_CHOICE in
+         1)
+           echo ""
+           echo "✅ Merging and cleaning up..."
+           echo ""
+
+           # Check for uncommitted changes
+           if ! git diff-index --quiet HEAD --; then
+             echo "⚠️  You have uncommitted changes."
+             echo ""
+             git status --short
+             echo ""
+             read -p "Commit these changes first? (yes/no): " COMMIT_CHOICE
+
+             if [[ "$COMMIT_CHOICE" =~ ^[Yy] ]]; then
+               read -p "Commit message: " COMMIT_MSG
+               git add .
+               git commit -m "$COMMIT_MSG"
+               echo "✅ Changes committed"
+               echo ""
+             else
+               echo "⚠️  Proceeding with uncommitted changes (they will be carried over)"
+               echo ""
+             fi
+           fi
+
+           # Merge to main
+           git checkout "$MAIN_BRANCH"
+
+           # Check if merge will be successful (no conflicts)
+           if git merge --no-commit --no-ff "$CURRENT_BRANCH" >/dev/null 2>&1; then
+             git merge --abort  # Abort the test merge
+
+             # Do the actual merge with proper commit message
+             FEATURE_NAME=$(echo "$CURRENT_BRANCH" | sed 's/^[0-9]*-//')
+             git merge "$CURRENT_BRANCH" --no-ff -m "feat: merge $CURRENT_BRANCH - $FEATURE_NAME"
+
+             echo "✅ Merged $CURRENT_BRANCH to $MAIN_BRANCH"
+             echo ""
+
+             # Delete the feature branch
+             git branch -d "$CURRENT_BRANCH"
+             echo "✅ Deleted feature branch $CURRENT_BRANCH"
+             echo ""
+             echo "🎉 You are now on $MAIN_BRANCH"
+           else
+             git merge --abort  # Abort the test merge
+             echo "❌ Merge conflicts detected!"
+             echo ""
+             echo "Cannot auto-merge. Please resolve conflicts manually:"
+             echo "  1. git checkout $MAIN_BRANCH"
+             echo "  2. git merge $CURRENT_BRANCH"
+             echo "  3. Resolve conflicts"
+             echo "  4. git add . && git commit"
+             echo "  5. git branch -d $CURRENT_BRANCH"
+             echo ""
+             # Stay on feature branch
+             git checkout "$CURRENT_BRANCH"
+           fi
+           ;;
+
+         2)
+           echo ""
+           echo "✅ Staying on $CURRENT_BRANCH"
+           echo ""
+           echo "When ready to merge, run:"
+           echo "  git checkout $MAIN_BRANCH"
+           echo "  git merge $CURRENT_BRANCH"
+           echo "  git branch -d $CURRENT_BRANCH"
+           echo ""
+           ;;
+
+         3)
+           echo ""
+           echo "✅ Switching to $MAIN_BRANCH (keeping branch)"
+           git checkout "$MAIN_BRANCH"
+           echo ""
+           echo "Feature branch $CURRENT_BRANCH preserved."
+           echo "To merge later: git merge $CURRENT_BRANCH"
+           echo "To delete later: git branch -d $CURRENT_BRANCH"
+           echo ""
+           ;;
+
+         *)
+           echo ""
+           echo "⚠️  Invalid choice. Staying on $CURRENT_BRANCH"
+           echo ""
+           echo "Git workflow can be completed manually:"
+           echo "  • Merge: git checkout $MAIN_BRANCH && git merge $CURRENT_BRANCH"
+           echo "  • Switch: git checkout $MAIN_BRANCH"
+           echo ""
+           ;;
+       esac
+     else
+       echo ""
+       echo "ℹ️  Already on main branch ($CURRENT_BRANCH)"
+       echo ""
+     fi
+   fi
+   ```
+
 <!-- ========== END POST-IMPLEMENT HOOK ========== -->
 
 Note: This command assumes a complete task breakdown exists in tasks.md. If tasks are incomplete or missing, suggest running `/spectest:tasks` first to regenerate the task list.

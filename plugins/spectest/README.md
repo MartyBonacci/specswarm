@@ -224,7 +224,185 @@ Phase 3: Services (8 tasks) - Parallel Batch 2
 ⚡ Performance: 6m 15s (vs 18m sequential = 2.9x faster)
 
 ✅ Feature complete! View metrics: /spectest:metrics 001
+
+🌳 Git Workflow
+===============
+
+Current branch: 001-user-authentication
+Main branch: main
+
+Feature implementation complete! What would you like to do?
+
+  1. Merge to main and delete feature branch (recommended)
+  2. Stay on 001-user-authentication for additional work
+  3. Switch to main without merging (keep branch)
+
+Choose (1/2/3): 1
+
+✅ Merging and cleaning up...
+✅ Merged 001-user-authentication to main
+✅ Deleted feature branch 001-user-authentication
+🎉 You are now on main
 ```
+
+---
+
+## 🌳 Git Workflow Management
+
+SpecTest now includes **automatic git workflow management** to complete the full feature lifecycle.
+
+### How It Works
+
+After `/spectest:implement` completes, the **Post-Implement Hook** automatically:
+
+1. **Detects your git repository** and current branch
+2. **Offers three workflow options** if you're on a feature branch
+3. **Handles the merge and cleanup** based on your choice
+
+### The Three Options
+
+#### Option 1: Merge and Delete (Recommended)
+
+**Best for**: Normal feature completion
+
+**What happens**:
+- ✅ Checks for uncommitted changes (prompts to commit)
+- ✅ Tests merge for conflicts (dry run)
+- ✅ Merges feature branch to main
+- ✅ Deletes feature branch
+- ✅ Returns you to main branch
+- ✅ Ready for next feature!
+
+**Use when**: Feature is complete and tested
+
+---
+
+#### Option 2: Stay on Branch
+
+**Best for**: Additional polish or testing needed
+
+**What happens**:
+- ✅ Keeps you on the feature branch
+- ✅ Provides manual merge instructions
+- ✅ Branch preserved for more work
+
+**Use when**: Need to add more commits, run additional tests, or get code review
+
+---
+
+#### Option 3: Switch Without Merge
+
+**Best for**: Pausing feature work
+
+**What happens**:
+- ✅ Switches to main branch
+- ✅ Preserves feature branch
+- ✅ Provides merge/delete instructions for later
+
+**Use when**: Working on multiple features, need to switch context, or waiting for dependencies
+
+---
+
+### Safety Features
+
+**Conflict Detection**:
+```bash
+# Tests merge before executing
+❌ Merge conflicts detected!
+
+Cannot auto-merge. Please resolve conflicts manually:
+  1. git checkout main
+  2. git merge 001-user-authentication
+  3. Resolve conflicts
+  4. git add . && git commit
+  5. git branch -d 001-user-authentication
+```
+
+**Uncommitted Changes Handling**:
+```bash
+⚠️  You have uncommitted changes.
+
+ M  src/components/UserProfile.tsx
+ M  src/services/auth.ts
+
+Commit these changes first? (yes/no): yes
+Commit message: Polish user profile styling
+✅ Changes committed
+```
+
+---
+
+### Complete Workflow
+
+The full feature lifecycle with SpecTest:
+
+```
+/spectest:specify "User authentication"
+  → Creates branch: 001-user-authentication ✅
+
+/spectest:plan
+  → Plans on feature branch ✅
+
+/spectest:tasks
+  → Generates tasks on feature branch ✅
+
+/spectest:implement
+  → Implements feature ✅
+  → Offers git workflow options ✅
+  → Merges and cleans up ✅
+
+Back on main → Ready for next feature! ✅
+```
+
+---
+
+### When Git Workflow Doesn't Run
+
+The git workflow **won't prompt** when:
+
+- ❌ Not a git repository
+- ❌ Already on main/master branch
+- ❌ No branches created (non-git project)
+
+In these cases, you'll see:
+```
+ℹ️  Already on main branch (main)
+```
+
+---
+
+### Manual Override
+
+If you prefer manual git workflow:
+
+Choose **Option 2** (Stay on branch), then handle git manually:
+
+```bash
+# When you're ready
+git checkout main
+git merge 001-user-authentication
+git branch -d 001-user-authentication
+```
+
+---
+
+### Troubleshooting
+
+**"I accidentally chose the wrong option!"**
+
+No problem! The workflow is non-destructive:
+
+- **Chose 2 or 3?** Just run the merge manually when ready
+- **Chose 1 and regret it?** The merge is already done, but your code is safe on main
+- **Conflicts?** The workflow aborts and keeps you on the feature branch to resolve manually
+
+**"I want to skip the git workflow prompt"**
+
+The prompt only appears when:
+- You're in a git repository AND
+- You're on a feature branch (not main/master)
+
+To skip: Just choose **Option 2** and handle git yourself.
 
 ---
 
@@ -238,6 +416,7 @@ Phase 3: Services (8 tasks) - Parallel Batch 2
 | **Parallel execution** | ❌ Sequential only | ✅ **2-4x faster** |
 | **Hook system** | ❌ No | ✅ **8 hook points** |
 | **Performance metrics** | ❌ No tracking | ✅ **Full analytics** |
+| **Git workflow management** | ❌ Manual | ✅ **Auto merge/cleanup** |
 | Execution time (typical) | ~18-20 minutes | ~6-8 minutes |
 
 ---

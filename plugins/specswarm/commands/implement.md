@@ -287,4 +287,317 @@ You **MUST** consider the user input before proceeding (if not empty).
    - Confirm the implementation follows the technical plan
    - Report final status with summary of completed work
 
+<!-- ========== QUALITY VALIDATION (SpecSwarm Phase 1) ========== -->
+<!-- Added by Marty Bonacci & Claude Code (2025) -->
+
+10. **Quality Validation** (if quality-standards.md exists):
+
+   **Purpose**: Automated quality assurance before merge
+
+   ```bash
+   # Load plugin directory
+   PLUGIN_DIR="$(dirname "$(dirname "$(readlink -f "$0")")")"
+
+   # Check if quality standards exist
+   QUALITY_STANDARDS="${REPO_ROOT}/memory/quality-standards.md"
+
+   if [ ! -f "$QUALITY_STANDARDS" ]; then
+     echo ""
+     echo "ℹ️  Quality Validation"
+     echo "===================="
+     echo ""
+     echo "No quality standards defined. Skipping automated validation."
+     echo ""
+     echo "To enable quality gates:"
+     echo "  1. Create /memory/quality-standards.md"
+     echo "  2. Define minimum coverage and quality score"
+     echo "  3. Configure test requirements"
+     echo ""
+     echo "See: plugins/specswarm/templates/quality-standards-template.md"
+     echo ""
+     # Continue to git workflow
+   else
+     echo ""
+     echo "🧪 Running Quality Validation"
+     echo "============================="
+     echo ""
+
+     # Load quality gates library
+     source "${PLUGIN_DIR}/lib/quality-gates.sh"
+     source "${PLUGIN_DIR}/lib/visual-validation.sh"
+
+     # 1. Run unit tests
+     echo "1. Unit Tests"
+     echo "============="
+     echo ""
+
+     run_unit_tests
+     UNIT_RESULT=$?
+
+     echo ""
+
+     # 2. Run integration tests
+     echo "2. Integration Tests"
+     echo "===================="
+     echo ""
+
+     run_integration_tests
+     INTEGRATION_RESULT=$?
+
+     echo ""
+
+     # 3. Measure code coverage
+     echo "3. Code Coverage"
+     echo "================"
+     echo ""
+
+     COVERAGE_PCT=$(measure_coverage)
+
+     echo ""
+
+     # 4. Run browser tests (if framework detected)
+     BROWSER_FRAMEWORK=$(detect_browser_test_framework)
+
+     if [ "$BROWSER_FRAMEWORK" != "none" ]; then
+       echo "4. Browser Tests"
+       echo "================"
+       echo ""
+
+       run_browser_tests
+       BROWSER_RESULT=$?
+
+       echo ""
+
+       # 5. Visual validation (analyze screenshots)
+       echo "5. Visual Validation"
+       echo "===================="
+       echo ""
+
+       # Determine screenshot directory based on browser framework
+       case "$BROWSER_FRAMEWORK" in
+         playwright)
+           SCREENSHOT_DIR="${REPO_ROOT}/test-results/screenshots"
+           ;;
+         cypress)
+           SCREENSHOT_DIR="${REPO_ROOT}/cypress/screenshots"
+           ;;
+         *)
+           SCREENSHOT_DIR="${FEATURE_DIR}/.screenshots"
+           ;;
+       esac
+
+       # Analyze screenshots against spec
+       analyze_screenshots_against_spec \
+         "$SCREENSHOT_DIR" \
+         "${FEATURE_DIR}/spec.md" \
+         "$FEATURE_DIR"
+
+       VISUAL_SCORE=$?
+     else
+       echo "4. Browser Tests"
+       echo "================"
+       echo ""
+       echo "  ⊘ No browser test framework detected"
+       echo "  Skipping browser tests and visual validation"
+       echo ""
+
+       BROWSER_RESULT=2  # Skipped
+       VISUAL_SCORE=0
+     fi
+
+     # 6. Calculate quality score
+     QUALITY_SCORE=$(calculate_quality_score \
+       "$UNIT_RESULT" \
+       "$INTEGRATION_RESULT" \
+       "$COVERAGE_PCT" \
+       "$BROWSER_RESULT" \
+       "$VISUAL_SCORE")
+
+     # 7. Display quality report
+     display_quality_report \
+       "$UNIT_RESULT" \
+       "$INTEGRATION_RESULT" \
+       "$COVERAGE_PCT" \
+       "$BROWSER_RESULT" \
+       "$VISUAL_SCORE" \
+       "$QUALITY_SCORE"
+
+     # 8. Check quality gates
+     MIN_QUALITY_SCORE=$(grep "min_quality_score:" "$QUALITY_STANDARDS" 2>/dev/null | awk '{print $2}')
+     MIN_QUALITY_SCORE=${MIN_QUALITY_SCORE:-80}
+
+     BLOCK_ON_FAILURE=$(grep "block_merge_on_failure:" "$QUALITY_STANDARDS" 2>/dev/null | awk '{print $2}')
+     BLOCK_ON_FAILURE=${BLOCK_ON_FAILURE:-false}
+
+     if [ "$QUALITY_SCORE" -lt "$MIN_QUALITY_SCORE" ]; then
+       echo "⚠️  Quality score below minimum (${QUALITY_SCORE} < ${MIN_QUALITY_SCORE})"
+       echo ""
+
+       if [ "$BLOCK_ON_FAILURE" = "true" ]; then
+         echo "❌ Quality gate FAILED - merge blocked"
+         echo ""
+         echo "Fix quality issues and re-run /specswarm:implement"
+         echo ""
+         exit 1
+       else
+         echo "⚠️  Quality gate warning (soft failure)"
+         echo ""
+         read -p "Continue with merge anyway? (yes/no): " CONTINUE_CHOICE
+
+         if [[ ! "$CONTINUE_CHOICE" =~ ^[Yy] ]]; then
+           echo ""
+           echo "Halting. Fix issues and re-run /specswarm:implement"
+           echo ""
+           exit 1
+         fi
+         echo ""
+       fi
+     else
+       echo "✅ Quality validation passed!"
+       echo ""
+     fi
+
+     # 9. Save quality metrics
+     save_quality_metrics \
+       "$FEATURE_NUM" \
+       "$QUALITY_SCORE" \
+       "$COVERAGE_PCT" \
+       "$VISUAL_SCORE" \
+       "$UNIT_RESULT" \
+       "$INTEGRATION_RESULT" \
+       "$BROWSER_RESULT" \
+       "$REPO_ROOT"
+   fi
+   ```
+
+<!-- ========== END QUALITY VALIDATION ========== -->
+
+11. **Git Workflow Completion** (if git repository):
+
+   **Purpose**: Handle feature branch merge and cleanup after successful implementation
+
+   ```bash
+   # Check if we're in a git repository
+   if git rev-parse --git-dir >/dev/null 2>&1; then
+     CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
+     MAIN_BRANCH=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@' || echo "main")
+
+     # Only show workflow if on a feature branch
+     if [ "$CURRENT_BRANCH" != "$MAIN_BRANCH" ] && [ "$CURRENT_BRANCH" != "master" ]; then
+       echo ""
+       echo "🌳 Git Workflow"
+       echo "==============="
+       echo ""
+       echo "Current branch: $CURRENT_BRANCH"
+       echo "Main branch: $MAIN_BRANCH"
+       echo ""
+       echo "Feature implementation complete! What would you like to do?"
+       echo ""
+       echo "  1. Merge to $MAIN_BRANCH and delete feature branch (recommended)"
+       echo "  2. Stay on $CURRENT_BRANCH for additional work"
+       echo "  3. Switch to $MAIN_BRANCH without merging (keep branch)"
+       echo ""
+       read -p "Choose (1/2/3): " GIT_CHOICE
+
+       case $GIT_CHOICE in
+         1)
+           echo ""
+           echo "✅ Merging and cleaning up..."
+           echo ""
+
+           # Check for uncommitted changes
+           if ! git diff-index --quiet HEAD --; then
+             echo "⚠️  You have uncommitted changes."
+             echo ""
+             git status --short
+             echo ""
+             read -p "Commit these changes first? (yes/no): " COMMIT_CHOICE
+
+             if [[ "$COMMIT_CHOICE" =~ ^[Yy] ]]; then
+               read -p "Commit message: " COMMIT_MSG
+               git add .
+               git commit -m "$COMMIT_MSG"
+               echo "✅ Changes committed"
+               echo ""
+             else
+               echo "⚠️  Proceeding with uncommitted changes (they will be carried over)"
+               echo ""
+             fi
+           fi
+
+           # Merge to main
+           git checkout "$MAIN_BRANCH"
+
+           # Check if merge will be successful (no conflicts)
+           if git merge --no-commit --no-ff "$CURRENT_BRANCH" >/dev/null 2>&1; then
+             git merge --abort  # Abort the test merge
+
+             # Do the actual merge with proper commit message
+             FEATURE_NAME=$(echo "$CURRENT_BRANCH" | sed 's/^[0-9]*-//')
+             git merge "$CURRENT_BRANCH" --no-ff -m "feat: merge $CURRENT_BRANCH - $FEATURE_NAME"
+
+             echo "✅ Merged $CURRENT_BRANCH to $MAIN_BRANCH"
+             echo ""
+
+             # Delete the feature branch
+             git branch -d "$CURRENT_BRANCH"
+             echo "✅ Deleted feature branch $CURRENT_BRANCH"
+             echo ""
+             echo "🎉 You are now on $MAIN_BRANCH"
+           else
+             git merge --abort  # Abort the test merge
+             echo "❌ Merge conflicts detected!"
+             echo ""
+             echo "Cannot auto-merge. Please resolve conflicts manually:"
+             echo "  1. git checkout $MAIN_BRANCH"
+             echo "  2. git merge $CURRENT_BRANCH"
+             echo "  3. Resolve conflicts"
+             echo "  4. git add . && git commit"
+             echo "  5. git branch -d $CURRENT_BRANCH"
+             echo ""
+             # Stay on feature branch
+             git checkout "$CURRENT_BRANCH"
+           fi
+           ;;
+
+         2)
+           echo ""
+           echo "✅ Staying on $CURRENT_BRANCH"
+           echo ""
+           echo "When ready to merge, run:"
+           echo "  git checkout $MAIN_BRANCH"
+           echo "  git merge $CURRENT_BRANCH"
+           echo "  git branch -d $CURRENT_BRANCH"
+           echo ""
+           ;;
+
+         3)
+           echo ""
+           echo "✅ Switching to $MAIN_BRANCH (keeping branch)"
+           git checkout "$MAIN_BRANCH"
+           echo ""
+           echo "Feature branch $CURRENT_BRANCH preserved."
+           echo "To merge later: git merge $CURRENT_BRANCH"
+           echo "To delete later: git branch -d $CURRENT_BRANCH"
+           echo ""
+           ;;
+
+         *)
+           echo ""
+           echo "⚠️  Invalid choice. Staying on $CURRENT_BRANCH"
+           echo ""
+           echo "Git workflow can be completed manually:"
+           echo "  • Merge: git checkout $MAIN_BRANCH && git merge $CURRENT_BRANCH"
+           echo "  • Switch: git checkout $MAIN_BRANCH"
+           echo ""
+           ;;
+       esac
+     else
+       echo ""
+       echo "ℹ️  Already on main branch ($CURRENT_BRANCH)"
+       echo ""
+     fi
+   fi
+   ```
+
 Note: This command assumes a complete task breakdown exists in tasks.md. If tasks are incomplete or missing, suggest running `/tasks` first to regenerate the task list.

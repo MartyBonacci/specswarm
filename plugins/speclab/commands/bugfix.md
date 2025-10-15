@@ -276,6 +276,155 @@ Output to user:
 
 ---
 
+### 2.5. Orchestrator Detection
+
+After creating the bugfix specification, analyze whether this is an orchestration opportunity:
+
+```bash
+# Load detection library
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PLUGIN_DIR="$(dirname "$SCRIPT_DIR")"
+
+if [ -f "$PLUGIN_DIR/lib/orchestrator-detection.sh" ]; then
+    source "$PLUGIN_DIR/lib/orchestrator-detection.sh"
+
+    echo ""
+    echo "🔍 Analyzing bugfix complexity..."
+    echo ""
+
+    # Count bugs in specification (look for "### Bug #" headers or symptoms list)
+    BUG_COUNT=$(grep -cE "^### Bug #|^- Bug [0-9]+" "$BUGFIX_SPEC" 2>/dev/null || echo "1")
+
+    # If user input mentions multiple bugs, count them
+    if [ -n "$ARGUMENTS" ]; then
+        ARG_BUG_COUNT=$(echo "$ARGUMENTS" | grep -oE "bug" | wc -l)
+        if [ "$ARG_BUG_COUNT" -gt "$BUG_COUNT" ]; then
+            BUG_COUNT=$ARG_BUG_COUNT
+        fi
+    fi
+
+    # Get list of affected files from bugfix spec
+    AFFECTED_FILES=$(grep -A 20 "^## Proposed Solution" "$BUGFIX_SPEC" | grep -E "^- File |^  - " | sed 's/^- File //' | sed 's/^  - //' | tr '\n' ' ' || echo "")
+
+    # If no files found in spec yet, check user input
+    if [ -z "$AFFECTED_FILES" ] && [ -n "$ARGUMENTS" ]; then
+        AFFECTED_FILES=$(echo "$ARGUMENTS" | grep -oE "[a-zA-Z0-9/_-]+\.(ts|tsx|js|jsx|py|go|java)" | tr '\n' ' ')
+    fi
+
+    # Build context info based on spec content
+    CONTEXT_INFO=""
+    if grep -qiE "log|logging|console" "$BUGFIX_SPEC"; then
+        CONTEXT_INFO="${CONTEXT_INFO} requires_logging"
+    fi
+    if grep -qiE "restart|reload|rebuild" "$BUGFIX_SPEC"; then
+        CONTEXT_INFO="${CONTEXT_INFO} requires_server_restarts"
+    fi
+
+    # Check if orchestrator should be used
+    DETECTION_RESULT=$(should_use_orchestrator "$BUG_COUNT" "$AFFECTED_FILES" "$CONTEXT_INFO" 2>/dev/null)
+
+    if [ $? -eq 0 ]; then
+        echo "🎯 Orchestrator Detection"
+        echo "========================"
+        echo ""
+
+        # Extract recommendation details
+        RECOMMENDATION=$(echo "$DETECTION_RESULT" | grep -o '"recommendation": "[^"]*"' | cut -d'"' -f4)
+        REASON=$(echo "$DETECTION_RESULT" | grep -o '"reason": "[^"]*"' | cut -d'"' -f4)
+        CONFIDENCE=$(echo "$DETECTION_RESULT" | grep -o '"confidence": "[^"]*"' | cut -d'"' -f4)
+
+        echo "Reason: $REASON"
+        echo "Confidence: $CONFIDENCE"
+        echo ""
+
+        if [ "$RECOMMENDATION" = "orchestrator" ]; then
+            echo "💡 STRONG RECOMMENDATION: Use Project Orchestrator"
+            echo ""
+            echo "This is a textbook orchestration case!"
+            echo ""
+            echo "Benefits:"
+            echo "  • Estimated time savings: 40-60%"
+            echo "  • Parallel bug investigation"
+            echo "  • Better context management"
+            echo "  • Coordinated server restarts"
+            echo "  • Specialized agents per domain"
+            echo ""
+            echo "Detected signals:"
+            echo "  - $BUG_COUNT bug(s) to fix"
+
+            if [ -n "$AFFECTED_FILES" ]; then
+                DOMAIN_NAMES=$(get_domain_names "$AFFECTED_FILES" 2>/dev/null)
+                if [ -n "$DOMAIN_NAMES" ]; then
+                    echo "  - Spans domains: $DOMAIN_NAMES"
+                fi
+            fi
+
+            if echo "$CONTEXT_INFO" | grep -q "requires_logging"; then
+                echo "  - Requires extensive logging"
+            fi
+            if echo "$CONTEXT_INFO" | grep -q "requires_server_restarts"; then
+                echo "  - Requires server restarts"
+            fi
+
+            echo ""
+            echo "Choose workflow:"
+            echo "  1. Continue with sequential bugfix (traditional)"
+            echo "  2. Switch to Orchestrator debug mode (recommended)"
+            echo ""
+            read -p "Your choice (1 or 2): " WORKFLOW_CHOICE
+
+            if [ "$WORKFLOW_CHOICE" = "2" ]; then
+                echo ""
+                echo "✅ Switching to Orchestrator debug mode..."
+                echo ""
+                echo "Next step: Create debug workflow specification"
+                echo ""
+                echo "Run one of these commands:"
+                echo "  • /debug:coordinate \"$ARGUMENTS\""
+                echo "  • /project-orchestrator:debug --spec=\"$BUGFIX_SPEC\""
+                echo ""
+                echo "The orchestrator will:"
+                echo "  1. Add strategic logging across affected files"
+                echo "  2. Spawn specialist agents per domain"
+                echo "  3. Coordinate parallel investigation"
+                echo "  4. Integrate and test all fixes together"
+                echo ""
+                exit 0
+            else
+                echo ""
+                echo "✅ Continuing with sequential workflow"
+                echo ""
+                echo "Note: You can switch to orchestrator mode anytime by running:"
+                echo "  /debug:coordinate \"<problem-description>\""
+                echo ""
+            fi
+
+        elif [ "$RECOMMENDATION" = "consider_orchestrator" ]; then
+            echo "💭 SUGGESTION: Orchestrator may help with this workflow"
+            echo ""
+            echo "Complexity signals detected. Consider using orchestrator if:"
+            echo "  • Workflow becomes more complex than expected"
+            echo "  • Multiple iterations needed (log → restart → fix cycle)"
+            echo "  • You find more bugs during investigation"
+            echo ""
+            echo "To switch to orchestrator mode, run:"
+            echo "  /debug:coordinate \"<problem-description>\""
+            echo ""
+        fi
+    else
+        echo "ℹ️  Single bug detected - sequential workflow is optimal"
+        echo ""
+    fi
+else
+    echo "ℹ️  Orchestrator detection not available (lib not found)"
+    echo ""
+fi
+```
+
+Continue with normal workflow...
+
+---
+
 ### 3. Create Regression Test Specification
 
 Create `$REGRESSION_TEST_SPEC` using this template:

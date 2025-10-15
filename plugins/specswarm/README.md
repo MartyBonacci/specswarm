@@ -104,6 +104,157 @@ Generate requirement quality checklists.
 /specswarm:implement
 ```
 
+## 🌳 Git Workflow Management
+
+SpecSwarm now includes **automatic git workflow management** to complete the full feature lifecycle.
+
+### How It Works
+
+After `/specswarm:implement` completes, the **Post-Implement Hook** automatically:
+
+1. **Detects your git repository** and current branch
+2. **Offers three workflow options** if you're on a feature branch
+3. **Handles the merge and cleanup** based on your choice
+
+### The Three Options
+
+#### Option 1: Merge and Delete (Recommended)
+
+**Best for**: Normal feature completion
+
+**What happens**:
+- ✅ Checks for uncommitted changes (prompts to commit)
+- ✅ Tests merge for conflicts (dry run)
+- ✅ Merges feature branch to main
+- ✅ Deletes feature branch
+- ✅ Returns you to main branch
+- ✅ Ready for next feature!
+
+**Use when**: Feature is complete and tested
+
+---
+
+#### Option 2: Stay on Branch
+
+**Best for**: Additional polish or testing needed
+
+**What happens**:
+- ✅ Keeps you on the feature branch
+- ✅ Provides manual merge instructions
+- ✅ Branch preserved for more work
+
+**Use when**: Need to add more commits, run additional tests, or get code review
+
+---
+
+#### Option 3: Switch Without Merge
+
+**Best for**: Pausing feature work
+
+**What happens**:
+- ✅ Switches to main branch
+- ✅ Preserves feature branch
+- ✅ Provides merge/delete instructions for later
+
+**Use when**: Working on multiple features, need to switch context, or waiting for dependencies
+
+---
+
+### Safety Features
+
+**Conflict Detection**:
+```bash
+# Tests merge before executing
+❌ Merge conflicts detected!
+
+Cannot auto-merge. Please resolve conflicts manually:
+  1. git checkout main
+  2. git merge 001-user-authentication
+  3. Resolve conflicts
+  4. git add . && git commit
+  5. git branch -d 001-user-authentication
+```
+
+**Uncommitted Changes Handling**:
+```bash
+⚠️  You have uncommitted changes.
+
+ M  src/components/UserProfile.tsx
+ M  src/services/auth.ts
+
+Commit these changes first? (yes/no): yes
+Commit message: Polish user profile styling
+✅ Changes committed
+```
+
+---
+
+### Complete Workflow
+
+The full feature lifecycle with SpecSwarm:
+
+```
+/specswarm:specify "User authentication"
+  → Creates branch: 001-user-authentication ✅
+
+/specswarm:plan
+  → Plans on feature branch ✅
+
+/specswarm:tasks
+  → Generates tasks on feature branch ✅
+
+/specswarm:implement
+  → Implements feature ✅
+  → Offers git workflow options ✅
+  → Merges and cleans up ✅
+
+Back on main → Ready for next feature! ✅
+```
+
+---
+
+### When Git Workflow Doesn't Run
+
+The git workflow **won't prompt** when:
+
+- ❌ Not a git repository
+- ❌ Already on main/master branch
+- ❌ No branches created (non-git project)
+
+In these cases, you'll see:
+```
+ℹ️  Already on main branch (main)
+```
+
+---
+
+### Expected Output
+
+After `/specswarm:implement` completes:
+
+```
+✅ Feature implementation complete!
+
+🌳 Git Workflow
+===============
+
+Current branch: 001-user-authentication
+Main branch: main
+
+Feature implementation complete! What would you like to do?
+
+  1. Merge to main and delete feature branch (recommended)
+  2. Stay on 001-user-authentication for additional work
+  3. Switch to main without merging (keep branch)
+
+Choose (1/2/3): 1
+
+✅ Merging and cleaning up...
+✅ Merged 001-user-authentication to main
+✅ Deleted feature branch 001-user-authentication
+🎉 You are now on main
+```
+
 ## 📋 Tech Stack Management
 
 ### Tech Stack File Structure
