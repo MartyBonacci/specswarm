@@ -1,5 +1,6 @@
 {
-  "name": "SpecSwarm Plugin Marketplace",
+  "name": "specswarm-marketplace",
+  "owner": "MartyBonacci",
   "description": "Spec-Driven Development plugins with tech stack management and quality validation",
   "author": {
     "name": "Marty Bonacci",
@@ -9,43 +10,39 @@
   "plugins": [
     {
       "name": "specswarm",
-      "path": "plugins/specswarm",
+      "source": "plugins/specswarm",
       "version": "1.1.0",
       "description": "Spec-Driven Development with intelligent tech stack management and quality validation"
     },
     {
       "name": "spectest",
-      "path": "plugins/spectest",
+      "source": "plugins/spectest",
       "version": "1.0.1",
-      "description": "Experimental: SpecSwarm enhanced with parallel execution, hooks, performance metrics, and quality validation",
-      "experimental": true
+      "description": "Experimental: SpecSwarm enhanced with parallel execution, hooks, performance metrics, and quality validation"
     },
     {
       "name": "speclab",
-      "path": "plugins/speclab",
+      "source": "plugins/speclab",
       "version": "1.1.0",
-      "description": "Experimental: Lifecycle workflow laboratory for bugfix, modify, hotfix, refactor, and deprecate workflows",
-      "experimental": true
+      "description": "Experimental: Lifecycle workflow laboratory for bugfix, modify, hotfix, refactor, and deprecate workflows"
     },
     {
       "name": "speckit",
-      "path": "plugins/speckit",
+      "source": "plugins/speckit",
       "version": "1.0.1",
       "description": "Spec-Driven Development workflow for Claude Code (adapted from GitHub spec-kit)"
     },
     {
       "name": "project-orchestrator",
-      "path": "plugins/project-orchestrator",
+      "source": "plugins/project-orchestrator",
       "version": "0.1.1",
-      "description": "Autonomous development orchestrator for building features and projects with multi-agent coordination (Phase 0)",
-      "experimental": true
+      "description": "Autonomous development orchestrator for building features and projects with multi-agent coordination (Phase 0)"
     },
     {
       "name": "debug-coordinate",
-      "path": "plugins/debug-coordinate",
+      "source": "plugins/debug-coordinate",
       "version": "1.0.0",
-      "description": "Systematic debugging coordination for multi-bug scenarios",
-      "experimental": true
+      "description": "Systematic debugging coordination for multi-bug scenarios"
     }
   ]
 }
