@@ -592,131 +592,107 @@ Execute the following after all tasks are completed:
 
 8. **Git Workflow Completion** (if git repository):
 
-   **Purpose**: Handle feature branch merge and cleanup
+   **Purpose**: Handle feature branch merge and cleanup after successful implementation
 
-   ```bash
-   # Check if we're in a git repository
-   if git rev-parse --git-dir >/dev/null 2>&1; then
-     CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
-     MAIN_BRANCH=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@' || echo "main")
+   **INSTRUCTIONS FOR CLAUDE:**
 
-     # Only show workflow if on a feature branch
-     if [ "$CURRENT_BRANCH" != "$MAIN_BRANCH" ] && [ "$CURRENT_BRANCH" != "master" ]; then
-       echo ""
-       echo "🌳 Git Workflow"
-       echo "==============="
-       echo ""
-       echo "Current branch: $CURRENT_BRANCH"
-       echo "Main branch: $MAIN_BRANCH"
-       echo ""
-       echo "Feature implementation complete! What would you like to do?"
-       echo ""
-       echo "  1. Merge to $MAIN_BRANCH and delete feature branch (recommended)"
-       echo "  2. Stay on $CURRENT_BRANCH for additional work"
-       echo "  3. Switch to $MAIN_BRANCH without merging (keep branch)"
-       echo ""
-       read -p "Choose (1/2/3): " GIT_CHOICE
+   1. **Check if in a git repository** using Bash tool:
+      ```bash
+      git rev-parse --git-dir 2>/dev/null
+      ```
+      If this fails, skip git workflow entirely.
 
-       case $GIT_CHOICE in
-         1)
-           echo ""
-           echo "✅ Merging and cleaning up..."
-           echo ""
+   2. **Get current and main branch names** using Bash:
+      ```bash
+      git rev-parse --abbrev-ref HEAD
+      git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@'
+      ```
 
-           # Check for uncommitted changes
-           if ! git diff-index --quiet HEAD --; then
-             echo "⚠️  You have uncommitted changes."
-             echo ""
-             git status --short
-             echo ""
-             read -p "Commit these changes first? (yes/no): " COMMIT_CHOICE
+   3. **Only proceed if on a feature branch** (not main/master). If already on main, display "Already on main branch" and stop.
 
-             if [[ "$COMMIT_CHOICE" =~ ^[Yy] ]]; then
-               read -p "Commit message: " COMMIT_MSG
-               git add .
-               git commit -m "$COMMIT_MSG"
-               echo "✅ Changes committed"
-               echo ""
-             else
-               echo "⚠️  Proceeding with uncommitted changes (they will be carried over)"
-               echo ""
-             fi
-           fi
+   4. **Display git workflow options** to the user:
+      ```
+      🌳 Git Workflow
+      ===============
 
-           # Merge to main
-           git checkout "$MAIN_BRANCH"
+      Current branch: {CURRENT_BRANCH}
+      Main branch: {MAIN_BRANCH}
 
-           # Check if merge will be successful (no conflicts)
-           if git merge --no-commit --no-ff "$CURRENT_BRANCH" >/dev/null 2>&1; then
-             git merge --abort  # Abort the test merge
+      Feature implementation complete! What would you like to do?
 
-             # Do the actual merge with proper commit message
-             FEATURE_NAME=$(echo "$CURRENT_BRANCH" | sed 's/^[0-9]*-//')
-             git merge "$CURRENT_BRANCH" --no-ff -m "feat: merge $CURRENT_BRANCH - $FEATURE_NAME"
+        1. Merge to {MAIN_BRANCH} and delete feature branch (recommended)
+        2. Stay on {CURRENT_BRANCH} for additional work
+        3. Switch to {MAIN_BRANCH} without merging (keep branch)
 
-             echo "✅ Merged $CURRENT_BRANCH to $MAIN_BRANCH"
-             echo ""
+      Choose (1/2/3):
+      ```
 
-             # Delete the feature branch
-             git branch -d "$CURRENT_BRANCH"
-             echo "✅ Deleted feature branch $CURRENT_BRANCH"
-             echo ""
-             echo "🎉 You are now on $MAIN_BRANCH"
-           else
-             git merge --abort  # Abort the test merge
-             echo "❌ Merge conflicts detected!"
-             echo ""
-             echo "Cannot auto-merge. Please resolve conflicts manually:"
-             echo "  1. git checkout $MAIN_BRANCH"
-             echo "  2. git merge $CURRENT_BRANCH"
-             echo "  3. Resolve conflicts"
-             echo "  4. git add . && git commit"
-             echo "  5. git branch -d $CURRENT_BRANCH"
-             echo ""
-             # Stay on feature branch
-             git checkout "$CURRENT_BRANCH"
-           fi
-           ;;
+   5. **Wait for user choice** and proceed based on their selection.
 
-         2)
-           echo ""
-           echo "✅ Staying on $CURRENT_BRANCH"
-           echo ""
-           echo "When ready to merge, run:"
-           echo "  git checkout $MAIN_BRANCH"
-           echo "  git merge $CURRENT_BRANCH"
-           echo "  git branch -d $CURRENT_BRANCH"
-           echo ""
-           ;;
+   **OPTION 1: Merge and Delete Branch**
 
-         3)
-           echo ""
-           echo "✅ Switching to $MAIN_BRANCH (keeping branch)"
-           git checkout "$MAIN_BRANCH"
-           echo ""
-           echo "Feature branch $CURRENT_BRANCH preserved."
-           echo "To merge later: git merge $CURRENT_BRANCH"
-           echo "To delete later: git branch -d $CURRENT_BRANCH"
-           echo ""
-           ;;
+   a. **Check for uncommitted changes** using Bash:
+      ```bash
+      git diff-index --quiet HEAD --
+      ```
+      If exit code is non-zero, there are uncommitted changes.
 
-         *)
-           echo ""
-           echo "⚠️  Invalid choice. Staying on $CURRENT_BRANCH"
-           echo ""
-           echo "Git workflow can be completed manually:"
-           echo "  • Merge: git checkout $MAIN_BRANCH && git merge $CURRENT_BRANCH"
-           echo "  • Switch: git checkout $MAIN_BRANCH"
-           echo ""
-           ;;
-       esac
-     else
-       echo ""
-       echo "ℹ️  Already on main branch ($CURRENT_BRANCH)"
-       echo ""
-     fi
-   fi
-   ```
+   b. **If there are uncommitted changes:**
+      - Display: `git status --short` to show changes
+      - Ask user: "Commit these changes first? (yes/no)"
+
+   c. **If user wants to commit, intelligently stage ONLY source files:**
+
+      **CRITICAL - Smart Git Staging (to avoid build artifacts):**
+
+      1. **Get list of all changed files:**
+         ```bash
+         git status --porcelain
+         ```
+
+      2. **Filter out build artifacts** - Exclude files matching these patterns:
+         - `build/`, `dist/`, `.next/`, `out/`
+         - `node_modules/`, `.pnpm-store/`, `.yarn/`
+         - `*.log`, `.env*` (unless explicitly in repo)
+         - `coverage/`, `.nyc_output/`
+         - `*.min.js`, `*.map`
+         - Anything matching patterns in .gitignore
+
+      3. **Stage ONLY filtered files** using specific paths:
+         ```bash
+         # For each file from filtered list:
+         git add {specific-file-path}
+         ```
+
+         OR use git's pathspec feature to exclude patterns:
+         ```bash
+         git add . ':!build/' ':!dist/' ':!.next/' ':!out/' ':!coverage/' ':!*.log'
+         ```
+
+      4. **Commit with user-provided message** using Bash:
+         ```bash
+         git commit -m "{USER_PROVIDED_MESSAGE}"
+         ```
+
+   d. **Merge to main branch:**
+      - Test merge first (dry run): `git merge --no-commit --no-ff {CURRENT_BRANCH}`
+      - If successful: abort test, do real merge with message
+      - If conflicts: abort, show manual resolution steps, stay on feature branch
+
+   e. **Delete feature branch** if merge succeeded:
+      ```bash
+      git branch -d {CURRENT_BRANCH}
+      ```
+
+   **OPTION 2: Stay on Current Branch**
+   - Display message about when/how to merge later
+   - No git commands needed
+
+   **OPTION 3: Switch to Main (Keep Branch)**
+   - Switch to main: `git checkout {MAIN_BRANCH}`
+   - Keep feature branch for later
+
+   **IMPORTANT**: When staging files for commit, NEVER use `git add .` - always filter out build artifacts!
 
 <!-- ========== END POST-IMPLEMENT HOOK ========== -->
 
