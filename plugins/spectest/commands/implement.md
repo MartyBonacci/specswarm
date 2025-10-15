@@ -481,16 +481,112 @@ Execute the following after all tasks are completed:
 
 <!-- ========== QUALITY VALIDATION (SpecTest Phase 1) ========== -->
 
-7. **Quality Validation** (if quality-standards.md exists):
+7. **Quality Validation** - CRITICAL STEP, MUST EXECUTE:
 
    **Purpose**: Automated quality assurance before merge
 
-   See SpecSwarm quality validation implementation (same code)
+   **YOU MUST NOW CHECK FOR AND RUN QUALITY VALIDATION:**
 
-   This step runs automated tests, measures coverage, executes browser tests,
-   analyzes screenshots, and validates against quality gates.
+   1. **First**, check if quality standards file exists by reading the file at `${REPO_ROOT}/memory/quality-standards.md` using the Read tool.
 
-   [IMPLEMENTATION NOTE: Use identical logic from SpecSwarm Step 10]
+   2. **If the file does NOT exist:**
+      - Display this message to the user:
+        ```
+        ℹ️  Quality Validation
+        ====================
+
+        No quality standards defined. Skipping automated validation.
+
+        To enable quality gates:
+          1. Create /memory/quality-standards.md
+          2. Define minimum coverage and quality score
+          3. Configure test requirements
+
+        See: plugins/spectest/templates/quality-standards-template.md
+        ```
+      - Then proceed directly to Step 8 (Git Workflow)
+
+   3. **If the file EXISTS, you MUST execute the full quality validation workflow using the Bash tool:**
+
+      a. **Display header** by outputting directly to the user:
+         ```
+         🧪 Running Quality Validation
+         =============================
+         ```
+
+      b. **Detect test frameworks** by running these Bash commands:
+         ```bash
+         cd ${REPO_ROOT} && source ~/.claude/plugins/marketplaces/specswarm-marketplace/plugins/spectest/lib/quality-gates.sh && detect_test_framework
+         ```
+         Store the result in a variable for use in the report.
+
+      c. **Run unit tests** using the Bash tool:
+         ```bash
+         cd ${REPO_ROOT} && npx vitest run --reporter=verbose 2>&1 | tail -50
+         ```
+         Parse the output to extract:
+         - Total tests run
+         - Tests passed
+         - Tests failed
+         - Test duration
+         Display results to the user with "1. Unit Tests" header.
+
+      d. **Measure code coverage** (if coverage tool available):
+         - Check if `@vitest/coverage-v8` or similar is installed
+         - If yes, run: `npx vitest run --coverage --reporter=verbose 2>&1 | grep -A 10 "Coverage"`
+         - Parse coverage percentage
+         - Display results to user with "3. Code Coverage" header
+         - If no coverage tool, display "Coverage measurement not configured" and use 0%
+
+      e. **Detect browser test framework**:
+         ```bash
+         cd ${REPO_ROOT} && source ~/.claude/plugins/marketplaces/specswarm-marketplace/plugins/spectest/lib/quality-gates.sh && detect_browser_test_framework
+         ```
+
+      f. **Run browser tests** (if Playwright/Cypress detected):
+         - For Playwright: `npx playwright test 2>&1 | tail -30`
+         - For Cypress: `npx cypress run 2>&1 | tail -30`
+         - Parse results (passed/failed/total)
+         - Display with "4. Browser Tests" header
+         - If no browser framework: Display "No browser test framework detected - Skipping"
+
+      g. **Calculate quality score** based on these components:
+         - Unit Tests: 25 points if all pass, 0 if any fail
+         - Integration Tests: 20 points if all pass, 0 if any fail
+         - Coverage: 25 points * (coverage_pct / min_coverage_target)
+         - Browser Tests: 15 points if all pass, 0 if fail, skip if not available
+         - Visual Alignment: 15 points (set to 0 for now - screenshot analysis Phase 2)
+
+         Total possible: 100 points
+
+      h. **Display quality report** to the user:
+         ```
+         Quality Validation Results
+         ==========================
+
+         ✓/✗ Unit Tests: X passing, Y failing
+         ✓/✗ Code Coverage: Z% (target: A%)
+         ✓/✗ Browser Tests: X passing, Y failing (or "Not configured")
+         ⊘ Visual Alignment: Phase 2 feature (not yet implemented)
+
+         Quality Score: XX/100
+         Status: PASSED/FAILED (threshold: YY)
+         ```
+
+      i. **Check quality gates** from quality-standards.md:
+         - Read min_quality_score (default 80)
+         - Read block_merge_on_failure (default false)
+         - If score < minimum:
+           - If block_merge_on_failure is true: HALT and show error
+           - If block_merge_on_failure is false: Show warning and ask user "Continue with merge anyway? (yes/no)"
+         - If score >= minimum: Display "✅ Quality validation passed!"
+
+      j. **Save quality metrics** by updating `${REPO_ROOT}/memory/metrics.json`:
+         - Add quality validation data to the existing implement section for this feature
+         - Include quality score, coverage, test results
+         - Use Edit tool to update the JSON file
+
+   **IMPORTANT**: You MUST execute this step if quality-standards.md exists. Do NOT skip it. Use the Bash tool to run all commands and parse the results.
 
 <!-- ========== END QUALITY VALIDATION ========== -->
 

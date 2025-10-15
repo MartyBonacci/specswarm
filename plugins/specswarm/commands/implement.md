@@ -290,185 +290,112 @@ You **MUST** consider the user input before proceeding (if not empty).
 <!-- ========== QUALITY VALIDATION (SpecSwarm Phase 1) ========== -->
 <!-- Added by Marty Bonacci & Claude Code (2025) -->
 
-10. **Quality Validation** (if quality-standards.md exists):
+10. **Quality Validation** - CRITICAL STEP, MUST EXECUTE:
 
    **Purpose**: Automated quality assurance before merge
 
-   ```bash
-   # Load plugin directory
-   PLUGIN_DIR="$(dirname "$(dirname "$(readlink -f "$0")")")"
+   **YOU MUST NOW CHECK FOR AND RUN QUALITY VALIDATION:**
 
-   # Check if quality standards exist
-   QUALITY_STANDARDS="${REPO_ROOT}/memory/quality-standards.md"
+   1. **First**, check if quality standards file exists by reading the file at `${REPO_ROOT}/memory/quality-standards.md` using the Read tool.
 
-   if [ ! -f "$QUALITY_STANDARDS" ]; then
-     echo ""
-     echo "ℹ️  Quality Validation"
-     echo "===================="
-     echo ""
-     echo "No quality standards defined. Skipping automated validation."
-     echo ""
-     echo "To enable quality gates:"
-     echo "  1. Create /memory/quality-standards.md"
-     echo "  2. Define minimum coverage and quality score"
-     echo "  3. Configure test requirements"
-     echo ""
-     echo "See: plugins/specswarm/templates/quality-standards-template.md"
-     echo ""
-     # Continue to git workflow
-   else
-     echo ""
-     echo "🧪 Running Quality Validation"
-     echo "============================="
-     echo ""
+   2. **If the file does NOT exist:**
+      - Display this message to the user:
+        ```
+        ℹ️  Quality Validation
+        ====================
 
-     # Load quality gates library
-     source "${PLUGIN_DIR}/lib/quality-gates.sh"
-     source "${PLUGIN_DIR}/lib/visual-validation.sh"
+        No quality standards defined. Skipping automated validation.
 
-     # 1. Run unit tests
-     echo "1. Unit Tests"
-     echo "============="
-     echo ""
+        To enable quality gates:
+          1. Create /memory/quality-standards.md
+          2. Define minimum coverage and quality score
+          3. Configure test requirements
 
-     run_unit_tests
-     UNIT_RESULT=$?
+        See: plugins/specswarm/templates/quality-standards-template.md
+        ```
+      - Then proceed directly to Step 11 (Git Workflow)
 
-     echo ""
+   3. **If the file EXISTS, you MUST execute the full quality validation workflow using the Bash tool:**
 
-     # 2. Run integration tests
-     echo "2. Integration Tests"
-     echo "===================="
-     echo ""
+      a. **Display header** by outputting directly to the user:
+         ```
+         🧪 Running Quality Validation
+         =============================
+         ```
 
-     run_integration_tests
-     INTEGRATION_RESULT=$?
+      b. **Detect test frameworks** by running these Bash commands:
+         ```bash
+         cd ${REPO_ROOT} && source ~/.claude/plugins/marketplaces/specswarm-marketplace/plugins/specswarm/lib/quality-gates.sh && detect_test_framework
+         ```
+         Store the result in a variable for use in the report.
 
-     echo ""
+      c. **Run unit tests** using the Bash tool:
+         ```bash
+         cd ${REPO_ROOT} && npx vitest run --reporter=verbose 2>&1 | tail -50
+         ```
+         Parse the output to extract:
+         - Total tests run
+         - Tests passed
+         - Tests failed
+         - Test duration
+         Display results to the user with "1. Unit Tests" header.
 
-     # 3. Measure code coverage
-     echo "3. Code Coverage"
-     echo "================"
-     echo ""
+      d. **Measure code coverage** (if coverage tool available):
+         - Check if `@vitest/coverage-v8` or similar is installed
+         - If yes, run: `npx vitest run --coverage --reporter=verbose 2>&1 | grep -A 10 "Coverage"`
+         - Parse coverage percentage
+         - Display results to user with "3. Code Coverage" header
+         - If no coverage tool, display "Coverage measurement not configured" and use 0%
 
-     COVERAGE_PCT=$(measure_coverage)
+      e. **Detect browser test framework**:
+         ```bash
+         cd ${REPO_ROOT} && source ~/.claude/plugins/marketplaces/specswarm-marketplace/plugins/specswarm/lib/quality-gates.sh && detect_browser_test_framework
+         ```
 
-     echo ""
+      f. **Run browser tests** (if Playwright/Cypress detected):
+         - For Playwright: `npx playwright test 2>&1 | tail -30`
+         - For Cypress: `npx cypress run 2>&1 | tail -30`
+         - Parse results (passed/failed/total)
+         - Display with "4. Browser Tests" header
+         - If no browser framework: Display "No browser test framework detected - Skipping"
 
-     # 4. Run browser tests (if framework detected)
-     BROWSER_FRAMEWORK=$(detect_browser_test_framework)
+      g. **Calculate quality score** based on these components:
+         - Unit Tests: 25 points if all pass, 0 if any fail
+         - Integration Tests: 20 points if all pass, 0 if any fail
+         - Coverage: 25 points * (coverage_pct / min_coverage_target)
+         - Browser Tests: 15 points if all pass, 0 if fail, skip if not available
+         - Visual Alignment: 15 points (set to 0 for now - screenshot analysis Phase 2)
 
-     if [ "$BROWSER_FRAMEWORK" != "none" ]; then
-       echo "4. Browser Tests"
-       echo "================"
-       echo ""
+         Total possible: 100 points
 
-       run_browser_tests
-       BROWSER_RESULT=$?
+      h. **Display quality report** to the user:
+         ```
+         Quality Validation Results
+         ==========================
 
-       echo ""
+         ✓/✗ Unit Tests: X passing, Y failing
+         ✓/✗ Code Coverage: Z% (target: A%)
+         ✓/✗ Browser Tests: X passing, Y failing (or "Not configured")
+         ⊘ Visual Alignment: Phase 2 feature (not yet implemented)
 
-       # 5. Visual validation (analyze screenshots)
-       echo "5. Visual Validation"
-       echo "===================="
-       echo ""
+         Quality Score: XX/100
+         Status: PASSED/FAILED (threshold: YY)
+         ```
 
-       # Determine screenshot directory based on browser framework
-       case "$BROWSER_FRAMEWORK" in
-         playwright)
-           SCREENSHOT_DIR="${REPO_ROOT}/test-results/screenshots"
-           ;;
-         cypress)
-           SCREENSHOT_DIR="${REPO_ROOT}/cypress/screenshots"
-           ;;
-         *)
-           SCREENSHOT_DIR="${FEATURE_DIR}/.screenshots"
-           ;;
-       esac
+      i. **Check quality gates** from quality-standards.md:
+         - Read min_quality_score (default 80)
+         - Read block_merge_on_failure (default false)
+         - If score < minimum:
+           - If block_merge_on_failure is true: HALT and show error
+           - If block_merge_on_failure is false: Show warning and ask user "Continue with merge anyway? (yes/no)"
+         - If score >= minimum: Display "✅ Quality validation passed!"
 
-       # Analyze screenshots against spec
-       analyze_screenshots_against_spec \
-         "$SCREENSHOT_DIR" \
-         "${FEATURE_DIR}/spec.md" \
-         "$FEATURE_DIR"
+      j. **Save quality metrics** by updating `${REPO_ROOT}/memory/metrics.json`:
+         - Add entry for current feature number
+         - Include quality score, coverage, test results
+         - Use Write tool to update the JSON file
 
-       VISUAL_SCORE=$?
-     else
-       echo "4. Browser Tests"
-       echo "================"
-       echo ""
-       echo "  ⊘ No browser test framework detected"
-       echo "  Skipping browser tests and visual validation"
-       echo ""
-
-       BROWSER_RESULT=2  # Skipped
-       VISUAL_SCORE=0
-     fi
-
-     # 6. Calculate quality score
-     QUALITY_SCORE=$(calculate_quality_score \
-       "$UNIT_RESULT" \
-       "$INTEGRATION_RESULT" \
-       "$COVERAGE_PCT" \
-       "$BROWSER_RESULT" \
-       "$VISUAL_SCORE")
-
-     # 7. Display quality report
-     display_quality_report \
-       "$UNIT_RESULT" \
-       "$INTEGRATION_RESULT" \
-       "$COVERAGE_PCT" \
-       "$BROWSER_RESULT" \
-       "$VISUAL_SCORE" \
-       "$QUALITY_SCORE"
-
-     # 8. Check quality gates
-     MIN_QUALITY_SCORE=$(grep "min_quality_score:" "$QUALITY_STANDARDS" 2>/dev/null | awk '{print $2}')
-     MIN_QUALITY_SCORE=${MIN_QUALITY_SCORE:-80}
-
-     BLOCK_ON_FAILURE=$(grep "block_merge_on_failure:" "$QUALITY_STANDARDS" 2>/dev/null | awk '{print $2}')
-     BLOCK_ON_FAILURE=${BLOCK_ON_FAILURE:-false}
-
-     if [ "$QUALITY_SCORE" -lt "$MIN_QUALITY_SCORE" ]; then
-       echo "⚠️  Quality score below minimum (${QUALITY_SCORE} < ${MIN_QUALITY_SCORE})"
-       echo ""
-
-       if [ "$BLOCK_ON_FAILURE" = "true" ]; then
-         echo "❌ Quality gate FAILED - merge blocked"
-         echo ""
-         echo "Fix quality issues and re-run /specswarm:implement"
-         echo ""
-         exit 1
-       else
-         echo "⚠️  Quality gate warning (soft failure)"
-         echo ""
-         read -p "Continue with merge anyway? (yes/no): " CONTINUE_CHOICE
-
-         if [[ ! "$CONTINUE_CHOICE" =~ ^[Yy] ]]; then
-           echo ""
-           echo "Halting. Fix issues and re-run /specswarm:implement"
-           echo ""
-           exit 1
-         fi
-         echo ""
-       fi
-     else
-       echo "✅ Quality validation passed!"
-       echo ""
-     fi
-
-     # 9. Save quality metrics
-     save_quality_metrics \
-       "$FEATURE_NUM" \
-       "$QUALITY_SCORE" \
-       "$COVERAGE_PCT" \
-       "$VISUAL_SCORE" \
-       "$UNIT_RESULT" \
-       "$INTEGRATION_RESULT" \
-       "$BROWSER_RESULT" \
-       "$REPO_ROOT"
-   fi
-   ```
+   **IMPORTANT**: You MUST execute this step if quality-standards.md exists. Do NOT skip it. Use the Bash tool to run all commands and parse the results.
 
 <!-- ========== END QUALITY VALIDATION ========== -->
 
