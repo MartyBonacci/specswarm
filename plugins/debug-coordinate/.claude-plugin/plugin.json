@@ -1,0 +1,26 @@
+{
+  "name": "debug-coordinate",
+  "version": "1.0.0",
+  "description": "Systematic debugging coordination for multi-bug scenarios with logging and agent orchestration",
+  "author": {
+    "name": "Marty Bonacci",
+    "url": "https://github.com/MartyBonacci"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/MartyBonacci/specswarm",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MartyBonacci/specswarm.git"
+  },
+  "experimental": true,
+  "keywords": [
+    "debugging",
+    "logging",
+    "monitoring",
+    "orchestration",
+    "multi-agent",
+    "root-cause-analysis",
+    "systematic-debugging",
+    "experimental"
+  ]
+}
