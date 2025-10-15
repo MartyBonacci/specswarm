@@ -1,6 +1,9 @@
 {
   "name": "specswarm-marketplace",
-  "owner": "MartyBonacci",
+  "owner": {
+    "name": "Marty Bonacci",
+    "url": "https://github.com/MartyBonacci"
+  },
   "description": "Spec-Driven Development plugins with tech stack management and quality validation",
   "author": {
     "name": "Marty Bonacci",
@@ -10,37 +13,37 @@
   "plugins": [
     {
       "name": "specswarm",
-      "source": "plugins/specswarm",
+      "source": "./plugins/specswarm",
       "version": "1.1.0",
       "description": "Spec-Driven Development with intelligent tech stack management and quality validation"
     },
     {
       "name": "spectest",
-      "source": "plugins/spectest",
+      "source": "./plugins/spectest",
       "version": "1.0.1",
       "description": "Experimental: SpecSwarm enhanced with parallel execution, hooks, performance metrics, and quality validation"
     },
     {
       "name": "speclab",
-      "source": "plugins/speclab",
+      "source": "./plugins/speclab",
       "version": "1.1.0",
       "description": "Experimental: Lifecycle workflow laboratory for bugfix, modify, hotfix, refactor, and deprecate workflows"
     },
     {
       "name": "speckit",
-      "source": "plugins/speckit",
+      "source": "./plugins/speckit",
       "version": "1.0.1",
       "description": "Spec-Driven Development workflow for Claude Code (adapted from GitHub spec-kit)"
     },
     {
       "name": "project-orchestrator",
-      "source": "plugins/project-orchestrator",
+      "source": "./plugins/project-orchestrator",
       "version": "0.1.1",
       "description": "Autonomous development orchestrator for building features and projects with multi-agent coordination (Phase 0)"
     },
     {
       "name": "debug-coordinate",
-      "source": "plugins/debug-coordinate",
+      "source": "./plugins/debug-coordinate",
       "version": "1.0.0",
       "description": "Systematic debugging coordination for multi-bug scenarios"
     }
