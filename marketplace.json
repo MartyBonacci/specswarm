@@ -1,7 +1,7 @@
 {
   "name": "specswarm-marketplace",
   "owner": "MartyBonacci",
-  "description": "Spec-Driven Development plugins with tech stack management and quality validation",
+  "description": "Complete software development lifecycle with spec-driven workflows, quality validation, and experimental autonomous features",
   "author": {
     "name": "Marty Bonacci",
     "url": "https://github.com/MartyBonacci"
@@ -11,38 +11,44 @@
     {
       "name": "specswarm",
       "source": "plugins/specswarm",
-      "version": "1.1.0",
-      "description": "Spec-Driven Development with intelligent tech stack management and quality validation"
+      "version": "2.0.0",
+      "description": "Complete software development toolkit: spec-driven workflows, lifecycle management (bugfix/modify/refactor), quality validation, and performance monitoring"
     },
     {
-      "name": "spectest",
-      "source": "plugins/spectest",
-      "version": "1.0.1",
-      "description": "Experimental: SpecSwarm enhanced with parallel execution, hooks, performance metrics, and quality validation"
-    },
-    {
-      "name": "speclab",
-      "source": "plugins/speclab",
-      "version": "1.1.0",
-      "description": "Experimental: Lifecycle workflow laboratory for bugfix, modify, hotfix, refactor, and deprecate workflows"
+      "name": "speclabs",
+      "source": "plugins/speclabs",
+      "version": "1.0.0",
+      "description": "Experimental laboratory for autonomous development and advanced debugging. Features in active development - use at your own risk."
     },
     {
       "name": "speckit",
       "source": "plugins/speckit",
       "version": "1.0.1",
-      "description": "Spec-Driven Development workflow for Claude Code (adapted from GitHub spec-kit)"
+      "description": "⚠️ DEPRECATED - Merged into SpecSwarm v2.0+. Use SpecSwarm instead for spec-driven development workflows."
+    },
+    {
+      "name": "spectest",
+      "source": "plugins/spectest",
+      "version": "1.0.1",
+      "description": "⚠️ DEPRECATED - Merged into SpecSwarm v2.0+. Performance enhancements now included in SpecSwarm."
+    },
+    {
+      "name": "speclab",
+      "source": "plugins/speclab",
+      "version": "1.1.0",
+      "description": "⚠️ DEPRECATED - Merged into SpecSwarm v2.0+. Lifecycle workflows now included in SpecSwarm."
     },
     {
       "name": "project-orchestrator",
       "source": "plugins/project-orchestrator",
       "version": "0.1.1",
-      "description": "Autonomous development orchestrator for building features and projects with multi-agent coordination (Phase 0)"
+      "description": "⚠️ DEPRECATED - Merged into SpecLabs v1.0+. Autonomous development now unified with advanced debugging in experimental SpecLabs plugin"
     },
     {
       "name": "debug-coordinate",
       "source": "plugins/debug-coordinate",
       "version": "1.0.0",
-      "description": "Systematic debugging coordination for multi-bug scenarios"
+      "description": "⚠️ DEPRECATED - Merged into SpecLabs v1.0+. Advanced debugging now unified with autonomous development in experimental SpecLabs plugin"
     }
   ]
 }
