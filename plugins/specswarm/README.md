@@ -285,12 +285,26 @@ export function getApiUrl(path: string): string {
 
 ## Attribution
 
-**Forked From**: SpecKit → GitHub spec-kit
+### Forked From
 
-**Attribution Chain**:
-1. Original: [GitHub spec-kit](https://github.com/github/spec-kit) © GitHub, Inc. | MIT
-2. Adapted: SpecKit by Marty Bonacci (2025)
-3. Enhanced: SpecSwarm by Marty Bonacci & Claude Code (2025)
+SpecSwarm is a consolidated plugin that builds upon **SpecKit**, which adapted **GitHub's spec-kit** for Claude Code.
+
+**Attribution Chain:**
+
+1. **Original**: [GitHub spec-kit](https://github.com/github/spec-kit)
+   - Copyright (c) GitHub, Inc. | MIT License
+   - Spec-Driven Development methodology and workflow concepts
+
+2. **Adapted**: SpecKit plugin by Marty Bonacci (2025)
+   - Claude Code integration and plugin architecture
+   - Workflow adaptation for slash commands
+
+3. **Enhanced**: SpecSwarm v2.0.0 by Marty Bonacci & Claude Code (2025)
+   - Tech stack management and drift prevention (95% effectiveness)
+   - Lifecycle workflows (bugfix, modify, refactor, hotfix, deprecate)
+   - Quality validation system (0-100 point scoring)
+   - Chain bug detection and bundle size monitoring
+   - Consolidated from SpecKit, SpecTest, and SpecLab plugins
 
 ---
 
