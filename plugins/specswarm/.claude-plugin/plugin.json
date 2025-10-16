@@ -1,7 +1,7 @@
 {
   "name": "specswarm",
-  "version": "1.1.0",
-  "description": "Spec-Driven Development with intelligent tech stack management and quality validation (forked from SpecKit)",
+  "version": "2.0.0",
+  "description": "Complete software development toolkit: spec-driven workflows, lifecycle management (bugfix/modify/refactor), quality validation, and performance monitoring",
   "author": {
     "name": "Marty Bonacci",
     "url": "https://github.com/MartyBonacci"
@@ -20,6 +20,15 @@
     "drift-prevention",
     "architecture",
     "quality-validation",
-    "testing"
+    "testing",
+    "bugfix",
+    "refactor",
+    "hotfix",
+    "lifecycle-workflows",
+    "chain-bug-detection",
+    "bundle-monitoring",
+    "performance-budgets",
+    "ssr-validation",
+    "multi-framework"
   ]
 }

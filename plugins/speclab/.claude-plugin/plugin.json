@@ -1,7 +1,7 @@
 {
   "name": "speclab",
   "version": "1.1.0",
-  "description": "Experimental: Lifecycle workflow laboratory for bugfix, modify, hotfix, refactor, and deprecate workflows with orchestrator detection",
+  "description": "⚠️ DEPRECATED - Merged into SpecSwarm v2.0+. All lifecycle workflows (bugfix, modify, refactor, hotfix, deprecate) now in unified SpecSwarm plugin",
   "author": {
     "name": "Marty Bonacci",
     "url": "https://github.com/MartyBonacci"
@@ -10,20 +10,14 @@
   "homepage": "https://github.com/MartyBonacci/specswarm",
   "repository": "https://github.com/MartyBonacci/specswarm",
   "keywords": [
-    "spec-driven-development",
+    "deprecated",
     "lifecycle-workflows",
     "bugfix",
     "modify",
     "hotfix",
     "refactor",
     "deprecate",
-    "regression-testing",
-    "impact-analysis",
-    "backward-compatibility",
-    "emergency-response",
-    "code-quality",
-    "feature-sunset",
-    "orchestrator-detection",
-    "experimental"
+    "merged",
+    "legacy"
   ]
 }

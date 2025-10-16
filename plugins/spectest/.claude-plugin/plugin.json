@@ -1,7 +1,7 @@
 {
   "name": "spectest",
   "version": "1.0.1",
-  "description": "Experimental: SpecSwarm enhanced with parallel execution, hooks, performance metrics, and quality validation",
+  "description": "⚠️ DEPRECATED - Use SpecSwarm v2.0+ instead. Experimental features have been stabilized and merged into SpecSwarm",
   "author": {
     "name": "Marty Bonacci",
     "url": "https://github.com/MartyBonacci"
@@ -10,20 +10,13 @@
   "homepage": "https://github.com/MartyBonacci/specswarm",
   "repository": "https://github.com/MartyBonacci/specswarm",
   "keywords": [
+    "deprecated",
     "spec-driven-development",
-    "specification",
-    "requirements",
-    "planning",
-    "implementation",
-    "workflow",
-    "tech-stack",
-    "drift-prevention",
-    "architecture",
+    "experimental",
     "parallel-execution",
     "performance-metrics",
     "hooks",
-    "quality-validation",
     "testing",
-    "experimental"
+    "legacy"
   ]
 }

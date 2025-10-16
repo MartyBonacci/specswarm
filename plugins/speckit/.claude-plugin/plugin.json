@@ -1,7 +1,7 @@
 {
   "name": "speckit",
   "version": "1.0.1",
-  "description": "Spec-Driven Development workflow for Claude Code (adapted from GitHub spec-kit)",
+  "description": "⚠️ DEPRECATED - Use SpecSwarm v2.0+ instead. Original spec-driven development workflow (adapted from GitHub spec-kit)",
   "author": {
     "name": "Marty Bonacci",
     "url": "https://github.com/MartyBonacci"
@@ -10,11 +10,13 @@
   "homepage": "https://github.com/MartyBonacci/specswarm",
   "repository": "https://github.com/MartyBonacci/specswarm",
   "keywords": [
+    "deprecated",
     "spec-driven-development",
     "specification",
     "requirements",
     "planning",
     "implementation",
-    "workflow"
+    "workflow",
+    "legacy"
   ]
 }
