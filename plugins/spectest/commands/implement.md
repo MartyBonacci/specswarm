@@ -641,29 +641,85 @@ Execute the following after all tasks are completed:
          =============================
          ```
 
-      b. **Detect test frameworks** by running these Bash commands:
+      b. **Detect test frameworks** using the Bash tool:
          ```bash
-         cd ${REPO_ROOT} && source ~/.claude/plugins/marketplaces/specswarm-marketplace/plugins/spectest/lib/quality-gates.sh && detect_test_framework
+         cd ${REPO_ROOT} && bash ~/.claude/plugins/marketplaces/specswarm-marketplace/plugins/spectest/lib/test-framework-detector.sh
          ```
-         Store the result in a variable for use in the report.
+         Parse the JSON output to extract:
+         - List of all detected frameworks
+         - Primary framework (highest priority)
+         - Framework count
+         Store primary framework for use in tests.
 
-      c. **Run unit tests** using the Bash tool:
-         ```bash
-         cd ${REPO_ROOT} && npx vitest run --reporter=verbose 2>&1 | tail -50
-         ```
-         Parse the output to extract:
-         - Total tests run
-         - Tests passed
-         - Tests failed
-         - Test duration
-         Display results to the user with "1. Unit Tests" header.
+      c. **Run unit tests** using the detected framework:
+
+         **YOU MUST NOW run tests using the Bash tool:**
+
+         1. **Source the test detector library:**
+            ```bash
+            source ~/.claude/plugins/marketplaces/specswarm-marketplace/plugins/spectest/lib/test-framework-detector.sh
+            ```
+
+         2. **Run tests for primary framework:**
+            ```bash
+            run_tests "{PRIMARY_FRAMEWORK}" ${REPO_ROOT}
+            ```
+
+         3. **Parse test results:**
+            ```bash
+            parse_test_results "{PRIMARY_FRAMEWORK}" "{TEST_OUTPUT}"
+            ```
+            Extract: total, passed, failed, skipped counts
+
+         4. **Display results to user:**
+            ```
+            1. Unit Tests ({FRAMEWORK_NAME})
+            ✓ Total: {TOTAL}
+            ✓ Passed: {PASSED} ({PASS_RATE}%)
+            ✗ Failed: {FAILED}
+            ⊘ Skipped: {SKIPPED}
+            ```
 
       d. **Measure code coverage** (if coverage tool available):
-         - Check if `@vitest/coverage-v8` or similar is installed
-         - If yes, run: `npx vitest run --coverage --reporter=verbose 2>&1 | grep -A 10 "Coverage"`
-         - Parse coverage percentage
-         - Display results to user with "3. Code Coverage" header
-         - If no coverage tool, display "Coverage measurement not configured" and use 0%
+
+         **YOU MUST NOW measure coverage using the Bash tool:**
+
+         1. **Check for coverage tool:**
+            ```bash
+            source ~/.claude/plugins/marketplaces/specswarm-marketplace/plugins/spectest/lib/test-framework-detector.sh
+            detect_coverage_tool "{PRIMARY_FRAMEWORK}" ${REPO_ROOT}
+            ```
+
+         2. **If coverage tool detected, run coverage:**
+            ```bash
+            run_coverage "{PRIMARY_FRAMEWORK}" ${REPO_ROOT}
+            ```
+            Parse coverage percentage from output.
+
+         3. **Calculate proportional coverage score (Phase 2 Enhancement):**
+            - Read min_coverage from quality-standards.md (default 80%)
+            - Calculate score using proportional formula:
+              * Coverage >= 90%: 25 points (full credit)
+              * Coverage 80-89%: 20-24 points (proportional)
+              * Coverage 70-79%: 15-19 points (proportional)
+              * Coverage 60-69%: 10-14 points (proportional)
+              * Coverage 50-59%: 5-9 points (proportional)
+              * Coverage < 50%: 0-4 points (proportional)
+
+            Formula: `score = min(25, (coverage / 90) * 25)`
+
+         4. **Display results to user:**
+            ```
+            3. Code Coverage
+            Coverage: {COVERAGE}%
+            Target: {TARGET}%
+            Score: {SCORE}/25 points
+            Status: {EXCELLENT/GOOD/ACCEPTABLE/NEEDS IMPROVEMENT/INSUFFICIENT}
+            ```
+
+         5. **If no coverage tool:**
+            - Display: "Coverage measurement not configured (0 points)"
+            - Score: 0 points
 
       e. **Detect browser test framework**:
          ```bash
@@ -677,27 +733,88 @@ Execute the following after all tasks are completed:
          - Display with "4. Browser Tests" header
          - If no browser framework: Display "No browser test framework detected - Skipping"
 
-      g. **Calculate quality score** based on these components:
-         - Unit Tests: 25 points if all pass, 0 if any fail
-         - Integration Tests: 20 points if all pass, 0 if any fail
-         - Coverage: 25 points * (coverage_pct / min_coverage_target)
-         - Browser Tests: 15 points if all pass, 0 if fail, skip if not available
-         - Visual Alignment: 15 points (set to 0 for now - screenshot analysis Phase 2)
+      g. **Calculate quality score** using proportional scoring (Phase 2 Enhancement):
 
-         Total possible: 100 points
+         **YOU MUST NOW calculate scores for each component:**
 
-      h. **Display quality report** to the user:
+         1. **Unit Tests** (0-25 points - proportional by pass rate):
+            - 100% passing: 25 points
+            - 90-99% passing: 20-24 points (proportional)
+            - 80-89% passing: 15-19 points (proportional)
+            - 70-79% passing: 10-14 points (proportional)
+            - 60-69% passing: 5-9 points (proportional)
+            - <60% passing: 0-4 points (proportional)
+
+            Formula: `score = min(25, (pass_rate / 100) * 25)`
+
+         2. **Code Coverage** (0-25 points - proportional by coverage %):
+            - >=90% coverage: 25 points
+            - 80-89% coverage: 20-24 points (proportional)
+            - 70-79% coverage: 15-19 points (proportional)
+            - 60-69% coverage: 10-14 points (proportional)
+            - 50-59% coverage: 5-9 points (proportional)
+            - <50% coverage: 0-4 points (proportional)
+
+            Formula: `score = min(25, (coverage / 90) * 25)`
+
+         3. **Integration Tests** (0-20 points - proportional):
+            - 100% passing: 20 points
+            - Proportional for <100%
+            - 0 points if not detected
+
+            Formula: `score = min(20, (pass_rate / 100) * 20)`
+
+         4. **Browser Tests** (0-15 points - proportional):
+            - 100% passing: 15 points
+            - Proportional for <100%
+            - 0 points if not detected
+
+            Formula: `score = min(15, (pass_rate / 100) * 15)`
+
+         5. **Visual Alignment** (0-15 points - Phase 3 feature):
+            - Set to 0 for now (screenshot analysis not yet implemented)
+
+         **Total possible: 100 points**
+
+         **Example Calculation:**
+         - Unit Tests: 106/119 passing (89%) → 22.25 points
+         - Coverage: 75% → 20.83 points
+         - Integration Tests: Not detected → 0 points
+         - Browser Tests: Not configured → 0 points
+         - Visual Alignment: Not implemented → 0 points
+         - **Total: 43.08/100 points**
+
+      h. **Display quality report** with proportional scoring details:
          ```
          Quality Validation Results
          ==========================
 
-         ✓/✗ Unit Tests: X passing, Y failing
-         ✓/✗ Code Coverage: Z% (target: A%)
-         ✓/✗ Browser Tests: X passing, Y failing (or "Not configured")
-         ⊘ Visual Alignment: Phase 2 feature (not yet implemented)
+         1. Unit Tests ({FRAMEWORK}): {SCORE}/25 points
+            ✓ Passed: {PASSED}/{TOTAL} ({PASS_RATE}%)
+            ✗ Failed: {FAILED}
+            Status: {EXCELLENT/GOOD/ACCEPTABLE/NEEDS IMPROVEMENT}
 
-         Quality Score: XX/100
-         Status: PASSED/FAILED (threshold: YY)
+         2. Code Coverage: {SCORE}/25 points
+            Coverage: {COVERAGE}% (target: {TARGET}%)
+            Status: {EXCELLENT/GOOD/ACCEPTABLE/NEEDS IMPROVEMENT/INSUFFICIENT}
+
+         3. Integration Tests: {SCORE}/20 points
+            {DETAILS or "Not detected"}
+
+         4. Browser Tests: {SCORE}/15 points
+            {DETAILS or "Not configured"}
+
+         5. Visual Alignment: 0/15 points
+            Status: Not yet implemented (Phase 3 feature)
+
+         ════════════════════════════════════════
+         Total Quality Score: {TOTAL_SCORE}/100 points
+         ════════════════════════════════════════
+
+         Status: {PASS/FAIL} (threshold: {THRESHOLD}/100)
+
+         Score Breakdown:
+         ████████████████░░░░░░░░ {TOTAL_SCORE}% ({VISUAL_BAR})
          ```
 
       i. **Check quality gates** from quality-standards.md:
