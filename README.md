@@ -1,184 +1,193 @@
 # SpecSwarm
 
-A Claude Code plugin marketplace for specification-driven development orchestration with intelligent tech stack management and performance enhancements.
+A Claude Code plugin marketplace for complete software development lifecycle management with spec-driven workflows, quality validation, and experimental autonomous features.
 
 ## Overview
 
-SpecSwarm provides four curated plugins that help you follow structured, systematic development workflows using Claude Code:
+SpecSwarm provides **two curated plugins** that cover the complete software development lifecycle using Claude Code:
 
-- **SpecKit**: Original spec-driven development workflow (stable)
-- **SpecSwarm**: Tech stack drift prevention with 95% effectiveness (stable)
-- **SpecTest**: Parallel execution and hooks for 2-4x faster implementation (experimental)
-- **SpecLab**: Lifecycle workflow laboratory for bugfix, modify, hotfix, refactor, and deprecate workflows (experimental)
+- **SpecSwarm v2.0.0**: Production-ready complete toolkit for building, fixing, maintaining, and analyzing software (17 commands)
+- **SpecLabs v1.0.0**: Experimental laboratory for autonomous development and advanced debugging (3 commands)
 
-All plugins emphasize clear specifications, thoughtful planning, and methodical implementation - with progressive enhancements for tech stack consistency, performance optimization, and complete lifecycle coverage.
-
-## Available Plugins
-
-### SpecKit
-
-Brings Spec-Driven Development (SDD) workflow to Claude Code, adapted from [GitHub's spec-kit project](https://github.com/github/spec-kit).
-
-**Features:**
-- 8 slash commands for complete SDD workflow
-- Constitution-based project governance
-- Systematic specification writing
-- Technical planning and task breakdown
-- Cross-artifact consistency analysis
-- Requirements quality checklists
-
-**Commands:**
-- `/speckit.constitution` - Establish project principles
-- `/speckit.specify` - Define feature specifications
-- `/speckit.clarify` - Resolve ambiguities
-- `/speckit.plan` - Create technical plans
-- `/speckit.tasks` - Generate task breakdowns
-- `/speckit.implement` - Execute implementation
-- `/speckit.analyze` - Validate consistency
-- `/speckit.checklist` - Create quality checklists
-
-[Read full SpecKit documentation →](plugins/speckit/README.md)
+**Complete lifecycle coverage** from initial specification through implementation, bug fixing, modifications, refactoring, and sunset - with progressive enhancements for quality validation, tech stack consistency, and autonomous workflows.
 
 ---
 
-### SpecSwarm
+## Available Plugins
 
-Enhanced version of SpecKit with **95% tech stack drift prevention** through intelligent validation.
+### SpecSwarm v2.0.0 (Production-Ready)
 
-**Unique Features:**
-- 8 slash commands with tech stack management
-- Auto-detection of project technologies
-- Automatic validation at plan/task/implement phases
-- Conflict detection with approval workflows
-- Hard blocking of prohibited technologies
-- Semantic versioning for tech changes
+**Complete Software Development Toolkit**
 
-**Key Enhancement**: Prevents tech stack drift across features by maintaining `/memory/tech-stack.md` and validating all technology choices at every workflow phase.
+The unified, production-ready plugin for the complete development lifecycle. SpecSwarm consolidates spec-driven development, lifecycle workflows, quality validation, and performance monitoring into one comprehensive toolkit.
 
-**Commands:**
-- `/specswarm:constitution` - Establish principles + tech enforcement
-- `/specswarm:specify` - Define specifications
-- `/specswarm:clarify` - Resolve ambiguities
-- `/specswarm:plan` - Create plans **+ auto tech validation**
-- `/specswarm:tasks` - Generate tasks **+ tech pre-validation**
-- `/specswarm:implement` - Execute **+ runtime enforcement**
-- `/specswarm:analyze` - Validate consistency
-- `/specswarm:checklist` - Create quality checklists
+**17 Commands** | **8 Utilities** | **Production Ready**
+
+#### Key Features
+
+- **Spec-Driven Development** - From specification to implementation
+- **Bug & Issue Management** - Systematic fixing with regression testing
+- **Code Maintenance** - Refactoring and modernization
+- **Quality Assurance** - Automated testing and validation (0-100 point scoring)
+- **Performance Monitoring** - Bundle size tracking and budgets
+- **Architecture Validation** - SSR patterns, tech stack compliance
+- **Chain Bug Detection** - Prevents cascading failures (Bug 912→913)
+- **Tech Stack Management** - 95% drift prevention
+
+#### Quick Start
+
+```bash
+# New Feature Development
+/specswarm:specify "Add user authentication with email/password"
+/specswarm:plan
+/specswarm:tasks
+/specswarm:implement
+
+# Bug Fixing
+/specswarm:bugfix "Bug 915: Login fails with special characters"
+
+# Code Quality
+/specswarm:analyze-quality
+/specswarm:refactor "Improve authentication module performance"
+```
+
+#### All Commands
+
+**New Feature Workflows (8)**:
+- `/specswarm:specify` - Create detailed feature specification
+- `/specswarm:plan` - Design implementation with tech stack validation
+- `/specswarm:tasks` - Generate dependency-ordered task breakdown
+- `/specswarm:implement` - Execute with comprehensive quality validation
+- `/specswarm:clarify` - Ask targeted clarification questions
+- `/specswarm:checklist` - Generate custom requirement checklists
+- `/specswarm:analyze` - Cross-artifact consistency validation
+- `/specswarm:constitution` - Create/update project governance
+
+**Bug & Issue Management (2)**:
+- `/specswarm:bugfix` - Regression-test-first fixing with chain bug detection
+- `/specswarm:hotfix` - Emergency production issue response
+
+**Code Maintenance (2)**:
+- `/specswarm:modify` - Feature modification with impact analysis
+- `/specswarm:refactor` - Metrics-driven quality improvement
+
+**Analysis & Utilities (5)**:
+- `/specswarm:analyze-quality` - Comprehensive codebase analysis
+- `/specswarm:impact` - Standalone impact analysis
+- `/specswarm:suggest` - AI-powered workflow recommendation
+- `/specswarm:workflow-metrics` - Cross-workflow analytics
+- `/specswarm:deprecate` - Phased feature sunset
 
 [Read full SpecSwarm documentation →](plugins/specswarm/README.md)
 
 ---
 
-### SpecTest ⚠️ EXPERIMENTAL
+### SpecLabs v1.0.0 (Experimental)
 
-Experimental fork of SpecSwarm with **Phase 1 performance enhancements**: parallel execution, hooks system, and performance metrics.
+**Experimental Laboratory for Autonomous Development & Advanced Debugging**
 
-**Breakthrough Features:**
-- **2-4x faster implementation** via parallel task execution
-- **Pre/post operation hooks** for automation and validation
-- **Performance analytics dashboard** with `/spectest:metrics`
-- All SpecSwarm tech stack features preserved
+⚠️ **EXPERIMENTAL** - Features in active development - Use at your own risk
 
-**Phase 1 Complete (Core Workflow)**:
-- `/spectest:specify` - With pre/post hooks, quality validation
-- `/spectest:plan` - With hooks, tech stack summary
-- `/spectest:tasks` - With hooks, parallel detection, execution preview
-- `/spectest:implement` - With hooks, **parallel batching** (2-4x faster!)
-- `/spectest:metrics` - **NEW**: Performance dashboard
+The experimental wing of SpecSwarm, providing cutting-edge features for autonomous development workflows and advanced systematic debugging. SpecLabs is where bleeding-edge capabilities are tested before potential graduation to SpecSwarm.
 
-**Performance Impact**: Typical feature implementation drops from ~18-20 minutes to ~6-8 minutes.
+**3 Commands** | **Phase 0** | **High Risk, High Reward**
 
-[Read full SpecTest documentation →](plugins/spectest/README.md)
+#### Key Features
 
----
+- **Autonomous Development** - Multi-agent test workflow orchestration
+- **Browser Automation** - Playwright-based validation
+- **Advanced Debugging** - Systematic multi-bug investigation with logging strategies
+- **Orchestration Planning** - Parallel fix execution for 3+ bugs
+- **Visual Analysis** - Screenshot capture and validation (manual in Phase 0)
 
-### SpecLab ⚠️ EXPERIMENTAL
+#### Quick Start
 
-Experimental lifecycle workflow laboratory that extends spec-driven development to the **complete development lifecycle** (bugfix, modify, hotfix, refactor, deprecate).
+```bash
+# Autonomous Test Execution
+/speclabs:orchestrate-test features/001-fix/test-workflow.md /path/to/project
 
-**Breakthrough Features:**
-- **Bugfix workflow** (40% ROI) - Regression-test-first bug fixing
-- **Modify workflow** (30% ROI) - Impact analysis for feature modifications
-- **Hotfix workflow** - Expedited emergency response (<2h resolution)
-- **Refactor workflow** - Metrics-driven quality improvement
-- **Deprecate workflow** - Phased feature sunset with migration guidance
-- **Smart integration** with SpecSwarm (tech enforcement) and SpecTest (parallel/hooks)
+# Automated Validation
+/speclabs:orchestrate-validate /path/to/project
 
-**Commands:**
-- `/speclab:bugfix` - Regression-test-first bug fixing (40% of work)
-- `/speclab:modify` - Impact-analysis-first modifications (30% of work)
-- `/speclab:hotfix` - Emergency response (10-15% of work)
-- `/speclab:refactor` - Metrics-driven quality improvement (10% of work)
-- `/speclab:deprecate` - Phased feature sunset (5% of work)
-- `/speclab:impact <feature>` - Standalone impact analysis utility
-- `/speclab:suggest` - AI workflow recommendation
-- `/speclab:workflow-metrics [feature]` - Analytics dashboard
+# Systematic Multi-Bug Debugging
+/speclabs:coordinate "navbar broken, sign-out fails, like button blank page"
+```
 
-**Coverage Impact**: While SpecSwarm/SpecTest handle feature development (~25% of work), SpecLab covers the remaining **~75%** (bugfixes, modifications, hotfixes, refactoring, deprecations).
+#### All Commands
 
-**Combined Coverage**: SpecSwarm + SpecTest + SpecLab = **~95% complete development lifecycle**
+**Autonomous Development (2)**:
+- `/speclabs:orchestrate-test` - Automated test workflow with agent execution
+- `/speclabs:orchestrate-validate` - Validation suite (browser, terminal, visual)
 
-[Read full SpecLab documentation →](plugins/speclab/README.md)
+**Advanced Debugging (1)**:
+- `/speclabs:coordinate` - Systematic multi-bug debugging with logging and orchestration
+
+[Read full SpecLabs documentation →](plugins/speclabs/README.md)
 
 ---
 
 ## Which Plugin Should I Use?
 
-### Choose Based on Your Needs:
+### Quick Decision Guide
 
-**🎯 SpecKit** - Original SDD Workflow
-- **Use if**: You want the pure, proven spec-driven development methodology
-- **Stability**: ✅ Stable
-- **Best for**: Teams new to SDD, conservative environments
+**🎯 Use SpecSwarm v2.0.0 when**:
+- Building new features (specify → plan → tasks → implement)
+- Fixing bugs with regression testing
+- Modifying existing features
+- Refactoring code for quality
+- Emergency production fixes
+- Quality analysis and validation
+- **ANY production-critical work**
 
-**🛡️ SpecSwarm** - Tech Stack Enforcement
-- **Use if**: You need tech stack consistency across features
-- **Stability**: ✅ Stable
-- **Best for**: Multi-developer teams, long-lived projects, preventing drift
-- **Includes**: Everything from SpecKit + tech validation
+**🧪 Use SpecLabs v1.0.0 when**:
+- Experimenting with autonomous development
+- Testing multi-agent workflows
+- Advanced multi-bug debugging (3+ bugs)
+- You're comfortable with experimental features
+- You can handle bugs and failures gracefully
+- **NEVER for production-critical work**
 
-**⚡ SpecTest** - Performance Enhanced
-- **Use if**: You want maximum speed and workflow automation
-- **Stability**: ⚠️ Experimental (alpha)
-- **Best for**: Solo developers, experimental projects, performance-critical workflows
-- **Includes**: Everything from SpecSwarm + parallel execution + hooks + metrics
+### Plugin Comparison
 
-**🔬 SpecLab** - Lifecycle Workflows
-- **Use if**: You need workflows for bugfixes, modifications, hotfixes, refactoring, or deprecations
-- **Stability**: ⚠️ Experimental (v1.0.0)
-- **Best for**: Complete development lifecycle coverage beyond feature development
-- **Includes**: 5 lifecycle workflows + 3 utilities + smart integration with SpecSwarm/SpecTest
+| Feature | SpecSwarm v2.0.0 | SpecLabs v1.0.0 |
+|---------|------------------|-----------------|
+| **Feature Development** | ✅ Complete workflow | ❌ |
+| **Bug Fixing** | ✅ Regression-test-first | ❌ |
+| **Modifications** | ✅ Impact analysis | ❌ |
+| **Refactoring** | ✅ Metrics-driven | ❌ |
+| **Quality Validation** | ✅ 0-100 point scoring | ❌ |
+| **Tech Stack Enforcement** | ✅ 95% drift prevention | ❌ |
+| **Bundle Size Monitoring** | ✅ Performance budgets | ❌ |
+| **Chain Bug Detection** | ✅ Prevents cascades | ❌ |
+| **Autonomous Development** | ❌ | ✅ Multi-agent |
+| **Browser Automation** | ❌ | ✅ Playwright |
+| **Advanced Debugging** | ❌ | ✅ Systematic |
+| **Stability** | ✅ Production-ready | ⚠️ Experimental (Phase 0) |
+| **Commands** | 17 | 3 |
+| **Utilities** | 8 | 0 |
+| **Lifecycle Coverage** | ~95% | Experimental additions |
 
-### Quick Comparison:
+### Integration Pattern
 
-| Feature | SpecKit | SpecSwarm | SpecTest | SpecLab |
-|---------|---------|-----------|----------|---------|
-| **Feature Development** | ✅ | ✅ | ✅ | ❌ |
-| **Bugfix Workflow** | ❌ | ❌ | ❌ | ✅ Regression-test-first |
-| **Modify Workflow** | ❌ | ❌ | ❌ | ✅ Impact analysis |
-| **Hotfix Workflow** | ❌ | ❌ | ❌ | ✅ Emergency response |
-| **Refactor Workflow** | ❌ | ❌ | ❌ | ✅ Metrics-driven |
-| **Deprecate Workflow** | ❌ | ❌ | ❌ | ✅ Phased sunset |
-| Tech Stack Enforcement | ❌ | ✅ | ✅ | ✅ (via SpecSwarm) |
-| Parallel Execution | ❌ | ❌ | ✅ 2-4x faster | ✅ (via SpecTest) |
-| Pre/Post Hooks | ❌ | ❌ | ✅ 8 hook points | ✅ (via SpecTest) |
-| Performance Metrics | ❌ | ❌ | ✅ Dashboard | ✅ Extended |
-| Stability | Stable | Stable | Experimental | Experimental |
-| Lifecycle Coverage | ~25% | ~25% | ~25% | **~75%** |
-| Typical Feature Impl | 18-20 min | 18-20 min | 6-8 min | N/A |
-| Typical Bugfix | N/A | N/A | N/A | ~2h |
-| Typical Modify | N/A | N/A | N/A | ~4h |
-| Typical Hotfix | N/A | N/A | N/A | <2h |
+SpecSwarm can suggest SpecLabs features when appropriate:
 
-**Recommended Setup for Complete Coverage**:
-- **Feature Development**: Use **SpecTest** (fastest with parallel execution)
-- **Bugfixes**: Use **SpecLab:bugfix** (regression-test-first)
-- **Modifications**: Use **SpecLab:modify** (impact analysis)
-- **Emergencies**: Use **SpecLab:hotfix** (expedited response)
-- **Quality**: Use **SpecLab:refactor** (metrics-driven)
-- **Sunset**: Use **SpecLab:deprecate** (phased removal)
+```
+SpecSwarm Development Workflow:
+  /specswarm:specify → /specswarm:plan → /specswarm:tasks
+      ↓
+  Optional: /speclabs:orchestrate-test (autonomous execution)
+      ↓
+  /specswarm:implement (quality validation)
+```
 
-**Combined**: Install all plugins for **~95% development lifecycle coverage**
+```
+SpecSwarm Debugging Workflow:
+  Complex multi-bug scenario detected
+      ↓
+  Suggestion: Try /speclabs:coordinate for systematic analysis
+      ↓
+  Fall back to /specswarm:bugfix for each issue
+```
 
 ---
 
@@ -187,6 +196,7 @@ Experimental lifecycle workflow laboratory that extends spec-driven development 
 ### Add the Marketplace
 
 ```bash
+# Add SpecSwarm marketplace to Claude Code
 claude plugin marketplace add marty/specswarm
 ```
 
@@ -198,20 +208,14 @@ claude plugin marketplace add /path/to/specswarm
 
 ### Install Plugins
 
-Install individual plugins from the marketplace:
+Install plugins from the marketplace:
 
 ```bash
-# Install SpecKit plugin (stable, original SDD workflow)
-claude plugin install speckit
-
-# Install SpecSwarm plugin (stable, with tech stack management)
+# Install SpecSwarm plugin (production-ready complete toolkit)
 claude plugin install specswarm
 
-# Install SpecTest plugin (experimental, with parallel execution + hooks)
-claude plugin install spectest
-
-# Install SpecLab plugin (experimental, lifecycle workflows)
-claude plugin install speclab
+# Install SpecLabs plugin (experimental autonomous features)
+claude plugin install speclabs
 ```
 
 List available plugins:
@@ -219,6 +223,8 @@ List available plugins:
 ```bash
 claude plugin marketplace list
 ```
+
+---
 
 ## What is Spec-Driven Development?
 
@@ -239,6 +245,84 @@ This approach leads to:
 - Easier onboarding for new team members
 - Better documentation as a byproduct
 
+---
+
+## Configuration
+
+Both plugins can be configured through files in `/memory/`:
+
+### Quality Standards (`/memory/quality-standards.md`)
+
+```yaml
+# Quality Gates
+min_test_coverage: 85
+min_quality_score: 80
+block_merge_on_failure: false
+
+# Performance Budgets (SpecSwarm v2.0+)
+enforce_budgets: true
+max_bundle_size: 500      # KB per bundle
+max_initial_load: 1000    # KB initial load
+```
+
+### Tech Stack (`/memory/tech-stack.md`)
+
+```markdown
+## Core Technologies
+- TypeScript 5.x
+- React Router v7
+- PostgreSQL 17.x
+
+## Approved Libraries
+- Zod v4+ (validation)
+- Drizzle ORM (database)
+
+## Prohibited
+- ❌ Redux (use React Router loaders/actions)
+- ❌ Class components (use functional)
+```
+
+SpecSwarm automatically validates against this configuration at plan, task, and implementation phases.
+
+---
+
+## Migration from Previous Plugins
+
+**If you were using older plugins**, here's what happened:
+
+### Deprecated Plugins (Merged into SpecSwarm v2.0.0)
+
+- **SpecKit** → Merged into SpecSwarm v2.0.0
+- **SpecTest** → Merged into SpecSwarm v2.0.0
+- **SpecLab** → Merged into SpecSwarm v2.0.0
+
+All features from these plugins are now available in **SpecSwarm v2.0.0**.
+
+**Migration**: Replace old plugin commands with SpecSwarm:
+```bash
+# Old
+/speckit:specify → /specswarm:specify
+/spectest:implement → /specswarm:implement
+/speclab:bugfix → /specswarm:bugfix
+```
+
+### Deprecated Plugins (Merged into SpecLabs v1.0.0)
+
+- **debug-coordinate** → Merged into SpecLabs v1.0.0
+- **project-orchestrator** → Merged into SpecLabs v1.0.0
+
+**Migration**: Replace old plugin commands with SpecLabs:
+```bash
+# Old
+/debug-coordinate:coordinate → /speclabs:coordinate
+/project-orchestrator:orchestrate-test → /speclabs:orchestrate-test
+/project-orchestrator:orchestrate-validate → /speclabs:orchestrate-validate
+```
+
+See `DEPRECATED.md` files in old plugin directories for full migration details.
+
+---
+
 ## Repository Structure
 
 ```
@@ -246,156 +330,145 @@ specswarm/
 ├── .claude-plugin/
 │   └── marketplace.json          # Marketplace configuration
 ├── plugins/
-│   ├── speckit/                  # SpecKit plugin (original)
+│   ├── specswarm/                # SpecSwarm v2.0.0 (production)
 │   │   ├── .claude-plugin/
 │   │   │   └── plugin.json
-│   │   ├── commands/             # 8 SDD commands
-│   │   │   ├── analyze.md
-│   │   │   ├── checklist.md
-│   │   │   ├── clarify.md
-│   │   │   ├── constitution.md
-│   │   │   ├── implement.md
-│   │   │   ├── plan.md
+│   │   ├── commands/             # 17 commands
 │   │   │   ├── specify.md
-│   │   │   └── tasks.md
-│   │   └── README.md
-│   ├── specswarm/                # SpecSwarm plugin (tech stack enforcement)
-│   │   ├── .claude-plugin/
-│   │   │   └── plugin.json
-│   │   ├── commands/             # 8 commands + tech validation
-│   │   │   ├── analyze.md
-│   │   │   ├── checklist.md
-│   │   │   ├── clarify.md
-│   │   │   ├── constitution.md
-│   │   │   ├── implement.md
 │   │   │   ├── plan.md
-│   │   │   ├── specify.md
-│   │   │   └── tasks.md
-│   │   └── README.md
-│   ├── spectest/                 # SpecTest plugin (experimental)
-│   │   ├── .claude-plugin/
-│   │   │   └── plugin.json
-│   │   ├── commands/             # 9 commands (adds metrics)
+│   │   │   ├── tasks.md
+│   │   │   ├── implement.md
 │   │   │   ├── analyze.md
 │   │   │   ├── checklist.md
 │   │   │   ├── clarify.md
 │   │   │   ├── constitution.md
-│   │   │   ├── implement.md      # Enhanced: parallel execution
-│   │   │   ├── metrics.md        # NEW: performance dashboard
-│   │   │   ├── plan.md           # Enhanced: hooks
-│   │   │   ├── specify.md        # Enhanced: hooks
-│   │   │   └── tasks.md          # Enhanced: hooks + parallel detection
+│   │   │   ├── bugfix.md
+│   │   │   ├── hotfix.md
+│   │   │   ├── modify.md
+│   │   │   ├── refactor.md
+│   │   │   ├── deprecate.md
+│   │   │   ├── analyze-quality.md
+│   │   │   ├── impact.md
+│   │   │   ├── suggest.md
+│   │   │   └── workflow-metrics.md
+│   │   ├── lib/                  # 8 utilities
+│   │   │   ├── chain-bug-detector.sh
+│   │   │   ├── bundle-size-monitor.sh
+│   │   │   ├── performance-budget-enforcer.sh
+│   │   │   └── ...
 │   │   └── README.md
-│   └── speclab/                  # SpecLab plugin (experimental)
-│       ├── .claude-plugin/
-│       │   └── plugin.json
-│       ├── commands/             # 8 commands (5 workflows + 3 utilities)
-│       │   ├── bugfix.md         # Regression-test-first bug fixing
-│       │   ├── modify.md         # Impact-analysis-first modifications
-│       │   ├── hotfix.md         # Emergency response workflow
-│       │   ├── refactor.md       # Metrics-driven quality improvement
-│       │   ├── deprecate.md      # Phased feature sunset
-│       │   ├── impact.md         # Standalone impact analysis utility
-│       │   ├── suggest.md        # AI workflow recommendation
-│       │   └── workflow-metrics.md  # Cross-workflow analytics
-│       └── README.md
+│   ├── speclabs/                 # SpecLabs v1.0.0 (experimental)
+│   │   ├── .claude-plugin/
+│   │   │   └── plugin.json
+│   │   ├── commands/             # 3 commands
+│   │   │   ├── orchestrate-test.md
+│   │   │   ├── orchestrate-validate.md
+│   │   │   └── coordinate.md
+│   │   └── README.md
+│   ├── speckit/                  # DEPRECATED (merged into SpecSwarm)
+│   │   ├── DEPRECATED.md
+│   │   └── ...
+│   ├── spectest/                 # DEPRECATED (merged into SpecSwarm)
+│   │   ├── DEPRECATED.md
+│   │   └── ...
+│   ├── speclab/                  # DEPRECATED (merged into SpecSwarm)
+│   │   ├── DEPRECATED.md
+│   │   └── ...
+│   ├── debug-coordinate/         # DEPRECATED (merged into SpecLabs)
+│   │   ├── DEPRECATED.md
+│   │   └── ...
+│   └── project-orchestrator/     # DEPRECATED (merged into SpecLabs)
+│       ├── DEPRECATED.md
+│       └── ...
 ├── README.md                     # This file
 └── LICENSE                       # MIT License
 ```
 
+---
+
+## Best Practices
+
+### For SpecSwarm v2.0.0
+
+1. **Define tech-stack.md early** - Prevents drift from day 1
+2. **Enable quality gates** - Maintain >80% scores
+3. **Run analyze-quality regularly** - Catch issues early
+4. **Keep bundles <500KB** - Performance matters
+5. **Use bugfix workflow** - Regression testing prevents cascades
+
+### For SpecLabs v1.0.0
+
+1. **Use in non-critical environments** - Experimental features may fail
+2. **Always have backups** - Commit before running SpecLabs commands
+3. **Review agent work carefully** - Don't blindly trust autonomous execution
+4. **Report issues** - Help improve experimental features
+5. **Start small** - Test with simple tasks first
+
+---
+
+## Quality Validation (SpecSwarm)
+
+Automated quality scoring across 6 dimensions (0-100 points):
+
+- **Unit Tests** (25 pts) - Proportional by pass rate
+- **Code Coverage** (25 pts) - Proportional by coverage %
+- **Integration Tests** (15 pts) - API/service testing
+- **Browser Tests** (15 pts) - E2E user flows
+- **Bundle Size** (20 pts) - Performance budgets
+- **Visual Alignment** (15 pts) - Future
+
+**Multi-Framework Support** (11 test frameworks):
+- JavaScript: Vitest, Jest, Mocha, Jasmine
+- Python: Pytest, unittest
+- Go: go test
+- Ruby: RSpec
+- Java: JUnit
+- And more...
+
+---
+
 ## Attribution
-
-### SpecKit Plugin
-
-The SpecKit plugin is adapted from [GitHub's spec-kit project](https://github.com/github/spec-kit):
-
-- **Original Work:** Copyright (c) GitHub, Inc.
-- **Original License:** MIT License
-- **Original Repository:** https://github.com/github/spec-kit
-- **Adapted for Claude Code by:** Marty Bonacci (2025)
-
-Key differences from the original:
-- Integrated into Claude Code plugin system
-- Removed Python CLI dependencies
-- Commands run directly in Claude Code
-- Preserved core SDD methodology
 
 ### SpecSwarm Plugin
 
-Enhanced fork of SpecKit with tech stack management:
+Enhanced and consolidated from multiple sources:
 
-- **Based on:** SpecKit plugin (adapted from GitHub spec-kit)
-- **Enhanced by:** Marty Bonacci & Claude Code (2025)
-- **License:** MIT License
-- **Key Innovation:** 95% tech stack drift prevention
+**Forked From**: SpecKit → GitHub spec-kit
 
-Key enhancements:
-- Tech stack auto-detection and validation
-- Semantic versioning for technology changes
-- Runtime enforcement of prohibited technologies
-- Constitutional tech stack governance
-- Auto-addition of non-conflicting libraries
-- Conflict detection with approval workflows
+**Attribution Chain**:
+1. Original: [GitHub spec-kit](https://github.com/github/spec-kit) © GitHub, Inc. | MIT
+2. Adapted: SpecKit by Marty Bonacci (2025)
+3. Enhanced: SpecSwarm by Marty Bonacci & Claude Code (2025)
 
-### SpecTest Plugin ⚠️ EXPERIMENTAL
+**Key Consolidations** (v2.0.0):
+- Merged SpecKit (spec-driven workflows)
+- Merged SpecTest (performance enhancements)
+- Merged SpecLab (lifecycle workflows)
 
-Experimental fork of SpecSwarm with performance enhancements:
+### SpecLabs Plugin
 
-- **Based on:** SpecSwarm plugin
-- **Enhanced by:** Marty Bonacci & Claude Code (2025)
-- **License:** MIT License
-- **Status:** Alpha - Phase 1 complete
-- **Key Innovation:** 2-4x faster implementation via parallel execution
+Experimental autonomous development and debugging:
 
-Phase 1 enhancements:
-- Parallel task execution (2-4x speedup)
-- Pre/post operation hooks (8 hook points on core commands)
-- Performance metrics and analytics dashboard
-- All SpecSwarm tech stack features preserved
-- Intelligent next-step suggestions
+**Created by**: Marty Bonacci & Claude Code (2025)
 
-### SpecLab Plugin ⚠️ EXPERIMENTAL
+**Consolidated From**:
+- debug-coordinate v1.0.0 (advanced debugging)
+- project-orchestrator v0.1.1 (autonomous development)
 
-Experimental lifecycle workflow laboratory:
+**Based on Learnings**:
+- `docs/learnings/2025-10-14-orchestrator-missed-opportunity.md`
+- Test 4A results and orchestrator concept testing
 
-- **Based on:** spec-kit-extensions methodologies by Marty Bonacci
-- **Inspired by:** https://github.com/MartyBonacci/spec-kit-extensions
-- **Created by:** Marty Bonacci & Claude Code (2025)
-- **License:** MIT License
-- **Status:** Experimental v1.0.0
-- **Key Innovation:** Complete lifecycle coverage (bugfix, modify, hotfix, refactor, deprecate)
-
-Key workflows:
-- Bugfix: Regression-test-first methodology (40% of development work)
-- Modify: Impact-analysis-first modifications (30% of development work)
-- Hotfix: Expedited emergency response (10-15% of work)
-- Refactor: Metrics-driven quality improvement (10% of work)
-- Deprecate: Phased feature sunset (5% of work)
-- Smart integration with SpecSwarm (tech enforcement) and SpecTest (parallel/hooks)
-
-**Production Results** (from spec-kit-extensions):
-- 100% build success rate
-- 0 regressions in production
-- ~30% time savings on modifications
-- Complete lifecycle coverage when combined with SpecSwarm/SpecTest
-
-## Creating Your Own Plugins
-
-Want to contribute a plugin to SpecSwarm? Follow these guidelines:
-
-1. **Structure:** Follow the [Claude Code plugin structure](https://docs.claude.com/en/docs/claude-code/plugins)
-2. **Documentation:** Provide clear README with usage examples
-3. **Attribution:** Properly credit any adapted work
-4. **Quality:** Test thoroughly before submitting
-5. **License:** Use compatible open-source license (MIT preferred)
-
-See [Claude Code plugin documentation](https://docs.claude.com/en/docs/claude-code/plugins) for technical details.
+---
 
 ## Community & Support
 
-- **GitHub Issues:** Report bugs or request features
-- **Original spec-kit:** Questions about SDD methodology → [spec-kit repo](https://github.com/github/spec-kit)
-- **Claude Code docs:** [Official documentation](https://docs.claude.com/en/docs/claude-code)
+- **Repository**: https://github.com/MartyBonacci/specswarm
+- **Issues**: https://github.com/MartyBonacci/specswarm/issues
+- **Original spec-kit**: Questions about SDD methodology → [spec-kit repo](https://github.com/github/spec-kit)
+- **Claude Code docs**: [Official documentation](https://docs.claude.com/en/docs/claude-code)
+
+---
 
 ## License
 
@@ -403,57 +476,13 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 Individual plugins may have their own attributions and licenses. See each plugin's README for details.
 
+---
+
 ## Acknowledgments
 
 - **GitHub** for creating the original [spec-kit](https://github.com/github/spec-kit) project
 - **Anthropic** for [Claude Code](https://docs.claude.com/en/docs/claude-code) and the plugin system
 - All contributors to Spec-Driven Development methodology
-
-## 🧪 Testing
-
-**Want to validate the plugins yourself?** Complete testing workflows available:
-
-- **[Testing Quick Start](docs/testing/QUICK-START.md)** ⭐ - Start here for testing overview
-- **[Plugin Testing Guide](docs/testing/plugin-testing-guide.md)** - Comprehensive testing methodology
-- **[Test 3: SpecTest Workflow](docs/testing/test-3-spectest.md)** - Complete workflow with prompts (paste into Claude Code)
-
-**Test Project**: Build "Tweeter" (simplified Twitter clone) to validate:
-- **Phase 1**: Feature development (SpecKit, SpecSwarm, SpecTest)
-- **Phase 2A**: Lifecycle workflows (SpecLab on SpecTest)
-- **Phase 2B**: Integration validation (optional)
-
-**Expected Timeline**: 10-14 hours (quick) or 26-34 hours (comprehensive)
-
----
-
-## 📚 Documentation
-
-### Quick Start Guides
-
-**New to SpecSwarm plugins?** Start here:
-
-1. **[Complete Workflow Guide](docs/cheatsheets/complete-workflow-guide.md)** ⭐
-   - Master reference for choosing the right plugin
-   - Decision trees and comparison matrices
-   - Integration patterns and best practices
-
-2. **Plugin Cheatsheets** (Quick Reference):
-   - [SpecLab Cheatsheet](docs/cheatsheets/speclab-cheatsheet.md) - Lifecycle workflows (bugfix, modify, hotfix, refactor, deprecate)
-   - SpecKit Cheatsheet *(coming soon)* - Original SDD workflow
-   - SpecSwarm Cheatsheet *(coming soon)* - Tech stack enforcement
-   - SpecTest Cheatsheet *(coming soon)* - Parallel execution + metrics
-
-3. **Real-World Examples**:
-   - [Bugfix Example](docs/examples/bugfix-example.md) - Complete walkthrough of fixing a production bug
-   - Feature Development Example *(coming soon)*
-   - Modification Example *(coming soon)*
-
-### Full Plugin Documentation
-
-- [SpecKit README](plugins/speckit/README.md) - Original SDD workflow
-- [SpecSwarm README](plugins/specswarm/README.md) - Tech stack enforcement
-- [SpecTest README](plugins/spectest/README.md) - Parallel execution + metrics
-- [SpecLab README](plugins/speclab/README.md) - Lifecycle workflows
 
 ---
 
@@ -463,4 +492,9 @@ Individual plugins may have their own attributions and licenses. See each plugin
 - [Claude Code plugins documentation](https://docs.claude.com/en/docs/claude-code/plugins)
 - [Claude Code plugin marketplaces](https://docs.claude.com/en/docs/claude-code/plugin-marketplaces)
 - [GitHub spec-kit](https://github.com/github/spec-kit)
-- [spec-kit-extensions](https://github.com/MartyBonacci/spec-kit-extensions) - SpecLab methodologies
+
+---
+
+**SpecSwarm Marketplace** - Complete software development lifecycle in Claude Code. 🚀
+
+Build it. Fix it. Maintain it. Analyze it. All in one place.

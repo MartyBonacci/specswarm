@@ -1,552 +1,313 @@
-# SpecSwarm Plugin for Claude Code
+# SpecSwarm v2.0.0
 
-**Spec-Driven Development with Intelligent Tech Stack Management**
+**Complete Software Development Toolkit**
 
-SpecSwarm is an enhanced fork of the SpecKit plugin that adds powerful tech stack drift prevention and automatic validation to your development workflow.
+Build, fix, maintain, and analyze your entire software project with one unified plugin.
 
-## 🎯 What Makes SpecSwarm Different?
+---
 
-SpecSwarm extends Spec-Driven Development with **95% effective tech stack drift prevention** through:
+## Overview
 
-- ✅ **Auto-detection** of project technologies on first feature
-- ✅ **Smart validation** at plan, task, and implementation phases
-- ✅ **Automatic addition** of non-conflicting libraries
-- ✅ **Conflict detection** with approval workflows
-- ✅ **Hard blocking** of prohibited technologies
-- ✅ **Zero new commands** - validation embedded in existing workflow
+SpecSwarm is a comprehensive plugin that provides everything you need for the complete software development lifecycle:
 
-## Attribution
+- ✅ **Spec-Driven Development** - From specification to implementation
+- 🐛 **Bug & Issue Management** - Systematic fixing with regression testing
+- 🔧 **Code Maintenance** - Refactoring and modernization
+- 📊 **Quality Assurance** - Automated testing and validation
+- 🚀 **Performance Monitoring** - Bundle size tracking and budgets
+- 🏗️ **Architecture Validation** - SSR patterns, tech stack compliance
 
-### Forked From
-SpecSwarm is a fork of **SpecKit**, which adapted **GitHub's spec-kit** for Claude Code.
+**17 Commands** | **8 Utilities** | **Production Ready**
 
-**Attribution Chain:**
-1. **Original**: [GitHub spec-kit](https://github.com/github/spec-kit)
-   - Copyright (c) GitHub, Inc. | MIT License
-2. **Adapted**: SpecKit plugin by Marty Bonacci (2025)
-   - Claude Code integration and workflow adaptation
-3. **Enhanced**: SpecSwarm by Marty Bonacci & Claude Code (2025)
-   - Tech stack management and drift prevention system
+---
 
-## Commands
+## Quick Start
 
-SpecSwarm provides 8 slash commands identical to SpecKit, with enhanced tech stack management:
+### New Feature Development
 
-### `/specswarm:constitution`
-Establish project principles including tech stack enforcement.
-
-### `/specswarm:specify <description>`
-Create feature specifications with automatic quality validation.
-
-### `/specswarm:clarify`
-Resolve ambiguities with targeted clarification questions.
-
-### `/specswarm:plan` ⭐ **Enhanced**
-Create technical plans with **automatic tech stack validation**:
-- First feature: Auto-creates `/memory/tech-stack.md`
-- Subsequent features: Validates all technologies
-- Auto-adds non-conflicting libraries
-- Prompts for conflict resolution
-- Blocks prohibited technologies
-
-### `/specswarm:tasks` ⭐ **Enhanced**
-Generate task breakdowns with **tech stack pre-validation**:
-- Scans tasks for prohibited technologies
-- Auto-corrects with approved alternatives
-- Verifies compliance report resolved
-
-### `/specswarm:implement` ⭐ **Enhanced**
-Execute implementation with **runtime tech stack enforcement**:
-- Validates before every import/dependency
-- Blocks prohibited patterns (e.g., class components)
-- Warns on unapproved libraries
-- Continuous validation during implementation
-
-### `/specswarm:analyze`
-Cross-artifact consistency validation.
-
-### `/specswarm:checklist <type>`
-Generate requirement quality checklists.
-
-## 🚀 Quick Start
-
-### First Feature (Auto-Setup)
 ```bash
-# 1. Define your feature
-/specswarm:specify Create user authentication system
+# 1. Create specification
+/specswarm:specify "Add user authentication with email/password"
 
-# 2. Create plan (auto-creates tech stack file)
+# 2. Design implementation plan
 /specswarm:plan
-# SpecSwarm detects: TypeScript, React Router, PostgreSQL
-# Prompts: "Review tech-stack.md and add prohibited technologies"
-# You type: "continue"
 
-# 3. Generate tasks
+# 3. Generate task breakdown
 /specswarm:tasks
 
-# 4. Implement
+# 4. Execute implementation with quality validation
 /specswarm:implement
 ```
 
-### Subsequent Features (Auto-Validation)
+### Bug Fixing
+
 ```bash
-# 1. Define feature
-/specswarm:specify Add product catalog
-
-# 2. Plan with validation
-/specswarm:plan
-# SpecSwarm validates: TypeScript ✅, React Router ✅
-# SpecSwarm auto-adds: react-query (non-conflicting)
-# SpecSwarm blocks: Axios (prohibited, use fetch instead)
-
-# 3. Rest of workflow as normal
-/specswarm:tasks
-/specswarm:implement
+# Regression-test-first bugfix workflow
+/specswarm:bugfix "Bug 915: Login fails with special characters in password"
 ```
 
-## 🌳 Git Workflow Management
+### Code Quality
 
-SpecSwarm now includes **automatic git workflow management** to complete the full feature lifecycle.
-
-### How It Works
-
-After `/specswarm:implement` completes, the **Post-Implement Hook** automatically:
-
-1. **Detects your git repository** and current branch
-2. **Offers three workflow options** if you're on a feature branch
-3. **Handles the merge and cleanup** based on your choice
-
-### The Three Options
-
-#### Option 1: Merge and Delete (Recommended)
-
-**Best for**: Normal feature completion
-
-**What happens**:
-- ✅ Checks for uncommitted changes (prompts to commit)
-- ✅ Tests merge for conflicts (dry run)
-- ✅ Merges feature branch to main
-- ✅ Deletes feature branch
-- ✅ Returns you to main branch
-- ✅ Ready for next feature!
-
-**Use when**: Feature is complete and tested
-
----
-
-#### Option 2: Stay on Branch
-
-**Best for**: Additional polish or testing needed
-
-**What happens**:
-- ✅ Keeps you on the feature branch
-- ✅ Provides manual merge instructions
-- ✅ Branch preserved for more work
-
-**Use when**: Need to add more commits, run additional tests, or get code review
-
----
-
-#### Option 3: Switch Without Merge
-
-**Best for**: Pausing feature work
-
-**What happens**:
-- ✅ Switches to main branch
-- ✅ Preserves feature branch
-- ✅ Provides merge/delete instructions for later
-
-**Use when**: Working on multiple features, need to switch context, or waiting for dependencies
-
----
-
-### Safety Features
-
-**Conflict Detection**:
 ```bash
-# Tests merge before executing
-❌ Merge conflicts detected!
+# Comprehensive codebase analysis
+/specswarm:analyze-quality
 
-Cannot auto-merge. Please resolve conflicts manually:
-  1. git checkout main
-  2. git merge 001-user-authentication
-  3. Resolve conflicts
-  4. git add . && git commit
-  5. git branch -d 001-user-authentication
-```
-
-**Uncommitted Changes Handling**:
-```bash
-⚠️  You have uncommitted changes.
-
- M  src/components/UserProfile.tsx
- M  src/services/auth.ts
-
-Commit these changes first? (yes/no): yes
-Commit message: Polish user profile styling
-✅ Changes committed
+# Metrics-driven refactoring
+/specswarm:refactor "Improve authentication module performance"
 ```
 
 ---
 
-### Complete Workflow
+## Commands Reference
 
-The full feature lifecycle with SpecSwarm:
+### 🆕 New Feature Workflows (8 commands)
 
-```
-/specswarm:specify "User authentication"
-  → Creates branch: 001-user-authentication ✅
+See full command documentation in [COMMANDS.md](./COMMANDS.md) for detailed usage.
 
-/specswarm:plan
-  → Plans on feature branch ✅
+- `/specswarm:specify` - Create detailed feature specification
+- `/specswarm:plan` - Design implementation with tech stack validation
+- `/specswarm:tasks` - Generate dependency-ordered task breakdown
+- `/specswarm:implement` - Execute with comprehensive quality validation
+- `/specswarm:clarify` - Ask targeted clarification questions
+- `/specswarm:checklist` - Generate custom requirement checklists
+- `/specswarm:analyze` - Cross-artifact consistency validation
+- `/specswarm:constitution` - Create/update project governance
 
-/specswarm:tasks
-  → Generates tasks on feature branch ✅
+### 🐛 Bug & Issue Management (2 commands)
 
-/specswarm:implement
-  → Implements feature ✅
-  → Offers git workflow options ✅
-  → Merges and cleans up ✅
+- `/specswarm:bugfix` - Regression-test-first fixing with chain bug detection
+- `/specswarm:hotfix` - Emergency production issue response
 
-Back on main → Ready for next feature! ✅
-```
+### 🔧 Code Maintenance (2 commands)
 
----
+- `/specswarm:modify` - Feature modification with impact analysis
+- `/specswarm:refactor` - Metrics-driven quality improvement
 
-### When Git Workflow Doesn't Run
+### 📊 Analysis & Utilities (5 commands)
 
-The git workflow **won't prompt** when:
-
-- ❌ Not a git repository
-- ❌ Already on main/master branch
-- ❌ No branches created (non-git project)
-
-In these cases, you'll see:
-```
-ℹ️  Already on main branch (main)
-```
+- `/specswarm:analyze-quality` - Comprehensive codebase analysis
+- `/specswarm:impact` - Standalone impact analysis
+- `/specswarm:suggest` - AI-powered workflow recommendation
+- `/specswarm:workflow-metrics` - Cross-workflow analytics
+- `/specswarm:deprecate` - Phased feature sunset
 
 ---
 
-### Expected Output
+## Key Features
 
-After `/specswarm:implement` completes:
+### Quality Validation (0-100 Points)
 
-```
-✅ Feature implementation complete!
+Automated quality scoring across 6 dimensions:
 
-🌳 Git Workflow
-===============
+- **Unit Tests** (25 pts) - Proportional by pass rate
+- **Code Coverage** (25 pts) - Proportional by coverage %
+- **Integration Tests** (15 pts) - API/service testing
+- **Browser Tests** (15 pts) - E2E user flows
+- **Bundle Size** (20 pts) - Performance budgets ⭐ NEW
+- **Visual Alignment** (15 pts) - Future
 
-Current branch: 001-user-authentication
-Main branch: main
+### Tech Stack Management
 
-Feature implementation complete! What would you like to do?
+Prevents technology drift across features:
 
-  1. Merge to main and delete feature branch (recommended)
-  2. Stay on 001-user-authentication for additional work
-  3. Switch to main without merging (keep branch)
-
-Choose (1/2/3): 1
-
-✅ Merging and cleaning up...
-✅ Merged 001-user-authentication to main
-✅ Deleted feature branch 001-user-authentication
-🎉 You are now on main
-```
-
-## 📋 Tech Stack Management
-
-### Tech Stack File Structure
-```markdown
+```yaml
 # /memory/tech-stack.md
+Core Technologies:
+  - TypeScript 5.x
+  - React Router v7
+  - PostgreSQL 17.x
 
-**Version**: 1.0.0
+Prohibited:
+  - ❌ Redux (use React Router loaders/actions)
+  - ❌ Class components (use functional)
+```
 
-## Core Technologies (IMMUTABLE)
-- **Language**: TypeScript 5.x
-- **Framework**: React Router v7
-- **Database**: PostgreSQL 17.x
+**95% drift prevention** through automatic validation at plan, task, and implementation phases.
 
-## Standard Libraries (APPROVED)
-- Drizzle ORM (database access) <!-- PURPOSE:orm -->
-- Zod v4+ (validation) <!-- PURPOSE:validation -->
-- fetch API (HTTP requests) <!-- PURPOSE:http-client -->
+### SSR Pattern Validation
 
-## Prohibited Technologies
-- ❌ Axios (use fetch API instead)
-- ❌ Class components (use functional components)
+Detects production failures before deployment:
+
+- Hardcoded URLs in loaders/actions
+- Relative URLs in SSR contexts
+- Missing environment-aware patterns
+- React Router v7 / Remix / Next.js support
+
+### Multi-Framework Testing
+
+Supports 11 test frameworks automatically:
+
+- JavaScript: Vitest, Jest, Mocha, Jasmine
+- Python: Pytest, unittest
+- Go: go test
+- Ruby: RSpec
+- Java: JUnit
+- And more...
+
+### Chain Bug Detection ⭐ NEW
+
+Prevents Bug 912→913 cascading failures:
+
+- Compares test counts before/after
+- Detects new SSR issues
+- Checks TypeScript errors
+- Stops cascading bugs
+
+### Bundle Size Monitoring ⭐ NEW
+
+Automatic performance tracking:
+
+- Analyzes production bundles
+- Calculates size score (0-20 points)
+- Enforces configurable budgets
+- Tracks over time
+
+---
+
+## Configuration
+
+### Quality Standards
+
+Enable quality gates by creating `/memory/quality-standards.md`:
+
+```yaml
+# Quality Gates
+min_test_coverage: 85
+min_quality_score: 80
+block_merge_on_failure: false
+
+# Performance Budgets (NEW in v2.0)
+enforce_budgets: true
+max_bundle_size: 500      # KB per bundle
+max_initial_load: 1000    # KB initial load
+```
+
+### Tech Stack
+
+Define your stack in `/memory/tech-stack.md`:
+
+```markdown
+## Core Technologies
+- TypeScript 5.x
+- React Router v7
+
+## Approved Libraries
+- Zod v4+ (validation)
+- Drizzle ORM (database)
+
+## Prohibited
 - ❌ Redux (use React Router loaders/actions)
 ```
 
-### How Validation Works
+---
 
-#### 1. Plan Phase
-- Extract technologies from Technical Context
-- Classify as: APPROVED, PROHIBITED, CONFLICT, or AUTO_ADD
-- Generate Tech Stack Compliance Report
-- Auto-add non-conflicting (bump MINOR version)
-- Prompt for conflict resolution
-- Block prohibited technologies
+## Integration with SpecLabs
 
-#### 2. Tasks Phase
-- Verify compliance report resolved
-- Scan task descriptions for prohibited tech
-- Auto-correct with approved alternatives
+SpecSwarm can suggest experimental SpecLabs features when appropriate:
 
-#### 3. Implementation Phase
-- Runtime validation before every import
-- Block prohibited patterns
-- Warn on unapproved libraries
-- Continuous enforcement
-
-### Example: Conflicting Technology
+**Complex Bugs**:
 ```
-⚠️ Conflicting Technology Detected
-
-**Axios v1.6** conflicts with **fetch API**
-Both serve the same purpose: HTTP client
-
-| Option | Choice | Implications |
-|--------|--------|--------------|
-| A | Keep fetch API | Remove Axios, update plan |
-| B | Replace with Axios | Tech stack v2.0.0 (MAJOR), refactor code |
-| C | Use both | Justify in research.md, document overlap |
-
-Your choice (A/B/C): _
+/specswarm:bugfix detects chain bugs
+→ "Use /speclabs:coordinate for systematic analysis?"
 ```
 
-### Example: Prohibited Technology
+**Autonomous Mode**:
 ```
-❌ Prohibited Technology Detected
-
-**Redux Toolkit** is prohibited in this project.
-Reason: "Use React Router loaders/actions for state"
-
-✅ Must use: React Router loaders/actions
-📖 See: /memory/tech-stack.md
-
-Cannot proceed until resolved.
+/specswarm:implement
+→ "Try /speclabs:orchestrate-test for autonomous execution?"
 ```
 
-## 🎨 Workflow Comparison
+See [SpecLabs](../speclabs/README.md) for experimental features.
 
-| Workflow Step | SpecKit | SpecSwarm |
-|--------------|---------|-----------|
-| Constitution | Set principles | Set principles + tech stack enforcement |
-| Specify | Create spec | Create spec (unchanged) |
-| Plan | Technical design | Technical design **+ auto-validation** |
-| Tasks | Break down work | Break down work **+ validation** |
-| Implement | Execute tasks | Execute tasks **+ runtime enforcement** |
+---
 
-## 📊 Effectiveness
+## Best Practices
 
-| Problem | Without SpecSwarm | With SpecSwarm |
-|---------|-------------------|----------------|
-| Stack drift across features | ~20% prevention | **95% prevention** |
-| Prohibited tech usage | Manual review | **Automatic blocking** |
-| Conflicting libraries | Discovered late | **Caught at plan time** |
-| Tech documentation | Manual/outdated | **Auto-maintained** |
+1. **Define tech-stack.md early** - Prevents drift from day 1
+2. **Enable quality gates** - Maintain >80% scores
+3. **Run analyze-quality regularly** - Catch issues early
+4. **Keep bundles <500KB** - Performance matters
+5. **Use bugfix workflow** - Regression testing prevents cascades
 
-## 🛠️ Installation
+---
 
-### From Marketplace
-```bash
-claude plugin marketplace add marty/specswarm
-claude plugin install specswarm
+## Troubleshooting
+
+### Quality Validation Not Running
+
+Create `/memory/quality-standards.md` to enable quality gates.
+
+### SSR Validation Fails
+
+Use environment-aware helper:
+
+```typescript
+// app/utils/api.ts
+export function getApiUrl(path: string): string {
+  const base = typeof window !== 'undefined'
+    ? ''
+    : process.env.API_BASE_URL || 'http://localhost:3000';
+  return `${base}${path}`;
+}
 ```
 
-### From Local Directory
-```bash
-claude plugin install /path/to/specswarm/plugins/specswarm
-```
+### Bundle Size Exceeds Budget
 
-## 📁 File Structure
+1. Implement code splitting
+2. Use dynamic imports
+3. Analyze: `npx vite-bundle-visualizer`
+4. Remove unused dependencies
 
-```
-your-project/
-├── memory/
-│   ├── constitution.md          # Project principles
-│   └── tech-stack.md            # ⭐ Tech stack enforcement
-├── features/
-│   └── 001-feature-name/
-│       ├── spec.md              # Feature specification
-│       ├── plan.md              # Tech plan + compliance report
-│       ├── tasks.md             # Tasks + validation status
-│       └── checklists/          # Quality checklists
-```
-
-## 🔄 Version Semantics
-
-Tech stack file uses semantic versioning:
-
-- **MAJOR** (X.0.0): Core technology replacement, prohibited → approved
-- **MINOR** (1.X.0): New library additions (auto-added)
-- **PATCH** (1.0.X): Documentation updates, purpose tag additions
-
-## 🧪 Examples
-
-### Auto-Addition (Silent)
-```
-Loading tech stack from /memory/tech-stack.md...
-
-✅ TypeScript 5.x - approved
-✅ React Router v7 - approved
-➕ react-query v5 - NEW (auto-adding)
-
-Tech Stack Compliance Report:
-- react-query v5 auto-added to Data Layer
-- Version updated: 1.0.0 → 1.1.0
-
-Continuing with plan generation...
-```
-
-### Conflict Resolution (Interactive)
-```
-⚠️ Axios v1.6 conflicts with fetch API
-
-Your choice (A/B/C): A
-
-✓ Updating plan.md to use fetch API...
-✓ Continuing with plan generation...
-```
-
-### Prohibition Block (Hard Stop)
-```
-❌ Redux Toolkit is PROHIBITED
-
-Cannot proceed. Please update plan.md to use:
-✅ React Router loaders/actions
-
-Halting until resolved.
-```
-
-## 📝 Customizing Tech Stack Template (Optional)
-
-By default, SpecSwarm uses an embedded template when auto-creating `/memory/tech-stack.md`. You can customize this by creating your own template in your project.
-
-### Create Custom Template
-
-Create `/templates/tech-stack-template.md` in your project root:
-
-```markdown
-# Project Technology Stack
-
-**Version**: 1.0.0
-**Created**: [CREATION_DATE]
-**Last Updated**: [LAST_UPDATE_DATE]
-
-<!--
-  This file defines the approved technology stack for ALL features in this project.
-  Changes require constitutional amendment (see /memory/constitution.md Principle 5).
--->
-
-## Core Technologies (IMMUTABLE)
-<!-- These are fundamental to the project and should rarely change -->
-
-- **Language**: [LANGUAGE] [VERSION]
-- **Runtime**: [RUNTIME] [VERSION]
-- **Framework**: [FRAMEWORK] [VERSION]
-- **Database**: [DATABASE] [VERSION]
-
-## Standard Libraries (APPROVED)
-<!-- These libraries are approved for use across all features -->
-
-**Data Layer:**
-- [ORM_LIBRARY] ([PURPOSE]) <!-- PURPOSE:orm -->
-- [VALIDATION_LIBRARY] ([PURPOSE]) <!-- PURPOSE:validation -->
-
-**UI Layer:**
-- [STYLING_LIBRARY] ([PURPOSE]) <!-- PURPOSE:css -->
-- [COMPONENT_LIBRARY] ([PURPOSE]) <!-- PURPOSE:ui-components -->
-
-**Utilities:**
-- [HTTP_CLIENT] ([PURPOSE]) <!-- PURPOSE:http-client -->
-- [DATE_LIBRARY] ([PURPOSE]) <!-- PURPOSE:date-utils -->
-
-## Prohibited Technologies
-<!-- NEVER use these - constitutional violations trigger errors -->
-
-⚠️ **Add your project-specific prohibitions:**
-
-**Common anti-patterns to consider:**
-- ❌ [DEPRECATED_LIBRARY] (use [APPROVED_ALTERNATIVE] instead)
-- ❌ [OUTDATED_PATTERN] (use [MODERN_PATTERN] instead)
-- ❌ [CONFLICTING_LIBRARY] (use [APPROVED_LIBRARY] instead)
-
-**Why prohibit technologies?**
-- Prevents accidental use of deprecated/superseded libraries
-- Enforces modern patterns and best practices
-- Reduces bundle size (no duplicate libraries)
-- Maintains architectural consistency
-
-## Adding New Technologies
-
-**Process for approving new technology:**
-
-1. **Document justification** in feature's `research.md`
-2. **Propose amendment** with rationale
-3. **Update constitution** if governance review required
-4. **Add to appropriate section** above with purpose tag
-5. **Increment version number** (MINOR for additions, MAJOR for replacements)
+---
 
 ## Version History
 
-- **1.0.0** ([CREATION_DATE]): Initial tech stack [SOURCE]
-```
+### v2.0.0 (2025-10-15) - Major Consolidation
+- Merged SpecLab lifecycle workflows (9 commands)
+- Added chain bug detection
+- Added bundle size monitoring
+- Added performance budget enforcement
+- Complete lifecycle coverage
 
-### How It Works
+### v1.1.0 (2025-10-14) - Quality Enhancements
+- Phase 1-3 improvements
+- SSR validation
+- Multi-framework testing
+- Proportional scoring
+- Project-aware git staging
 
-- **First feature**: SpecSwarm checks for `/templates/tech-stack-template.md`
-- **If found**: Uses your custom template
-- **If not found**: Uses embedded default template
-- **Placeholders**: Auto-populated with detected technologies
-- **Customization**: Add custom sections, notes, or policies
+### v1.0.0 (2025-10-11) - Initial Release
+- Spec-driven workflows
+- Tech stack management
+- Basic quality validation
 
-### Template Tips
+---
 
-1. **Add Purpose Tags**: `<!-- PURPOSE:category -->` enables conflict detection
-2. **Document Rationale**: Explain why technologies are prohibited
-3. **Version Policies**: Add notes about update strategies
-4. **Team Agreements**: Include team-specific conventions
+## Attribution
 
-## 💡 Best Practices
+**Forked From**: SpecKit → GitHub spec-kit
 
-1. **Populate Prohibited Technologies Early**
-   - Add prohibited tech when creating tech-stack.md
-   - Prevents accidental usage throughout project
+**Attribution Chain**:
+1. Original: [GitHub spec-kit](https://github.com/github/spec-kit) © GitHub, Inc. | MIT
+2. Adapted: SpecKit by Marty Bonacci (2025)
+3. Enhanced: SpecSwarm by Marty Bonacci & Claude Code (2025)
 
-2. **Use Purpose Tags**
-   - Add `<!-- PURPOSE:category -->` comments
-   - Enables automatic conflict detection
+---
 
-3. **Constitutional Enforcement**
-   - Run `/specswarm:constitution` after first feature
-   - Add Principle 5: Technology Stack Consistency
+## License
 
-4. **Review Auto-Additions**
-   - Check tech-stack.md version history
-   - Verify auto-added libraries make sense
+MIT License - See LICENSE file for details
 
-## 🤝 Contributing
+---
 
-This is a fork of SpecKit (adapted from GitHub spec-kit).
+## Support
 
-- Original methodology: [spec-kit repository](https://github.com/github/spec-kit)
-- SpecKit adaptation: Issues in SpecSwarm repository
-- SpecSwarm enhancements: Issues in SpecSwarm repository
+- **Repository**: https://github.com/MartyBonacci/specswarm
+- **Issues**: https://github.com/MartyBonacci/specswarm/issues
+- **Migration Guides**: See DEPRECATED.md files in deprecated plugins
 
-## 📜 License
+---
 
-MIT License (inherited from original spec-kit)
+**SpecSwarm v2.0.0** - Your complete software development toolkit. 🚀
 
-**Attribution Chain:**
-- Original: GitHub, Inc. (MIT)
-- SpecKit: Marty Bonacci (MIT)
-- SpecSwarm: Marty Bonacci & Claude Code (MIT)
-
-## 🔗 Learn More
-
-- [GitHub spec-kit](https://github.com/github/spec-kit) - Original project
-- [Spec-Driven Development](https://github.com/github/spec-kit/blob/main/spec-driven.md) - Methodology
-- [Claude Code Plugins](https://docs.claude.com/en/docs/claude-code/plugins) - Plugin system
+Build it. Fix it. Maintain it. Analyze it. All in one place.
