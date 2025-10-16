@@ -860,6 +860,61 @@ fi
 
 ---
 
+## Chain Bug Detection (Phase 3 Enhancement)
+
+**Purpose**: Detect if this bug fix introduced new bugs (prevent Bug 912 → Bug 913 scenarios)
+
+**YOU MUST NOW check for chain bugs using the Bash tool:**
+
+1. **Run chain bug detector:**
+   ```bash
+   bash ~/.claude/plugins/marketplaces/specswarm-marketplace/plugins/speclab/lib/chain-bug-detector.sh ${REPO_ROOT}
+   ```
+
+2. **Parse detector output:**
+   - Exit code 0: No chain bugs detected (✓ SAFE)
+   - Exit code 1: Chain bugs detected (⚠️ WARNING)
+
+3. **If chain bugs detected:**
+
+   a. **Display warning:**
+      ```
+      ⛓️  CHAIN BUG DETECTED
+      ═══════════════════════
+
+      This bug fix may have introduced new issues:
+      - Tests decreased: {BEFORE} → {AFTER}
+      - SSR issues: {COUNT}
+      - TypeScript errors: {COUNT}
+
+      This suggests the fix created new problems.
+      ```
+
+   b. **Offer actions:**
+      ```
+      What would you like to do?
+      1. Review fix and improve (analyze with /speclab:analyze-quality)
+      2. Use orchestrator for complex fix (/debug-coordinate:coordinate)
+      3. Revert and try different approach (git revert HEAD)
+      4. Continue anyway (NOT RECOMMENDED)
+
+      Choose (1/2/3/4):
+      ```
+
+   c. **Execute user choice:**
+      - Option 1: Run `/speclab:analyze-quality` for full analysis
+      - Option 2: Display orchestrator command to use
+      - Option 3: Offer to revert last commit
+      - Option 4: Display strong warning and continue
+
+4. **If no chain bugs:**
+   - Display: "✓ No chain bugs detected - Fix is clean"
+   - Continue to Final Output
+
+**Impact**: Prevents cascading bug fixes (Bug 912 → 913 → 914 chains)
+
+---
+
 ## Final Output
 
 ```

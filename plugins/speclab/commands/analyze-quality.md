@@ -212,10 +212,15 @@ Perform comprehensive codebase quality analysis to identify improvement opportun
 
 **YOU MUST NOW detect performance issues:**
 
-1. **Check bundle sizes** using Bash:
+1. **Run bundle size analyzer** (Phase 3 Enhancement) using Bash:
    ```bash
-   find dist/ build/ .next/ -name "*.js" -size +500k 2>/dev/null
+   bash ~/.claude/plugins/marketplaces/specswarm-marketplace/plugins/speclab/lib/bundle-size-monitor.sh ${REPO_ROOT}
    ```
+   Capture:
+   - Total bundle size
+   - List of large bundles (>500KB)
+   - List of critical bundles (>1MB)
+   - Bundle size score (0-20 points)
 
 2. **Find missing lazy loading:**
    ```bash
@@ -233,15 +238,20 @@ Perform comprehensive codebase quality analysis to identify improvement opportun
    ⚡ Performance Issues
    =====================
 
-   Large Bundle Files: {COUNT}
-   - {FILE1}: {SIZE}
-   - {FILE2}: {SIZE}
+   Bundle Sizes (Phase 3):
+   - Total: {TOTAL_SIZE}
+   - Large bundles (>500KB): {COUNT}
+   - Critical bundles (>1MB): {COUNT}
+   - Top offenders:
+     * {LARGEST_BUNDLE_1}
+     * {LARGEST_BUNDLE_2}
+   - Score: {SCORE}/20 points
 
    Missing Lazy Loading: {COUNT} routes
    Unoptimized Images: {COUNT} files (>{SIZE})
 
    Priority: {HIGH/MEDIUM}
-   Impact: Page load performance degraded
+   Impact: Page load performance degraded by {TOTAL_SIZE}
    ```
 
 ---

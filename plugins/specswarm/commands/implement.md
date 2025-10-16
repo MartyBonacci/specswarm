@@ -542,7 +542,90 @@ You **MUST** consider the user input before proceeding (if not empty).
          - Display with "4. Browser Tests" header
          - If no browser framework: Display "No browser test framework detected - Skipping"
 
-      g. **Calculate quality score** using proportional scoring (Phase 2 Enhancement):
+      f2. **Analyze bundle sizes** (Phase 3 Enhancement):
+
+         **YOU MUST NOW analyze bundle sizes using the Bash tool:**
+
+         1. **Run bundle size monitor:**
+            ```bash
+            cd ${REPO_ROOT} && bash ~/.claude/plugins/marketplaces/specswarm-marketplace/plugins/speclab/lib/bundle-size-monitor.sh
+            ```
+
+         2. **Parse bundle analysis results:**
+            - Exit code 0: All bundles within budget (✓ PASS)
+            - Exit code 1: Large bundles detected (⚠️ WARNING)
+            - Exit code 2: Critical bundle size exceeded (🔴 CRITICAL)
+
+         3. **Extract bundle metrics:**
+            - Total bundle size (in KB)
+            - Number of large bundles (>500KB)
+            - Number of critical bundles (>1MB)
+            - List of top 5 largest bundles
+
+         4. **Calculate bundle size score:**
+            - < 500KB total: 20 points (excellent)
+            - 500-750KB: 15 points (good)
+            - 750-1000KB: 10 points (acceptable)
+            - 1000-2000KB: 5 points (poor)
+            - > 2000KB: 0 points (critical)
+
+         5. **Display results to user:**
+            ```
+            5. Bundle Size Performance
+            Total Size: {TOTAL_SIZE}
+            Largest Bundle: {LARGEST_BUNDLE}
+            Score: {SCORE}/20 points
+            Status: {EXCELLENT/GOOD/ACCEPTABLE/POOR/CRITICAL}
+            ```
+
+         6. **If no build directory found:**
+            - Display: "No build artifacts found - Run build first (0 points)"
+            - Score: 0 points
+            - Note: Bundle size analysis requires a production build
+
+         7. **Track bundle size in metrics:**
+            - Add bundle_size_kb to metrics.json
+            - Enables bundle size tracking over time
+
+      f3. **Enforce performance budgets** (Phase 3 Enhancement - Optional):
+
+         **YOU MUST NOW check if performance budgets are defined:**
+
+         1. **Check for budget configuration:**
+            - Read quality-standards.md using Read tool
+            - Look for budget settings:
+              * max_bundle_size (KB)
+              * max_initial_load (KB)
+              * enforce_budgets (true/false)
+
+         2. **If enforce_budgets is true, run enforcement:**
+            ```bash
+            cd ${REPO_ROOT} && bash ~/.claude/plugins/marketplaces/specswarm-marketplace/plugins/speclab/lib/performance-budget-enforcer.sh
+            ```
+
+         3. **Parse enforcement results:**
+            - Exit code 0: All budgets met (✓ PASS)
+            - Exit code 1: Budgets violated (❌ FAIL)
+
+         4. **If budgets violated:**
+            a. **Display violations** from enforcer output
+            b. **Check block_merge setting:**
+               - If block_merge_on_budget_violation is true: HALT
+               - If false: Warn and ask user "Continue anyway? (yes/no)"
+
+         5. **Display budget status:**
+            ```
+            ⚡ Performance Budget Status
+            - Bundle Size: {PASS/FAIL}
+            - Initial Load: {PASS/FAIL}
+            Overall: {PASS/FAIL}
+            ```
+
+         6. **If no budgets configured:**
+            - Skip enforcement
+            - Note: "Performance budgets not configured (optional)"
+
+      g. **Calculate quality score** using proportional scoring (Phase 2 & 3 Enhancement):
 
          **YOU MUST NOW calculate scores for each component:**
 
@@ -566,12 +649,12 @@ You **MUST** consider the user input before proceeding (if not empty).
 
             Formula: `score = min(25, (coverage / 90) * 25)`
 
-         3. **Integration Tests** (0-20 points - proportional):
-            - 100% passing: 20 points
+         3. **Integration Tests** (0-15 points - proportional):
+            - 100% passing: 15 points
             - Proportional for <100%
             - 0 points if not detected
 
-            Formula: `score = min(20, (pass_rate / 100) * 20)`
+            Formula: `score = min(15, (pass_rate / 100) * 15)`
 
          4. **Browser Tests** (0-15 points - proportional):
             - 100% passing: 15 points
@@ -580,18 +663,29 @@ You **MUST** consider the user input before proceeding (if not empty).
 
             Formula: `score = min(15, (pass_rate / 100) * 15)`
 
-         5. **Visual Alignment** (0-15 points - Phase 3 feature):
+         5. **Bundle Size** (0-20 points - Phase 3 feature):
+            - < 500KB total: 20 points
+            - 500-750KB: 15 points
+            - 750-1000KB: 10 points
+            - 1000-2000KB: 5 points
+            - > 2000KB: 0 points
+            - No build found: 0 points
+
+         6. **Visual Alignment** (0-15 points - Phase 3 future):
             - Set to 0 for now (screenshot analysis not yet implemented)
 
-         **Total possible: 100 points**
+         **Total possible: 115 points** (but scaled to 100 for display)
+
+         **Scoring Note**: When Visual Alignment is implemented, adjust other components to maintain 100-point scale.
 
          **Example Calculation:**
          - Unit Tests: 106/119 passing (89%) → 22.25 points
          - Coverage: 75% → 20.83 points
          - Integration Tests: Not detected → 0 points
          - Browser Tests: Not configured → 0 points
+         - Bundle Size: 450KB → 20 points
          - Visual Alignment: Not implemented → 0 points
-         - **Total: 43.08/100 points**
+         - **Total: 63.08/115 points** (scaled to ~55/100)
 
       h. **Display quality report** with proportional scoring details:
          ```
@@ -607,23 +701,30 @@ You **MUST** consider the user input before proceeding (if not empty).
             Coverage: {COVERAGE}% (target: {TARGET}%)
             Status: {EXCELLENT/GOOD/ACCEPTABLE/NEEDS IMPROVEMENT/INSUFFICIENT}
 
-         3. Integration Tests: {SCORE}/20 points
+         3. Integration Tests: {SCORE}/15 points
             {DETAILS or "Not detected"}
 
          4. Browser Tests: {SCORE}/15 points
             {DETAILS or "Not configured"}
 
-         5. Visual Alignment: 0/15 points
-            Status: Not yet implemented (Phase 3 feature)
+         5. Bundle Size: {SCORE}/20 points
+            Total: {TOTAL_SIZE} | Largest: {LARGEST_BUNDLE}
+            Status: {EXCELLENT/GOOD/ACCEPTABLE/POOR/CRITICAL}
+
+         6. Visual Alignment: 0/15 points
+            Status: Not yet implemented (Phase 3 future)
 
          ════════════════════════════════════════
-         Total Quality Score: {TOTAL_SCORE}/100 points
+         Raw Score: {RAW_SCORE}/115 points
+         Scaled Score: {SCALED_SCORE}/100 points
          ════════════════════════════════════════
 
          Status: {PASS/FAIL} (threshold: {THRESHOLD}/100)
 
          Score Breakdown:
-         ████████████████░░░░░░░░ {TOTAL_SCORE}% ({VISUAL_BAR})
+         ████████████████░░░░░░░░ {SCALED_SCORE}% ({VISUAL_BAR})
+
+         Note: Score scaled from 115-point system to 100-point display
          ```
 
       i. **Check quality gates** from quality-standards.md:

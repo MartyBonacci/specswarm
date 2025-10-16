@@ -228,6 +228,17 @@ max_workers: 4
 
 ## Performance Budgets
 
+### Enforcement (Phase 3 Feature)
+
+```yaml
+enforce_budgets: true
+block_merge_on_budget_violation: false
+```
+
+**Explanation**:
+- `enforce_budgets`: Enable performance budget validation during quality checks
+- `block_merge_on_budget_violation`: If `true`, prevents merge when budgets exceeded
+
 ### Page Load Times
 
 ```yaml
@@ -239,10 +250,19 @@ max_api_response: 500ms   # API endpoint response
 ### Bundle Sizes
 
 ```yaml
-max_js_bundle: 250kb   # gzipped
-max_css_bundle: 50kb   # gzipped
-max_total_size: 500kb  # gzipped
+max_bundle_size: 500      # KB per bundle (uncompressed)
+max_initial_load: 1000    # KB for initial load (uncompressed)
+max_js_bundle: 250        # KB gzipped
+max_css_bundle: 50        # KB gzipped
+max_total_size: 500       # KB gzipped
 ```
+
+**Budget Levels**:
+- **Excellent**: < 500KB total
+- **Good**: 500-750KB
+- **Acceptable**: 750-1000KB
+- **Poor**: 1000-2000KB
+- **Critical**: > 2000KB
 
 ---
 
