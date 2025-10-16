@@ -69,14 +69,47 @@ Execute the following checks before proceeding with implementation:
 ## Outline
 
 1. **Discover Feature Context**:
-   ```bash
-   REPO_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
-   BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
-   FEATURE_NUM=$(echo "$BRANCH" | grep -oE '^[0-9]{3}')
-   [ -z "$FEATURE_NUM" ] && FEATURE_NUM=$(ls -1 features/ 2>/dev/null | grep -oE '^[0-9]{3}' | sort -nr | head -1)
-   FEATURE_DIR=$(find features -maxdepth 1 -type d -name "${FEATURE_NUM}-*" 2>/dev/null | head -1)
-   FEATURE_DIR="${REPO_ROOT}/${FEATURE_DIR}"
-   ```
+
+   **YOU MUST NOW discover the feature context using the Bash tool:**
+
+   a. **Get repository root** by executing:
+      ```bash
+      git rev-parse --show-toplevel 2>/dev/null || pwd
+      ```
+      Store the result as REPO_ROOT.
+
+   b. **Get current branch name** by executing:
+      ```bash
+      git rev-parse --abbrev-ref HEAD 2>/dev/null
+      ```
+      Store the result as BRANCH.
+
+   c. **Extract feature number from branch name** by executing:
+      ```bash
+      echo "$BRANCH" | grep -oE '^[0-9]{3}'
+      ```
+      Store the result as FEATURE_NUM.
+
+   d. **If feature number is empty, find latest feature** by executing:
+      ```bash
+      ls -1 features/ 2>/dev/null | grep -oE '^[0-9]{3}' | sort -nr | head -1
+      ```
+      Store the result as FEATURE_NUM.
+
+   e. **Find feature directory** by executing:
+      ```bash
+      find features -maxdepth 1 -type d -name "${FEATURE_NUM}-*" 2>/dev/null | head -1
+      ```
+      Combine with REPO_ROOT to get full path as FEATURE_DIR.
+
+   f. **Display to user:**
+      ```
+      📁 Feature Context
+      ✓ Repository: {REPO_ROOT}
+      ✓ Branch: {BRANCH}
+      ✓ Feature: {FEATURE_NUM}
+      ✓ Directory: {FEATURE_DIR}
+      ```
 
 2. **Check checklists status** (if FEATURE_DIR/checklists/ exists):
    - Scan all checklist files in the checklists/ directory
@@ -123,32 +156,54 @@ Execute the following checks before proceeding with implementation:
 
    **Purpose**: Runtime validation before writing any code or imports
 
-   1. **Load Tech Stack Compliance Report** from plan.md:
-      - Check if "Tech Stack Compliance Report" section exists
-      - If it does NOT exist: Skip validation (plan created before SpecSwarm)
-      - If it DOES exist: Proceed with validation
+   **YOU MUST NOW perform tech stack validation using these steps:**
 
-   2. **Verify All Conflicts Resolved**:
-      ```bash
-      if grep -q "⚠️ Conflicting Technologies" "${FEATURE_DIR}/plan.md"; then
-        if grep -q "**Your choice**: _\[" "${FEATURE_DIR}/plan.md"; then
-          ERROR "Tech stack conflicts still unresolved"
-          MESSAGE "Cannot implement until all conflicts in plan.md are resolved"
-          HALT
-        fi
-      fi
-      ```
+   1. **Check if tech-stack.md exists** using the Read tool:
+      - Try to read `/memory/tech-stack.md`
+      - If file doesn't exist: Skip this entire section (3b)
+      - If file exists: Continue with validation
 
-   3. **Verify No Prohibited Technologies in Plan**:
-      ```bash
-      if grep -q "❌ Prohibited Technologies" "${FEATURE_DIR}/plan.md"; then
-        if grep -q "**Cannot proceed**" "${FEATURE_DIR}/plan.md"; then
-          ERROR "Prohibited technologies still present in plan.md"
-          MESSAGE "Remove or replace prohibited technologies before implementing"
-          HALT
-        fi
-      fi
-      ```
+   2. **Load Tech Stack Compliance Report** from plan.md using the Read tool:
+      - Read `${FEATURE_DIR}/plan.md`
+      - Search for "Tech Stack Compliance Report" section
+      - If section does NOT exist: Skip validation (plan created before SpecSwarm)
+      - If section DOES exist: Continue to step 3
+
+   3. **Verify All Conflicts Resolved** using the Grep tool:
+
+      a. Search for conflicts:
+         ```bash
+         grep -q "⚠️ Conflicting Technologies" "${FEATURE_DIR}/plan.md"
+         ```
+
+      b. If conflicts found, check if unresolved:
+         ```bash
+         grep -q "**Your choice**: _\[" "${FEATURE_DIR}/plan.md"
+         ```
+
+      c. If unresolved choices found:
+         - **HALT** implementation
+         - Display error: "❌ Tech stack conflicts still unresolved"
+         - Display message: "Cannot implement until all conflicts in plan.md are resolved"
+         - Stop execution
+
+   4. **Verify No Prohibited Technologies in Plan** using the Grep tool:
+
+      a. Search for prohibited techs:
+         ```bash
+         grep -q "❌ Prohibited Technologies" "${FEATURE_DIR}/plan.md"
+         ```
+
+      b. If found, check if blocking:
+         ```bash
+         grep -q "**Cannot proceed**" "${FEATURE_DIR}/plan.md"
+         ```
+
+      c. If blocking issues found:
+         - **HALT** implementation
+         - Display error: "❌ Prohibited technologies still present in plan.md"
+         - Display message: "Remove or replace prohibited technologies before implementing"
+         - Stop execution
 
    4. **Load Prohibited Technologies List**:
       ```bash
@@ -587,6 +642,78 @@ Execute the following after all tasks are completed:
          - Use Edit tool to update the JSON file
 
    **IMPORTANT**: You MUST execute this step if quality-standards.md exists. Do NOT skip it. Use the Bash tool to run all commands and parse the results.
+
+   4. **Proactive Quality Improvements** - If quality score < 80/100:
+
+      **YOU MUST NOW offer to improve the quality score:**
+
+      a. **Check for missing coverage tool:**
+         - If Vitest was detected but coverage measurement showed 0% or "not configured":
+           - Display to user:
+             ```
+             ⚡ Coverage Tool Not Installed
+             =============================
+
+             Installing @vitest/coverage-v8 would add +25 points to your quality score.
+
+             Current: {CURRENT_SCORE}/100
+             With coverage: {CURRENT_SCORE + 25}/100
+
+             Would you like me to:
+             1. Install coverage tool and re-run validation
+             2. Skip (continue without coverage)
+
+             Choose (1 or 2):
+             ```
+           - If user chooses 1:
+             - Run: `npm install --save-dev @vitest/coverage-v8`
+             - Check if vitest.config.ts exists using Read tool
+             - If exists, update it to add coverage configuration
+             - If not exists, create vitest.config.ts with coverage config
+             - Re-run quality validation (step 3 above)
+             - Display new score
+
+      b. **Check for missing E2E tests:**
+         - If Playwright was detected but no tests were found:
+           - Display to user:
+             ```
+             ⚡ No E2E Tests Found
+             =====================
+
+             Writing basic E2E tests would add +15 points to your quality score.
+
+             Current: {CURRENT_SCORE}/100
+             With E2E tests: {CURRENT_SCORE + 15}/100
+
+             Would you like me to:
+             1. Generate basic Playwright test templates
+             2. Skip (continue without E2E tests)
+
+             Choose (1 or 2):
+             ```
+           - If user chooses 1:
+             - Create tests/e2e/ directory if not exists
+             - Generate basic test file with:
+               * Login flow test (if authentication exists)
+               * Main feature flow test (based on spec.md)
+               * Basic smoke test
+             - Run: `npx playwright test`
+             - Re-run quality validation
+             - Display new score
+
+      c. **Display final improvement summary:**
+         ```
+         📊 Quality Score Improvement
+         ============================
+
+         Before improvements: {ORIGINAL_SCORE}/100
+         After improvements:  {FINAL_SCORE}/100
+         Increase: +{INCREASE} points
+
+         {STATUS_EMOJI} Quality Status: {PASS/FAIL}
+         ```
+
+   **Note**: This proactive improvement step can increase quality scores from 25/100 to 65/100+ automatically.
 
 <!-- ========== END QUALITY VALIDATION ========== -->
 
