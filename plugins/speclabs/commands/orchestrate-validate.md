@@ -24,15 +24,15 @@ Run comprehensive validation on a target project using:
 2. **Visual Analysis** (Claude Vision API) - Analyze screenshots for UI issues
 3. **Terminal Monitoring** - Check dev server output for errors
 
-**Usage**: `/project-orchestrator:orchestrate-validate <project-path> [url]`
+**Usage**: `/speclabs:orchestrate-validate <project-path> [url]`
 
 **Examples**:
 ```bash
 # Validate project at specific path
-/project-orchestrator:orchestrate-validate /home/marty/code-projects/tweeter-spectest
+/speclabs:orchestrate-validate /home/marty/code-projects/tweeter-spectest
 
 # Validate with custom URL
-/project-orchestrator:orchestrate-validate /home/marty/code-projects/tweeter-spectest http://localhost:5173
+/speclabs:orchestrate-validate /home/marty/code-projects/tweeter-spectest http://localhost:5173
 ```
 
 ---
@@ -73,10 +73,10 @@ fi
 if [ -z "$PROJECT_PATH" ]; then
   echo "❌ Error: Project path required"
   echo ""
-  echo "Usage: /project-orchestrator:orchestrate-validate <project-path> [url]"
+  echo "Usage: /speclabs:orchestrate-validate <project-path> [url]"
   echo ""
   echo "Example:"
-  echo "/project-orchestrator:orchestrate-validate /home/marty/code-projects/tweeter-spectest"
+  echo "/speclabs:orchestrate-validate /home/marty/code-projects/tweeter-spectest"
   exit 1
 fi
 
@@ -358,7 +358,7 @@ echo ""
 echo "📈 Next Steps:"
 echo "1. Review screenshot: /tmp/orchestrator-validation-screenshot.png"
 echo "2. Review full results: /tmp/orchestrator-validation-results.json"
-echo "3. If validation passed, ready for orchestrate-test"
+echo "3. If validation passed, ready for orchestrate"
 echo ""
 ```
 

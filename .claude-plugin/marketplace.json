@@ -20,8 +20,8 @@
     {
       "name": "speclabs",
       "source": "./plugins/speclabs",
-      "version": "1.0.0",
-      "description": "Experimental laboratory for autonomous development and advanced debugging. Features in active development - use at your own risk."
+      "version": "2.0.0",
+      "description": "Experimental laboratory for autonomous development with Phase 2 Feature Workflow Engine. Complete feature orchestration from description to implementation. Use at your own risk."
     },
     {
       "name": "speckit",
