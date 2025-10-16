@@ -534,6 +534,78 @@ Execute the following after all tasks are completed:
    📋 Analyze quality: /spectest:analyze
    ```
 
+<!-- ========== SSR PATTERN VALIDATION ========== -->
+<!-- Added by Marty Bonacci & Claude Code (2025-10-15) -->
+
+6b. **SSR Architecture Validation** - Prevent Bug 913-type issues:
+
+   **Purpose**: Detect hardcoded URLs and relative URLs in server-side rendering contexts
+
+   **YOU MUST NOW run SSR pattern validation using the Bash tool:**
+
+   1. **Execute SSR validator:**
+      ```bash
+      cd ${REPO_ROOT} && bash ~/.claude/plugins/marketplaces/specswarm-marketplace/plugins/spectest/lib/ssr-validator.sh
+      ```
+
+   2. **Parse validation results:**
+      - Exit code 0: No issues found (✓ PASS)
+      - Exit code 1: Issues detected (⚠️ FAIL)
+
+   3. **If issues detected:**
+
+      a. **Display issue summary** from validator output
+
+      b. **Ask user for action:**
+         ```
+         ⚠️  SSR Pattern Issues Detected
+         ================================
+
+         Would you like me to:
+         1. Auto-fix common issues (create getApiUrl helper, update imports)
+         2. Show detailed issues and fix manually
+         3. Skip (continue anyway - NOT RECOMMENDED)
+
+         Choose (1/2/3):
+         ```
+
+      c. **If user chooses option 1 (Auto-fix):**
+         - Check if app/utils/api.ts exists
+         - If not, create it with getApiUrl() helper:
+           ```typescript
+           export function getApiUrl(path: string): string {
+             const base = typeof window !== 'undefined'
+               ? ''
+               : process.env.API_BASE_URL || 'http://localhost:3000';
+             return `${base}${path}`;
+           }
+           ```
+         - Scan all files with hardcoded URLs using Grep tool
+         - For each file:
+           * Add import: `import { getApiUrl } from '../utils/api';`
+           * Replace `fetch('http://localhost:3000/api/...')` with `fetch(getApiUrl('/api/...'))`
+           * Replace `fetch('/api/...')` in loaders/actions with `fetch(getApiUrl('/api/...'))`
+         - Re-run SSR validator to confirm fixes
+         - Display: "✅ Auto-fix complete. All SSR patterns corrected."
+
+      d. **If user chooses option 2 (Manual fix):**
+         - Display detailed issue list from validator
+         - Display recommendations
+         - Wait for user to fix manually
+         - Offer to re-run validator: "Type 'validate' to re-check or 'continue' to proceed"
+
+      e. **If user chooses option 3 (Skip):**
+         - Display warning: "⚠️ Skipping SSR validation. Production deployment may fail."
+         - Continue to next step
+
+   4. **If no issues found:**
+      - Display: "✅ SSR patterns validated - No architectural issues detected"
+      - Continue to next step
+
+   **IMPORTANT**: This validation prevents production failures from Bug 913-type issues (relative URLs in SSR contexts).
+
+<!-- ========== END SSR PATTERN VALIDATION ========== -->
+
 <!-- ========== QUALITY VALIDATION (SpecTest Phase 1) ========== -->
 
 7. **Quality Validation** - CRITICAL STEP, MUST EXECUTE:
@@ -770,36 +842,98 @@ Execute the following after all tasks are completed:
 
    c. **If user wants to commit, intelligently stage ONLY source files:**
 
-      **CRITICAL - Smart Git Staging (to avoid build artifacts):**
+      **CRITICAL - Smart Git Staging (Project-Aware):**
 
-      1. **Get list of all changed files:**
+      **YOU MUST NOW perform smart file staging using these steps:**
+
+      1. **Detect project type** by checking for files:
+         - Read package.json using Read tool
+         - Check for framework indicators:
+           * Vite: `vite.config.ts` or `"vite"` in package.json
+           * Next.js: `next.config.js` or `"next"` in package.json
+           * Remix: `remix.config.js` or `"@remix-run"` in package.json
+           * Create React App: `react-scripts` in package.json
+           * Node.js generic: package.json exists but no specific framework
+         - Store detected type for use in exclusions
+
+      2. **Build exclusion patterns based on project type:**
+
+         a. **Base exclusions (all projects):**
+            ```
+            ':!node_modules/' ':!.pnpm-store/' ':!.yarn/'
+            ':!*.log' ':!coverage/' ':!.nyc_output/'
+            ```
+
+         b. **Project-specific exclusions:**
+            - Vite: `':!dist/' ':!build/'`
+            - Next.js: `':!.next/' ':!out/'`
+            - Remix: `':!build/' ':!public/build/'`
+            - CRA: `':!build/'`
+
+         c. **Parse .gitignore** using Read tool:
+            - Read .gitignore if it exists
+            - Extract patterns (lines not starting with #)
+            - Convert to pathspec format: `:!{pattern}`
+            - Add to exclusion list
+
+      3. **Check for large files** using Bash:
          ```bash
-         git status --porcelain
+         git status --porcelain | cut -c4- | while read file; do
+           if [ -f "$file" ] && [ $(stat -f%z "$file" 2>/dev/null || stat -c%s "$file" 2>/dev/null) -gt 1048576 ]; then
+             echo "$file ($(du -h "$file" | cut -f1))"
+           fi
+         done
          ```
 
-      2. **Filter out build artifacts** - Exclude files matching these patterns:
-         - `build/`, `dist/`, `.next/`, `out/`
-         - `node_modules/`, `.pnpm-store/`, `.yarn/`
-         - `*.log`, `.env*` (unless explicitly in repo)
-         - `coverage/`, `.nyc_output/`
-         - `*.min.js`, `*.map`
-         - Anything matching patterns in .gitignore
+         a. **If large files found:**
+            - Display warning:
+              ```
+              ⚠️ Large Files Detected
+              ======================
 
-      3. **Stage ONLY filtered files** using specific paths:
+              The following files are >1MB:
+              - {file1} ({size1})
+              - {file2} ({size2})
+
+              These may not belong in git. Add to .gitignore?
+              1. Add to .gitignore and skip
+              2. Commit anyway
+              3. Cancel commit
+
+              Choose (1/2/3):
+              ```
+
+            - If option 1: Append to .gitignore, exclude from staging
+            - If option 2: Include in staging
+            - If option 3: Cancel commit, return to main flow
+
+      4. **Stage files with exclusions** using Bash:
          ```bash
-         # For each file from filtered list:
-         git add {specific-file-path}
+         git add . {BASE_EXCLUSIONS} {PROJECT_EXCLUSIONS} {GITIGNORE_EXCLUSIONS}
          ```
 
-         OR use git's pathspec feature to exclude patterns:
+         Example for Vite project:
          ```bash
-         git add . ':!build/' ':!dist/' ':!.next/' ':!out/' ':!coverage/' ':!*.log'
+         git add . ':!node_modules/' ':!dist/' ':!build/' ':!*.log' ':!coverage/'
          ```
 
-      4. **Commit with user-provided message** using Bash:
+      5. **Verify staging** using Bash:
+         ```bash
+         git diff --cached --name-only
+         ```
+
+         a. **Check if any excluded patterns appear:**
+            - If `dist/`, `build/`, `.next/`, etc. appear in staged files
+            - Display error: "❌ Build artifacts detected in staging"
+            - Ask user: "Unstage and retry? (yes/no)"
+            - If yes: `git reset` and retry with stricter patterns
+
+      6. **Commit with message** using Bash:
          ```bash
          git commit -m "{USER_PROVIDED_MESSAGE}"
          ```
+
+      **IMPORTANT**: This project-aware staging prevents build artifacts and large files from being committed.
 
    d. **Merge to main branch:**
       - Test merge first (dry run): `git merge --no-commit --no-ff {CURRENT_BRANCH}`

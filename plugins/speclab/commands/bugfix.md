@@ -749,14 +749,114 @@ if [ "$ENABLE_HOOKS" = "true" ]; then
   echo ""
   echo "⏱️  Time to Fix: ${WORKFLOW_HOURS}h"
   echo ""
-  echo "✅ Bugfix Workflow Complete"
-  echo ""
-  echo "📈 Next Steps:"
-  echo "- Review: ${BUGFIX_SPEC}"
-  echo "- Commit changes with regression test"
-  echo "- View metrics: /speclab:workflow-metrics ${FEATURE_NUM}"
 fi
 ```
+
+---
+
+## Quality Impact Validation
+
+**Purpose**: Ensure bug fix doesn't introduce new issues or reduce code quality
+
+**YOU MUST NOW validate quality impact using these steps:**
+
+1. **Check if quality standards exist** using the Read tool:
+   - Try to read `${REPO_ROOT}/memory/quality-standards.md`
+   - If file doesn't exist: Skip quality validation, go to Final Output
+   - If file exists: Continue with validation
+
+2. **Execute quality validation** using the Bash tool:
+
+   a. **Display header:**
+      ```
+      🧪 Quality Impact Analysis
+      ==========================
+      ```
+
+   b. **Run unit tests:**
+      ```bash
+      cd ${REPO_ROOT} && npx vitest run --reporter=verbose 2>&1 | tail -50
+      ```
+      Parse output for test counts (total, passed, failed).
+
+   c. **Measure code coverage** (if tool available):
+      ```bash
+      npx vitest run --coverage 2>&1 | grep -A 10 "Coverage" || echo "Coverage not configured"
+      ```
+      Parse coverage percentage.
+
+   d. **Calculate quality score:**
+      - Unit Tests: 25 points if all pass, 0 if any fail
+      - Coverage: 25 points * (coverage_pct / 80)
+      - Other components: Use same scoring as implement workflow
+
+3. **Compare before/after quality:**
+
+   a. **Load previous quality score** from metrics.json:
+      - Read `${REPO_ROOT}/memory/metrics.json`
+      - Find most recent quality score before this bugfix
+      - Store as BEFORE_SCORE
+
+   b. **Calculate current quality score:**
+      - Use scores from step 2
+      - Store as AFTER_SCORE
+
+   c. **Calculate delta:**
+      - QUALITY_DELTA = AFTER_SCORE - BEFORE_SCORE
+
+4. **Display quality impact report:**
+   ```
+   📊 Quality Impact Report
+   ========================
+
+   Before Fix:  {BEFORE_SCORE}/100
+   After Fix:   {AFTER_SCORE}/100
+   Change:      {QUALITY_DELTA > 0 ? '+' : ''}{QUALITY_DELTA} points
+
+   Test Results:
+   - Total Tests: {TOTAL}
+   - Passing: {PASSED} ({PASS_RATE}%)
+   - Failing: {FAILED}
+
+   Code Coverage: {COVERAGE}%
+
+   {VERDICT}
+   ```
+
+5. **Determine verdict:**
+
+   a. **If QUALITY_DELTA < 0 (quality decreased):**
+      - Display: "⚠️ WARNING: Bug fix reduced code quality by {abs(QUALITY_DELTA)} points"
+      - Ask user:
+        ```
+        This suggests the fix may have introduced new issues.
+
+        Would you like to:
+        1. Review the changes and improve quality
+        2. Continue anyway (NOT RECOMMENDED)
+        3. Revert fix and try different approach
+
+        Choose (1/2/3):
+        ```
+      - If user chooses 1: Halt, suggest improvements
+      - If user chooses 2: Display strong warning and continue
+      - If user chooses 3: Offer to revert last commit
+
+   b. **If QUALITY_DELTA == 0 (no change):**
+      - Display: "✅ Quality maintained - Fix didn't introduce regressions"
+      - Continue to Final Output
+
+   c. **If QUALITY_DELTA > 0 (quality improved):**
+      - Display: "🎉 Quality improved! Fix increased quality by {QUALITY_DELTA} points"
+      - Highlight improvements (more tests passing, higher coverage, etc.)
+      - Continue to Final Output
+
+6. **Save quality metrics:**
+   - Update `${REPO_ROOT}/memory/metrics.json`
+   - Add quality_delta field to bugfix record
+   - Include before/after scores
+
+**IMPORTANT**: This validation catches regressions introduced by bug fixes. If quality decreases, investigate before proceeding.
 
 ---
 
