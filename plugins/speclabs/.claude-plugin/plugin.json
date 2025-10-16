@@ -1,0 +1,27 @@
+{
+  "name": "speclabs",
+  "version": "1.0.0",
+  "description": "Experimental laboratory for autonomous development and advanced debugging. Features in active development - use at your own risk.",
+  "author": {
+    "name": "Marty Bonacci",
+    "url": "https://github.com/MartyBonacci"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/MartyBonacci/specswarm",
+  "repository": "https://github.com/MartyBonacci/specswarm",
+  "keywords": [
+    "experimental",
+    "autonomous-development",
+    "orchestration",
+    "debugging",
+    "multi-agent",
+    "test-automation",
+    "validation",
+    "systematic-debugging",
+    "root-cause-analysis",
+    "logging",
+    "monitoring",
+    "playwright",
+    "claude-vision"
+  ]
+}

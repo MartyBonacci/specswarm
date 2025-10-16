@@ -1,7 +1,7 @@
 {
   "name": "project-orchestrator",
   "version": "0.1.1",
-  "description": "Autonomous development orchestrator for building features and projects with multi-agent coordination (Phase 0)",
+  "description": "⚠️ DEPRECATED - Merged into SpecLabs v1.0+. Autonomous development now unified with advanced debugging in experimental SpecLabs plugin",
   "author": {
     "name": "Marty Bonacci",
     "url": "https://github.com/MartyBonacci"
@@ -10,15 +10,10 @@
   "homepage": "https://github.com/MartyBonacci/specswarm",
   "repository": "https://github.com/MartyBonacci/specswarm",
   "keywords": [
+    "deprecated",
     "autonomous-development",
     "orchestration",
-    "multi-agent",
-    "test-automation",
-    "prompt-generation",
-    "validation",
-    "playwright",
-    "claude-vision",
-    "project-building",
-    "experimental"
+    "merged",
+    "legacy"
   ]
 }

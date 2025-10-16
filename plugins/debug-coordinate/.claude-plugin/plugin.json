@@ -1,7 +1,7 @@
 {
   "name": "debug-coordinate",
   "version": "1.0.0",
-  "description": "Systematic debugging coordination for multi-bug scenarios with logging and agent orchestration",
+  "description": "⚠️ DEPRECATED - Merged into SpecLabs v1.0+. Advanced debugging now unified with autonomous development in experimental SpecLabs plugin",
   "author": {
     "name": "Marty Bonacci",
     "url": "https://github.com/MartyBonacci"
@@ -10,13 +10,10 @@
   "homepage": "https://github.com/MartyBonacci/specswarm",
   "repository": "https://github.com/MartyBonacci/specswarm",
   "keywords": [
+    "deprecated",
     "debugging",
-    "logging",
-    "monitoring",
     "orchestration",
-    "multi-agent",
-    "root-cause-analysis",
-    "systematic-debugging",
-    "experimental"
+    "merged",
+    "legacy"
   ]
 }
