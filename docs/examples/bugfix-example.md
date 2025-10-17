@@ -1,6 +1,6 @@
 # Bugfix Example: Login Timeout Issue
 
-**Real-world walkthrough of using `/speclab:bugfix` to fix a production bug**
+**Real-world walkthrough of using `/specswarm:bugfix` to fix a production bug**
 
 ---
 
@@ -35,7 +35,7 @@ Switched to a new branch 'bugfix/042-login-timeout'
 ## Step 2: Run Bugfix Workflow
 
 ```bash
-/speclab:bugfix
+/specswarm:bugfix
 ```
 
 **Claude's Response:**
@@ -166,8 +166,8 @@ login attempts. Started happening after recent database migration.
 ## Metadata
 
 **Workflow**: Bugfix (regression-test-first)
-**Created By**: SpecLab Plugin v1.0.0
-**Smart Integration**: SpecSwarm + SpecTest enabled
+**Created By**: SpecSwarm Plugin v2.0.0
+**Smart Integration**: Tech stack enforcement + quality validation enabled
 ```
 
 ---
@@ -286,7 +286,7 @@ describe('Bug 042: Login Timeout Regression Test', () => {
 ## Metadata
 
 **Workflow**: Bugfix (regression-test-first)
-**Created By**: SpecLab Plugin v1.0.0
+**Created By**: SpecSwarm Plugin v2.0.0
 ```
 
 ---
@@ -594,7 +594,7 @@ Duration: 1h 12min
 2. Commit changes: git add . && git commit -m "fix: login timeout issue (bug 042)"
 3. Create PR and deploy
 4. Monitor production metrics
-5. View metrics: /speclab:workflow-metrics 042
+5. View metrics: /specswarm:workflow-metrics 042
 ```
 
 ---
@@ -665,7 +665,7 @@ EOF
 
 ```bash
 # View metrics for this bugfix
-/speclab:workflow-metrics 042
+/specswarm:workflow-metrics 042
 ```
 
 **Output:**
@@ -765,7 +765,7 @@ Total:    ███████████████████████�
 
 ## Comparison: With vs Without SpecLab
 
-### Without SpecLab (Ad-hoc)
+### Without SpecSwarm Bugfix (Ad-hoc)
 
 ```
 1. Read bug report
@@ -785,10 +785,10 @@ Result:
 - ~2-3 hours (lots of manual testing)
 ```
 
-### With SpecLab (Systematic)
+### With SpecSwarm Bugfix (Systematic)
 
 ```
-1. /speclab:bugfix
+1. /specswarm:bugfix
 2. Claude guides through regression-test-first
 3. Test fails (proves bug exists)
 4. Implement fix
@@ -816,7 +816,7 @@ Result:
 git checkout -b bugfix/NNN-description
 
 # 2. Run workflow
-/speclab:bugfix
+/specswarm:bugfix
 
 # 3. Follow Claude's guidance
 
@@ -824,6 +824,5 @@ git checkout -b bugfix/NNN-description
 ```
 
 **Questions?**
-- [Full SpecLab Documentation](../../plugins/speclab/README.md)
-- [SpecLab Cheatsheet](../cheatsheets/speclab-cheatsheet.md)
-- [Complete Workflow Guide](../cheatsheets/complete-workflow-guide.md)
+- [Full SpecSwarm Documentation](../../plugins/specswarm/README.md)
+- [SpecSwarm Commands Reference](../../plugins/specswarm/COMMANDS.md)

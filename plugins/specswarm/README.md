@@ -17,7 +17,7 @@ SpecSwarm is a comprehensive plugin that provides everything you need for the co
 - 🚀 **Performance Monitoring** - Bundle size tracking and budgets
 - 🏗️ **Architecture Validation** - SSR patterns, tech stack compliance
 
-**17 Commands** | **8 Utilities** | **Production Ready**
+**18 Commands** | **8 Utilities** | **Production Ready**
 
 ---
 

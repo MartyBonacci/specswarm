@@ -21,7 +21,7 @@ SpecSwarm provides **two curated plugins** that cover the complete software deve
 
 The unified, production-ready plugin for the complete development lifecycle. SpecSwarm consolidates spec-driven development, lifecycle workflows, quality validation, and performance monitoring into one comprehensive toolkit.
 
-**17 Commands** | **8 Utilities** | **Production Ready**
+**18 Commands** | **Production Ready** | **Phase 2.2 Complete**
 
 #### Key Features
 
@@ -64,12 +64,15 @@ The unified, production-ready plugin for the complete development lifecycle. Spe
 - `/specswarm:constitution` - Create/update project governance
 
 **Bug & Issue Management (2)**:
-- `/specswarm:bugfix` - Regression-test-first fixing with chain bug detection
+- `/specswarm:bugfix` - Regression-test-first fixing with ultrathinking (Phase 2.2)
 - `/specswarm:hotfix` - Emergency production issue response
 
 **Code Maintenance (2)**:
 - `/specswarm:modify` - Feature modification with impact analysis
 - `/specswarm:refactor` - Metrics-driven quality improvement
+
+**Workflow Completion (1)** ✨ NEW! Phase 2.2:
+- `/specswarm:complete` - Clean, guided feature/bugfix completion with merge to main
 
 **Analysis & Utilities (5)**:
 - `/specswarm:analyze-quality` - Comprehensive codebase analysis
@@ -376,7 +379,7 @@ specswarm/
 │   ├── specswarm/                # SpecSwarm v2.0.0 (production)
 │   │   ├── .claude-plugin/
 │   │   │   └── plugin.json
-│   │   ├── commands/             # 17 commands
+│   │   ├── commands/             # 18 commands (NEW: complete)
 │   │   │   ├── specify.md
 │   │   │   ├── plan.md
 │   │   │   ├── tasks.md
@@ -393,43 +396,33 @@ specswarm/
 │   │   │   ├── analyze-quality.md
 │   │   │   ├── impact.md
 │   │   │   ├── suggest.md
-│   │   │   └── workflow-metrics.md
-│   │   ├── lib/                  # 8 utilities
-│   │   │   ├── chain-bug-detector.sh
-│   │   │   ├── bundle-size-monitor.sh
-│   │   │   ├── performance-budget-enforcer.sh
-│   │   │   └── ...
+│   │   │   ├── workflow-metrics.md
+│   │   │   └── complete.md       # NEW! Phase 2.2
+│   │   ├── templates/            # NEW! Phase 2.2
+│   │   │   └── gitignore-diagnostic-files.txt
 │   │   └── README.md
-│   ├── speclabs/                 # SpecLabs v2.0.0 (experimental - Phase 2)
-│   │   ├── .claude-plugin/
-│   │   │   └── plugin.json
-│   │   ├── commands/             # 4 commands
-│   │   │   ├── orchestrate-feature.md  # NEW! Phase 2
-│   │   │   ├── orchestrate.md
-│   │   │   ├── orchestrate-validate.md
-│   │   │   └── coordinate.md
-│   │   ├── lib/                  # 5 components
-│   │   │   ├── feature-orchestrator.sh  # NEW! Phase 2
-│   │   │   ├── task-converter.sh        # NEW! Phase 2
-│   │   │   ├── state-manager.sh
-│   │   │   ├── decision-maker.sh
-│   │   │   └── prompt-refiner.sh
-│   │   └── README.md
-│   ├── speckit/                  # DEPRECATED (merged into SpecSwarm)
-│   │   ├── DEPRECATED.md
-│   │   └── ...
-│   ├── spectest/                 # DEPRECATED (merged into SpecSwarm)
-│   │   ├── DEPRECATED.md
-│   │   └── ...
-│   ├── speclab/                  # DEPRECATED (merged into SpecSwarm)
-│   │   ├── DEPRECATED.md
-│   │   └── ...
-│   ├── debug-coordinate/         # DEPRECATED (merged into SpecLabs)
-│   │   ├── DEPRECATED.md
-│   │   └── ...
-│   └── project-orchestrator/     # DEPRECATED (merged into SpecLabs)
-│       ├── DEPRECATED.md
-│       └── ...
+│   └── speclabs/                 # SpecLabs v2.0.0 (experimental - Phase 2)
+│       ├── .claude-plugin/
+│       │   └── plugin.json
+│       ├── commands/             # 4 commands
+│       │   ├── orchestrate-feature.md  # Phase 2
+│       │   ├── orchestrate.md
+│       │   ├── orchestrate-validate.md
+│       │   └── coordinate.md
+│       ├── lib/                  # 17 utilities + components
+│       │   ├── feature-orchestrator.sh
+│       │   ├── task-converter.sh
+│       │   ├── state-manager.sh
+│       │   ├── decision-maker.sh
+│       │   ├── prompt-refiner.sh
+│       │   ├── metrics-tracker.sh
+│       │   ├── vision-api.sh
+│       │   ├── bundle-size-monitor.sh
+│       │   ├── chain-bug-detector.sh
+│       │   ├── orchestrator-detection.sh
+│       │   ├── performance-budget-enforcer.sh
+│       │   └── integration-patterns/  # NEW! Phase 2.1
+│       └── README.md
 ├── README.md                     # This file
 └── LICENSE                       # MIT License
 ```
