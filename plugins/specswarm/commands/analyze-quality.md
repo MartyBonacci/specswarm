@@ -214,7 +214,7 @@ Perform comprehensive codebase quality analysis to identify improvement opportun
 
 1. **Run bundle size analyzer** (Phase 3 Enhancement) using Bash:
    ```bash
-   bash ~/.claude/plugins/marketplaces/specswarm-marketplace/plugins/speclab/lib/bundle-size-monitor.sh ${REPO_ROOT}
+   bash ~/.claude/plugins/marketplaces/specswarm-marketplace/plugins/speclabs/lib/bundle-size-monitor.sh ${REPO_ROOT}
    ```
    Capture:
    - Total bundle size
@@ -452,7 +452,7 @@ Perform comprehensive codebase quality analysis to identify improvement opportun
    Commands:
    - View detailed SSR issues: bash plugins/specswarm/lib/ssr-validator.sh
    - Generate test templates: /specswarm:implement {feature}
-   - Re-run analysis: /speclab:analyze-quality
+   - Re-run analysis: /specswarm:analyze-quality
    ```
 
 ---

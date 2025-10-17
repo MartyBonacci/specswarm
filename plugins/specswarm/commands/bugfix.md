@@ -42,15 +42,15 @@ Before starting workflow, detect available plugins for enhanced capabilities:
 # Check for SpecSwarm (tech stack enforcement)
 SPECSWARM_INSTALLED=$(claude plugin list | grep -q "specswarm" && echo "true" || echo "false")
 
-# Check for SpecTest (parallel execution, hooks, metrics)
-SPECTEST_INSTALLED=$(claude plugin list | grep -q "spectest" && echo "true" || echo "false")
+# Check for SpecLabs (experimental features)
+SPECLABS_INSTALLED=$(claude plugin list | grep -q "speclabs" && echo "true" || echo "false")
 
 # Configure workflow based on detection
-if [ "$SPECTEST_INSTALLED" = "true" ]; then
+if [ "$SPECLABS_INSTALLED" = "true" ]; then
   EXECUTION_MODE="parallel"
   ENABLE_HOOKS=true
   ENABLE_METRICS=true
-  echo "🎯 Smart Integration: SpecTest detected (parallel execution, hooks, metrics enabled)"
+  echo "🎯 Smart Integration: SpecLabs detected (experimental features enabled)"
 elif [ "$SPECSWARM_INSTALLED" = "true" ]; then
   EXECUTION_MODE="sequential"
   ENABLE_TECH_VALIDATION=true
@@ -890,7 +890,7 @@ fi
 
 1. **Run chain bug detector:**
    ```bash
-   bash ~/.claude/plugins/marketplaces/specswarm-marketplace/plugins/speclab/lib/chain-bug-detector.sh ${REPO_ROOT}
+   bash ~/.claude/plugins/marketplaces/specswarm-marketplace/plugins/speclabs/lib/chain-bug-detector.sh ${REPO_ROOT}
    ```
 
 2. **Parse detector output:**
@@ -915,8 +915,8 @@ fi
    b. **Offer actions:**
       ```
       What would you like to do?
-      1. Review fix and improve (analyze with /speclab:analyze-quality)
-      2. Use orchestrator for complex fix (/debug-coordinate:coordinate)
+      1. Review fix and improve (analyze with /specswarm:analyze-quality)
+      2. Use orchestrator for complex fix (/speclabs:coordinate)
       3. Revert and try different approach (git revert HEAD)
       4. Continue anyway (NOT RECOMMENDED)
 
@@ -924,7 +924,7 @@ fi
       ```
 
    c. **Execute user choice:**
-      - Option 1: Run `/speclab:analyze-quality` for full analysis
+      - Option 1: Run `/specswarm:analyze-quality` for full analysis
       - Option 2: Display orchestrator command to use
       - Option 3: Offer to revert last commit
       - Option 4: Display strong warning and continue
@@ -959,7 +959,7 @@ ${PARALLEL_SPEEDUP_RESULT}
 📈 Next Steps:
 1. Review artifacts in: ${FEATURE_DIR}
 2. Commit changes: git add . && git commit -m "fix: bug ${FEATURE_NUM}"
-3. View metrics: /speclab:workflow-metrics ${FEATURE_NUM}
+3. View metrics: /specswarm:workflow-metrics ${FEATURE_NUM}
 4. ${SUGGEST_NEXT_COMMAND}
 ```
 

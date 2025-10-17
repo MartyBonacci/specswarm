@@ -164,7 +164,7 @@ fi
 
 ## Recommendation
 
-### 🎯 Primary Recommendation: `/speclab:[workflow]`
+### 🎯 Primary Recommendation: `/specswarm:[workflow]`
 
 **Confidence**: [High/Medium/Low]
 
@@ -184,11 +184,11 @@ fi
 
 ## Alternative Workflows
 
-### Alternative 1: `/speclab:[workflow2]`
+### Alternative 1: `/specswarm:[workflow2]`
 **Confidence**: [Medium/Low]
 **When to Use**: [Scenario where this would be better]
 
-### Alternative 2: `/speclab:[workflow3]`
+### Alternative 2: `/specswarm:[workflow3]`
 **Confidence**: [Medium/Low]
 **When to Use**: [Scenario where this would be better]
 
@@ -196,7 +196,7 @@ fi
 
 ## Not Recommended
 
-**Feature Development** → Use `/spectest:*` or `/specswarm:*` instead
+**Feature Development** → Use `/specswarm:*` workflows
 **Reason**: [If feature development detected, redirect to appropriate plugin]
 
 ---
@@ -204,12 +204,12 @@ fi
 ## Next Steps
 
 1. **Review recommendation** above
-2. **Run recommended workflow**: `/speclab:[workflow]`
-3. **If uncertain**, provide more context: `/speclab:suggest "more details here"`
+2. **Run recommended workflow**: `/specswarm:[workflow]`
+3. **If uncertain**, provide more context: `/specswarm:suggest "more details here"`
 
 **Command to run**:
 ```
-/speclab:[recommended_workflow]
+/specswarm:[recommended_workflow]
 ```
 ```
 
@@ -220,7 +220,7 @@ fi
 ```
 🤖 Workflow Suggestion Complete
 
-🎯 Recommended Workflow: /speclab:[workflow]
+🎯 Recommended Workflow: /specswarm:[workflow]
 Confidence: [High/Medium/Low]
 
 📊 Analysis:
@@ -232,7 +232,7 @@ Confidence: [High/Medium/Low]
 📋 Full analysis (above)
 
 ⚡ Quick Start:
-/speclab:[recommended_workflow]
+/specswarm:[recommended_workflow]
 ```
 
 ---
@@ -242,7 +242,7 @@ Confidence: [High/Medium/Low]
 ```
 🤖 Workflow Suggestion Complete
 
-🎯 Recommended Workflow: /speclab:bugfix
+🎯 Recommended Workflow: /specswarm:bugfix
 Confidence: High
 
 📊 Analysis:

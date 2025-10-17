@@ -548,7 +548,7 @@ You **MUST** consider the user input before proceeding (if not empty).
 
          1. **Run bundle size monitor:**
             ```bash
-            cd ${REPO_ROOT} && bash ~/.claude/plugins/marketplaces/specswarm-marketplace/plugins/speclab/lib/bundle-size-monitor.sh
+            cd ${REPO_ROOT} && bash ~/.claude/plugins/marketplaces/specswarm-marketplace/plugins/speclabs/lib/bundle-size-monitor.sh
             ```
 
          2. **Parse bundle analysis results:**
@@ -600,7 +600,7 @@ You **MUST** consider the user input before proceeding (if not empty).
 
          2. **If enforce_budgets is true, run enforcement:**
             ```bash
-            cd ${REPO_ROOT} && bash ~/.claude/plugins/marketplaces/specswarm-marketplace/plugins/speclab/lib/performance-budget-enforcer.sh
+            cd ${REPO_ROOT} && bash ~/.claude/plugins/marketplaces/specswarm-marketplace/plugins/speclabs/lib/performance-budget-enforcer.sh
             ```
 
          3. **Parse enforcement results:**
