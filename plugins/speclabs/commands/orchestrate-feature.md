@@ -102,11 +102,11 @@ source "$PLUGIN_DIR/lib/feature-orchestrator.sh"
 feature_start_specswarm_phase "$FEATURE_SESSION_ID" "specify"
 ```
 
-I'll execute the SpecSwarm specify command:
+Now executing the SpecSwarm specify command to create the feature specification.
 
-**Command**: `/specswarm:specify "${FEATURE_DESC}"`
+**Please execute**: `/specswarm:specify "${FEATURE_DESC}"`
 
-The specify command will create a detailed feature specification in `${PROJECT_PATH}/spec.md`.
+_(I'll wait for the specify command to complete before proceeding to the next step)_
 
 ### Step 2: Clarify - Refine Requirements
 
@@ -114,11 +114,11 @@ The specify command will create a detailed feature specification in `${PROJECT_P
 feature_start_specswarm_phase "$FEATURE_SESSION_ID" "clarify"
 ```
 
-I'll execute the SpecSwarm clarify command to ask targeted questions:
+Now executing the SpecSwarm clarify command to refine requirements.
 
-**Command**: `/specswarm:clarify`
+**Please execute**: `/specswarm:clarify`
 
-The clarify command will ask up to 5 clarification questions and update the spec.
+_(I'll wait for the clarify command to complete before proceeding)_
 
 ### Step 3: Plan - Generate Implementation Plan
 
@@ -126,11 +126,11 @@ The clarify command will ask up to 5 clarification questions and update the spec
 feature_start_specswarm_phase "$FEATURE_SESSION_ID" "plan"
 ```
 
-I'll execute the SpecSwarm plan command to create the implementation design:
+Now executing the SpecSwarm plan command to create the implementation design.
 
-**Command**: `/specswarm:plan`
+**Please execute**: `/specswarm:plan`
 
-The plan command will generate `${PROJECT_PATH}/plan.md` with the complete implementation design.
+_(I'll wait for the plan command to complete before proceeding)_
 
 ### Step 4: Tasks - Generate Task Breakdown
 
@@ -138,11 +138,11 @@ The plan command will generate `${PROJECT_PATH}/plan.md` with the complete imple
 feature_start_specswarm_phase "$FEATURE_SESSION_ID" "tasks"
 ```
 
-I'll execute the SpecSwarm tasks command to break down the implementation:
+Now executing the SpecSwarm tasks command to generate the task breakdown.
 
-**Command**: `/specswarm:tasks`
+**Please execute**: `/specswarm:tasks`
 
-The tasks command will generate `${PROJECT_PATH}/tasks.md` with actionable tasks.
+_(I'll wait for the tasks command to complete before proceeding to implementation)_
 
 ### Step 5: Parse Tasks
 
@@ -242,13 +242,11 @@ echo "🚀 Executing task with orchestrator..."
 # Execute: /speclabs:orchestrate <workflow_file> <project_path>
 ```
 
-**Command**: `/speclabs:orchestrate ${WORKFLOW_FILE} ${PROJECT_PATH}`
+Now executing the task with the Phase 1b orchestrator.
 
-This will:
-- Launch an agent to complete the task
-- Automatically validate the implementation
-- Retry up to 3 times if validation fails
-- Use intelligent prompt refinement on retries
+**Please execute**: `/speclabs:orchestrate ${WORKFLOW_FILE} ${PROJECT_PATH}`
+
+_(This will launch an agent to complete the task with automatic validation and retry logic)_
 
 3. **Process Task Result**
 
@@ -331,12 +329,16 @@ if [ "$FAILED_COUNT" -gt 0 ]; then
   feature_start_bugfix "$FEATURE_SESSION_ID"
 
   # Run bugfix command
-  echo "Executing: /specswarm:bugfix"
+  echo "Executing bugfix workflow for failed tasks..."
+fi
 ```
 
-**Command**: `/specswarm:bugfix`
+**Please execute**: `/specswarm:bugfix`
+
+_(This will use ultrathinking to find and fix any remaining issues)_
 
 ```bash
+if [ "$FAILED_COUNT" -gt 0 ]; then
   # After bugfix completes
   echo "✅ Bugfix phase complete"
   feature_complete_bugfix "$FEATURE_SESSION_ID" "$FAILED_COUNT"

@@ -1,0 +1,146 @@
+# SpecSwarm Recommended .gitignore Patterns
+
+# Add these patterns to your project's .gitignore to prevent
+# diagnostic and temporary files from being committed
+
+# ============================================================
+# SpecSwarm Diagnostic Files
+# ============================================================
+
+# Debug/diagnostic scripts created during development
+check-*.ts
+check-*.js
+check_*.ts
+check_*.js
+diagnose-*.ts
+diagnose-*.js
+debug-*.ts
+debug-*.js
+temp-*.ts
+temp-*.js
+
+# Diagnostic output files
+debug-output-*.txt
+diagnostic-results-*.json
+
+# ============================================================
+# Claude Code Debug Directory
+# ============================================================
+
+# Store diagnostics here instead of root (keep for review)
+.claude/debug/
+
+# ============================================================
+# SpecSwarm Memory (optional)
+# ============================================================
+
+# Uncomment to exclude memory files from version control
+# (only do this if memory is project-specific, not shared)
+# memory/
+# .specswarm/memory/
+
+# ============================================================
+# Build Artifacts (project-specific)
+# ============================================================
+
+# React Router generated types (auto-generated)
+.react-router/types/
+
+# ============================================================
+# Usage Notes
+# ============================================================
+
+# 1. Diagnostic Scripts
+#    - These are created during bugfix/debug workflows
+#    - They help investigate issues but shouldn't be committed
+#    - Move useful diagnostics to .claude/debug/ to keep them
+#    - Pattern: check-*, diagnose-*, debug-*, temp-*
+
+# 2. Debug Directory
+#    - Create .claude/debug/ in your project
+#    - Move useful diagnostic scripts there
+#    - Add .claude/debug/ to .gitignore
+#    - This keeps diagnostics accessible but out of version control
+
+# 3. Memory Files
+#    - memory/ contains project-specific settings
+#    - Usually SHOULD be committed (shared across team)
+#    - Only gitignore if memory is personal/local only
+
+# 4. Auto-Generated Files
+#    - .react-router/types/ is auto-generated
+#    - Shouldn't be committed (regenerated on build)
+#    - Similar to node_modules/
+
+# ============================================================
+# Example Project .gitignore
+# ============================================================
+
+# Here's what a complete .gitignore might look like:
+
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Testing
+coverage/
+
+# Production
+build/
+dist/
+.next/
+out/
+
+# Environment
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# SpecSwarm (from this file)
+check-*.ts
+check-*.js
+check_*.ts
+check_*.js
+diagnose-*.ts
+diagnose-*.js
+debug-*.ts
+debug-*.js
+temp-*.ts
+temp-*.js
+.claude/debug/
+.react-router/types/
+
+# ============================================================
+# When to Commit Diagnostic Files
+# ============================================================
+
+# Generally DON'T commit diagnostic files, but you MAY want to
+# commit them if:
+
+# 1. They're actually tests (rename to test-*.ts and move to tests/)
+# 2. They're utilities you'll reuse (rename and move to src/utils/)
+# 3. They document a complex bug (move to docs/debugging/)
+# 4. They're regression tests (convert to proper tests)
+
+# Otherwise: DELETE or move to .claude/debug/
+
+# ============================================================
