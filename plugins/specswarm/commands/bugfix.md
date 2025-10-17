@@ -190,12 +190,25 @@ If `$BUGFIX_SPEC` doesn't exist, create it using this template:
 
 ## Root Cause Analysis
 
+**IMPORTANT: Use ultrathinking for deep analysis**
+
+Before documenting the root cause, you MUST:
+1. **Ultrathink** - Perform deep, multi-layer analysis
+2. Check database configuration (transforms, defaults, constraints)
+3. Analyze property access patterns (camelCase vs snake_case mismatches)
+4. Examine caching behavior (frontend, backend, browser)
+5. Trace data flow from database → backend → frontend
+6. Look for cascading bugs (one bug hiding another)
+
+**Root Cause Documentation:**
+
 [What is causing the bug?]
 
 - Component/module affected
 - Code location (file:line)
 - Logic error or edge case missed
 - Conditions required to trigger
+- Configuration mismatches (transforms, environment, etc.)
 
 ## Impact Assessment
 
@@ -255,11 +268,20 @@ If `$BUGFIX_SPEC` doesn't exist, create it using this template:
 
 Populate template by:
 1. Load user input (if provided in `$ARGUMENTS`)
-2. Analyze repository context:
+2. **ULTRATHINK** - Perform deep root cause analysis:
    - Search for error logs, stack traces
+   - Check database schema configuration (transforms, defaults)
+   - Analyze property naming patterns (camelCase vs snake_case)
+   - Check caching behavior (frontend loaders, backend, browser)
+   - Trace data flow from database through all layers
+   - Look for multi-layer bugs (frontend + backend + database)
    - Check recent commits for related changes
    - Review issues/PRs mentioning bug number
-3. Prompt user for missing critical information:
+3. Analyze repository context:
+   - Identify all affected layers (database, backend, frontend)
+   - Check for configuration mismatches
+   - Look for similar bugs that might indicate patterns
+4. Prompt user for missing critical information:
    - Bug title
    - Symptoms (what's broken?)
    - Reproduction steps
@@ -966,13 +988,38 @@ ${PARALLEL_SPEEDUP_RESULT}
 
 ## Operating Principles
 
-1. **Test First**: Always write regression test before fixing
-2. **Verify Reproduction**: Test must fail to prove bug exists
-3. **Single Responsibility**: Each task has one clear goal
-4. **No Regressions**: Full test suite must pass
-5. **Tech Compliance**: Validate fix against tech stack (if SpecSwarm installed)
-6. **Metrics Tracking**: Record time-to-fix, regression coverage
-7. **Smart Integration**: Leverage SpecSwarm/SpecTest when available
+1. **Ultrathink First**: Deep multi-layer analysis before jumping to solutions
+2. **Test First**: Always write regression test before fixing
+3. **Verify Reproduction**: Test must fail to prove bug exists
+4. **Single Responsibility**: Each task has one clear goal
+5. **No Regressions**: Full test suite must pass
+6. **Tech Compliance**: Validate fix against tech stack (if SpecSwarm installed)
+7. **Metrics Tracking**: Record time-to-fix, regression coverage
+8. **Smart Integration**: Leverage SpecSwarm/SpecTest when available
+
+### Best Practice: Ultrathinking
+
+**Always use ultrathinking for root cause analysis.** Many bugs have multiple layers:
+
+**Example - Bug 918 (Password Reset "Already Used" Error):**
+- **Surface symptom**: "Reset Link Already Used" error on fresh tokens
+- **First layer found**: Multiple tokens allowed per user (Bug 916)
+- **Second layer suspected**: Frontend caching issue (Bug 917 - red herring)
+- **ACTUAL root cause** (found with ultrathink): Property name mismatch
+  - Database config: `postgres.camel` transforms `used_at` → `usedAt`
+  - Code accessed: `result.used_at` (wrong name) → returned `undefined`
+  - Logic treated `undefined` as "already used" → fresh tokens rejected
+
+**Without ultrathink**: Found Bug 916, missed actual cause
+**With ultrathink**: Found Bug 918, resolved the issue
+
+**Ultrathinking checklist:**
+- ✅ Check database configuration (transforms, defaults, constraints)
+- ✅ Analyze property access patterns (naming mismatches)
+- ✅ Examine caching behavior (all layers)
+- ✅ Trace data flow end-to-end
+- ✅ Look for cascading bugs (one hiding another)
+- ✅ Validate assumptions about how libraries work
 
 ---
 
