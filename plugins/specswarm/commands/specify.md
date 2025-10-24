@@ -109,7 +109,98 @@ Given that feature description, do this:
    - If empty: ERROR "No feature description provided"
    - Extract key concepts: actors, actions, data, constraints
 
-4. Follow this execution flow:
+4. **Framework & Dependency Compatibility Check** (for upgrade/migration features):
+
+   If the feature description mentions dependency upgrades (PHP, Laravel, Node, framework versions, etc.), perform compatibility validation:
+
+   a. **Detect Upgrade Context**:
+   ```bash
+   # Check if feature involves upgrades
+   INVOLVES_UPGRADE=$(echo "$ARGUMENTS" | grep -iE '(upgrade|migrat|updat).*(php|laravel|node|framework|version|[0-9]\.[0-9])')
+   ```
+
+   b. **Read Project Dependencies** (if upgrade detected):
+   ```bash
+   if [ -n "$INVOLVES_UPGRADE" ] && [ -f "${REPO_ROOT}/composer.json" ]; then
+     # Extract PHP requirement
+     PHP_CURRENT=$(grep -Po '(?<="php":\s")[^"]+' "${REPO_ROOT}/composer.json" 2>/dev/null)
+
+     # Extract Laravel/framework version
+     FRAMEWORK=$(grep -Po '(?<="laravel/framework":\s")[^"]+' "${REPO_ROOT}/composer.json" 2>/dev/null)
+   fi
+   ```
+
+   c. **Cross-Reference Compatibility Matrices**:
+
+   When upgrade targets are identified in the feature description, check known compatibility constraints:
+
+   **Laravel Compatibility Matrix**:
+   - Laravel 5.8: PHP 7.2 - 7.4 ONLY
+   - Laravel 6.x: PHP 7.2 - 8.0
+   - Laravel 7.x: PHP 7.2 - 8.0
+   - Laravel 8.x: PHP 7.3 - 8.1
+   - Laravel 9.x: PHP 8.0 - 8.2
+   - Laravel 10.x: PHP 8.1 - 8.3
+   - Laravel 11.x: PHP 8.2 - 8.3
+
+   **Key Detection Rules**:
+   - If feature mentions "PHP 8.x upgrade" AND Laravel 5.8 detected → BLOCKER
+   - If feature mentions "PHP 8.x upgrade" AND Laravel 6-7 detected → WARNING (check target PHP version)
+   - If feature mentions framework upgrade dependencies → Include in spec
+
+   d. **Add Blockers Section to Spec** (if incompatibilities found):
+
+   If compatibility issues detected, add this section AFTER "Overview" and BEFORE "User Scenarios":
+
+   ```markdown
+   ## ⚠️ CRITICAL BLOCKERS & DEPENDENCIES
+
+   ### [Framework] Version Incompatibility
+
+   **Issue**: [Current framework version] officially supports [compatible versions] only.
+
+   **Current State**:
+   - Framework: [Detected version from composer.json]
+   - Target: [Upgrade target from feature description]
+   - Compatibility: ❌ NOT COMPATIBLE
+
+   **Resolution Options**:
+
+   1. **Recommended**: Upgrade framework first
+      - Path: [Current] → [Intermediate versions] → [Target compatible version]
+      - Benefit: Official support, maintained compatibility
+      - Timeline: [Estimated complexity]
+
+   2. **Community Patches**: Use unofficial compatibility patches
+      - Benefit: Faster, smaller scope
+      - Risk: Unsupported, may break in production
+      - Recommendation: NOT recommended for production
+
+   3. **Stay on Compatible Version**: Delay target upgrade
+      - Keep: [Current compatible version]
+      - Timeline: [Until when it's supported]
+      - Benefit: Stable, supported
+
+   4. **Accept Risk**: Proceed with unsupported configuration
+      - Risk: High - potential breaking changes
+      - Required: Extensive testing, acceptance of maintenance burden
+      - Recommendation: Only if timeline critical and resources available
+
+   **Recommended Path**: [Most appropriate option with reasoning]
+
+   **Impact on This Feature**: This blocker must be resolved before beginning implementation. Consider creating separate features for:
+   - Feature XXX: [Framework] upgrade to [compatible version]
+   - Feature YYY: [Dependency] upgrade (this feature, dependent on XXX)
+   ```
+
+   e. **Document Assumptions About Compatibility**:
+
+   Even if no blockers found, add relevant assumptions to the Assumptions section:
+   - "Framework version [X] is compatible with [upgrade target]"
+   - "Standard upgrade path follows: [path]"
+   - "Breaking changes from [source docs URL] have been reviewed"
+
+5. Follow this execution flow:
 
     1. For unclear aspects:
        - Make informed guesses based on context and industry standards
