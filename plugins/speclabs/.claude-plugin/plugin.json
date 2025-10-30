@@ -1,7 +1,7 @@
 {
   "name": "speclabs",
-  "version": "1.0.0",
-  "description": "Experimental laboratory for autonomous development and advanced debugging. Features in active development - use at your own risk.",
+  "version": "2.1.0",
+  "description": "Experimental laboratory for autonomous development with Phase 2 Feature Workflow Engine. v2.1: NEW metrics dashboard and --audit flag for code quality. Use at your own risk.",
   "author": {
     "name": "Marty Bonacci",
     "url": "https://github.com/MartyBonacci"
