@@ -14,14 +14,14 @@
     {
       "name": "specswarm",
       "source": "./plugins/specswarm",
-      "version": "2.0.0",
-      "description": "Complete software development toolkit: spec-driven workflows, lifecycle management (bugfix/modify/refactor), quality validation, and performance monitoring"
+      "version": "2.1.0",
+      "description": "Complete software development toolkit: spec-driven workflows, lifecycle management (bugfix/modify/refactor), quality validation, and performance monitoring. v2.1: Enhanced git workflow with parent branch detection."
     },
     {
       "name": "speclabs",
       "source": "./plugins/speclabs",
-      "version": "1.0.0",
-      "description": "Experimental laboratory for autonomous development and advanced debugging. Features in active development - use at your own risk."
+      "version": "2.1.0",
+      "description": "Experimental laboratory for autonomous development with Phase 2 Feature Workflow Engine. v2.1: NEW metrics dashboard and --audit flag for code quality. Use at your own risk."
     },
     {
       "name": "speckit",

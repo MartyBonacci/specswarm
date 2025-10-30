@@ -1,5 +1,5 @@
 ---
-description: Complete feature or bugfix workflow and merge to main
+description: Complete feature or bugfix workflow and merge to parent branch
 ---
 
 ## User Input
@@ -12,11 +12,13 @@ You **MUST** consider the user input before proceeding (if not empty).
 
 ## Goal
 
-Complete feature or bugfix workflow by cleaning up, validating, committing, and merging to main branch.
+Complete feature or bugfix workflow by cleaning up, validating, committing, and merging to parent branch.
 
 **Purpose**: Provide a clean, guided completion process for features and bugfixes developed with SpecSwarm workflows.
 
 **Scope**: Handles cleanup → validation → commit → merge → branch deletion
+
+**NEW**: Supports individual feature branches with auto-merge to parent branch (not just main)
 
 ---
 
@@ -119,6 +121,60 @@ if [ -n "$FEATURE_DIR" ]; then
   echo "Directory: $FEATURE_DIR"
 fi
 echo ""
+```
+
+---
+
+### Step 1b: Detect Parent Branch Strategy
+
+```bash
+echo "🔍 Analyzing git workflow..."
+echo ""
+
+# Detect main branch name
+MAIN_BRANCH=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@' || echo "main")
+
+# Detect if we're in a sequential upgrade branch workflow
+SEQUENTIAL_BRANCH=false
+PARENT_BRANCH="$MAIN_BRANCH"
+
+if [ "$CURRENT_BRANCH" != "$MAIN_BRANCH" ]; then
+  # Check if current branch contains multiple feature directories
+  FEATURE_DIRS_ON_BRANCH=$(git log "$CURRENT_BRANCH" --not "$MAIN_BRANCH" --name-only --pretty=format: 2>/dev/null | \
+                            grep '^features/[0-9]\{3\}-' | cut -d'/' -f2 | sort -u | wc -l || echo "0")
+
+  if [ "$FEATURE_DIRS_ON_BRANCH" -gt 1 ]; then
+    SEQUENTIAL_BRANCH=true
+    PARENT_BRANCH="$CURRENT_BRANCH"
+    echo "Detected: Sequential branch workflow"
+    echo "  This branch contains $FEATURE_DIRS_ON_BRANCH features"
+    echo "  Features will be marked complete without merging"
+    echo ""
+  fi
+fi
+
+# If not sequential, determine parent branch
+if [ "$SEQUENTIAL_BRANCH" = "false" ]; then
+  # Check if there's a previous feature branch this might merge into
+  PREV_FEATURE_NUM=$(printf "%03d" $((10#$FEATURE_NUM - 1)))
+  PREV_FEATURE_BRANCH=$(git branch -a 2>/dev/null | grep -E "^  (remotes/origin/)?${PREV_FEATURE_NUM}-" | head -1 | sed 's/^[* ]*//' | sed 's/remotes\/origin\///' || echo "")
+
+  if [ -n "$PREV_FEATURE_BRANCH" ] && git show-ref --verify --quiet "refs/heads/$PREV_FEATURE_BRANCH" 2>/dev/null; then
+    echo "Found previous feature branch: $PREV_FEATURE_BRANCH"
+    echo ""
+    read -p "Merge into $PREV_FEATURE_BRANCH instead of $MAIN_BRANCH? (y/n): " merge_into_prev
+    if [ "$merge_into_prev" = "y" ]; then
+      PARENT_BRANCH="$PREV_FEATURE_BRANCH"
+      echo "✓ Will merge to: $PARENT_BRANCH"
+    else
+      echo "✓ Will merge to: $MAIN_BRANCH"
+    fi
+    echo ""
+  else
+    echo "✓ Will merge to: $MAIN_BRANCH"
+    echo ""
+  fi
+fi
 ```
 
 ---
@@ -401,29 +457,44 @@ fi
 
 ---
 
-### Step 5: Merge to Main
+### Step 5: Merge to Parent Branch
 
 ```bash
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "Phase 4: Merge to Main"
+echo "Phase 4: Merge to Parent Branch"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 
-# Detect main branch name
-MAIN_BRANCH=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@' || echo "main")
+# Skip merge for sequential branches
+if [ "$SEQUENTIAL_BRANCH" = "true" ]; then
+  echo "✓ Sequential branch workflow - NO MERGE"
+  echo ""
+  echo "This feature is part of a sequential upgrade branch."
+  echo "Features will be merged together after the entire sequence completes."
+  echo ""
 
-# Check if already on main
-if [ "$CURRENT_BRANCH" = "$MAIN_BRANCH" ]; then
-  echo "✓ Already on $MAIN_BRANCH branch"
+  # Create completion tag for tracking
+  TAG_NAME="feature-${FEATURE_NUM}-complete"
+  if ! git tag -l | grep -q "^${TAG_NAME}$"; then
+    git tag "$TAG_NAME"
+    echo "✓ Created completion tag: $TAG_NAME"
+  fi
+  echo ""
+  SKIP_MERGE=true
+elif [ "$CURRENT_BRANCH" = "$PARENT_BRANCH" ]; then
+  echo "✓ Already on $PARENT_BRANCH branch"
   echo "✓ No merge needed"
   echo ""
   SKIP_MERGE=true
 else
   SKIP_MERGE=false
 
-  echo "Ready to merge to $MAIN_BRANCH branch."
+  echo "Ready to merge to $PARENT_BRANCH branch."
+  if [ "$PARENT_BRANCH" != "$MAIN_BRANCH" ]; then
+    echo "ℹ️  Note: Merging into '$PARENT_BRANCH' (not main)"
+  fi
   echo ""
-  echo "⚠️  IMPORTANT: This will merge your changes to $MAIN_BRANCH."
+  echo "⚠️  IMPORTANT: This will merge your changes to $PARENT_BRANCH."
   echo "    Make sure you've tested the feature thoroughly."
   echo ""
   read -p "Proceed with merge? (y/n): " merge_choice
@@ -438,18 +509,18 @@ else
     echo "  /specswarm:complete"
     echo ""
     echo "Or merge manually:"
-    echo "  git checkout $MAIN_BRANCH"
+    echo "  git checkout $PARENT_BRANCH"
     echo "  git merge --no-ff $CURRENT_BRANCH"
     exit 0
   fi
 
   echo ""
-  echo "Checking out $MAIN_BRANCH..."
-  git checkout "$MAIN_BRANCH"
+  echo "Checking out $PARENT_BRANCH..."
+  git checkout "$PARENT_BRANCH"
 
   echo "Pulling latest changes..."
   git pull
-  echo "✓ $MAIN_BRANCH branch up to date"
+  echo "✓ $PARENT_BRANCH branch up to date"
   echo ""
 
   echo "Merging feature branch (no-ff)..."
@@ -461,6 +532,13 @@ Feature $FEATURE_NUM complete
 
   if git merge --no-ff "$CURRENT_BRANCH" -m "$MERGE_MSG"; then
     echo "✓ Merge successful"
+
+    # Create completion tag
+    TAG_NAME="feature-${FEATURE_NUM}-complete"
+    if ! git tag -l | grep -q "^${TAG_NAME}$"; then
+      git tag "$TAG_NAME"
+      echo "✓ Created completion tag: $TAG_NAME"
+    fi
   else
     echo "❌ Merge conflicts detected"
     echo ""
@@ -477,8 +555,8 @@ Feature $FEATURE_NUM complete
   read -p "Push to remote? (y/n): " push_main_choice
   if [ "$push_main_choice" = "y" ]; then
     echo "Pushing to remote..."
-    git push
-    echo "✓ $MAIN_BRANCH branch updated"
+    git push --follow-tags
+    echo "✓ $PARENT_BRANCH branch updated"
   else
     echo "⚠️  Not pushed (you can push manually later)"
   fi
@@ -496,8 +574,10 @@ echo "Phase 5: Cleanup"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 
-if [ "$SKIP_MERGE" = "true" ]; then
-  echo "✓ No branch cleanup needed (already on $MAIN_BRANCH)"
+if [ "$SKIP_MERGE" = "true" ] && [ "$SEQUENTIAL_BRANCH" = "false" ]; then
+  echo "✓ No branch cleanup needed (already on $PARENT_BRANCH)"
+elif [ "$SEQUENTIAL_BRANCH" = "true" ]; then
+  echo "✓ Sequential branch - keeping feature branch for remaining features"
 else
   read -p "Delete feature branch '$CURRENT_BRANCH'? (y/n): " delete_choice
 
@@ -526,6 +606,7 @@ else
   else
     echo "✓ Keeping feature branch"
   fi
+  fi
 fi
 
 # Update feature status
@@ -553,9 +634,18 @@ if [ "$SKIP_COMMIT" = "false" ]; then
   echo "✓ Changes committed"
 fi
 
-if [ "$SKIP_MERGE" = "false" ]; then
-  echo "✓ Merged to: $MAIN_BRANCH"
-  if [ "$delete_choice" = "y" ]; then
+if [ "$SEQUENTIAL_BRANCH" = "true" ]; then
+  echo "✓ Feature marked complete (sequential workflow)"
+  echo "✓ Tag created: feature-${FEATURE_NUM}-complete"
+  echo ""
+  echo "ℹ️  This is part of a sequential upgrade branch."
+  echo "   Continue with remaining features, then merge the entire branch to main."
+elif [ "$SKIP_MERGE" = "false" ]; then
+  echo "✓ Merged to: $PARENT_BRANCH"
+  if [ "$PARENT_BRANCH" != "$MAIN_BRANCH" ]; then
+    echo "ℹ️  Note: This is an intermediate merge. Complete $PARENT_BRANCH next."
+  fi
+  if [ "${delete_choice:-}" = "y" ]; then
     echo "✓ Branch: Deleted"
   fi
 fi
@@ -568,14 +658,23 @@ fi
 
 echo ""
 echo "🚀 Next Steps:"
-if grep -q '"deploy' package.json 2>/dev/null; then
-  echo "  - Deploy to staging: npm run deploy"
+if [ "$SEQUENTIAL_BRANCH" = "true" ]; then
+  echo "  - Continue with next feature in sequence"
+  echo "  - After all features complete, merge branch to main"
+  echo "  - Test the complete upgrade sequence"
+elif [ "$PARENT_BRANCH" != "$MAIN_BRANCH" ] && [ "$SKIP_MERGE" = "false" ]; then
+  echo "  - Complete the parent branch: /specswarm:complete"
+  echo "  - This will merge $PARENT_BRANCH to main"
+else
+  if grep -q '"deploy' package.json 2>/dev/null; then
+    echo "  - Deploy to staging: npm run deploy"
+  fi
+  if grep -q '"test:e2e' package.json 2>/dev/null; then
+    echo "  - Run E2E tests: npm run test:e2e"
+  fi
+  echo "  - Monitor production for issues"
+  echo "  - Update project documentation if needed"
 fi
-if grep -q '"test:e2e' package.json 2>/dev/null; then
-  echo "  - Run E2E tests: npm run test:e2e"
-fi
-echo "  - Monitor production for issues"
-echo "  - Update project documentation if needed"
 echo ""
 ```
 

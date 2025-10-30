@@ -19,6 +19,9 @@ args:
   - name: --max-retries
     description: Maximum retries per task (default 3)
     required: false
+  - name: --audit
+    description: Run comprehensive code audit phase after implementation (compatibility, security, best practices)
+    required: false
 pre_orchestration_hook: |
   #!/bin/bash
 
@@ -29,6 +32,7 @@ pre_orchestration_hook: |
   echo "  2. SpecLabs Execution: orchestrate each task with validation"
   echo "  3. Intelligent Retry: Auto-retry failed tasks up to 3 times"
   echo "  4. Quality Assurance: Automated bugfix for remaining issues"
+  echo "  5. Code Audit: Comprehensive audit with --audit flag (optional)"
   echo ""
 
   # Parse arguments
@@ -38,6 +42,7 @@ pre_orchestration_hook: |
   SKIP_CLARIFY=false
   SKIP_PLAN=false
   MAX_RETRIES=3
+  RUN_AUDIT=false
 
   shift 2
   while [[ $# -gt 0 ]]; do
@@ -46,6 +51,7 @@ pre_orchestration_hook: |
       --skip-clarify) SKIP_CLARIFY=true; shift ;;
       --skip-plan) SKIP_PLAN=true; shift ;;
       --max-retries) MAX_RETRIES="$2"; shift 2 ;;
+      --audit) RUN_AUDIT=true; shift ;;
       *) shift ;;
     esac
   done
@@ -81,6 +87,7 @@ pre_orchestration_hook: |
   export SKIP_CLARIFY="$SKIP_CLARIFY"
   export SKIP_PLAN="$SKIP_PLAN"
   export MAX_RETRIES="$MAX_RETRIES"
+  export RUN_AUDIT="$RUN_AUDIT"
   export PLUGIN_DIR="$PLUGIN_DIR"
 
   echo "🚀 Ready to orchestrate feature: $FEATURE_DESC"
@@ -346,6 +353,254 @@ if [ "$FAILED_COUNT" -gt 0 ]; then
 fi
 ```
 
+## Phase 3a: Code Audit (Optional)
+
+If the `--audit` flag was provided, I'll run a comprehensive code audit:
+
+```bash
+if [ "$RUN_AUDIT" = "true" ]; then
+  echo "🔍 Starting Code Audit Phase..."
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo ""
+
+  feature_start_audit "$FEATURE_SESSION_ID"
+
+  # Create audit report directory
+  AUDIT_DIR="${PROJECT_PATH}/.speclabs/audit"
+  mkdir -p "$AUDIT_DIR"
+  AUDIT_REPORT="${AUDIT_DIR}/audit-report-$(date +%Y%m%d-%H%M%S).md"
+
+  echo "📋 Audit Report: $AUDIT_REPORT"
+  echo ""
+
+  # Initialize audit report
+  cat > "$AUDIT_REPORT" << 'AUDIT_HEADER'
+# Code Audit Report
+
+**Generated**: $(date)
+**Feature**: ${FEATURE_DESC}
+**Project**: ${PROJECT_PATH}
+
+## Audit Scope
+
+This comprehensive audit checks:
+- ✅ Code compatibility (language version, framework version)
+- ✅ Security vulnerabilities (common attack vectors, data exposure)
+- ✅ Best practices (code patterns, architecture, performance)
+- ✅ Type safety (if applicable)
+- ✅ Deprecated patterns and technical debt
+
+---
+
+AUDIT_HEADER
+
+  echo "🔍 Running compatibility audit..."
+  echo ""
+  echo "### 1. Compatibility Audit" >> "$AUDIT_REPORT"
+  echo "" >> "$AUDIT_REPORT"
+
+  # Compatibility Audit
+  echo "Checking language and framework compatibility..."
+
+  # Detect project type
+  if [ -f "${PROJECT_PATH}/composer.json" ]; then
+    # PHP project
+    echo "**Project Type**: PHP/Laravel" >> "$AUDIT_REPORT"
+    echo "" >> "$AUDIT_REPORT"
+
+    # Check PHP version requirements
+    if command -v php &> /dev/null; then
+      PHP_VERSION=$(php -v | head -n 1 | cut -d ' ' -f 2)
+      echo "**PHP Version**: $PHP_VERSION" >> "$AUDIT_REPORT"
+      echo "" >> "$AUDIT_REPORT"
+    fi
+
+    echo "#### Compatibility Checks:" >> "$AUDIT_REPORT"
+    echo "" >> "$AUDIT_REPORT"
+
+    # Check for deprecated PHP patterns
+    echo "Scanning for deprecated PHP patterns..." >> "$AUDIT_REPORT"
+
+    # Dynamic properties (PHP 8.2+)
+    DYNAMIC_PROPS=$(grep -rn "public \$[a-zA-Z_]" "${PROJECT_PATH}/app" 2>/dev/null | wc -l || echo "0")
+    if [ "$DYNAMIC_PROPS" -gt 0 ]; then
+      echo "- ⚠️  Found $DYNAMIC_PROPS potential dynamic properties (deprecated in PHP 8.2+)" >> "$AUDIT_REPORT"
+      echo "  Review: app/ directory for undeclared properties" >> "$AUDIT_REPORT"
+    else
+      echo "- ✅ No dynamic property issues detected" >> "$AUDIT_REPORT"
+    fi
+    echo "" >> "$AUDIT_REPORT"
+
+    # Check for deprecated functions
+    DEPRECATED_FUNCS=$(grep -rn "create_function\|each\|utf8_encode\|utf8_decode" "${PROJECT_PATH}/app" 2>/dev/null | wc -l || echo "0")
+    if [ "$DEPRECATED_FUNCS" -gt 0 ]; then
+      echo "- ⚠️  Found $DEPRECATED_FUNCS uses of deprecated functions" >> "$AUDIT_REPORT"
+      echo "  Review: Deprecated functions like create_function, each, utf8_encode" >> "$AUDIT_REPORT"
+    else
+      echo "- ✅ No deprecated function usage detected" >> "$AUDIT_REPORT"
+    fi
+    echo "" >> "$AUDIT_REPORT"
+
+  elif [ -f "${PROJECT_PATH}/package.json" ]; then
+    # Node.js project
+    echo "**Project Type**: Node.js" >> "$AUDIT_REPORT"
+    echo "" >> "$AUDIT_REPORT"
+
+    if command -v node &> /dev/null; then
+      NODE_VERSION=$(node -v)
+      echo "**Node Version**: $NODE_VERSION" >> "$AUDIT_REPORT"
+      echo "" >> "$AUDIT_REPORT"
+    fi
+
+    echo "#### Compatibility Checks:" >> "$AUDIT_REPORT"
+    echo "" >> "$AUDIT_REPORT"
+    echo "- ℹ️  Run \`npm audit\` for dependency vulnerabilities" >> "$AUDIT_REPORT"
+    echo "- ℹ️  Check package.json engines field for version requirements" >> "$AUDIT_REPORT"
+    echo "" >> "$AUDIT_REPORT"
+  else
+    echo "**Project Type**: Unknown" >> "$AUDIT_REPORT"
+    echo "" >> "$AUDIT_REPORT"
+  fi
+
+  echo "✅ Compatibility audit complete"
+  echo ""
+
+  # Security Audit
+  echo "🔒 Running security audit..."
+  echo ""
+  echo "### 2. Security Audit" >> "$AUDIT_REPORT"
+  echo "" >> "$AUDIT_REPORT"
+
+  # Check for common security issues
+  echo "#### Security Checks:" >> "$AUDIT_REPORT"
+  echo "" >> "$AUDIT_REPORT"
+
+  # Check for hardcoded secrets
+  HARDCODED_SECRETS=$(grep -rn "password\s*=\s*['\"][^'\"]*['\"]" "${PROJECT_PATH}" --include="*.php" --include="*.js" --include="*.ts" 2>/dev/null | wc -l || echo "0")
+  if [ "$HARDCODED_SECRETS" -gt 0 ]; then
+    echo "- ⚠️  Found $HARDCODED_SECRETS potential hardcoded secrets" >> "$AUDIT_REPORT"
+    echo "  Review: Check for hardcoded passwords, API keys, tokens" >> "$AUDIT_REPORT"
+  else
+    echo "- ✅ No obvious hardcoded secrets detected" >> "$AUDIT_REPORT"
+  fi
+  echo "" >> "$AUDIT_REPORT"
+
+  # Check for SQL injection vulnerabilities (raw queries)
+  RAW_QUERIES=$(grep -rn "DB::raw\|->raw(" "${PROJECT_PATH}" --include="*.php" 2>/dev/null | wc -l || echo "0")
+  if [ "$RAW_QUERIES" -gt 0 ]; then
+    echo "- ⚠️  Found $RAW_QUERIES raw database queries" >> "$AUDIT_REPORT"
+    echo "  Review: Ensure proper parameterization to prevent SQL injection" >> "$AUDIT_REPORT"
+  else
+    echo "- ✅ No raw database queries detected" >> "$AUDIT_REPORT"
+  fi
+  echo "" >> "$AUDIT_REPORT"
+
+  # Check for XSS vulnerabilities (unescaped output in Blade templates)
+  UNESCAPED_OUTPUT=$(grep -rn "{!!" "${PROJECT_PATH}/resources/views" 2>/dev/null | wc -l || echo "0")
+  if [ "$UNESCAPED_OUTPUT" -gt 0 ]; then
+    echo "- ⚠️  Found $UNESCAPED_OUTPUT unescaped outputs in Blade templates" >> "$AUDIT_REPORT"
+    echo "  Review: Ensure {!! output is intentional and sanitized" >> "$AUDIT_REPORT"
+  else
+    echo "- ✅ No unescaped template output detected" >> "$AUDIT_REPORT"
+  fi
+  echo "" >> "$AUDIT_REPORT"
+
+  # Check for eval usage
+  EVAL_USAGE=$(grep -rn "eval(" "${PROJECT_PATH}" --include="*.php" --include="*.js" 2>/dev/null | wc -l || echo "0")
+  if [ "$EVAL_USAGE" -gt 0 ]; then
+    echo "- ⚠️  Found $EVAL_USAGE uses of eval()" >> "$AUDIT_REPORT"
+    echo "  Review: eval() is a security risk and should be avoided" >> "$AUDIT_REPORT"
+  else
+    echo "- ✅ No eval() usage detected" >> "$AUDIT_REPORT"
+  fi
+  echo "" >> "$AUDIT_REPORT"
+
+  echo "✅ Security audit complete"
+  echo ""
+
+  # Best Practices Audit
+  echo "📚 Running best practices audit..."
+  echo ""
+  echo "### 3. Best Practices Audit" >> "$AUDIT_REPORT"
+  echo "" >> "$AUDIT_REPORT"
+
+  echo "#### Code Quality Checks:" >> "$AUDIT_REPORT"
+  echo "" >> "$AUDIT_REPORT"
+
+  # Check for TODO/FIXME comments
+  TODO_COUNT=$(grep -rn "TODO\|FIXME\|HACK" "${PROJECT_PATH}" --include="*.php" --include="*.js" --include="*.ts" 2>/dev/null | wc -l || echo "0")
+  if [ "$TODO_COUNT" -gt 0 ]; then
+    echo "- ℹ️  Found $TODO_COUNT TODO/FIXME comments" >> "$AUDIT_REPORT"
+    echo "  Consider: Address technical debt items" >> "$AUDIT_REPORT"
+  else
+    echo "- ✅ No pending TODO/FIXME items" >> "$AUDIT_REPORT"
+  fi
+  echo "" >> "$AUDIT_REPORT"
+
+  # Check for error suppression (@)
+  ERROR_SUPPRESSION=$(grep -rn "@" "${PROJECT_PATH}" --include="*.php" | grep -v "param\|return\|var\|throws\|author" 2>/dev/null | wc -l || echo "0")
+  if [ "$ERROR_SUPPRESSION" -gt 10 ]; then
+    echo "- ⚠️  Found excessive error suppression (@)" >> "$AUDIT_REPORT"
+    echo "  Review: Error suppression can hide bugs - use proper error handling" >> "$AUDIT_REPORT"
+  else
+    echo "- ✅ Error suppression usage is reasonable" >> "$AUDIT_REPORT"
+  fi
+  echo "" >> "$AUDIT_REPORT"
+
+  # Check for console.log in production code
+  if [ -d "${PROJECT_PATH}/resources/js" ] || [ -d "${PROJECT_PATH}/src" ]; then
+    CONSOLE_LOGS=$(grep -rn "console\.log" "${PROJECT_PATH}/resources/js" "${PROJECT_PATH}/src" 2>/dev/null | wc -l || echo "0")
+    if [ "$CONSOLE_LOGS" -gt 5 ]; then
+      echo "- ⚠️  Found $CONSOLE_LOGS console.log statements" >> "$AUDIT_REPORT"
+      echo "  Review: Remove debug logging before production deployment" >> "$AUDIT_REPORT"
+    else
+      echo "- ✅ Minimal debug logging detected" >> "$AUDIT_REPORT"
+    fi
+    echo "" >> "$AUDIT_REPORT"
+  fi
+
+  echo "✅ Best practices audit complete"
+  echo ""
+
+  # Audit Summary
+  echo "📊 Generating audit summary..."
+  echo ""
+
+  echo "---" >> "$AUDIT_REPORT"
+  echo "" >> "$AUDIT_REPORT"
+  echo "## Audit Summary" >> "$AUDIT_REPORT"
+  echo "" >> "$AUDIT_REPORT"
+  echo "**Status**: Audit complete" >> "$AUDIT_REPORT"
+  echo "" >> "$AUDIT_REPORT"
+  echo "### Recommendations:" >> "$AUDIT_REPORT"
+  echo "" >> "$AUDIT_REPORT"
+  echo "1. Review all ⚠️  warnings in this report" >> "$AUDIT_REPORT"
+  echo "2. Address security concerns before production deployment" >> "$AUDIT_REPORT"
+  echo "3. Update deprecated code patterns for future compatibility" >> "$AUDIT_REPORT"
+  echo "4. Run language-specific linters for detailed analysis:" >> "$AUDIT_REPORT"
+  echo "   - PHP: \`./vendor/bin/phpstan analyse\`" >> "$AUDIT_REPORT"
+  echo "   - JavaScript: \`npm run lint\`" >> "$AUDIT_REPORT"
+  echo "" >> "$AUDIT_REPORT"
+  echo "### Next Steps:" >> "$AUDIT_REPORT"
+  echo "" >> "$AUDIT_REPORT"
+  echo "- [ ] Address critical security issues" >> "$AUDIT_REPORT"
+  echo "- [ ] Fix compatibility warnings" >> "$AUDIT_REPORT"
+  echo "- [ ] Update deprecated patterns" >> "$AUDIT_REPORT"
+  echo "- [ ] Run automated tests" >> "$AUDIT_REPORT"
+  echo "- [ ] Manual testing in staging environment" >> "$AUDIT_REPORT"
+  echo "" >> "$AUDIT_REPORT"
+
+  # Complete audit phase
+  feature_complete_audit "$FEATURE_SESSION_ID" "$AUDIT_REPORT"
+
+  echo "✅ Audit phase complete"
+  echo "📄 Report saved: $AUDIT_REPORT"
+  echo ""
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo ""
+fi
+```
+
 ## Phase 4: Feature Completion
 
 ```bash
@@ -561,20 +816,45 @@ fi
 3. ✅ **Validation**: Automatic validation after each task
 4. ✅ **Retry Logic**: Failed tasks automatically retried up to 3 times
 5. ✅ **Bugfix**: Remaining issues addressed with SpecSwarm bugfix
-6. ✅ **Reporting**: Comprehensive session report generated
+6. ✅ **Code Audit**: Compatibility, security, and best practices audit (if --audit flag used)
+7. ✅ **Reporting**: Comprehensive session report generated
 
 **Artifacts Generated**:
 - `${PROJECT_PATH}/spec.md` - Feature specification
 - `${PROJECT_PATH}/plan.md` - Implementation plan
 - `${PROJECT_PATH}/tasks.md` - Task breakdown
 - `${PROJECT_PATH}/.speclabs/workflows/` - Generated workflow files
+- `${PROJECT_PATH}/.speclabs/audit/` - Code audit reports (if --audit used)
 - Feature report in memory directory
 
 **Next Steps**:
-- Review the feature report for detailed results
-- Test the implemented feature manually if needed
-- Run `/specswarm:refactor` if code quality improvements are needed
-- Commit the changes with git
+
+1. **Manual Testing** (Required):
+   - Test the implemented feature thoroughly
+   - Verify all user scenarios work as expected
+   - Check for runtime errors and edge cases
+   - Validate external integrations (APIs, services, etc.)
+
+2. **Complete the Feature** (Required):
+   Once manual testing is successful, run the SpecSwarm complete workflow:
+
+   ```
+   /specswarm:complete
+   ```
+
+   This will:
+   - Generate final completion documentation
+   - Create git commits with comprehensive messages
+   - Merge to parent branch or main branch
+   - Tag the completion for tracking
+   - Archive feature artifacts
+
+3. **Optional Improvements**:
+   - Run `/specswarm:refactor` if code quality improvements are needed
+   - Review audit report (if --audit was used) and address warnings
+   - Update project documentation as needed
+
+⚠️  **IMPORTANT**: Always run `/specswarm:complete` after manual testing to properly finalize the feature with git workflow, documentation, and completion tracking.
 
 ---
 
@@ -582,7 +862,7 @@ fi
 
 **Architecture**:
 ```
-User: /speclabs:orchestrate-feature "Add feature X"
+User: /speclabs:orchestrate-feature "Add feature X" [--audit]
          ↓
     SpecSwarm Planning (specify → clarify → plan → tasks)
          ↓
@@ -591,6 +871,8 @@ User: /speclabs:orchestrate-feature "Add feature X"
     Phase 1b Execution (orchestrate each task)
          ↓
     Bugfix (if needed)
+         ↓
+    Code Audit (if --audit flag used)
          ↓
     Feature Complete!
 ```

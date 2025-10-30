@@ -135,6 +135,7 @@ The experimental wing of SpecSwarm, building toward **autonomous sprint and proj
 
 **Phase 2: Feature Orchestration (1)** ✅ NEW!:
 - `/speclabs:orchestrate-feature` - Complete feature lifecycle from description to implementation
+  - NEW: `--audit` flag for comprehensive code audits (compatibility, security, best practices)
 
 **Phase 1b: Task Orchestration (2)** ✅:
 - `/speclabs:orchestrate` - Task workflow orchestration with intelligent retry logic
@@ -142,6 +143,9 @@ The experimental wing of SpecSwarm, building toward **autonomous sprint and proj
 
 **Advanced Debugging (1)**:
 - `/speclabs:coordinate` - Systematic multi-bug debugging with logging and orchestration
+
+**Analytics (1)** ✅ NEW!:
+- `/speclabs:metrics` - View orchestration performance metrics and analytics dashboard
 
 **Future Commands** (Phase 3):
 - `/speclabs:orchestrate-sprint` - Complete sprint backlogs overnight (Phase 3)
