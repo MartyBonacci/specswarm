@@ -20,8 +20,8 @@
     {
       "name": "speclabs",
       "source": "./plugins/speclabs",
-      "version": "2.1.0",
-      "description": "Experimental laboratory for autonomous development with Phase 2 Feature Workflow Engine. v2.1: NEW metrics dashboard and --audit flag for code quality. Use at your own risk."
+      "version": "2.1.1",
+      "description": "Experimental laboratory for autonomous development with Phase 2 Feature Workflow Engine. v2.1.1: Bug fixes for session tracking and --audit auto-execution. Use at your own risk."
     },
     {
       "name": "speckit",

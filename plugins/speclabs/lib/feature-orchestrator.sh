@@ -12,8 +12,8 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # It will be sourced by the command that uses this library
 
 # Feature session directory
-ORCHESTRATOR_STATE_DIR="${ORCHESTRATOR_STATE_DIR:-/home/marty/code-projects/specswarm/memory/orchestrator}"
-FEATURE_SESSION_DIR="${ORCHESTRATOR_STATE_DIR}/features"
+SPECSWARM_ROOT="${SPECSWARM_ROOT:-/home/marty/code-projects/specswarm}"
+FEATURE_SESSION_DIR="${SPECSWARM_ROOT}/memory/feature-orchestrator/sessions"
 
 # Initialize feature orchestrator
 feature_init() {
@@ -334,6 +334,71 @@ feature_complete_bugfix() {
 
   feature_update "$session_id" "bugfix.status" '"complete"'
   feature_update "$session_id" "bugfix.issues_fixed" "$issues_fixed"
+}
+
+# Start audit phase
+# Args: session_id
+feature_start_audit() {
+  local session_id="$1"
+  local session_file="${FEATURE_SESSION_DIR}/${session_id}.json"
+
+  if [ ! -f "$session_file" ]; then
+    echo "Error: Session $session_id not found" >&2
+    return 1
+  fi
+
+  local temp_file=$(mktemp)
+
+  # Add audit section if it doesn't exist, otherwise update it
+  jq --arg started_at "$(date -Iseconds)" \
+     --arg updated_at "$(date -Iseconds)" \
+     '.audit = {
+        "status": "in_progress",
+        "started_at": $started_at,
+        "completed_at": null,
+        "report_file": null,
+        "quality_score": null,
+        "checks": {
+          "compatibility": {"status": "pending", "warnings": 0, "errors": 0},
+          "security": {"status": "pending", "warnings": 0, "errors": 0},
+          "best_practices": {"status": "pending", "warnings": 0, "errors": 0}
+        }
+      } |
+      .phase = "audit" |
+      .updated_at = $updated_at' \
+     "$session_file" > "$temp_file"
+
+  mv "$temp_file" "$session_file"
+}
+
+# Complete audit phase
+# Args: session_id, report_file, quality_score
+feature_complete_audit() {
+  local session_id="$1"
+  local report_file="$2"
+  local quality_score="${3:-0}"
+  local session_file="${FEATURE_SESSION_DIR}/${session_id}.json"
+
+  if [ ! -f "$session_file" ]; then
+    echo "Error: Session $session_id not found" >&2
+    return 1
+  fi
+
+  local temp_file=$(mktemp)
+
+  jq --arg completed_at "$(date -Iseconds)" \
+     --arg report_file "$report_file" \
+     --argjson quality_score "$quality_score" \
+     --arg updated_at "$(date -Iseconds)" \
+     '.audit.status = "complete" |
+      .audit.completed_at = $completed_at |
+      .audit.report_file = $report_file |
+      .audit.quality_score = $quality_score |
+      .metrics.quality_score = $quality_score |
+      .updated_at = $updated_at' \
+     "$session_file" > "$temp_file"
+
+  mv "$temp_file" "$session_file"
 }
 
 # Complete feature session

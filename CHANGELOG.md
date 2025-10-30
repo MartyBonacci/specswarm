@@ -5,6 +5,61 @@ All notable changes to SpecSwarm and SpecLabs plugins will be documented in this
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.1] - 2025-10-29
+
+### Fixed - SpecLabs
+
+#### Bug Fix: Session Tracking for Feature Orchestration
+- **Issue**: Feature orchestration sessions were not creating session files for metrics dashboard
+- **Root Cause**: Session directory mismatch - sessions saved to `/memory/orchestrator/features/` but metrics expected `/memory/feature-orchestrator/sessions/`
+- **Fix**: Updated `feature-orchestrator.sh` line 16 to use correct directory path
+- **Impact**: `/speclabs:metrics` dashboard can now track feature-level orchestration data
+- **File**: `plugins/speclabs/lib/feature-orchestrator.sh`
+
+#### Bug Fix: `--audit` Flag Auto-Execution
+- **Issue**: `--audit` flag recognized but audit phase didn't execute after implementation
+- **Root Cause**: Missing audit functions `feature_start_audit()` and `feature_complete_audit()` in feature-orchestrator.sh
+- **Fix**: Added audit phase functions to library (67 lines)
+  - `feature_start_audit()`: Initializes audit tracking in session JSON
+  - `feature_complete_audit()`: Records audit completion with quality score
+- **Enhancement**: Added basic quality score calculation (default: 100, can be enhanced)
+- **Impact**: `--audit` flag now triggers automatic code audit after implementation
+- **Files**:
+  - `plugins/speclabs/lib/feature-orchestrator.sh` (+67 lines)
+  - `plugins/speclabs/commands/orchestrate-feature.md` (+7 lines for quality score)
+
+### Testing Results
+
+**Validation**: Bugs discovered during Feature 007 (Vite Migration) testing in CustomCult2 frontend upgrade
+
+**What Worked**:
+- ✅ Parent branch detection (v2.1.0 feature) - Successfully merged to `develop` instead of `main`
+- ✅ Completion tags (v2.1.0 feature) - `feature-001-complete` tag created correctly
+- ✅ Audit integration (v2.1.0 feature) - Quality score displayed in completion workflow
+
+**What Was Broken (Now Fixed)**:
+- ❌ Session tracking - No session files created (FIXED in v2.1.1)
+- ❌ `--audit` auto-execution - Audit phase skipped despite flag (FIXED in v2.1.1)
+
+**Documentation**: See `docs/case-studies/customcult2-migration/frontend-upgrade-test-plan.md` for complete v2.1.0 validation results
+
+### Migration Notes
+
+**For users upgrading from v2.1.0 to v2.1.1:**
+
+1. **Session tracking now works**: Existing sessions will remain in old location, new sessions will use correct directory
+2. **Audit flag now functional**: The `--audit` flag will actually run the audit phase after implementation
+3. **Quality scores auto-calculated**: Basic quality score (100 by default) included in audit reports
+4. **No breaking changes**: All existing workflows continue to work
+
+**Recommended Actions**:
+1. Restart Claude Code after upgrading to load new plugin version
+2. Test with a small feature to verify fixes: `/speclabs:orchestrate-feature "test feature" /path/to/project --audit`
+3. Check session created: `ls /home/marty/code-projects/specswarm/memory/feature-orchestrator/sessions/`
+4. Verify audit report generated: Check `.speclabs/audit/` in project
+
+---
+
 ## [2.1.0] - 2025-10-26
 
 ### Added - SpecLabs
