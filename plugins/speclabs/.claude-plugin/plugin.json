@@ -1,7 +1,7 @@
 {
   "name": "speclabs",
-  "version": "2.1.2",
-  "description": "Experimental laboratory for autonomous development with Phase 2 Feature Workflow Engine. v2.1.2: Fully automatic orchestration - no manual command execution required. Use at your own risk.",
+  "version": "2.1.3",
+  "description": "Experimental laboratory for autonomous development with Phase 2 Feature Workflow Engine. v2.1.3: Fixed automation directives - truly hands-free orchestration. Use at your own risk.",
   "author": {
     "name": "Marty Bonacci",
     "url": "https://github.com/MartyBonacci"

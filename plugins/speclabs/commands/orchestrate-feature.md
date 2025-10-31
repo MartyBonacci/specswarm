@@ -109,11 +109,11 @@ source "$PLUGIN_DIR/lib/feature-orchestrator.sh"
 feature_start_specswarm_phase "$FEATURE_SESSION_ID" "specify"
 ```
 
-Now I'll automatically execute the SpecSwarm specify command to create the feature specification.
+Now automatically execute the SpecSwarm specify command to create the feature specification.
 
-I'll use the SlashCommand tool to run: `/specswarm:specify "${FEATURE_DESC}"`
+**Execute immediately using the SlashCommand tool**: `/specswarm:specify "${FEATURE_DESC}"`
 
-I'll wait for the specify command to complete before proceeding to the next step.
+Wait for the specify command to complete, then automatically proceed to the next step. Do not ask for user confirmation.
 
 ### Step 2: Clarify - Refine Requirements
 
@@ -121,11 +121,11 @@ I'll wait for the specify command to complete before proceeding to the next step
 feature_start_specswarm_phase "$FEATURE_SESSION_ID" "clarify"
 ```
 
-Now I'll automatically execute the SpecSwarm clarify command to refine requirements.
+Now automatically execute the SpecSwarm clarify command to refine requirements.
 
-I'll use the SlashCommand tool to run: `/specswarm:clarify`
+**Execute immediately using the SlashCommand tool**: `/specswarm:clarify`
 
-I'll wait for the clarify command to complete before proceeding.
+Wait for the clarify command to complete, then automatically proceed to the next step. Do not ask for user confirmation.
 
 ### Step 3: Plan - Generate Implementation Plan
 
@@ -133,11 +133,11 @@ I'll wait for the clarify command to complete before proceeding.
 feature_start_specswarm_phase "$FEATURE_SESSION_ID" "plan"
 ```
 
-Now I'll automatically execute the SpecSwarm plan command to create the implementation design.
+Now automatically execute the SpecSwarm plan command to create the implementation design.
 
-I'll use the SlashCommand tool to run: `/specswarm:plan`
+**Execute immediately using the SlashCommand tool**: `/specswarm:plan`
 
-I'll wait for the plan command to complete before proceeding.
+Wait for the plan command to complete, then automatically proceed to the next step. Do not ask for user confirmation.
 
 ### Step 4: Tasks - Generate Task Breakdown
 
@@ -145,11 +145,11 @@ I'll wait for the plan command to complete before proceeding.
 feature_start_specswarm_phase "$FEATURE_SESSION_ID" "tasks"
 ```
 
-Now I'll automatically execute the SpecSwarm tasks command to generate the task breakdown.
+Now automatically execute the SpecSwarm tasks command to generate the task breakdown.
 
-I'll use the SlashCommand tool to run: `/specswarm:tasks`
+**Execute immediately using the SlashCommand tool**: `/specswarm:tasks`
 
-I'll wait for the tasks command to complete before proceeding to implementation.
+Wait for the tasks command to complete, then automatically proceed to implementation. Do not ask for user confirmation.
 
 ### Step 5: Parse Tasks
 
@@ -247,11 +247,11 @@ fi
 echo "🚀 Executing task with orchestrator..."
 ```
 
-Now I'll automatically execute this task using the Phase 1b orchestrator.
+Now automatically execute this task using the Phase 1b orchestrator.
 
-I'll use the SlashCommand tool to run: `/speclabs:orchestrate ${WORKFLOW_FILE} ${PROJECT_PATH}`
+**Execute immediately using the SlashCommand tool**: `/speclabs:orchestrate ${WORKFLOW_FILE} ${PROJECT_PATH}`
 
-This will launch an agent to complete the task with automatic validation and retry logic. I'll wait for it to complete before continuing to the next task.
+This will launch an agent to complete the task with automatic validation and retry logic. Wait for it to complete before continuing to the next task. Do not ask for user confirmation.
 
 3. **Process Task Result**
 
@@ -338,11 +338,11 @@ if [ "$FAILED_COUNT" -gt 0 ]; then
 fi
 ```
 
-I'll automatically execute the SpecSwarm bugfix command using the SlashCommand tool.
+Automatically execute the SpecSwarm bugfix command using the SlashCommand tool.
 
-I'll run: `/specswarm:bugfix`
+**Execute immediately using the SlashCommand tool**: `/specswarm:bugfix`
 
-This will use ultrathinking to find and fix any remaining issues.
+This will use ultrathinking to find and fix any remaining issues. Do not ask for user confirmation.
 
 ```bash
 if [ "$FAILED_COUNT" -gt 0 ]; then

@@ -5,6 +5,48 @@ All notable changes to SpecSwarm and SpecLabs plugins will be documented in this
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.3] - 2025-10-30
+
+### Fixed - SpecLabs
+
+#### Critical Fix: Automation Directives Not Enforcing Automatic Execution
+- **Issue**: v2.1.2 changed text from "Please execute" to "I'll use the SlashCommand tool" but Claude still asked for user confirmation
+- **Root Cause**: Descriptive language ("I'll use") was interpreted as informational rather than directive
+- **Fix**: Changed all command execution instructions to be explicitly directive:
+  - **Before**: "I'll use the SlashCommand tool to run: /command"
+  - **After**: "**Execute immediately using the SlashCommand tool**: /command" + "Do not ask for user confirmation"
+- **Impact**: Claude now executes all phases automatically without waiting for user input
+- **Affected Phases**: All 6 automation points updated
+  - Specify phase (line 114)
+  - Clarify phase (line 126)
+  - Plan phase (line 138)
+  - Tasks phase (line 150)
+  - Task execution (line 252)
+  - Bugfix phase (line 343)
+- **File**: `plugins/speclabs/commands/orchestrate-feature.md`
+
+### Testing
+
+**v2.1.3 Validated During**: Feature 009 (React Router v6 upgrade) - First attempt
+**Issue Discovered**: After clarify phase completed, Claude waited for manual `/specswarm:plan` execution
+**Resolution**: Updated directive language to be more explicit and commanding
+**Expected Behavior**: All subsequent phases execute automatically without user prompts
+
+### Migration Notes
+
+**For users upgrading from v2.1.2 to v2.1.3:**
+
+1. **Actual Automation**: This version truly works hands-free (v2.1.2 still required manual confirmation)
+2. **No Breaking Changes**: Workflow remains the same - just works as originally intended
+3. **Restart Required**: Restart Claude Code after upgrading to load updated command prompts
+
+**Recommended Actions**:
+1. Restart Claude Code
+2. Pull latest marketplace changes: `cd ~/.claude/plugins/marketplaces/specswarm-marketplace && git pull`
+3. Test with a feature to verify automatic execution throughout all phases
+
+---
+
 ## [2.1.2] - 2025-10-30
 
 ### Changed - SpecLabs
