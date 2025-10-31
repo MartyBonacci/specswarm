@@ -109,11 +109,11 @@ source "$PLUGIN_DIR/lib/feature-orchestrator.sh"
 feature_start_specswarm_phase "$FEATURE_SESSION_ID" "specify"
 ```
 
-Now executing the SpecSwarm specify command to create the feature specification.
+Now I'll automatically execute the SpecSwarm specify command to create the feature specification.
 
-**Please execute**: `/specswarm:specify "${FEATURE_DESC}"`
+I'll use the SlashCommand tool to run: `/specswarm:specify "${FEATURE_DESC}"`
 
-_(I'll wait for the specify command to complete before proceeding to the next step)_
+I'll wait for the specify command to complete before proceeding to the next step.
 
 ### Step 2: Clarify - Refine Requirements
 
@@ -121,11 +121,11 @@ _(I'll wait for the specify command to complete before proceeding to the next st
 feature_start_specswarm_phase "$FEATURE_SESSION_ID" "clarify"
 ```
 
-Now executing the SpecSwarm clarify command to refine requirements.
+Now I'll automatically execute the SpecSwarm clarify command to refine requirements.
 
-**Please execute**: `/specswarm:clarify`
+I'll use the SlashCommand tool to run: `/specswarm:clarify`
 
-_(I'll wait for the clarify command to complete before proceeding)_
+I'll wait for the clarify command to complete before proceeding.
 
 ### Step 3: Plan - Generate Implementation Plan
 
@@ -133,11 +133,11 @@ _(I'll wait for the clarify command to complete before proceeding)_
 feature_start_specswarm_phase "$FEATURE_SESSION_ID" "plan"
 ```
 
-Now executing the SpecSwarm plan command to create the implementation design.
+Now I'll automatically execute the SpecSwarm plan command to create the implementation design.
 
-**Please execute**: `/specswarm:plan`
+I'll use the SlashCommand tool to run: `/specswarm:plan`
 
-_(I'll wait for the plan command to complete before proceeding)_
+I'll wait for the plan command to complete before proceeding.
 
 ### Step 4: Tasks - Generate Task Breakdown
 
@@ -145,11 +145,11 @@ _(I'll wait for the plan command to complete before proceeding)_
 feature_start_specswarm_phase "$FEATURE_SESSION_ID" "tasks"
 ```
 
-Now executing the SpecSwarm tasks command to generate the task breakdown.
+Now I'll automatically execute the SpecSwarm tasks command to generate the task breakdown.
 
-**Please execute**: `/specswarm:tasks`
+I'll use the SlashCommand tool to run: `/specswarm:tasks`
 
-_(I'll wait for the tasks command to complete before proceeding to implementation)_
+I'll wait for the tasks command to complete before proceeding to implementation.
 
 ### Step 5: Parse Tasks
 
@@ -245,15 +245,13 @@ fi
 
 ```bash
 echo "🚀 Executing task with orchestrator..."
-
-# Execute: /speclabs:orchestrate <workflow_file> <project_path>
 ```
 
-Now executing the task with the Phase 1b orchestrator.
+Now I'll automatically execute this task using the Phase 1b orchestrator.
 
-**Please execute**: `/speclabs:orchestrate ${WORKFLOW_FILE} ${PROJECT_PATH}`
+I'll use the SlashCommand tool to run: `/speclabs:orchestrate ${WORKFLOW_FILE} ${PROJECT_PATH}`
 
-_(This will launch an agent to complete the task with automatic validation and retry logic)_
+This will launch an agent to complete the task with automatic validation and retry logic. I'll wait for it to complete before continuing to the next task.
 
 3. **Process Task Result**
 
@@ -340,9 +338,11 @@ if [ "$FAILED_COUNT" -gt 0 ]; then
 fi
 ```
 
-**Please execute**: `/specswarm:bugfix`
+I'll automatically execute the SpecSwarm bugfix command using the SlashCommand tool.
 
-_(This will use ultrathinking to find and fix any remaining issues)_
+I'll run: `/specswarm:bugfix`
+
+This will use ultrathinking to find and fix any remaining issues.
 
 ```bash
 if [ "$FAILED_COUNT" -gt 0 ]; then

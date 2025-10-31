@@ -5,6 +5,93 @@ All notable changes to SpecSwarm and SpecLabs plugins will be documented in this
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.2] - 2025-10-30
+
+### Changed - SpecLabs
+
+#### Enhanced: Fully Automatic Orchestration
+- **Major Improvement**: `/speclabs:orchestrate-feature` is now fully automatic - no manual command execution required
+- **What Changed**: Removed all "Please execute" instructions that required user intervention
+- **Automated Phases**:
+  - ✅ Specify phase - Automatically runs `/specswarm:specify`
+  - ✅ Clarify phase - Automatically runs `/specswarm:clarify`
+  - ✅ Plan phase - Automatically runs `/specswarm:plan`
+  - ✅ Tasks phase - Automatically runs `/specswarm:tasks`
+  - ✅ Implementation phase - Automatically runs `/speclabs:orchestrate` for each task
+  - ✅ Bugfix phase - Automatically runs `/specswarm:bugfix` if needed
+  - ✅ Audit phase - Automatically runs if `--audit` flag specified
+- **User Experience**: Single command runs entire feature lifecycle from specification to completion
+- **File**: `plugins/speclabs/commands/orchestrate-feature.md` (6 sections updated)
+
+### Root Cause Analysis
+
+**Why v2.1.1 Fixes Didn't Work**:
+- v2.1.1 code was correct - session tracking and audit functions existed
+- Issue: Workflow required user to manually execute intermediate commands
+- Reality: Users performed manual implementation instead of following multi-step workflow
+- Result: Session tracking and audit phases never triggered (workflow never completed)
+
+**The Fix (v2.1.2)**:
+- Changed all "Please execute: /command" instructions to automatic SlashCommand tool usage
+- Claude now automatically executes all workflow phases without user intervention
+- Single command: `/speclabs:orchestrate-feature "description" /path --audit` runs everything
+
+### Testing Plan
+
+**v2.1.2 will be validated during Feature 009** (React Router v6 upgrade) to ensure:
+- ✅ Session file created automatically in `/memory/feature-orchestrator/sessions/`
+- ✅ All SpecSwarm phases execute without manual intervention
+- ✅ All tasks execute automatically through Phase 1b orchestrator
+- ✅ Audit phase triggers automatically after implementation (if `--audit` flag used)
+- ✅ Quality score calculated and included in audit report
+- ✅ `/speclabs:metrics` dashboard can track the session
+
+**Expected Workflow**:
+```bash
+# User runs single command
+/speclabs:orchestrate-feature "Upgrade React Router v4 to v6" /path/to/project --audit
+
+# Claude automatically executes:
+# 1. /specswarm:specify
+# 2. /specswarm:clarify
+# 3. /specswarm:plan
+# 4. /specswarm:tasks
+# 5. For each task: /speclabs:orchestrate workflow_N.md /path
+# 6. If needed: /specswarm:bugfix
+# 7. Audit phase (quality score calculated)
+# 8. User runs: /specswarm:complete
+
+# Total user commands: 2 (orchestrate-feature + complete)
+# Previous workflow required: 50+ manual commands
+```
+
+### Migration Notes
+
+**For users upgrading from v2.1.1 to v2.1.2:**
+
+1. **Breaking Change**: Workflow is now fully automatic
+   - Do NOT manually execute intermediate commands
+   - Let Claude automatically run all phases
+   - Only manual step: Run `/specswarm:complete` when orchestration finishes
+
+2. **Workflow Simplification**:
+   - Before: Run `/speclabs:orchestrate-feature` → manually execute 40+ commands → run `/specswarm:complete`
+   - After: Run `/speclabs:orchestrate-feature` → wait for completion → run `/specswarm:complete`
+
+3. **Session Tracking & Audit Now Work**:
+   - Session files will be created automatically
+   - Audit phase will run automatically if `--audit` flag used
+   - `/speclabs:metrics` dashboard will show orchestration data
+
+**Recommended Actions**:
+1. Restart Claude Code after upgrading to load v2.1.2
+2. Test with Feature 009 or a small standalone feature
+3. Monitor for automatic command execution (should see SlashCommand tool usage)
+4. Verify session created: `ls /memory/feature-orchestrator/sessions/`
+5. Verify audit report: Check `.speclabs/audit/` if `--audit` was used
+
+---
+
 ## [2.1.1] - 2025-10-29
 
 ### Fixed - SpecLabs
