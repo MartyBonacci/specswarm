@@ -5,8 +5,8 @@ args:
     description: Natural language description of the feature to build
     required: true
   - name: project_path
-    description: Path to the target project
-    required: true
+    description: Path to the target project (defaults to current working directory)
+    required: false
   - name: --skip-specify
     description: Skip the specify phase (spec.md already exists)
     required: false
@@ -37,14 +37,22 @@ pre_orchestration_hook: |
 
   # Parse arguments
   FEATURE_DESC="$1"
-  PROJECT_PATH="$2"
+  shift
+
+  # Check if next arg is a path (doesn't start with --)
+  if [ -n "$1" ] && [ "${1:0:2}" != "--" ]; then
+    PROJECT_PATH="$1"
+    shift
+  else
+    PROJECT_PATH="$(pwd)"
+  fi
+
   SKIP_SPECIFY=false
   SKIP_CLARIFY=false
   SKIP_PLAN=false
   MAX_RETRIES=3
   RUN_AUDIT=false
 
-  shift 2
   while [[ $# -gt 0 ]]; do
     case "$1" in
       --skip-specify) SKIP_SPECIFY=true; shift ;;
@@ -59,8 +67,11 @@ pre_orchestration_hook: |
   # Validate project path
   if [ ! -d "$PROJECT_PATH" ]; then
     echo "❌ Error: Project path does not exist: $PROJECT_PATH"
+    echo "   (Tip: Provide an explicit path or run from your project directory)"
     exit 1
   fi
+
+  echo "📁 Project: $PROJECT_PATH"
 
   # Source orchestration library
   PLUGIN_DIR="/home/marty/code-projects/specswarm/plugins/speclabs"

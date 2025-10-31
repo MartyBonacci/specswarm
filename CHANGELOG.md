@@ -5,6 +5,41 @@ All notable changes to SpecSwarm and SpecLabs plugins will be documented in this
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.1] - 2025-10-30
+
+### Changed - SpecLabs
+
+#### User Experience Enhancement: Optional PROJECT_PATH
+- **Made `project_path` argument optional** in `/speclabs:orchestrate-feature` command
+- **Defaults to current working directory**: When not specified, uses `$(pwd)` automatically
+- **Improved argument parsing**: Enhanced logic to detect path vs flags properly
+- **Better error messages**: Added helpful tip when project path doesn't exist
+
+**Usage Examples**:
+```bash
+# Before (v2.2.0) - path always required:
+/speclabs:orchestrate-feature "Add feature X" /home/marty/code-projects/myapp --audit
+
+# After (v2.2.1) - path optional if you're already in project directory:
+cd /home/marty/code-projects/myapp
+/speclabs:orchestrate-feature "Add feature X" --audit
+
+# Explicit path still works:
+/speclabs:orchestrate-feature "Add feature Y" /path/to/project --audit
+```
+
+**Benefits**:
+- ✅ Less typing when working in project directory
+- ✅ More intuitive for single-project workflows
+- ✅ Backward compatible (explicit paths still work)
+- ✅ Clearer error message if path doesn't exist
+
+**Technical Details**:
+- Updated `orchestrate-feature.md` pre-orchestration hook (lines 38-74)
+- Smart argument parsing: Detects if second arg is path or flag
+- Validates project directory exists before proceeding
+- Shows project path in output for clarity
+
 ## [2.2.0] - 2025-10-30
 
 ### Changed - SpecLabs (MAJOR ARCHITECTURE REDESIGN)

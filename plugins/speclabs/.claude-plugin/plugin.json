@@ -1,7 +1,7 @@
 {
   "name": "speclabs",
-  "version": "2.2.0",
-  "description": "Experimental laboratory for autonomous development with Agent-Based Orchestration Engine. v2.2.0: True autonomous execution via Task tool - single command orchestrates entire feature lifecycle. Use at your own risk.",
+  "version": "2.2.1",
+  "description": "Experimental laboratory for autonomous development with Agent-Based Orchestration Engine. v2.2.1: PROJECT_PATH now optional (defaults to pwd). v2.2.0: True autonomous execution via Task tool. Use at your own risk.",
   "author": {
     "name": "Marty Bonacci",
     "url": "https://github.com/MartyBonacci"
