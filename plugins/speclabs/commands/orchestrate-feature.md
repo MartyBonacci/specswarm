@@ -1,5 +1,5 @@
 ---
-description: Orchestrate complete feature lifecycle from specification to implementation using SpecSwarm + SpecLabs integration
+description: Orchestrate complete feature lifecycle from specification to implementation using autonomous agent
 args:
   - name: feature_description
     description: Natural language description of the feature to build
@@ -25,14 +25,14 @@ args:
 pre_orchestration_hook: |
   #!/bin/bash
 
-  echo "🎯 Feature Orchestrator - Phase 2: Feature Workflow Engine"
+  echo "🎯 Feature Orchestrator v2.2.0 - Agent-Based Orchestration"
   echo ""
-  echo "This orchestrator integrates SpecSwarm planning with SpecLabs execution:"
+  echo "This orchestrator launches an autonomous agent that handles:"
   echo "  1. SpecSwarm Planning: specify → clarify → plan → tasks"
-  echo "  2. SpecLabs Execution: orchestrate each task with validation"
-  echo "  3. Intelligent Retry: Auto-retry failed tasks up to 3 times"
-  echo "  4. Quality Assurance: Automated bugfix for remaining issues"
-  echo "  5. Code Audit: Comprehensive audit with --audit flag (optional)"
+  echo "  2. SpecLabs Execution: automatically execute all tasks"
+  echo "  3. Intelligent Bugfix: Auto-fix failures with /specswarm:bugfix"
+  echo "  4. Code Audit: Comprehensive quality validation (if --audit)"
+  echo "  5. Completion Report: Full summary with next steps"
   echo ""
 
   # Parse arguments
@@ -62,24 +62,20 @@ pre_orchestration_hook: |
     exit 1
   fi
 
-  # Source Phase 2 components
+  # Source orchestration library
   PLUGIN_DIR="/home/marty/code-projects/specswarm/plugins/speclabs"
   source "${PLUGIN_DIR}/lib/feature-orchestrator.sh"
-  source "${PLUGIN_DIR}/lib/task-converter.sh"
-  source "${PLUGIN_DIR}/lib/state-manager.sh"
-  source "${PLUGIN_DIR}/lib/decision-maker.sh"
-  source "${PLUGIN_DIR}/lib/prompt-refiner.sh"
 
-  echo "✅ All Phase 2 components loaded"
-  echo ""
+  # Initialize orchestrator
+  feature_init
 
   # Create feature session
-  echo "📝 Creating feature session..."
+  echo "📝 Creating feature orchestration session..."
   SESSION_ID=$(feature_create_session "$FEATURE_DESC" "$PROJECT_PATH")
   echo "✅ Feature Session: $SESSION_ID"
   echo ""
 
-  # Export for use in main workflow
+  # Export for agent
   export FEATURE_SESSION_ID="$SESSION_ID"
   export FEATURE_DESC="$FEATURE_DESC"
   export PROJECT_PATH="$PROJECT_PATH"
@@ -90,803 +86,288 @@ pre_orchestration_hook: |
   export RUN_AUDIT="$RUN_AUDIT"
   export PLUGIN_DIR="$PLUGIN_DIR"
 
-  echo "🚀 Ready to orchestrate feature: $FEATURE_DESC"
+  echo "🚀 Launching orchestration agent for: $FEATURE_DESC"
   echo ""
 ---
 
-# Feature Orchestration Workflow
+# Agent-Based Feature Orchestration
 
-I'll orchestrate the complete feature lifecycle for: **${FEATURE_DESC}**
+I'll now launch an autonomous agent to handle the complete feature lifecycle.
 
-## Phase 1: SpecSwarm Planning
+**Orchestration Details**:
+- **Feature**: ${FEATURE_DESC}
+- **Project**: ${PROJECT_PATH}
+- **Session ID**: ${FEATURE_SESSION_ID}
+- **Audit**: ${RUN_AUDIT}
+- **Skip Phases**: Specify=${SKIP_SPECIFY}, Clarify=${SKIP_CLARIFY}, Plan=${SKIP_PLAN}
 
-I'll run the SpecSwarm planning commands to generate the feature specification and task breakdown.
-
-### Step 1: Specify - Generate Feature Specification
-
-```bash
-source "$PLUGIN_DIR/lib/feature-orchestrator.sh"
-feature_start_specswarm_phase "$FEATURE_SESSION_ID" "specify"
-```
-
-Now automatically execute the SpecSwarm specify command to create the feature specification.
-
-**Execute immediately using the SlashCommand tool**: `/specswarm:specify "${FEATURE_DESC}"`
-
-Wait for the specify command to complete, then automatically proceed to the next step. Do not ask for user confirmation.
-
-### Step 2: Clarify - Refine Requirements
-
-```bash
-feature_start_specswarm_phase "$FEATURE_SESSION_ID" "clarify"
-```
-
-Now automatically execute the SpecSwarm clarify command to refine requirements.
-
-**Execute immediately using the SlashCommand tool**: `/specswarm:clarify`
-
-Wait for the clarify command to complete, then automatically proceed to the next step. Do not ask for user confirmation.
-
-### Step 3: Plan - Generate Implementation Plan
-
-```bash
-feature_start_specswarm_phase "$FEATURE_SESSION_ID" "plan"
-```
-
-Now automatically execute the SpecSwarm plan command to create the implementation design.
-
-**Execute immediately using the SlashCommand tool**: `/specswarm:plan`
-
-Wait for the plan command to complete, then automatically proceed to the next step. Do not ask for user confirmation.
-
-### Step 4: Tasks - Generate Task Breakdown
-
-```bash
-feature_start_specswarm_phase "$FEATURE_SESSION_ID" "tasks"
-```
-
-Now automatically execute the SpecSwarm tasks command to generate the task breakdown.
-
-**Execute immediately using the SlashCommand tool**: `/specswarm:tasks`
-
-Wait for the tasks command to complete, then automatically proceed to implementation. Do not ask for user confirmation.
-
-### Step 5: Parse Tasks
-
-```bash
-echo "📊 Parsing generated tasks..."
-TASKS_FILE="${PROJECT_PATH}/tasks.md"
-SPEC_FILE="${PROJECT_PATH}/spec.md"
-PLAN_FILE="${PROJECT_PATH}/plan.md"
-
-if [ ! -f "$TASKS_FILE" ]; then
-  echo "❌ Error: tasks.md not found"
-  exit 1
-fi
-
-# Parse and load tasks into feature session
-TASK_COUNT=$(feature_parse_tasks "$FEATURE_SESSION_ID" "$TASKS_FILE")
-echo "✅ Parsed $TASK_COUNT tasks from tasks.md"
-
-# Mark planning complete
-feature_update "$FEATURE_SESSION_ID" "status" '"planning_complete"'
-feature_complete_specswarm_phase "$FEATURE_SESSION_ID" "specify" "$SPEC_FILE"
-feature_complete_specswarm_phase "$FEATURE_SESSION_ID" "clarify" "$SPEC_FILE"
-feature_complete_specswarm_phase "$FEATURE_SESSION_ID" "plan" "$PLAN_FILE"
-feature_complete_specswarm_phase "$FEATURE_SESSION_ID" "tasks" "$TASKS_FILE"
-
-echo ""
-echo "✅ Planning Phase Complete!"
-echo "   - Spec: $SPEC_FILE"
-echo "   - Plan: $PLAN_FILE"
-echo "   - Tasks: $TASKS_FILE ($TASK_COUNT tasks)"
-echo ""
-```
-
-## Phase 2: Task Implementation
-
-I'll now implement each task using the Phase 1b orchestrator with automatic validation and retry logic.
-
-```bash
-echo "🔨 Starting Implementation Phase..."
-feature_start_implementation "$FEATURE_SESSION_ID"
-
-# Create workflows directory
-WORKFLOWS_DIR="${PROJECT_PATH}/.speclabs/workflows"
-mkdir -p "$WORKFLOWS_DIR"
-
-echo "📝 Converting tasks to workflows..."
-```
-
-### Task Execution Loop
-
-I'll execute each task automatically using the Phase 1b orchestrator:
-
-```bash
-# Initialize task counter
-CURRENT_TASK=1
-TOTAL_TASKS=$(feature_get "$FEATURE_SESSION_ID" "implementation.total_count")
-
-echo "📊 Executing $TOTAL_TASKS tasks..."
-echo ""
-```
-
-For each task, I'll:
-
-1. **Convert Task to Workflow**
-
-```bash
-echo "🔄 Task $CURRENT_TASK/$TOTAL_TASKS"
-
-# Get next pending task
-NEXT_TASK=$(feature_get_next_task "$FEATURE_SESSION_ID")
-
-if [ -z "$NEXT_TASK" ] || [ "$NEXT_TASK" = "null" ]; then
-  echo "✅ No more tasks to process"
-else
-  TASK_ID=$(echo "$NEXT_TASK" | jq -r '.id')
-  TASK_DESC=$(echo "$NEXT_TASK" | jq -r '.description')
-
-  echo "Task: $TASK_DESC"
-
-  # Generate workflow file
-  WORKFLOW_FILE="${WORKFLOWS_DIR}/workflow_${TASK_ID}.md"
-
-  # Convert task to workflow
-  source "$PLUGIN_DIR/lib/task-converter.sh"
-  task_to_workflow "$NEXT_TASK" "$PROJECT_PATH" "$SPEC_FILE" "$PLAN_FILE" "$WORKFLOW_FILE"
-
-  # Mark task as in progress
-  feature_update_task "$FEATURE_SESSION_ID" "$TASK_ID" "in_progress"
-fi
-```
-
-2. **Execute Task with Phase 1b Orchestrator**
-
-```bash
-echo "🚀 Executing task with orchestrator..."
-```
-
-Now automatically execute this task using the Phase 1b orchestrator.
-
-**Execute immediately using the SlashCommand tool**: `/speclabs:orchestrate ${WORKFLOW_FILE} ${PROJECT_PATH}`
-
-This will launch an agent to complete the task with automatic validation and retry logic. Wait for it to complete before continuing to the next task. Do not ask for user confirmation.
-
-3. **Process Task Result**
-
-```bash
-echo "📊 Processing task result..."
-
-# Check if orchestrate session succeeded
-# The orchestrate command will have created a session in /memory/orchestrator/sessions/
-
-# Find the most recent orchestrate session
-LATEST_ORCH_SESSION=$(ls -t /home/marty/code-projects/specswarm/memory/orchestrator/sessions/*.json | head -n 1)
-
-if [ -f "$LATEST_ORCH_SESSION" ]; then
-  ORCH_STATUS=$(jq -r '.status' "$LATEST_ORCH_SESSION")
-  ORCH_SESSION_ID=$(jq -r '.session_id' "$LATEST_ORCH_SESSION")
-
-  # Update feature task with orchestrate session ID
-  feature_update_task "$FEATURE_SESSION_ID" "$TASK_ID" "$ORCH_STATUS" "$ORCH_SESSION_ID"
-
-  if [ "$ORCH_STATUS" = "success" ]; then
-    echo "✅ Task completed successfully"
-    feature_complete_task "$FEATURE_SESSION_ID" "$TASK_ID" "true"
-  elif [ "$ORCH_STATUS" = "escalated" ]; then
-    echo "⚠️  Task escalated (max retries exceeded)"
-    feature_fail_task "$FEATURE_SESSION_ID" "$TASK_ID"
-  else
-    echo "⚠️  Task status: $ORCH_STATUS"
-    feature_fail_task "$FEATURE_SESSION_ID" "$TASK_ID"
-  fi
-else
-  echo "❌ Could not find orchestrate session"
-  feature_fail_task "$FEATURE_SESSION_ID" "$TASK_ID"
-fi
-
-echo ""
-```
-
-4. **Continue to Next Task**
-
-```bash
-# Increment counter
-((CURRENT_TASK++))
-
-# Loop continues for each task...
-# (This is a simplified representation - actual implementation will loop through all tasks)
-```
-
-### Implementation Summary
-
-```bash
-echo "📊 Implementation Phase Summary"
-echo "=============================="
-
-COMPLETED=$(feature_get "$FEATURE_SESSION_ID" "implementation.completed_count")
-FAILED=$(feature_get "$FEATURE_SESSION_ID" "implementation.failed_count")
-TOTAL=$(feature_get "$FEATURE_SESSION_ID" "implementation.total_count")
-
-echo "Total Tasks: $TOTAL"
-echo "Completed: $COMPLETED"
-echo "Failed: $FAILED"
-echo ""
-
-if [ "$FAILED" -gt 0 ]; then
-  echo "⚠️  Some tasks failed - proceeding to bugfix phase"
-else
-  echo "✅ All tasks completed successfully!"
-fi
-echo ""
-```
-
-## Phase 3: Bugfix (If Needed)
-
-If any tasks failed or validation issues remain, I'll run the SpecSwarm bugfix workflow:
-
-```bash
-FAILED_COUNT=$(feature_get "$FEATURE_SESSION_ID" "implementation.failed_count")
-
-if [ "$FAILED_COUNT" -gt 0 ]; then
-  echo "🔧 Starting Bugfix Phase..."
-  feature_start_bugfix "$FEATURE_SESSION_ID"
-
-  # Run bugfix command
-  echo "Executing bugfix workflow for failed tasks..."
-fi
-```
-
-Automatically execute the SpecSwarm bugfix command using the SlashCommand tool.
-
-**Execute immediately using the SlashCommand tool**: `/specswarm:bugfix`
-
-This will use ultrathinking to find and fix any remaining issues. Do not ask for user confirmation.
-
-```bash
-if [ "$FAILED_COUNT" -gt 0 ]; then
-  # After bugfix completes
-  echo "✅ Bugfix phase complete"
-  feature_complete_bugfix "$FEATURE_SESSION_ID" "$FAILED_COUNT"
-  echo ""
-fi
-```
-
-## Phase 3a: Code Audit (Optional)
-
-If the `--audit` flag was provided, I'll run a comprehensive code audit:
-
-```bash
-if [ "$RUN_AUDIT" = "true" ]; then
-  echo "🔍 Starting Code Audit Phase..."
-  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-  echo ""
-
-  feature_start_audit "$FEATURE_SESSION_ID"
-
-  # Create audit report directory
-  AUDIT_DIR="${PROJECT_PATH}/.speclabs/audit"
-  mkdir -p "$AUDIT_DIR"
-  AUDIT_REPORT="${AUDIT_DIR}/audit-report-$(date +%Y%m%d-%H%M%S).md"
-
-  echo "📋 Audit Report: $AUDIT_REPORT"
-  echo ""
-
-  # Initialize audit report
-  cat > "$AUDIT_REPORT" << 'AUDIT_HEADER'
-# Code Audit Report
-
-**Generated**: $(date)
-**Feature**: ${FEATURE_DESC}
-**Project**: ${PROJECT_PATH}
-
-## Audit Scope
-
-This comprehensive audit checks:
-- ✅ Code compatibility (language version, framework version)
-- ✅ Security vulnerabilities (common attack vectors, data exposure)
-- ✅ Best practices (code patterns, architecture, performance)
-- ✅ Type safety (if applicable)
-- ✅ Deprecated patterns and technical debt
+The agent will execute all phases automatically and report back when complete. This may take several minutes depending on feature complexity.
 
 ---
 
-AUDIT_HEADER
-
-  echo "🔍 Running compatibility audit..."
-  echo ""
-  echo "### 1. Compatibility Audit" >> "$AUDIT_REPORT"
-  echo "" >> "$AUDIT_REPORT"
-
-  # Compatibility Audit
-  echo "Checking language and framework compatibility..."
-
-  # Detect project type
-  if [ -f "${PROJECT_PATH}/composer.json" ]; then
-    # PHP project
-    echo "**Project Type**: PHP/Laravel" >> "$AUDIT_REPORT"
-    echo "" >> "$AUDIT_REPORT"
-
-    # Check PHP version requirements
-    if command -v php &> /dev/null; then
-      PHP_VERSION=$(php -v | head -n 1 | cut -d ' ' -f 2)
-      echo "**PHP Version**: $PHP_VERSION" >> "$AUDIT_REPORT"
-      echo "" >> "$AUDIT_REPORT"
-    fi
-
-    echo "#### Compatibility Checks:" >> "$AUDIT_REPORT"
-    echo "" >> "$AUDIT_REPORT"
-
-    # Check for deprecated PHP patterns
-    echo "Scanning for deprecated PHP patterns..." >> "$AUDIT_REPORT"
-
-    # Dynamic properties (PHP 8.2+)
-    DYNAMIC_PROPS=$(grep -rn "public \$[a-zA-Z_]" "${PROJECT_PATH}/app" 2>/dev/null | wc -l || echo "0")
-    if [ "$DYNAMIC_PROPS" -gt 0 ]; then
-      echo "- ⚠️  Found $DYNAMIC_PROPS potential dynamic properties (deprecated in PHP 8.2+)" >> "$AUDIT_REPORT"
-      echo "  Review: app/ directory for undeclared properties" >> "$AUDIT_REPORT"
-    else
-      echo "- ✅ No dynamic property issues detected" >> "$AUDIT_REPORT"
-    fi
-    echo "" >> "$AUDIT_REPORT"
-
-    # Check for deprecated functions
-    DEPRECATED_FUNCS=$(grep -rn "create_function\|each\|utf8_encode\|utf8_decode" "${PROJECT_PATH}/app" 2>/dev/null | wc -l || echo "0")
-    if [ "$DEPRECATED_FUNCS" -gt 0 ]; then
-      echo "- ⚠️  Found $DEPRECATED_FUNCS uses of deprecated functions" >> "$AUDIT_REPORT"
-      echo "  Review: Deprecated functions like create_function, each, utf8_encode" >> "$AUDIT_REPORT"
-    else
-      echo "- ✅ No deprecated function usage detected" >> "$AUDIT_REPORT"
-    fi
-    echo "" >> "$AUDIT_REPORT"
-
-  elif [ -f "${PROJECT_PATH}/package.json" ]; then
-    # Node.js project
-    echo "**Project Type**: Node.js" >> "$AUDIT_REPORT"
-    echo "" >> "$AUDIT_REPORT"
-
-    if command -v node &> /dev/null; then
-      NODE_VERSION=$(node -v)
-      echo "**Node Version**: $NODE_VERSION" >> "$AUDIT_REPORT"
-      echo "" >> "$AUDIT_REPORT"
-    fi
-
-    echo "#### Compatibility Checks:" >> "$AUDIT_REPORT"
-    echo "" >> "$AUDIT_REPORT"
-    echo "- ℹ️  Run \`npm audit\` for dependency vulnerabilities" >> "$AUDIT_REPORT"
-    echo "- ℹ️  Check package.json engines field for version requirements" >> "$AUDIT_REPORT"
-    echo "" >> "$AUDIT_REPORT"
-  else
-    echo "**Project Type**: Unknown" >> "$AUDIT_REPORT"
-    echo "" >> "$AUDIT_REPORT"
-  fi
-
-  echo "✅ Compatibility audit complete"
-  echo ""
-
-  # Security Audit
-  echo "🔒 Running security audit..."
-  echo ""
-  echo "### 2. Security Audit" >> "$AUDIT_REPORT"
-  echo "" >> "$AUDIT_REPORT"
-
-  # Check for common security issues
-  echo "#### Security Checks:" >> "$AUDIT_REPORT"
-  echo "" >> "$AUDIT_REPORT"
-
-  # Check for hardcoded secrets
-  HARDCODED_SECRETS=$(grep -rn "password\s*=\s*['\"][^'\"]*['\"]" "${PROJECT_PATH}" --include="*.php" --include="*.js" --include="*.ts" 2>/dev/null | wc -l || echo "0")
-  if [ "$HARDCODED_SECRETS" -gt 0 ]; then
-    echo "- ⚠️  Found $HARDCODED_SECRETS potential hardcoded secrets" >> "$AUDIT_REPORT"
-    echo "  Review: Check for hardcoded passwords, API keys, tokens" >> "$AUDIT_REPORT"
-  else
-    echo "- ✅ No obvious hardcoded secrets detected" >> "$AUDIT_REPORT"
-  fi
-  echo "" >> "$AUDIT_REPORT"
-
-  # Check for SQL injection vulnerabilities (raw queries)
-  RAW_QUERIES=$(grep -rn "DB::raw\|->raw(" "${PROJECT_PATH}" --include="*.php" 2>/dev/null | wc -l || echo "0")
-  if [ "$RAW_QUERIES" -gt 0 ]; then
-    echo "- ⚠️  Found $RAW_QUERIES raw database queries" >> "$AUDIT_REPORT"
-    echo "  Review: Ensure proper parameterization to prevent SQL injection" >> "$AUDIT_REPORT"
-  else
-    echo "- ✅ No raw database queries detected" >> "$AUDIT_REPORT"
-  fi
-  echo "" >> "$AUDIT_REPORT"
-
-  # Check for XSS vulnerabilities (unescaped output in Blade templates)
-  UNESCAPED_OUTPUT=$(grep -rn "{!!" "${PROJECT_PATH}/resources/views" 2>/dev/null | wc -l || echo "0")
-  if [ "$UNESCAPED_OUTPUT" -gt 0 ]; then
-    echo "- ⚠️  Found $UNESCAPED_OUTPUT unescaped outputs in Blade templates" >> "$AUDIT_REPORT"
-    echo "  Review: Ensure {!! output is intentional and sanitized" >> "$AUDIT_REPORT"
-  else
-    echo "- ✅ No unescaped template output detected" >> "$AUDIT_REPORT"
-  fi
-  echo "" >> "$AUDIT_REPORT"
-
-  # Check for eval usage
-  EVAL_USAGE=$(grep -rn "eval(" "${PROJECT_PATH}" --include="*.php" --include="*.js" 2>/dev/null | wc -l || echo "0")
-  if [ "$EVAL_USAGE" -gt 0 ]; then
-    echo "- ⚠️  Found $EVAL_USAGE uses of eval()" >> "$AUDIT_REPORT"
-    echo "  Review: eval() is a security risk and should be avoided" >> "$AUDIT_REPORT"
-  else
-    echo "- ✅ No eval() usage detected" >> "$AUDIT_REPORT"
-  fi
-  echo "" >> "$AUDIT_REPORT"
-
-  echo "✅ Security audit complete"
-  echo ""
-
-  # Best Practices Audit
-  echo "📚 Running best practices audit..."
-  echo ""
-  echo "### 3. Best Practices Audit" >> "$AUDIT_REPORT"
-  echo "" >> "$AUDIT_REPORT"
-
-  echo "#### Code Quality Checks:" >> "$AUDIT_REPORT"
-  echo "" >> "$AUDIT_REPORT"
-
-  # Check for TODO/FIXME comments
-  TODO_COUNT=$(grep -rn "TODO\|FIXME\|HACK" "${PROJECT_PATH}" --include="*.php" --include="*.js" --include="*.ts" 2>/dev/null | wc -l || echo "0")
-  if [ "$TODO_COUNT" -gt 0 ]; then
-    echo "- ℹ️  Found $TODO_COUNT TODO/FIXME comments" >> "$AUDIT_REPORT"
-    echo "  Consider: Address technical debt items" >> "$AUDIT_REPORT"
-  else
-    echo "- ✅ No pending TODO/FIXME items" >> "$AUDIT_REPORT"
-  fi
-  echo "" >> "$AUDIT_REPORT"
-
-  # Check for error suppression (@)
-  ERROR_SUPPRESSION=$(grep -rn "@" "${PROJECT_PATH}" --include="*.php" | grep -v "param\|return\|var\|throws\|author" 2>/dev/null | wc -l || echo "0")
-  if [ "$ERROR_SUPPRESSION" -gt 10 ]; then
-    echo "- ⚠️  Found excessive error suppression (@)" >> "$AUDIT_REPORT"
-    echo "  Review: Error suppression can hide bugs - use proper error handling" >> "$AUDIT_REPORT"
-  else
-    echo "- ✅ Error suppression usage is reasonable" >> "$AUDIT_REPORT"
-  fi
-  echo "" >> "$AUDIT_REPORT"
-
-  # Check for console.log in production code
-  if [ -d "${PROJECT_PATH}/resources/js" ] || [ -d "${PROJECT_PATH}/src" ]; then
-    CONSOLE_LOGS=$(grep -rn "console\.log" "${PROJECT_PATH}/resources/js" "${PROJECT_PATH}/src" 2>/dev/null | wc -l || echo "0")
-    if [ "$CONSOLE_LOGS" -gt 5 ]; then
-      echo "- ⚠️  Found $CONSOLE_LOGS console.log statements" >> "$AUDIT_REPORT"
-      echo "  Review: Remove debug logging before production deployment" >> "$AUDIT_REPORT"
-    else
-      echo "- ✅ Minimal debug logging detected" >> "$AUDIT_REPORT"
-    fi
-    echo "" >> "$AUDIT_REPORT"
-  fi
-
-  echo "✅ Best practices audit complete"
-  echo ""
-
-  # Audit Summary
-  echo "📊 Generating audit summary..."
-  echo ""
-
-  echo "---" >> "$AUDIT_REPORT"
-  echo "" >> "$AUDIT_REPORT"
-  echo "## Audit Summary" >> "$AUDIT_REPORT"
-  echo "" >> "$AUDIT_REPORT"
-  echo "**Status**: Audit complete" >> "$AUDIT_REPORT"
-  echo "" >> "$AUDIT_REPORT"
-  echo "### Recommendations:" >> "$AUDIT_REPORT"
-  echo "" >> "$AUDIT_REPORT"
-  echo "1. Review all ⚠️  warnings in this report" >> "$AUDIT_REPORT"
-  echo "2. Address security concerns before production deployment" >> "$AUDIT_REPORT"
-  echo "3. Update deprecated code patterns for future compatibility" >> "$AUDIT_REPORT"
-  echo "4. Run language-specific linters for detailed analysis:" >> "$AUDIT_REPORT"
-  echo "   - PHP: \`./vendor/bin/phpstan analyse\`" >> "$AUDIT_REPORT"
-  echo "   - JavaScript: \`npm run lint\`" >> "$AUDIT_REPORT"
-  echo "" >> "$AUDIT_REPORT"
-  echo "### Next Steps:" >> "$AUDIT_REPORT"
-  echo "" >> "$AUDIT_REPORT"
-  echo "- [ ] Address critical security issues" >> "$AUDIT_REPORT"
-  echo "- [ ] Fix compatibility warnings" >> "$AUDIT_REPORT"
-  echo "- [ ] Update deprecated patterns" >> "$AUDIT_REPORT"
-  echo "- [ ] Run automated tests" >> "$AUDIT_REPORT"
-  echo "- [ ] Manual testing in staging environment" >> "$AUDIT_REPORT"
-  echo "" >> "$AUDIT_REPORT"
-
-  # Calculate quality score (simple heuristic: 100 - (warnings + errors))
-  # This is a basic implementation - can be enhanced with weighted scoring
-  QUALITY_SCORE=100
-
-  # Count total issues (you would need to track these during the audit)
-  # For now, use a default score that can be updated manually in the report
-  echo "**Quality Score**: $QUALITY_SCORE/100 (auto-calculated)" >> "$AUDIT_REPORT"
-  echo "" >> "$AUDIT_REPORT"
-
-  # Complete audit phase
-  feature_complete_audit "$FEATURE_SESSION_ID" "$AUDIT_REPORT" "$QUALITY_SCORE"
-
-  echo "✅ Audit phase complete"
-  echo "📄 Report saved: $AUDIT_REPORT"
-  echo ""
-  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-  echo ""
-fi
-```
-
-## Phase 4: Feature Completion
-
-```bash
-echo "🎉 Feature Orchestration Complete!"
-echo "=================================="
-echo ""
-
-# Determine overall success
-FAILED_FINAL=$(feature_get "$FEATURE_SESSION_ID" "implementation.failed_count")
-
-if [ "$FAILED_FINAL" -eq 0 ]; then
-  feature_complete "$FEATURE_SESSION_ID" "true" "Feature implementation successful"
-  echo "✅ Status: SUCCESS"
-else
-  feature_complete "$FEATURE_SESSION_ID" "false" "Feature completed with $FAILED_FINAL unresolved tasks"
-  echo "⚠️  Status: PARTIAL SUCCESS ($FAILED_FINAL tasks unresolved)"
-fi
-echo ""
-
-# Generate comprehensive report
-echo "📄 Generating feature report..."
-REPORT_FILE=$(feature_export_report "$FEATURE_SESSION_ID")
-echo "✅ Report: $REPORT_FILE"
-echo ""
-
-# Display summary
-feature_summary "$FEATURE_SESSION_ID"
-
-# === Phase 2.1: Git Workflow Automation ===
-
-# Only proceed with git workflow if feature succeeded
-FEATURE_SUCCESS=$(feature_get "$FEATURE_SESSION_ID" "result.success")
-
-if [ "$FEATURE_SUCCESS" = "true" ]; then
-  echo ""
-  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-  echo "💾 Git Workflow: Committing Changes"
-  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-  echo ""
-
-  # Check if we're in a git repository
-  cd "$PROJECT_PATH"
-  if ! git rev-parse --git-dir > /dev/null 2>&1; then
-    echo "⚠️  Not a git repository - skipping git workflow"
-    echo "   Initialize git with: git init"
-  else
-    # Get current branch
-    CURRENT_BRANCH=$(git branch --show-current)
-
-    echo "📂 Current branch: $CURRENT_BRANCH"
-    echo ""
-
-    # Show what will be committed
-    echo "📋 Files to commit:"
-    git status --short | head -20
-    echo ""
-
-    # Stage all changes
-    git add -A
-
-    # Get quality score and file count
-    QUALITY_SCORE=$(feature_get "$FEATURE_SESSION_ID" "metrics.quality_score" 2>/dev/null || echo "N/A")
-    FILE_COUNT=$(git diff --cached --numstat | wc -l)
-
-    # Create comprehensive commit message
-    COMMIT_MSG="feat: ${FEATURE_DESC}
-
-Generated by SpecLabs Phase 2 Feature Workflow Engine
-Quality Score: ${QUALITY_SCORE}/100
-Files Changed: ${FILE_COUNT}
-
-⚠️ IMPORTANT: Manual testing required before merging.
-Phase 2 validation is structural only - runtime behavior not tested.
-
-Testing Checklist:
-- [ ] Feature works as expected
-- [ ] External integrations tested (Cloudinary, Stripe, etc.)
-- [ ] No runtime errors in server console
-- [ ] UI/UX is acceptable
-
-See orchestrator report: ${REPORT_FILE}
-
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-
-Co-Authored-By: Claude <noreply@anthropic.com>"
-
-    # Commit changes
-    if git commit -m "$COMMIT_MSG"; then
-      echo "✅ Changes committed to branch: $CURRENT_BRANCH"
-
-      # Push to remote
-      if git push -u origin "$CURRENT_BRANCH" 2>/dev/null; then
-        echo "✅ Branch pushed to remote"
-      else
-        echo "⚠️  Could not push to remote (may need to set upstream or authenticate)"
-        echo "   Push manually with: git push -u origin $CURRENT_BRANCH"
-      fi
-    else
-      echo "⚠️  Nothing to commit (no changes detected)"
-    fi
-
-    echo ""
-    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-    echo "🧪 Manual Testing Phase"
-    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-    echo ""
-    echo "Feature committed to branch: $CURRENT_BRANCH"
-    echo ""
-    echo "📋 Testing Checklist:"
-    echo "  - [ ] Feature works as expected"
-    echo "  - [ ] External integrations tested (if any)"
-    echo "  - [ ] No runtime errors in console"
-    echo "  - [ ] UI/UX is acceptable"
-    echo ""
-    echo "⚠️  Reminder: Phase 2 validation only checks code structure."
-    echo "   Always test runtime behavior manually before merging."
-    echo ""
-    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-    echo ""
-
-    # Offer auto-merge
-    read -p "❓ Feature tested and ready to merge to main? (y/n): " MERGE_APPROVAL
-
-    if [ "$MERGE_APPROVAL" = "y" ] || [ "$MERGE_APPROVAL" = "Y" ]; then
-      echo ""
-      echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-      echo "🔀 Merging Feature to Main"
-      echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-      echo ""
-
-      # Get main branch name (could be 'main' or 'master')
-      MAIN_BRANCH=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@' || echo "main")
-
-      # Checkout main
-      echo "📂 Switching to $MAIN_BRANCH..."
-      if git checkout "$MAIN_BRANCH"; then
-
-        # Pull latest changes
-        echo "📥 Pulling latest changes..."
-        git pull
-
-        # Merge feature branch (no fast-forward to preserve history)
-        echo "🔀 Merging $CURRENT_BRANCH..."
-        if git merge "$CURRENT_BRANCH" --no-ff -m "Merge feature: ${FEATURE_DESC}
-
-Feature tested and approved for merge.
-See branch $CURRENT_BRANCH for implementation details."; then
-
-          # Push to remote
-          if git push; then
-            echo "✅ Feature merged to $MAIN_BRANCH"
-            echo "✅ Changes pushed to remote"
-
-            # Delete local feature branch
-            git branch -d "$CURRENT_BRANCH" 2>/dev/null
-            echo "✅ Local feature branch deleted"
-
-            echo ""
-            echo "🎉 Feature complete and merged!"
-          else
-            echo "❌ Push failed - resolve manually and push"
-            echo "   git push"
-          fi
-        else
-          echo "❌ Merge conflict detected!"
-          echo ""
-          echo "Resolve conflicts manually:"
-          echo "  1. Fix conflicts in affected files"
-          echo "  2. git add <resolved-files>"
-          echo "  3. git commit"
-          echo "  4. git push"
-          echo ""
-          # Return to feature branch
-          git checkout "$CURRENT_BRANCH"
-        fi
-      else
-        echo "❌ Could not checkout $MAIN_BRANCH"
-        echo "   Check branch exists: git branch -a"
-      fi
-    else
-      echo ""
-      echo "⚠️  Merge cancelled"
-      echo ""
-      echo "Your feature branch remains: $CURRENT_BRANCH"
-      echo ""
-      echo "Options:"
-      echo "  1. Fix issues manually and merge later:"
-      echo "     git checkout main"
-      echo "     git merge $CURRENT_BRANCH"
-      echo ""
-      echo "  2. Run bugfix workflow:"
-      echo "     /specswarm:bugfix"
-      echo ""
-      echo "  3. Create pull request for review:"
-      echo "     gh pr create --title 'feat: $FEATURE_DESC'"
-      echo ""
-      echo "  4. Abandon feature:"
-      echo "     git branch -D $CURRENT_BRANCH"
-    fi
-  fi
-fi
-```
-
----
-
-## Feature Orchestration Complete! 🎉
-
-**Session ID**: ${FEATURE_SESSION_ID}
-
-**What Was Done**:
-1. ✅ **Planning**: SpecSwarm generated spec, plan, and tasks
-2. ✅ **Implementation**: Each task executed with Phase 1b orchestrator
-3. ✅ **Validation**: Automatic validation after each task
-4. ✅ **Retry Logic**: Failed tasks automatically retried up to 3 times
-5. ✅ **Bugfix**: Remaining issues addressed with SpecSwarm bugfix
-6. ✅ **Code Audit**: Compatibility, security, and best practices audit (if --audit flag used)
-7. ✅ **Reporting**: Comprehensive session report generated
-
-**Artifacts Generated**:
-- `${PROJECT_PATH}/spec.md` - Feature specification
-- `${PROJECT_PATH}/plan.md` - Implementation plan
-- `${PROJECT_PATH}/tasks.md` - Task breakdown
-- `${PROJECT_PATH}/.speclabs/workflows/` - Generated workflow files
-- `${PROJECT_PATH}/.speclabs/audit/` - Code audit reports (if --audit used)
-- Feature report in memory directory
+I'm using the Task tool to launch the orchestration agent with subagent_type "general-purpose":
+
+**Agent Mission**: Execute the complete feature development lifecycle for "${FEATURE_DESC}" in ${PROJECT_PATH}
+
+**Comprehensive Agent Instructions**:
+
+═══════════════════════════════════════════════════════════════
+🎯 FEATURE ORCHESTRATION AGENT - AUTONOMOUS EXECUTION
+═══════════════════════════════════════════════════════════════
+
+You are an autonomous feature orchestration agent. Your mission is to implement the complete feature development lifecycle from specification to implementation without manual intervention.
+
+**MISSION**: Implement "${FEATURE_DESC}" in ${PROJECT_PATH}
+
+**SESSION TRACKING**: ${FEATURE_SESSION_ID}
+
+**CONFIGURATION**:
+- Skip Specify: ${SKIP_SPECIFY}
+- Skip Clarify: ${SKIP_CLARIFY}
+- Skip Plan: ${SKIP_PLAN}
+- Max Retries: ${MAX_RETRIES}
+- Run Audit: ${RUN_AUDIT}
+
+═══════════════════════════════════════════════════════════════
+📋 WORKFLOW - EXECUTE IN ORDER
+═══════════════════════════════════════════════════════════════
+
+## PHASE 1: PLANNING (Automatic)
+
+### Step 1.1: Specification
+IF ${SKIP_SPECIFY} = false:
+  - Use the SlashCommand tool to execute: `/specswarm:specify "${FEATURE_DESC}"`
+  - Wait for completion
+  - Verify spec.md created in features/ directory
+  - Update session: feature_complete_specswarm_phase "${FEATURE_SESSION_ID}" "specify"
+ELSE:
+  - Skip this step (spec.md already exists)
+
+### Step 1.2: Clarification
+IF ${SKIP_CLARIFY} = false:
+  - Use the SlashCommand tool to execute: `/specswarm:clarify`
+  - Answer any clarification questions if prompted
+  - Wait for completion
+  - Update session: feature_complete_specswarm_phase "${FEATURE_SESSION_ID}" "clarify"
+ELSE:
+  - Skip this step
+
+### Step 1.3: Planning
+IF ${SKIP_PLAN} = false:
+  - Use the SlashCommand tool to execute: `/specswarm:plan`
+  - Wait for plan.md generation
+  - Review plan for implementation phases
+  - Update session: feature_complete_specswarm_phase "${FEATURE_SESSION_ID}" "plan"
+ELSE:
+  - Skip this step (plan.md already exists)
+
+### Step 1.4: Task Generation
+- Use the SlashCommand tool to execute: `/specswarm:tasks`
+- Wait for tasks.md generation
+- Update session: feature_complete_specswarm_phase "${FEATURE_SESSION_ID}" "tasks"
+
+### Step 1.5: Parse Tasks
+- Use the Read tool to read ${PROJECT_PATH}/features/*/tasks.md
+- Count total tasks (look for task IDs like T001, T002, etc.)
+- Extract task list
+- Report: "Found X tasks to execute"
+
+═══════════════════════════════════════════════════════════════
+🔨 PHASE 2: IMPLEMENTATION (Automatic Task Loop)
+═══════════════════════════════════════════════════════════════
+
+### Step 2.1: Initialize Implementation
+- Create directory: ${PROJECT_PATH}/.speclabs/workflows/
+- Initialize counters: completed=0, failed=0, total=X
+- Update session: feature_start_implementation "${FEATURE_SESSION_ID}"
+
+### Step 2.2: Execute Each Task
+FOR EACH TASK in the task list:
+
+  **Create Workflow File**:
+  1. Extract task description from tasks.md
+  2. Create workflow file: .speclabs/workflows/workflow_${TASK_ID}.md
+  3. Workflow content:
+     ```markdown
+     # Task ${TASK_ID}: ${TASK_DESCRIPTION}
+
+     ## Context
+     - Feature: ${FEATURE_DESC}
+     - Project: ${PROJECT_PATH}
+     - Session: ${FEATURE_SESSION_ID}
+
+     ## Task Details
+     ${FULL_TASK_DESCRIPTION_FROM_TASKS_MD}
+
+     ## Success Criteria
+     - Task completes without errors
+     - Code builds successfully
+     - All tests pass (if applicable)
+     ```
+
+  **Execute Task**:
+  1. Use the SlashCommand tool to execute: `/speclabs:orchestrate .speclabs/workflows/workflow_${TASK_ID}.md ${PROJECT_PATH}`
+  2. Wait for task completion
+  3. Check status from orchestrate session
+
+  **Track Progress**:
+  1. IF task succeeded:
+     - Increment completed counter
+     - Update session: feature_complete_task "${FEATURE_SESSION_ID}" "${TASK_ID}" "true"
+  2. IF task failed:
+     - Increment failed counter
+     - Update session: feature_fail_task "${FEATURE_SESSION_ID}" "${TASK_ID}"
+     - Log error details
+  3. Report progress: "Task ${TASK_ID} complete (${completed}/${total} succeeded, ${failed} failed)"
+
+  **Continue to next task**
+
+### Step 2.3: Implementation Summary
+- Report final statistics:
+  - "✅ Completed: ${completed}/${total} tasks"
+  - "❌ Failed: ${failed}/${total} tasks"
+- Update session: feature_complete_implementation "${FEATURE_SESSION_ID}" "${completed}" "${failed}"
+- If failed > 0: Prepare for bugfix phase
+
+═══════════════════════════════════════════════════════════════
+🔧 PHASE 3: BUGFIX (Conditional - If Tasks Failed)
+═══════════════════════════════════════════════════════════════
+
+IF ${failed} > 0:
+
+  ### Step 3.1: Execute Bugfix
+  - Update session: feature_start_bugfix "${FEATURE_SESSION_ID}"
+  - Use the SlashCommand tool to execute: `/specswarm:bugfix`
+  - Wait for bugfix completion
+  - Review bugfix results
+
+  ### Step 3.2: Re-Verify Failed Tasks
+  - Check if previously failed tasks are now fixed
+  - Update success/failure counts
+  - Update session: feature_complete_bugfix "${FEATURE_SESSION_ID}" "${fixed_count}"
+
+═══════════════════════════════════════════════════════════════
+🔍 PHASE 4: AUDIT (Conditional - If ${RUN_AUDIT}=true)
+═══════════════════════════════════════════════════════════════
+
+IF ${RUN_AUDIT} = true:
+
+  ### Step 4.1: Initialize Audit
+  - Create audit directory: ${PROJECT_PATH}/.speclabs/audit/
+  - Update session: feature_start_audit "${FEATURE_SESSION_ID}"
+  - Prepare audit report file
+
+  ### Step 4.2: Run Audit Checks
+
+  **Compatibility Audit**:
+  - Check for deprecated patterns
+  - Verify language version compatibility
+  - Check library compatibility
+
+  **Security Audit**:
+  - Scan for hardcoded secrets
+  - Check for SQL injection vulnerabilities
+  - Verify XSS prevention
+  - Look for dangerous functions (eval, exec, etc.)
+
+  **Best Practices Audit**:
+  - Check for TODO/FIXME comments
+  - Verify error handling
+  - Check for debug logging in production
+  - Verify code organization
+
+  ### Step 4.3: Calculate Quality Score
+  - Count warnings and errors across all checks
+  - Calculate score: 100 - (warnings + errors*2)
+  - Minimum score: 0
+
+  ### Step 4.4: Generate Audit Report
+  - Create comprehensive markdown report
+  - Include all findings with file locations and line numbers
+  - Add quality score
+  - Save to: ${PROJECT_PATH}/.speclabs/audit/audit-report-${DATE}.md
+  - Update session: feature_complete_audit "${FEATURE_SESSION_ID}" "${AUDIT_REPORT_PATH}" "${QUALITY_SCORE}"
+
+═══════════════════════════════════════════════════════════════
+📊 PHASE 5: COMPLETION REPORT
+═══════════════════════════════════════════════════════════════
+
+### Step 5.1: Generate Final Report
+
+Create comprehensive completion report with:
+
+**Planning Artifacts**:
+- ✅ Specification: ${SPEC_FILE_PATH}
+- ✅ Plan: ${PLAN_FILE_PATH}
+- ✅ Tasks: ${TASKS_FILE_PATH}
+
+**Implementation Results**:
+- ✅ Total Tasks: ${total}
+- ✅ Completed Successfully: ${completed}
+- ❌ Failed: ${failed}
+- ⚠️  Fixed in Bugfix: ${fixed} (if bugfix ran)
+
+**Quality Assurance**:
+- Bugfix Phase: ${RAN_BUGFIX ? "✅ Executed" : "⏭️ Skipped (no failures)"}
+- Audit Phase: ${RUN_AUDIT ? "✅ Executed (Score: ${QUALITY_SCORE}/100)" : "⏭️ Skipped (--audit not specified)"}
+- Audit Report: ${AUDIT_REPORT_PATH} (if audit ran)
+
+**Session Information**:
+- Session ID: ${FEATURE_SESSION_ID}
+- Session File: /memory/feature-orchestrator/sessions/${FEATURE_SESSION_ID}.json
+- Feature Branch: ${BRANCH_NAME}
 
 **Next Steps**:
+1. Review implementation changes: `git diff`
+2. Test manually: Run application and verify feature works
+3. Complete feature: Run `/specswarm:complete` to finalize with git workflow
 
-1. **Manual Testing** (Required):
-   - Test the implemented feature thoroughly
-   - Verify all user scenarios work as expected
-   - Check for runtime errors and edge cases
-   - Validate external integrations (APIs, services, etc.)
+### Step 5.2: Update Session Status
+- Update session: feature_complete "${FEATURE_SESSION_ID}" "true" "Orchestration complete"
+- Mark session as ready for completion
 
-2. **Complete the Feature** (Required):
-   Once manual testing is successful, run the SpecSwarm complete workflow:
+### Step 5.3: Return Report
+Return the complete report to the main Claude instance.
 
-   ```
-   /specswarm:complete
-   ```
+═══════════════════════════════════════════════════════════════
+⚠️  ERROR HANDLING
+═══════════════════════════════════════════════════════════════
 
-   This will:
-   - Generate final completion documentation
-   - Create git commits with comprehensive messages
-   - Merge to parent branch or main branch
-   - Tag the completion for tracking
-   - Archive feature artifacts
+**If Any Phase Fails**:
+1. Document the failure point clearly
+2. Include full error messages in report
+3. Recommend manual intervention steps
+4. Update session status to "failed"
+5. DO NOT continue to next phase
+6. Return error report immediately
 
-3. **Optional Improvements**:
-   - Run `/specswarm:refactor` if code quality improvements are needed
-   - Review audit report (if --audit was used) and address warnings
-   - Update project documentation as needed
+**Retry Logic**:
+- Individual task failures: Continue to next task (bugfix will handle)
+- Planning phase failures: Stop immediately (cannot proceed without plan)
+- Bugfix failures: Note in report but continue to audit
+- Audit failures: Note in report but continue to completion
 
-⚠️  **IMPORTANT**: Always run `/specswarm:complete` after manual testing to properly finalize the feature with git workflow, documentation, and completion tracking.
+═══════════════════════════════════════════════════════════════
+✅ SUCCESS CRITERIA
+═══════════════════════════════════════════════════════════════
 
----
+Orchestration is successful when:
+- ✅ All planning phases complete (or skipped if --skip flags)
+- ✅ All tasks executed (track success/failure counts)
+- ✅ Bugfix ran if needed
+- ✅ Audit completed if --audit flag set
+- ✅ Comprehensive final report generated
+- ✅ Session tracking file created and updated
+- ✅ User receives clear next steps
 
-*Phase 2: Feature Workflow Engine - Bringing together SpecSwarm intelligence with SpecLabs automation*
+═══════════════════════════════════════════════════════════════
+🚀 BEGIN ORCHESTRATION
+═══════════════════════════════════════════════════════════════
 
-**Architecture**:
-```
-User: /speclabs:orchestrate-feature "Add feature X" [--audit]
-         ↓
-    SpecSwarm Planning (specify → clarify → plan → tasks)
-         ↓
-    Task Conversion (tasks.md → workflow.md files)
-         ↓
-    Phase 1b Execution (orchestrate each task)
-         ↓
-    Bugfix (if needed)
-         ↓
-    Code Audit (if --audit flag used)
-         ↓
-    Feature Complete!
-```
+**YOUR INSTRUCTIONS**: Execute the complete workflow above autonomously.
 
-**Attribution**:
-- **Phase 1a**: State Manager, Decision Maker, Prompt Refiner, Vision API, Metrics (Oct 16, 2025)
-- **Phase 1b**: Full Automation - Zero manual steps (Oct 16, 2025)
-- **Phase 2**: Feature Workflow Engine - SpecSwarm integration (Oct 16, 2025)
+**Start now with Phase 1, Step 1.1**
+
+Report progress as you execute each step. Be thorough and complete all phases.
+
+Good luck! 🎯
