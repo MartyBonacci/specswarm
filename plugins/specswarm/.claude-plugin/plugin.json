@@ -1,7 +1,7 @@
 {
   "name": "specswarm",
-  "version": "2.1.0",
-  "description": "Complete software development toolkit: spec-driven workflows, lifecycle management (bugfix/modify/refactor), quality validation, and performance monitoring. v2.1: Enhanced git workflow with parent branch detection.",
+  "version": "2.1.1",
+  "description": "Complete software development toolkit: spec-driven workflows, lifecycle management (bugfix/modify/refactor), quality validation, and performance monitoring. v2.1.1: Parent branch tracking - features merge back to their origin branch. v2.1: Enhanced git workflow with parent branch detection.",
   "author": {
     "name": "Marty Bonacci",
     "url": "https://github.com/MartyBonacci"

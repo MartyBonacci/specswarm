@@ -54,15 +54,20 @@ Given that feature description, do this:
    SLUG=$(echo "$ARGUMENTS" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | sed 's/--*/-/g' | sed 's/^-//' | sed 's/-$//')
    ```
 
-   d. **Create Branch** (if git available):
+   d. **Capture Parent Branch and Create Feature Branch** (if git available):
    ```bash
    BRANCH_NAME="${FEATURE_NUM}-${SLUG}"
 
    if git rev-parse --git-dir >/dev/null 2>&1; then
+     # Capture current branch as parent BEFORE switching
+     PARENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+
+     # Create and switch to new feature branch
      git checkout -b "$BRANCH_NAME"
    else
      # Non-git: use environment variable
      export SPECIFY_FEATURE="$BRANCH_NAME"
+     PARENT_BRANCH="unknown"
    fi
    ```
 
@@ -223,6 +228,21 @@ Given that feature description, do this:
     6. Return: SUCCESS (spec ready for planning)
 
 5. Write the specification to SPEC_FILE using the template structure, replacing placeholders with concrete details derived from the feature description (arguments) while preserving section order and headings.
+
+   **IMPORTANT: Include YAML Frontmatter**:
+
+   The spec.md file MUST start with YAML frontmatter containing metadata:
+
+   ```yaml
+   ---
+   parent_branch: ${PARENT_BRANCH}
+   feature_number: ${FEATURE_NUM}
+   status: In Progress
+   created_at: $(date -Iseconds)
+   ---
+   ```
+
+   This metadata enables the `/specswarm:complete` command to merge back to the correct parent branch.
 
 6. **Specification Quality Validation**: After writing the initial spec, validate it against quality criteria:
 

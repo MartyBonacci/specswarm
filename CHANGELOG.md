@@ -5,6 +5,83 @@ All notable changes to SpecSwarm and SpecLabs plugins will be documented in this
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.1] - 2025-10-30
+
+### Changed - SpecSwarm
+
+#### Parent Branch Tracking for Accurate Merging
+- **Problem Solved**: `/specswarm:complete` previously tried to infer parent branch using heuristics (sequential workflow detection, previous feature number lookup), which failed for nested feature workflows
+- **Solution**: Direct parent branch tracking from feature creation to completion
+
+**Changes in `/specswarm:specify`** (plugins/specswarm/commands/specify.md):
+- **Capture parent branch** before creating feature branch: `git rev-parse --abbrev-ref HEAD`
+- **Store in YAML frontmatter** of spec.md:
+  ```yaml
+  ---
+  parent_branch: <branch-name>
+  feature_number: <number>
+  status: In Progress
+  created_at: <timestamp>
+  ---
+  ```
+- Works for git and non-git repositories (stores "unknown" for non-git)
+
+**Changes in `/specswarm:complete`** (plugins/specswarm/commands/complete.md):
+- **Read parent branch** from spec.md YAML frontmatter
+- **Use stored parent** instead of inference when available
+- **Priority logic**:
+  1. Sequential branch workflow (multiple features on branch) → no merge
+  2. Stored parent_branch from spec.md → use that
+  3. Previous feature branch inference → prompt user
+  4. Default to main branch
+- **Backward compatible**: Old features without frontmatter fall back to main
+
+**Workflow Examples**:
+
+*Example 1: Feature on main*
+```bash
+# On main branch
+/specswarm:specify "Add new feature"
+# Creates: 011-add-new-feature
+# Stores: parent_branch: main
+
+# Later...
+/specswarm:complete
+# Merges to: main ✅
+```
+
+*Example 2: Nested feature workflow*
+```bash
+# On feature-009-react-router-upgrade branch
+/specswarm:specify "Add console.log for verification"
+# Creates: 010-add-console-log-for-verification
+# Stores: parent_branch: feature-009-react-router-upgrade
+
+# Later...
+/specswarm:complete
+# Merges to: feature-009-react-router-upgrade ✅ (not main!)
+```
+
+*Example 3: Old feature (no frontmatter)*
+```bash
+# Old feature without parent_branch metadata
+/specswarm:complete
+# Falls back to: main ✅ (backward compatible)
+```
+
+**Benefits**:
+- ✅ Features merge back to their origin branch automatically
+- ✅ Supports nested feature workflows (feature branches from feature branches)
+- ✅ No manual prompts for parent branch selection
+- ✅ Fully backward compatible with old features
+- ✅ Sequential branch workflow still supported
+
+**Technical Details**:
+- YAML frontmatter uses standard format (compatible with many markdown parsers)
+- Extraction uses `grep -A 10 '^---$'` to find frontmatter block
+- Parent branch validated before merge (checks if branch exists)
+- Non-git repositories store "unknown" but can still complete features
+
 ## [2.2.1] - 2025-10-30
 
 ### Changed - SpecLabs

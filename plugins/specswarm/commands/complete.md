@@ -102,12 +102,17 @@ if [ -z "$FEATURE_DIR" ]; then
   echo ""
   echo "Continuing without feature artifacts..."
   FEATURE_DIR=""
+  STORED_PARENT_BRANCH=""
 else
   # Get feature title from spec
   if [ -f "$FEATURE_DIR/spec.md" ]; then
     FEATURE_TITLE=$(grep -m1 '^# Feature' "$FEATURE_DIR/spec.md" | sed 's/^# Feature [0-9]*: //' || echo "Feature $FEATURE_NUM")
+
+    # Extract parent branch from YAML frontmatter (v2.1.1+)
+    STORED_PARENT_BRANCH=$(grep -A 10 '^---$' "$FEATURE_DIR/spec.md" 2>/dev/null | grep '^parent_branch:' | sed 's/^parent_branch: *//' | tr -d '\r' || echo "")
   else
     FEATURE_TITLE="Feature $FEATURE_NUM"
+    STORED_PARENT_BRANCH=""
   fi
 fi
 
@@ -155,24 +160,31 @@ fi
 
 # If not sequential, determine parent branch
 if [ "$SEQUENTIAL_BRANCH" = "false" ]; then
-  # Check if there's a previous feature branch this might merge into
-  PREV_FEATURE_NUM=$(printf "%03d" $((10#$FEATURE_NUM - 1)))
-  PREV_FEATURE_BRANCH=$(git branch -a 2>/dev/null | grep -E "^  (remotes/origin/)?${PREV_FEATURE_NUM}-" | head -1 | sed 's/^[* ]*//' | sed 's/remotes\/origin\///' || echo "")
-
-  if [ -n "$PREV_FEATURE_BRANCH" ] && git show-ref --verify --quiet "refs/heads/$PREV_FEATURE_BRANCH" 2>/dev/null; then
-    echo "Found previous feature branch: $PREV_FEATURE_BRANCH"
-    echo ""
-    read -p "Merge into $PREV_FEATURE_BRANCH instead of $MAIN_BRANCH? (y/n): " merge_into_prev
-    if [ "$merge_into_prev" = "y" ]; then
-      PARENT_BRANCH="$PREV_FEATURE_BRANCH"
-      echo "✓ Will merge to: $PARENT_BRANCH"
-    else
-      echo "✓ Will merge to: $MAIN_BRANCH"
-    fi
+  # Check for stored parent branch (v2.1.1+)
+  if [ -n "$STORED_PARENT_BRANCH" ] && [ "$STORED_PARENT_BRANCH" != "unknown" ]; then
+    PARENT_BRANCH="$STORED_PARENT_BRANCH"
+    echo "✓ Parent branch (from spec.md): $PARENT_BRANCH"
     echo ""
   else
-    echo "✓ Will merge to: $MAIN_BRANCH"
-    echo ""
+    # Fallback: Check if there's a previous feature branch this might merge into
+    PREV_FEATURE_NUM=$(printf "%03d" $((10#$FEATURE_NUM - 1)))
+    PREV_FEATURE_BRANCH=$(git branch -a 2>/dev/null | grep -E "^  (remotes/origin/)?${PREV_FEATURE_NUM}-" | head -1 | sed 's/^[* ]*//' | sed 's/remotes\/origin\///' || echo "")
+
+    if [ -n "$PREV_FEATURE_BRANCH" ] && git show-ref --verify --quiet "refs/heads/$PREV_FEATURE_BRANCH" 2>/dev/null; then
+      echo "Found previous feature branch: $PREV_FEATURE_BRANCH"
+      echo ""
+      read -p "Merge into $PREV_FEATURE_BRANCH instead of $MAIN_BRANCH? (y/n): " merge_into_prev
+      if [ "$merge_into_prev" = "y" ]; then
+        PARENT_BRANCH="$PREV_FEATURE_BRANCH"
+        echo "✓ Will merge to: $PARENT_BRANCH"
+      else
+        echo "✓ Will merge to: $MAIN_BRANCH"
+      fi
+      echo ""
+    else
+      echo "✓ Will merge to: $MAIN_BRANCH (default)"
+      echo ""
+    fi
   fi
 fi
 ```
