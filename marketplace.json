@@ -20,8 +20,8 @@
     {
       "name": "speclabs",
       "source": "./plugins/speclabs",
-      "version": "2.3.0",
-      "description": "Advanced automation suite for production-ready autonomous development. v2.3.0: Graduated orchestrate-feature to production-ready status (validated across 4 complex features). v2.2.1: Optional PROJECT_PATH. v2.2.0: Agent-based orchestration engine."
+      "version": "2.4.0",
+      "description": "Advanced automation suite for production-ready autonomous development. v2.4.0: Automated error detection with Lighthouse integration (--validate flag). v2.3.0: Production-ready status. v2.2.1: Optional PROJECT_PATH."
     },
     {
       "name": "speckit",

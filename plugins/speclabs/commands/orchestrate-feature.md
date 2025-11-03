@@ -22,10 +22,13 @@ args:
   - name: --audit
     description: Run comprehensive code audit phase after implementation (compatibility, security, best practices)
     required: false
+  - name: --validate
+    description: Run automated error detection after implementation (launches dev server, runs Lighthouse audit, captures console errors, attempts auto-fix up to 3 times)
+    required: false
 pre_orchestration_hook: |
   #!/bin/bash
 
-  echo "🎯 Feature Orchestrator v2.2.0 - Agent-Based Orchestration"
+  echo "🎯 Feature Orchestrator v2.4.0 - Automated Error Detection"
   echo ""
   echo "This orchestrator launches an autonomous agent that handles:"
   echo "  1. SpecSwarm Planning: specify → clarify → plan → tasks"
@@ -52,6 +55,7 @@ pre_orchestration_hook: |
   SKIP_PLAN=false
   MAX_RETRIES=3
   RUN_AUDIT=false
+  RUN_VALIDATE=false
 
   while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -60,6 +64,7 @@ pre_orchestration_hook: |
       --skip-plan) SKIP_PLAN=true; shift ;;
       --max-retries) MAX_RETRIES="$2"; shift 2 ;;
       --audit) RUN_AUDIT=true; shift ;;
+      --validate) RUN_VALIDATE=true; shift ;;
       *) shift ;;
     esac
   done
@@ -95,6 +100,7 @@ pre_orchestration_hook: |
   export SKIP_PLAN="$SKIP_PLAN"
   export MAX_RETRIES="$MAX_RETRIES"
   export RUN_AUDIT="$RUN_AUDIT"
+  export RUN_VALIDATE="$RUN_VALIDATE"
   export PLUGIN_DIR="$PLUGIN_DIR"
 
   echo "🚀 Launching orchestration agent for: $FEATURE_DESC"
@@ -110,9 +116,12 @@ I'll now launch an autonomous agent to handle the complete feature lifecycle.
 - **Project**: ${PROJECT_PATH}
 - **Session ID**: ${FEATURE_SESSION_ID}
 - **Audit**: ${RUN_AUDIT}
+- **Validate**: ${RUN_VALIDATE}
 - **Skip Phases**: Specify=${SKIP_SPECIFY}, Clarify=${SKIP_CLARIFY}, Plan=${SKIP_PLAN}
 
 The agent will execute all phases automatically and report back when complete. This may take several minutes depending on feature complexity.
+
+${RUN_VALIDATE} = true enables automated error detection (Phase 6.5) - the agent will launch dev server, run Lighthouse audit, capture console errors, and auto-fix issues before manual testing.
 
 ---
 
@@ -138,6 +147,7 @@ You are an autonomous feature orchestration agent. Your mission is to implement 
 - Skip Plan: ${SKIP_PLAN}
 - Max Retries: ${MAX_RETRIES}
 - Run Audit: ${RUN_AUDIT}
+- Run Validate: ${RUN_VALIDATE}
 
 ═══════════════════════════════════════════════════════════════
 📋 WORKFLOW - EXECUTE IN ORDER
@@ -239,6 +249,119 @@ FOR EACH TASK in the task list:
   - "❌ Failed: ${failed}/${total} tasks"
 - Update session: feature_complete_implementation "${FEATURE_SESSION_ID}" "${completed}" "${failed}"
 - If failed > 0: Prepare for bugfix phase
+
+═══════════════════════════════════════════════════════════════
+🔍 PHASE 2.5: AUTOMATED ERROR DETECTION (Conditional - If ${RUN_VALIDATE}=true)
+═══════════════════════════════════════════════════════════════
+
+IF ${RUN_VALIDATE} = true:
+
+  ### Step 2.5.1: Pre-Validation Setup
+  - Report: "🔍 Starting automated error detection (--validate enabled)"
+  - Create validation directory: ${PROJECT_PATH}/.speclabs/validation/
+  - Initialize error retry counter: error_retry_count=0
+  - Set max error retries: max_error_retries=3
+
+  ### Step 2.5.2: Start Development Server
+  - Use Bash tool to start dev server in background:
+    ```bash
+    cd ${PROJECT_PATH} && npm run dev > .speclabs/validation/dev-server.log 2>&1 &
+    echo $! > .speclabs/validation/dev-server.pid
+    ```
+  - Wait 10 seconds for server startup
+  - Verify server running: Check if process exists and port responding
+  - Report: "✅ Dev server started (PID: [pid])"
+
+  ### Step 2.5.3: Run Lighthouse Audit (Retry Loop)
+
+  WHILE error_retry_count < max_error_retries:
+
+    **Run Lighthouse:**
+    - Use Bash tool:
+      ```bash
+      npx lighthouse http://localhost:5173 \
+        --output=json \
+        --output-path=${PROJECT_PATH}/.speclabs/validation/lighthouse-report-${error_retry_count}.json \
+        --quiet \
+        --chrome-flags="--headless --no-sandbox"
+      ```
+    - Wait for completion (timeout: 60 seconds)
+
+    **Parse Console Errors:**
+    - Use Read tool to read lighthouse-report-${error_retry_count}.json
+    - Extract console errors from: `audits.errors.details.items[]`
+    - Filter for severity: "error" (ignore warnings)
+    - Extract error messages, sources, and line numbers
+    - Count total errors found
+
+    **Decision Point:**
+    - IF no console errors found:
+      - Report: "✅ No console errors detected (Lighthouse audit passed)"
+      - BREAK out of retry loop
+      - Continue to Step 2.5.4
+
+    - IF console errors found:
+      - Report: "⚠️ Found ${error_count} console errors (attempt ${error_retry_count + 1}/${max_error_retries})"
+      - Create error report: .speclabs/validation/errors-${error_retry_count}.md
+      - Write error details to report (formatted for agent analysis)
+
+      **Attempt Auto-Fix:**
+      1. Analyze errors to identify fixable issues:
+         - Undefined variables/imports
+         - Type errors
+         - Missing dependencies
+         - Syntax errors
+         - Common React/JavaScript errors
+
+      2. IF errors appear auto-fixable:
+         - Use Read/Edit tools to fix identified issues
+         - Document fixes in validation log
+         - Increment error_retry_count
+         - Use Bash tool to rebuild: `cd ${PROJECT_PATH} && npm run build`
+         - Wait for build completion
+         - Report: "🔧 Applied fixes, retrying Lighthouse audit..."
+         - CONTINUE to next iteration of loop
+
+      3. IF errors not auto-fixable:
+         - Report: "⚠️ Errors require manual intervention"
+         - Document errors in final report
+         - BREAK out of retry loop
+
+    - IF error_retry_count >= max_error_retries:
+      - Report: "⚠️ Max retry attempts reached (${max_error_retries})"
+      - Report: "Proceeding with ${error_count} remaining errors for manual review"
+      - BREAK out of retry loop
+
+  END WHILE
+
+  ### Step 2.5.4: Kill Development Server
+  - Use Bash tool:
+    ```bash
+    if [ -f ${PROJECT_PATH}/.speclabs/validation/dev-server.pid ]; then
+      kill $(cat ${PROJECT_PATH}/.speclabs/validation/dev-server.pid) 2>/dev/null || true
+      rm ${PROJECT_PATH}/.speclabs/validation/dev-server.pid
+    fi
+    ```
+  - Report: "✅ Dev server stopped"
+
+  ### Step 2.5.5: Validation Summary
+  - Create summary report: .speclabs/validation/validation-summary.md
+  - Include:
+    - Total retry attempts: ${error_retry_count}
+    - Errors found: ${initial_error_count}
+    - Errors fixed: ${fixed_error_count}
+    - Errors remaining: ${remaining_error_count}
+    - Lighthouse reports generated: ${error_retry_count + 1}
+  - Report final status:
+    - IF remaining_error_count = 0:
+      - "✅ Automated error detection PASSED - No console errors"
+    - ELSE:
+      - "⚠️ Automated error detection completed with ${remaining_error_count} errors remaining"
+      - "See .speclabs/validation/ for detailed reports"
+
+ELSE:
+  - Skip automated error detection (--validate not specified)
+  - Report: "⏭️ Skipping automated error detection (use --validate to enable)"
 
 ═══════════════════════════════════════════════════════════════
 🔧 PHASE 3: BUGFIX (Conditional - If Tasks Failed)

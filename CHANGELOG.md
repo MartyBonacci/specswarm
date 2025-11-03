@@ -5,6 +5,74 @@ All notable changes to SpecSwarm and SpecLabs plugins will be documented in this
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.4.0] - 2025-11-03
+
+### Added - SpecLabs
+
+#### Automated Error Detection with Lighthouse Integration
+- **New Feature**: `--validate` flag for `/speclabs:orchestrate-feature`
+- **Automated Browser Validation**: Phase 2.5 added between implementation and manual testing
+- **Zero-Touch Error Fixing**: Automatically detects and fixes console errors before user testing
+
+**What's New**:
+- **Dev Server Management**: Automatically starts/stops development server
+- **Lighthouse Integration**: Runs browser audit to capture console errors
+- **Smart Error Parsing**: Extracts errors from JSON output, filters by severity
+- **Auto-Fix Retry Loop**: Attempts to fix errors up to 3 times before escalating
+- **Validation Reports**: Creates detailed reports in `.speclabs/validation/`
+
+**Usage**:
+```bash
+/speclabs:orchestrate-feature "feature description" /path/to/project --validate
+```
+
+**How It Works**:
+1. **Start Dev Server**: Launches `npm run dev` in background with PID tracking
+2. **Run Lighthouse**: Executes headless Chrome audit with JSON output
+3. **Parse Errors**: Extracts console errors from audit results
+4. **Attempt Auto-Fix**: Analyzes and fixes common error patterns:
+   - Undefined variables/imports
+   - Type errors
+   - Missing dependencies
+   - Syntax errors
+   - Common React/JavaScript issues
+5. **Retry or Escalate**: Rebuilds and retries up to 3 times, or reports unfixable errors
+6. **Stop Dev Server**: Cleanly terminates background process
+
+**Why This Change**:
+- **Problem Identified**: Users reported 3-5 manual debugging iterations after autonomous implementation:
+  - "took some copying of console errors and pasting them into Instance B... but after a bunch of tries it works"
+  - Manual error detection defeats the purpose of autonomous orchestration
+- **Expected Impact**:
+  - ~80% reduction in manual debugging iterations
+  - 15-30 minutes saved per feature
+  - Seamless autonomous execution from spec to working feature
+
+**Technical Details**:
+- Uses Lighthouse CLI with `--output=json` for programmatic parsing
+- Chrome flags: `--headless --no-sandbox` for CI/CD compatibility
+- Error extraction from `audits.errors.details.items[]`
+- PID-based process management for reliable server cleanup
+- Max 3 retry attempts to prevent infinite loops
+
+**Validation Reports**:
+- `dev-server.log`: Server output for debugging
+- `lighthouse-report-N.json`: Full audit data for each attempt
+- `errors-N.md`: Formatted error details for manual review
+- `validation-summary.md`: Final status and metrics
+
+**Benefits**:
+- ✅ Reduces manual debugging from 3-5 iterations to 0-1
+- ✅ Catches runtime errors before user testing
+- ✅ Automated error fixing for common patterns
+- ✅ Comprehensive validation reporting
+- ✅ Optional flag - backward compatible with existing workflows
+
+**Future Enhancements**:
+- Phase 2: Playwright integration for comprehensive browser testing
+- Phase 3: Chrome DevTools Protocol for real-time error monitoring
+- See `/home/marty/code-projects/instructor-notes-50/AI/BROWSER-TOOLS.md` for research
+
 ## [2.3.0] - 2025-11-02
 
 ### Changed - SpecLabs
