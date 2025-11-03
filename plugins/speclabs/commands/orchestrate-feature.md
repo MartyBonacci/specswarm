@@ -23,12 +23,12 @@ args:
     description: Run comprehensive code audit phase after implementation (compatibility, security, best practices)
     required: false
   - name: --validate
-    description: Run automated error detection after implementation (launches dev server, runs Lighthouse audit, captures console errors, attempts auto-fix up to 3 times)
+    description: Run interactive error detection with Playwright (monitors browser console + terminal output during interactions, auto-fixes errors, kills dev server when done)
     required: false
 pre_orchestration_hook: |
   #!/bin/bash
 
-  echo "🎯 Feature Orchestrator v2.4.0 - Automated Error Detection"
+  echo "🎯 Feature Orchestrator v2.5.0 - Interactive Error Detection with Playwright"
   echo ""
   echo "This orchestrator launches an autonomous agent that handles:"
   echo "  1. SpecSwarm Planning: specify → clarify → plan → tasks"
@@ -121,7 +121,7 @@ I'll now launch an autonomous agent to handle the complete feature lifecycle.
 
 The agent will execute all phases automatically and report back when complete. This may take several minutes depending on feature complexity.
 
-${RUN_VALIDATE} = true enables automated error detection (Phase 6.5) - the agent will launch dev server, run Lighthouse audit, capture console errors, and auto-fix issues before manual testing.
+${RUN_VALIDATE} = true enables interactive error detection (Phase 2.5) - the agent will launch dev server, run Playwright browser automation with console monitoring, test interaction flows, and auto-fix errors before manual testing. Dev server will be stopped before returning control to user.
 
 ---
 
@@ -251,16 +251,20 @@ FOR EACH TASK in the task list:
 - If failed > 0: Prepare for bugfix phase
 
 ═══════════════════════════════════════════════════════════════
-🔍 PHASE 2.5: AUTOMATED ERROR DETECTION (Conditional - If ${RUN_VALIDATE}=true)
+🔍 PHASE 2.5: INTERACTIVE ERROR DETECTION (Conditional - If ${RUN_VALIDATE}=true)
 ═══════════════════════════════════════════════════════════════
 
 IF ${RUN_VALIDATE} = true:
 
   ### Step 2.5.1: Pre-Validation Setup
-  - Report: "🔍 Starting automated error detection (--validate enabled)"
+  - Report: "🔍 Starting interactive error detection with Playwright (--validate enabled)"
   - Create validation directory: ${PROJECT_PATH}/.speclabs/validation/
   - Initialize error retry counter: error_retry_count=0
   - Set max error retries: max_error_retries=3
+  - Install Playwright if not present:
+    ```bash
+    cd ${PROJECT_PATH} && npx playwright install chromium --with-deps
+    ```
 
   ### Step 2.5.2: Start Development Server
   - Use Bash tool to start dev server in background:
@@ -272,59 +276,159 @@ IF ${RUN_VALIDATE} = true:
   - Verify server running: Check if process exists and port responding
   - Report: "✅ Dev server started (PID: [pid])"
 
-  ### Step 2.5.3: Run Lighthouse Audit (Retry Loop)
+  ### Step 2.5.3: Interactive Error Detection (Retry Loop)
 
   WHILE error_retry_count < max_error_retries:
 
-    **Run Lighthouse:**
+    **Create Playwright Test Script:**
+    - Use Write tool to create: ${PROJECT_PATH}/.speclabs/validation/error-detection-test.js
+    - Script content:
+      ```javascript
+      const { chromium } = require('playwright');
+      const fs = require('fs');
+
+      (async () => {
+        const consoleErrors = [];
+        const pageErrors = [];
+
+        // Launch browser
+        const browser = await chromium.launch({ headless: true });
+        const context = await browser.newContext({
+          viewport: { width: 1280, height: 720 }
+        });
+        const page = await context.newPage();
+
+        // Listen for console errors
+        page.on('console', msg => {
+          if (msg.type() === 'error') {
+            consoleErrors.push({
+              type: 'console',
+              message: msg.text(),
+              location: msg.location()
+            });
+          }
+        });
+
+        // Listen for uncaught exceptions
+        page.on('pageerror', exception => {
+          pageErrors.push({
+            type: 'exception',
+            message: exception.message,
+            stack: exception.stack
+          });
+        });
+
+        // Interaction Flow Testing
+        try {
+          // Navigate to homepage
+          await page.goto('http://localhost:5173', { waitUntil: 'networkidle', timeout: 30000 });
+          await page.waitForTimeout(2000);
+
+          // Take screenshot of initial state
+          await page.screenshot({ path: '.speclabs/validation/screenshot-home.png', fullPage: true });
+
+          // Auto-detect and test navigation links (if any)
+          const navLinks = await page.$$('nav a, header a, [role="navigation"] a');
+          for (let i = 0; i < Math.min(navLinks.length, 5); i++) {
+            try {
+              await navLinks[i].click();
+              await page.waitForTimeout(1000);
+              await page.screenshot({ path: \`.speclabs/validation/screenshot-nav-\${i}.png\` });
+              await page.goBack();
+              await page.waitForTimeout(500);
+            } catch (e) {
+              console.log(\`Navigation test \${i} failed: \${e.message}\`);
+            }
+          }
+
+          // Test any buttons on the page
+          const buttons = await page.$$('button:visible');
+          for (let i = 0; i < Math.min(buttons.length, 3); i++) {
+            try {
+              await buttons[i].click();
+              await page.waitForTimeout(1000);
+            } catch (e) {
+              console.log(\`Button test \${i} failed: \${e.message}\`);
+            }
+          }
+
+        } catch (error) {
+          pageErrors.push({
+            type: 'test-error',
+            message: error.message,
+            stack: error.stack
+          });
+        }
+
+        // Save errors to JSON
+        const allErrors = [...consoleErrors, ...pageErrors];
+        fs.writeFileSync('.speclabs/validation/errors-${error_retry_count}.json',
+          JSON.stringify(allErrors, null, 2));
+
+        // Close browser
+        await browser.close();
+
+        // Exit with error count
+        process.exit(allErrors.length > 0 ? 1 : 0);
+      })();
+      ```
+
+    **Run Playwright Test:**
     - Use Bash tool:
       ```bash
-      npx lighthouse http://localhost:5173 \
-        --output=json \
-        --output-path=${PROJECT_PATH}/.speclabs/validation/lighthouse-report-${error_retry_count}.json \
-        --quiet \
-        --chrome-flags="--headless --no-sandbox"
+      cd ${PROJECT_PATH} && node .speclabs/validation/error-detection-test.js 2>&1 | tee .speclabs/validation/test-output-${error_retry_count}.log
       ```
-    - Wait for completion (timeout: 60 seconds)
+    - Capture exit code to determine if errors were found
 
-    **Parse Console Errors:**
-    - Use Read tool to read lighthouse-report-${error_retry_count}.json
-    - Extract console errors from: `audits.errors.details.items[]`
-    - Filter for severity: "error" (ignore warnings)
-    - Extract error messages, sources, and line numbers
-    - Count total errors found
+    **Monitor Terminal Output:**
+    - Use Read tool to read last 100 lines of dev-server.log
+    - Look for error patterns:
+      - "Error:", "ERROR", "Failed to compile"
+      - Stack traces
+      - Uncaught exceptions
+      - Module not found errors
+    - Document any terminal errors found
+
+    **Parse Playwright Errors:**
+    - Use Read tool to read: .speclabs/validation/errors-${error_retry_count}.json
+    - Count total errors (consoleErrors + pageErrors + terminal errors)
+    - Create human-readable error report
 
     **Decision Point:**
-    - IF no console errors found:
-      - Report: "✅ No console errors detected (Lighthouse audit passed)"
+    - IF no errors found (browser + terminal clean):
+      - Report: "✅ No errors detected - browser console and terminal clean"
       - BREAK out of retry loop
       - Continue to Step 2.5.4
 
-    - IF console errors found:
-      - Report: "⚠️ Found ${error_count} console errors (attempt ${error_retry_count + 1}/${max_error_retries})"
-      - Create error report: .speclabs/validation/errors-${error_retry_count}.md
-      - Write error details to report (formatted for agent analysis)
+    - IF errors found:
+      - Report: "⚠️ Found ${error_count} errors (attempt ${error_retry_count + 1}/${max_error_retries})"
+      - Report error breakdown:
+        - Console errors: ${console_error_count}
+        - Uncaught exceptions: ${page_error_count}
+        - Terminal errors: ${terminal_error_count}
+      - Create detailed error report: .speclabs/validation/error-report-${error_retry_count}.md
 
       **Attempt Auto-Fix:**
       1. Analyze errors to identify fixable issues:
-         - Undefined variables/imports
-         - Type errors
-         - Missing dependencies
-         - Syntax errors
-         - Common React/JavaScript errors
+         - Undefined variables/imports (check import statements)
+         - Type errors (check prop types, function signatures)
+         - Missing dependencies (check package.json)
+         - Syntax errors (check for typos, missing brackets)
+         - Module resolution errors (check file paths)
+         - Common React errors (hooks rules, component lifecycle)
+         - API call failures (check network requests in terminal)
 
       2. IF errors appear auto-fixable:
          - Use Read/Edit tools to fix identified issues
-         - Document fixes in validation log
+         - Document each fix in .speclabs/validation/fixes-applied-${error_retry_count}.md
          - Increment error_retry_count
-         - Use Bash tool to rebuild: `cd ${PROJECT_PATH} && npm run build`
-         - Wait for build completion
-         - Report: "🔧 Applied fixes, retrying Lighthouse audit..."
+         - Report: "🔧 Applied ${fixes_count} fixes, retrying validation..."
          - CONTINUE to next iteration of loop
 
-      3. IF errors not auto-fixable:
-         - Report: "⚠️ Errors require manual intervention"
-         - Document errors in final report
+      3. IF errors not auto-fixable OR ambiguous:
+         - Report: "⚠️ Errors require manual intervention:"
+         - List each error with file location and description
+         - Document in final report with recommendations
          - BREAK out of retry loop
 
     - IF error_retry_count >= max_error_retries:
@@ -334,34 +438,46 @@ IF ${RUN_VALIDATE} = true:
 
   END WHILE
 
-  ### Step 2.5.4: Kill Development Server
+  ### Step 2.5.4: Kill Development Server (CRITICAL)
+  - **MUST execute this step before returning control to user**
   - Use Bash tool:
     ```bash
     if [ -f ${PROJECT_PATH}/.speclabs/validation/dev-server.pid ]; then
       kill $(cat ${PROJECT_PATH}/.speclabs/validation/dev-server.pid) 2>/dev/null || true
       rm ${PROJECT_PATH}/.speclabs/validation/dev-server.pid
     fi
+    # Verify process is dead
+    ! ps -p $(cat ${PROJECT_PATH}/.speclabs/validation/dev-server.pid 2>/dev/null) > /dev/null 2>&1 || kill -9 $(cat ${PROJECT_PATH}/.speclabs/validation/dev-server.pid 2>/dev/null)
     ```
-  - Report: "✅ Dev server stopped"
+  - Report: "✅ Dev server stopped (port available for user)"
 
   ### Step 2.5.5: Validation Summary
   - Create summary report: .speclabs/validation/validation-summary.md
   - Include:
     - Total retry attempts: ${error_retry_count}
-    - Errors found: ${initial_error_count}
+    - Errors found initially: ${initial_error_count}
     - Errors fixed: ${fixed_error_count}
     - Errors remaining: ${remaining_error_count}
-    - Lighthouse reports generated: ${error_retry_count + 1}
+    - Screenshots captured: List all .png files
+    - Test scenarios executed: Homepage + ${nav_tests} navigation + ${button_tests} interactions
   - Report final status:
     - IF remaining_error_count = 0:
-      - "✅ Automated error detection PASSED - No console errors"
+      - "✅ INTERACTIVE VALIDATION PASSED"
+      - "   - Browser console: Clean"
+      - "   - Terminal output: Clean"
+      - "   - Navigation tested: ${nav_tests} links"
+      - "   - Interactions tested: ${button_tests} buttons"
     - ELSE:
-      - "⚠️ Automated error detection completed with ${remaining_error_count} errors remaining"
-      - "See .speclabs/validation/ for detailed reports"
+      - "⚠️ Validation completed with ${remaining_error_count} errors remaining"
+      - "   See .speclabs/validation/ for:"
+      - "   - error-report-*.md (detailed error analysis)"
+      - "   - screenshot-*.png (visual states)"
+      - "   - dev-server.log (terminal output)"
+      - "   - fixes-applied-*.md (attempted fixes)"
 
 ELSE:
-  - Skip automated error detection (--validate not specified)
-  - Report: "⏭️ Skipping automated error detection (use --validate to enable)"
+  - Skip interactive error detection (--validate not specified)
+  - Report: "⏭️ Skipping interactive error detection (use --validate to enable)"
 
 ═══════════════════════════════════════════════════════════════
 🔧 PHASE 3: BUGFIX (Conditional - If Tasks Failed)

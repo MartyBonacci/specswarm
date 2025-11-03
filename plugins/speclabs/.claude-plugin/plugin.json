@@ -1,7 +1,7 @@
 {
   "name": "speclabs",
-  "version": "2.4.0",
-  "description": "Advanced automation suite for production-ready autonomous development. v2.4.0: Automated error detection with Lighthouse integration (--validate flag). v2.3.0: Production-ready status. v2.2.1: Optional PROJECT_PATH.",
+  "version": "2.5.0",
+  "description": "Advanced automation suite for production-ready autonomous development. v2.5.0: Interactive error detection with Playwright (browser console + terminal monitoring, interaction flows, auto-fix). v2.3.0: Production-ready status.",
   "author": {
     "name": "Marty Bonacci",
     "url": "https://github.com/MartyBonacci"
