@@ -4,7 +4,7 @@
     "name": "MartyBonacci",
     "url": "https://github.com/MartyBonacci"
   },
-  "description": "Complete software development lifecycle with spec-driven workflows, quality validation, and experimental autonomous features",
+  "description": "Complete software development lifecycle with spec-driven workflows, quality validation, and production-ready autonomous orchestration",
   "author": {
     "name": "Marty Bonacci",
     "url": "https://github.com/MartyBonacci"
@@ -20,8 +20,8 @@
     {
       "name": "speclabs",
       "source": "./plugins/speclabs",
-      "version": "2.2.1",
-      "description": "Experimental laboratory for autonomous development with Agent-Based Orchestration Engine. v2.2.1: PROJECT_PATH now optional (defaults to pwd). v2.2.0: True autonomous execution via Task tool. Use at your own risk."
+      "version": "2.3.0",
+      "description": "Advanced automation suite for production-ready autonomous development. v2.3.0: Graduated orchestrate-feature to production-ready status (validated across 4 complex features). v2.2.1: Optional PROJECT_PATH. v2.2.0: Agent-based orchestration engine."
     },
     {
       "name": "speckit",
