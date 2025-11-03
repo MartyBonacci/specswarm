@@ -5,6 +5,205 @@ All notable changes to SpecSwarm and SpecLabs plugins will be documented in this
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.7.0] - 2025-11-03
+
+### Added - SpecLabs
+
+#### Versatile Validation Orchestrator with Multi-Type Support
+- **Major Enhancement**: Standalone `/speclabs:validate-feature` command with extensible architecture
+- **Multi-Type Support**: Generic orchestrator ready for webapp, Android, REST API, and desktop GUI validation
+- **Automatic Detection**: Smart project type detection with confidence scoring
+- **Modular Design**: Pluggable validator interface enables adding new types without breaking changes
+- **v2.7.0 Ships With**: Full webapp validator (extracted from orchestrate-feature Phase 2.5)
+
+**What's New**:
+
+**1. Standalone Validation Command**:
+```bash
+# Auto-detect project type and validate
+/speclabs:validate-feature /path/to/project
+
+# Override detected type
+/speclabs:validate-feature --type webapp
+
+# Integrate with orchestration session
+/speclabs:validate-feature --session-id feature_20251103_143022
+```
+
+**2. Generic Orchestrator Architecture**:
+- **Project Type Detection** (`lib/detect-project-type.sh`):
+  - Webapp: React, Vite, Next.js, React Router (95% confidence)
+  - Android: AndroidManifest.xml, build.gradle (90% confidence)
+  - REST API: OpenAPI specs, Express/FastAPI (90% confidence)
+  - Desktop GUI: Electron, PyQt (85% confidence)
+  - Confidence scoring + manual `--type` override
+
+- **Validator Interface Contract** (`lib/validator-interface.sh`):
+  ```bash
+  validate_execute(
+    --project-path <path>
+    --session-id <id>
+    --type <webapp|android|rest-api|desktop-gui>
+  ) → standardized JSON result
+  ```
+
+- **Orchestration Delegation** (`lib/validate-feature-orchestrator.sh`):
+  - Detects project type
+  - Selects appropriate validator
+  - Delegates execution
+  - Aggregates results
+  - Updates session
+
+**3. Webapp Validator** (`lib/validators/validate-webapp.sh`):
+- **Extracted from Phase 2.5**: All existing validation logic preserved
+- **AI-Powered Flow Generation**: Analyzes spec.md/plan.md/tasks.md
+- **Feature Type Detection**: Shopping cart, social feed, auth, forms, CRUD
+- **Playwright Integration**: Browser automation with console monitoring
+- **Auto-Fix Retry Loop**: Up to 3 attempts to fix errors
+- **Dev Server Lifecycle**: Automatic start + guaranteed cleanup
+- **Standardized Output**: JSON matching validator interface
+
+**4. Session Integration** (`lib/feature-orchestrator.sh`):
+- `feature_start_validation()`: Initialize validation phase
+- `feature_complete_validation()`: Store validation results
+- Validation fields added to session schema
+- `feature_summary()` displays validation status
+- `feature_export_report()` includes validation section
+
+**Architecture Benefits**:
+
+✅ **Extensible**: Add new validators (Android, REST API, Desktop) without breaking changes
+✅ **Reusable**: Call validation independently or via orchestrate-feature
+✅ **Maintainable**: Reduced orchestrate-feature.md from 927 → 469 lines (49% reduction)
+✅ **Testable**: Each validator can be tested in isolation
+✅ **Future-Proof**: Ready for v2.7.1 (Android), v2.7.2 (REST API), v2.7.3 (Desktop GUI)
+
+**File Size Comparison**:
+
+| File | v2.6.1 | v2.7.0 | Change |
+|------|--------|--------|--------|
+| orchestrate-feature.md | 927 lines | 469 lines | **-458 lines (-49%)** |
+| Total validation code | 555 lines embedded | 550 lines modular | Refactored |
+
+**New Files**:
+- `lib/validator-interface.sh` (130 lines) - Interface contract
+- `lib/detect-project-type.sh` (155 lines) - Type detection
+- `lib/validate-feature-orchestrator.sh` (175 lines) - Orchestrator
+- `lib/validators/validate-webapp.sh` (550 lines) - Webapp validator
+- `commands/validate-feature.md` (310 lines) - User command
+
+**What Changed in orchestrate-feature.md**:
+
+**Before (v2.6.1 Phase 2.5)**:
+```
+IF ${RUN_VALIDATE} = true:
+  Step 2.5.1: Pre-Validation Setup & Flow Generation [240 lines]
+    - Parse user flows from spec.md
+    - AI-powered flow generation
+    - Merge flows
+    - Install Playwright
+  Step 2.5.2: Start Development Server [15 lines]
+  Step 2.5.3: Interactive Error Detection Loop [250 lines]
+    - Create Playwright test script
+    - Run validation
+    - Monitor terminal
+    - Auto-fix retry loop
+  Step 2.5.4: Kill Development Server [10 lines]
+  Step 2.5.5: Validation Summary [40 lines]
+  [555 total lines]
+```
+
+**After (v2.7.0 Phase 2.5)**:
+```
+IF ${RUN_VALIDATE} = true:
+  Step 2.5.1: Initialize Validation Phase [3 lines]
+  Step 2.5.2: Delegate to Standalone Validator [15 lines]
+    - Call: /speclabs:validate-feature ${PROJECT_PATH} --session-id ${SESSION_ID}
+    - Orchestrator handles: detection, generation, execution, cleanup
+  Step 2.5.3: Parse Validation Results from Session [10 lines]
+  Step 2.5.4: Report Validation Summary [60 lines]
+  [88 total lines + 37 lines informational section]
+```
+
+**Migration Benefits**:
+- Same functionality, cleaner architecture
+- All Phase 2.5 features preserved (AI flows, auto-fix, dev server management)
+- Validation now reusable across different commands
+- Foundation for multi-type validation
+
+**Use Cases Enabled**:
+
+1. **Standalone Validation**:
+   ```bash
+   # After implementing feature, validate manually
+   /speclabs:validate-feature
+   ```
+
+2. **CI/CD Integration**:
+   ```bash
+   # Exit code 0 = passed, 1 = failed
+   /speclabs:validate-feature && deploy || notify_team
+   ```
+
+3. **Legacy Feature Validation**:
+   ```bash
+   # Validate features built before SpecLabs existed
+   /speclabs:validate-feature /path/to/old-feature
+   ```
+
+4. **Iterative Development**:
+   ```bash
+   # Validate after each major change
+   /speclabs:validate-feature --session-id current_session
+   ```
+
+5. **Manual Testing Replacement**:
+   ```bash
+   # Comprehensive validation without manual testing
+   /speclabs:validate-feature --flows custom-edge-cases.json
+   ```
+
+**Future Roadmap**:
+
+**v2.7.1 (Planned)**: Android validator
+- Appium 2.0 + UiAutomator2
+- APK-based testing
+- Real device + emulator support
+
+**v2.7.2 (Planned)**: REST API validator
+- Newman (Postman CLI)
+- OpenAPI spec conversion
+- Auth token handling
+
+**v2.7.3 (Planned)**: Desktop GUI validator
+- Spectron for Electron apps
+- WinAppDriver for Windows
+- Cross-platform support
+
+**Backward Compatibility**:
+- `--validate` flag works identically
+- Session tracking preserves all data
+- All existing features continue working
+- Phase numbering unchanged
+- No breaking changes
+
+**Technical Details**:
+- Validator interface version: 1.0.0
+- JSON schema enforced with jq validation
+- Error result helper for failed validators
+- Confidence thresholds: HIGH (>80%), MEDIUM (60-80%), LOW (<60%)
+- Type-specific metadata preserved in results
+
+**What Stays the Same**:
+- Planning phases (specify, clarify, plan, tasks)
+- Implementation phase (uses /specswarm:implement)
+- Bugfix phase
+- Audit phase
+- All AI-powered flow generation logic
+- Playwright integration
+- Auto-fix retry loop
+- Dev server lifecycle management
+
 ## [2.6.1] - 2025-11-03
 
 ### Changed - SpecLabs

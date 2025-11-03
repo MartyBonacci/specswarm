@@ -401,6 +401,75 @@ feature_complete_audit() {
   mv "$temp_file" "$session_file"
 }
 
+# Start validation phase
+# Args: session_id
+feature_start_validation() {
+  local session_id="$1"
+  local session_file="${FEATURE_SESSION_DIR}/${session_id}.json"
+
+  if [ ! -f "$session_file" ]; then
+    echo "Error: Session $session_id not found" >&2
+    return 1
+  fi
+
+  local temp_file=$(mktemp)
+
+  # Add validation section if it doesn't exist, otherwise update it
+  jq --arg started_at "$(date -Iseconds)" \
+     --arg updated_at "$(date -Iseconds)" \
+     '.validation = {
+        "status": "in_progress",
+        "started_at": $started_at,
+        "completed_at": null,
+        "type": null,
+        "error_count": 0,
+        "summary": {
+          "total_flows": 0,
+          "passed_flows": 0,
+          "failed_flows": 0,
+          "error_count": 0
+        },
+        "results": null,
+        "artifacts": []
+      } |
+      .phase = "validation" |
+      .updated_at = $updated_at' \
+     "$session_file" > "$temp_file"
+
+  mv "$temp_file" "$session_file"
+}
+
+# Complete validation phase
+# Args: session_id, validation_result_json
+feature_complete_validation() {
+  local session_id="$1"
+  local validation_result="$2"
+  local session_file="${FEATURE_SESSION_DIR}/${session_id}.json"
+
+  if [ ! -f "$session_file" ]; then
+    echo "Error: Session $session_id not found" >&2
+    return 1
+  fi
+
+  local temp_file=$(mktemp)
+
+  jq --argjson result "$validation_result" \
+     --arg completed_at "$(date -Iseconds)" \
+     --arg updated_at "$(date -Iseconds)" \
+     '.validation.status = $result.status |
+      .validation.type = $result.type |
+      .validation.completed_at = $completed_at |
+      .validation.error_count = $result.summary.error_count |
+      .validation.summary = $result.summary |
+      .validation.results = $result |
+      .validation.artifacts = $result.artifacts |
+      .metrics.total_validations += 1 |
+      .updated_at = $updated_at' \
+     "$session_file" > "$temp_file"
+
+  mv "$temp_file" "$session_file"
+}
+
 # Complete feature session
 # Args: session_id, success (true|false), message
 feature_complete() {
@@ -447,6 +516,17 @@ feature_summary() {
   echo "  - Attempts: $(jq -r '.bugfix.attempts' "$session_file")"
   echo "  - Issues Fixed: $(jq -r '.bugfix.issues_fixed' "$session_file")"
   echo ""
+
+  # Display validation if it exists
+  if jq -e '.validation' "$session_file" >/dev/null 2>&1; then
+    echo "Validation:"
+    echo "  - Status: $(jq -r '.validation.status // "not_run"' "$session_file")"
+    echo "  - Type: $(jq -r '.validation.type // "N/A"' "$session_file")"
+    echo "  - Flows: $(jq -r '.validation.summary.passed_flows // 0' "$session_file")/$(jq -r '.validation.summary.total_flows // 0' "$session_file") passed"
+    echo "  - Errors: $(jq -r '.validation.error_count // 0' "$session_file")"
+    echo ""
+  fi
+
   echo "Result:"
   echo "  - Success: $(jq -r '.result.success' "$session_file")"
   echo "  - Message: $(jq -r '.result.message' "$session_file")"
@@ -506,6 +586,27 @@ EOF
 **Status**: $(jq -r '.bugfix.status' "$session_file")
 **Attempts**: $(jq -r '.bugfix.attempts' "$session_file")
 **Issues Fixed**: $(jq -r '.bugfix.issues_fixed' "$session_file")
+
+EOF
+
+  # Add validation section if it exists
+  if jq -e '.validation' "$session_file" >/dev/null 2>&1; then
+    cat >> "$report_file" <<EOF
+## Validation Phase
+
+**Status**: $(jq -r '.validation.status // "not_run"' "$session_file")
+**Type**: $(jq -r '.validation.type // "N/A"' "$session_file")
+**Flows**: $(jq -r '.validation.summary.passed_flows // 0' "$session_file")/$(jq -r '.validation.summary.total_flows // 0' "$session_file") passed
+**Errors Found**: $(jq -r '.validation.error_count // 0' "$session_file")
+
+### Validation Artifacts
+
+EOF
+    jq -r '.validation.artifacts[]? | "- **\(.type)**: \(.path)"' "$session_file" >> "$report_file"
+    echo "" >> "$report_file"
+  fi
+
+  cat >> "$report_file" <<EOF
 
 ## Metrics
 
