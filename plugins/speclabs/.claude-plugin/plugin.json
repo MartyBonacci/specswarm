@@ -1,7 +1,7 @@
 {
   "name": "speclabs",
-  "version": "2.6.0",
-  "description": "Advanced automation suite for production-ready autonomous development. v2.6.0: AI-powered flow validation (analyzes features, generates intelligent test flows, hybrid user+AI approach). v2.5.0: Playwright integration. v2.3.0: Production-ready.",
+  "version": "2.6.1",
+  "description": "Advanced automation suite for production-ready autonomous development. v2.6.1: Optimized implementation (uses /specswarm:implement). v2.6.0: AI-powered flow validation. v2.5.0: Playwright integration. v2.3.0: Production-ready.",
   "author": {
     "name": "Marty Bonacci",
     "url": "https://github.com/MartyBonacci"

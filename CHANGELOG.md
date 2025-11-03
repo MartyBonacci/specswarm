@@ -5,6 +5,79 @@ All notable changes to SpecSwarm and SpecLabs plugins will be documented in this
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.6.1] - 2025-11-03
+
+### Changed - SpecLabs
+
+#### Optimized Implementation Phase (Uses SpecSwarm Implement)
+- **Performance Optimization**: Phase 2 now uses `/specswarm:implement` instead of per-task orchestration loop
+- **Reduced Complexity**: Simplified from 50+ operations to 1 command for task execution
+- **Better Architecture**: Leverages SpecSwarm's built-in task execution instead of custom loop
+
+**What Changed**:
+
+**Before (v2.6.0)**:
+```
+Phase 2: Implementation
+  FOR EACH TASK (T001-T030):
+    - Write: workflow_T001.md
+    - SlashCommand: /speclabs:orchestrate workflow_T001.md
+    - Track: feature_complete_task
+  (50+ operations for 30 tasks)
+```
+
+**After (v2.6.1)**:
+```
+Phase 2: Implementation
+  - SlashCommand: /specswarm:implement
+  - Read: tasks.md (parse results)
+  - Update: session with statistics
+  (3 operations total)
+```
+
+**Why This Change**:
+- **User Feedback**: "Shouldn't /specswarm:implement be run around step 15?"
+- **Problem**: Redundant task loop when SpecSwarm already provides task execution
+- **Solution**: Use the proper SpecSwarm command designed for this exact purpose
+
+**Benefits**:
+- ✅ **16x-50x fewer operations**: 3 operations vs 50-150 operations
+- ✅ **Simpler architecture**: Single command instead of complex loop
+- ✅ **Better maintainability**: Leverages SpecSwarm's proven task execution
+- ✅ **Same functionality**: All features preserved (retries, error handling, progress tracking)
+- ✅ **Faster execution**: Reduced overhead from workflow file creation
+
+**Technical Details**:
+- Phase 2.1: Call `/specswarm:implement` (executes all tasks from tasks.md)
+- Phase 2.2: Parse results from tasks.md (SpecSwarm updates status markers)
+- Phase 2.3: Update session with completion statistics
+- Removed: Workflow file generation loop (`.speclabs/workflows/workflow_*.md`)
+- Removed: Per-task `/speclabs:orchestrate` calls
+- Retained: Session tracking, error counting, bugfix preparation
+
+**Backward Compatibility**:
+- All phases still execute in same order
+- Session tracking maintains same data structure
+- Error handling and bugfix phase unchanged
+- Validation and audit phases unchanged
+
+**Operations Comparison** (30-task feature):
+
+| Metric | v2.6.0 | v2.6.1 | Improvement |
+|--------|--------|--------|-------------|
+| SlashCommands (Phase 2) | 30 | 1 | -96.7% |
+| Write operations | 30 | 0 | -100% |
+| Total Phase 2 ops | ~90 | ~3 | -96.7% |
+| Execution time | Longer | Faster | Better |
+
+**What Stays the Same**:
+- Planning phases (specify, clarify, plan, tasks)
+- AI-powered flow validation (Phase 2.5)
+- Bugfix phase (Phase 3)
+- Audit phase (Phase 4)
+- Completion report (Phase 5)
+- All flags and configuration options
+
 ## [2.6.0] - 2025-11-03
 
 ### Added - SpecLabs

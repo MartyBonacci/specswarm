@@ -28,7 +28,7 @@ args:
 pre_orchestration_hook: |
   #!/bin/bash
 
-  echo "🎯 Feature Orchestrator v2.6.0 - AI-Powered Flow Validation"
+  echo "🎯 Feature Orchestrator v2.6.1 - Optimized Implementation"
   echo ""
   echo "This orchestrator launches an autonomous agent that handles:"
   echo "  1. SpecSwarm Planning: specify → clarify → plan → tasks"
@@ -194,61 +194,36 @@ ELSE:
 - Report: "Found X tasks to execute"
 
 ═══════════════════════════════════════════════════════════════
-🔨 PHASE 2: IMPLEMENTATION (Automatic Task Loop)
+🔨 PHASE 2: IMPLEMENTATION (SpecSwarm Implement)
 ═══════════════════════════════════════════════════════════════
 
-### Step 2.1: Initialize Implementation
-- Create directory: ${PROJECT_PATH}/.speclabs/workflows/
-- Initialize counters: completed=0, failed=0, total=X
+### Step 2.1: Execute All Tasks with SpecSwarm
 - Update session: feature_start_implementation "${FEATURE_SESSION_ID}"
+- Report: "🔨 Starting implementation of ${total_tasks} tasks using SpecSwarm"
+- Use the SlashCommand tool to execute: `/specswarm:implement`
+- Wait for implementation completion
+- SpecSwarm will:
+  - Read all tasks from tasks.md
+  - Execute each task sequentially
+  - Handle errors and retries (up to ${MAX_RETRIES} per task)
+  - Update tasks.md with completion status
+  - Report progress throughout execution
 
-### Step 2.2: Execute Each Task
-FOR EACH TASK in the task list:
-
-  **Create Workflow File**:
-  1. Extract task description from tasks.md
-  2. Create workflow file: .speclabs/workflows/workflow_${TASK_ID}.md
-  3. Workflow content:
-     ```markdown
-     # Task ${TASK_ID}: ${TASK_DESCRIPTION}
-
-     ## Context
-     - Feature: ${FEATURE_DESC}
-     - Project: ${PROJECT_PATH}
-     - Session: ${FEATURE_SESSION_ID}
-
-     ## Task Details
-     ${FULL_TASK_DESCRIPTION_FROM_TASKS_MD}
-
-     ## Success Criteria
-     - Task completes without errors
-     - Code builds successfully
-     - All tests pass (if applicable)
-     ```
-
-  **Execute Task**:
-  1. Use the SlashCommand tool to execute: `/speclabs:orchestrate .speclabs/workflows/workflow_${TASK_ID}.md ${PROJECT_PATH}`
-  2. Wait for task completion
-  3. Check status from orchestrate session
-
-  **Track Progress**:
-  1. IF task succeeded:
-     - Increment completed counter
-     - Update session: feature_complete_task "${FEATURE_SESSION_ID}" "${TASK_ID}" "true"
-  2. IF task failed:
-     - Increment failed counter
-     - Update session: feature_fail_task "${FEATURE_SESSION_ID}" "${TASK_ID}"
-     - Log error details
-  3. Report progress: "Task ${TASK_ID} complete (${completed}/${total} succeeded, ${failed} failed)"
-
-  **Continue to next task**
-
-### Step 2.3: Implementation Summary
-- Report final statistics:
+### Step 2.2: Parse Implementation Results
+- Use Read tool to read ${PROJECT_PATH}/features/*/tasks.md
+- Parse task completion status from tasks.md:
+  - Look for task status markers (✅ completed, ❌ failed, ⏳ in progress)
+  - Count completed tasks
+  - Count failed tasks
+  - Extract error messages for failed tasks
+- Report statistics:
   - "✅ Completed: ${completed}/${total} tasks"
   - "❌ Failed: ${failed}/${total} tasks"
+  - If failed > 0: List failed task IDs with error summaries
+
+### Step 2.3: Update Session
 - Update session: feature_complete_implementation "${FEATURE_SESSION_ID}" "${completed}" "${failed}"
-- If failed > 0: Prepare for bugfix phase
+- If failed > 0: Prepare for bugfix phase (Phase 3)
 
 ═══════════════════════════════════════════════════════════════
 🔍 PHASE 2.5: INTERACTIVE ERROR DETECTION (Conditional - If ${RUN_VALIDATE}=true)
