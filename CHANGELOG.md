@@ -5,6 +5,200 @@ All notable changes to SpecSwarm and SpecLabs plugins will be documented in this
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.6.0] - 2025-11-03
+
+### Added - SpecLabs
+
+#### AI-Powered Flow Validation (Hybrid User + AI Approach)
+- **Major Enhancement**: `--validate` flag now uses intelligent flow generation based on feature analysis
+- **Hybrid Approach**: Combines user-defined flows (from spec.md) with AI-generated flows (from feature artifacts)
+- **Feature-Aware Testing**: AI analyzes spec/plan/tasks to generate contextually relevant interaction flows
+- **Zero Manual Test Writing**: AI generates comprehensive test coverage automatically
+
+**What's New**:
+- **User-Defined Flows** (optional in spec.md YAML):
+  ```yaml
+  interaction_flows:
+    - id: custom-edge-case
+      name: "Empty Cart Checkout"
+      priority: high
+      requires_auth: true
+      steps:
+        - action: navigate
+          target: /checkout
+        - action: verify_text
+          selector: .empty-cart-message
+          expected: "Your cart is empty"
+  ```
+  - Supported actions: navigate, click, type, verify_text, verify_visible, wait_for_selector, screenshot, scroll, hover, select
+  - Priority levels: critical, high, medium, low
+  - Auth handling: separate flows for authenticated/guest users
+
+- **AI Flow Generation** (automatic):
+  - Analyzes spec.md: user stories, acceptance criteria, user flows, functional requirements
+  - Analyzes plan.md: components, routes, implementation phases
+  - Analyzes tasks.md: completed tasks, acceptance criteria, user story mappings
+  - Detects feature type: shopping_cart, social_feed, authentication, profile, search, crud, form
+  - Generates intelligent flows based on feature type:
+    - **Shopping cart**: Browse → Add to cart → Remove → Checkout
+    - **Social feed**: View feed → Post content → Like/comment
+    - **Authentication**: Sign up → Login → Logout
+    - **Forms**: Validation testing → Successful submission
+    - **CRUD**: Create → Read → Update → Delete
+
+- **Smart Flow Merging**:
+  - ID-based deduplication: User flows override AI flows with same ID
+  - Semantic similarity detection: Prevents redundant test execution
+  - Priority-based execution order: critical → high → medium → low
+  - Source tracking: Reports which flows are user-defined vs AI-generated
+
+- **Flow-Aware Error Reporting**:
+  - Execution results: "Flow X passed", "Flow Y failed at step 3"
+  - Error context: Which flow, which step, what action, why it failed
+  - Console/exception tracking: Errors captured with flow + step context
+  - Terminal monitoring: Dev server errors correlated with flow execution
+
+**How It Works**:
+
+1. **Flow Generation** (Phase 2.5.1):
+   - Parse user-defined flows from spec.md YAML frontmatter
+   - Read feature artifacts (spec.md, plan.md, tasks.md)
+   - Extract: user stories, components, routes, acceptance criteria
+   - Detect feature type (e.g., "shopping_cart" from keywords)
+   - Generate AI flows for detected feature type
+   - Map user stories to custom flows (extract actions from acceptance criteria)
+   - Merge user + AI flows (dedupe, sort by priority)
+   - Write flows.json for Playwright execution
+
+2. **Flow Execution** (Phase 2.5.3):
+   - Load merged flows from flows.json
+   - Execute each flow in priority order
+   - Monitor console errors and exceptions during each flow
+   - Capture step-by-step results with flow context
+   - Screenshot at key interaction points
+   - Report flow-level pass/fail status
+
+3. **Flow-Aware Reporting** (Phase 2.5.5):
+   - Summary: X flows passed, Y failed, detected feature type
+   - For failed flows: which step failed, error message, stack trace
+   - Artifacts: flow-results.json, screenshots/*.png, error-report-*.md
+
+**Why This Change**:
+- **User Feedback**: "How does it decide what to interact with?"
+- **Problem**: v2.5.0 used generic selectors (nav a, button:visible) which might miss feature-specific interactions
+- **Solution**: AI analyzes what was actually implemented and generates relevant test flows
+- **Example**: If implementing "Add to Cart", AI generates flows specifically for cart operations, not just generic button clicking
+
+**Usage**:
+
+```bash
+/speclabs:orchestrate-feature "Add shopping cart feature" /path/to/project --validate
+```
+
+**Example Output**:
+
+```
+🔍 Starting interactive error detection with Playwright
+
+📋 Flow Generation Summary:
+   User-defined flows: 1
+   AI-generated flows: 4
+   Total flows after merge: 5 (0 duplicates removed)
+
+🎯 Execution Order:
+   1. [HIGH] Empty Cart Checkout (user-defined)
+   2. [CRITICAL] Browse Products Flow (ai-generated from baseline)
+   3. [CRITICAL] Add to Cart Flow (ai-generated from US1)
+   4. [CRITICAL] Checkout Flow (ai-generated from US2)
+   5. [HIGH] Remove from Cart Flow (ai-generated)
+
+🧪 Running: Empty Cart Checkout (user-defined)
+      navigate: Navigate to /checkout
+      verify_text: Verify empty cart message
+   ✅ PASSED
+
+🧪 Running: Add to Cart Flow (ai-generated from US1)
+      navigate: Navigate to /products
+      click: Add first product to cart
+      verify_text: Verify cart badge shows 1
+      click: Open cart view
+      verify_visible: Verify product in cart
+   ✅ PASSED
+
+✅ FLOW-BASED VALIDATION PASSED
+   - Flows executed: 5
+   - All flows passed: 5/5
+   - Feature type: shopping_cart
+   - User flows: 1, AI flows: 4
+```
+
+**Benefits**:
+- ✅ **Intelligent test generation**: AI understands feature context and generates relevant flows
+- ✅ **Zero manual test writing**: For standard patterns (cart, feed, auth), AI generates comprehensive coverage
+- ✅ **User control**: Define edge cases and custom scenarios in spec.md
+- ✅ **Comprehensive coverage**: Baseline flows + feature-specific flows + user flows
+- ✅ **Flow-aware debugging**: Know exactly which flow failed and at which step
+- ✅ **Feature type detection**: Automatically adapts to shopping carts, social feeds, forms, etc.
+- ✅ **Semantic deduplication**: Prevents redundant testing
+- ✅ **Priority-based execution**: Critical flows run first
+
+**Feature Type Detection**:
+- **shopping_cart**: Generates browse, add to cart, remove, checkout flows
+- **social_feed**: Generates view feed, post content, like/comment flows
+- **authentication**: Generates signup, login, logout flows
+- **profile**: Generates view profile, edit profile, update settings flows
+- **search**: Generates search, filter, results flows
+- **crud**: Generates create, read, update, delete flows
+- **form**: Generates validation, submission, error handling flows
+
+**YAML Schema** (user-defined flows in spec.md):
+
+```yaml
+interaction_flows:
+  - id: string              # Unique ID (e.g., "checkout-empty-cart")
+    name: string            # Human-readable name
+    description: string     # What this flow tests
+    priority: critical|high|medium|low
+    user_story: string      # Optional: link to user story ID
+    requires_auth: boolean  # Whether flow needs authenticated user
+    steps:
+      - action: navigate|click|type|verify_text|verify_visible|wait_for_selector|screenshot|scroll|hover|select
+        target: string      # For navigate: URL path
+        selector: string    # For DOM actions: CSS selector
+        text: string        # For type: text to input
+        expected: string    # For verify: expected value
+        filename: string    # For screenshot: output filename
+        wait: number        # Optional: ms to wait after action
+        timeout: number     # Optional: timeout for wait actions
+        description: string # Step description
+```
+
+**Technical Details**:
+- **AI Analysis**: Parses markdown sections from spec/plan/tasks
+- **Feature Type Detection**: Keyword frequency analysis + context matching
+- **Flow Generation Templates**: Pre-built patterns for 7 feature types
+- **User Story Mapping**: Extracts actions from acceptance criteria
+- **Merge Algorithm**: ID-based override + semantic similarity (> 0.8 threshold)
+- **Playwright Integration**: Loads flows from JSON, executes sequentially, captures flow context
+- **Error Correlation**: Links console/exception errors to specific flow + step
+
+**Breaking Changes from v2.5.0**:
+- Playwright script now loads flows from flows.json (not hardcoded interactions)
+- Error output format changed from errors-N.json to flow-results.json
+- Reporting includes flow generation summary and feature type detection
+
+**Backward Compatibility**:
+- If no flows defined in spec.md → AI generates baseline flows only
+- If feature type undetected → falls back to generic navigation testing
+- --validate flag remains optional (same as v2.5.0)
+
+**Future Enhancements**:
+- Custom flow templates per project type
+- Machine learning from past flow executions
+- Visual regression testing (screenshot comparison)
+- Performance metrics per flow
+- Cross-browser flow execution
+
 ## [2.5.0] - 2025-11-03
 
 ### Added - SpecLabs

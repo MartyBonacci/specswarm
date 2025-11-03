@@ -23,12 +23,12 @@ args:
     description: Run comprehensive code audit phase after implementation (compatibility, security, best practices)
     required: false
   - name: --validate
-    description: Run interactive error detection with Playwright (monitors browser console + terminal output during interactions, auto-fixes errors, kills dev server when done)
+    description: Run AI-powered interaction flow validation with Playwright (analyzes feature artifacts, generates intelligent test flows, executes user-defined + AI flows, monitors browser console + terminal, auto-fixes errors, kills dev server when done)
     required: false
 pre_orchestration_hook: |
   #!/bin/bash
 
-  echo "🎯 Feature Orchestrator v2.5.0 - Interactive Error Detection with Playwright"
+  echo "🎯 Feature Orchestrator v2.6.0 - AI-Powered Flow Validation"
   echo ""
   echo "This orchestrator launches an autonomous agent that handles:"
   echo "  1. SpecSwarm Planning: specify → clarify → plan → tasks"
@@ -121,7 +121,7 @@ I'll now launch an autonomous agent to handle the complete feature lifecycle.
 
 The agent will execute all phases automatically and report back when complete. This may take several minutes depending on feature complexity.
 
-${RUN_VALIDATE} = true enables interactive error detection (Phase 2.5) - the agent will launch dev server, run Playwright browser automation with console monitoring, test interaction flows, and auto-fix errors before manual testing. Dev server will be stopped before returning control to user.
+${RUN_VALIDATE} = true enables AI-powered flow validation (Phase 2.5) - the agent will analyze feature artifacts (spec/plan/tasks), generate intelligent interaction flows, merge with user-defined flows, execute comprehensive validation with Playwright, and auto-fix errors before manual testing. Dev server will be stopped before returning control to user.
 
 ---
 
@@ -256,15 +256,233 @@ FOR EACH TASK in the task list:
 
 IF ${RUN_VALIDATE} = true:
 
-  ### Step 2.5.1: Pre-Validation Setup
+  ### Step 2.5.1: Pre-Validation Setup & Intelligent Flow Generation
   - Report: "🔍 Starting interactive error detection with Playwright (--validate enabled)"
   - Create validation directory: ${PROJECT_PATH}/.speclabs/validation/
   - Initialize error retry counter: error_retry_count=0
   - Set max error retries: max_error_retries=3
+
+  **A. Parse User-Defined Flows (from spec.md)**
+  - Locate spec.md in features/ directory
+  - Use Read tool to read spec.md
+  - Parse YAML frontmatter to extract `interaction_flows` section (if present)
+  - Validate flow structure:
+    - Each flow must have: id, name, description, priority, requires_auth, steps
+    - Each step must have: action, description
+    - Action-specific required fields:
+      - navigate: target (URL)
+      - click/verify_text/verify_visible/wait_for_selector: selector
+      - type: selector + text
+      - screenshot: filename
+  - Store valid user-defined flows in memory
+  - Report: "📝 Found ${user_flow_count} user-defined flows in spec.md"
+
+  **B. AI-Powered Flow Generation (from feature artifacts)**
+
+  **B1. Read Feature Artifacts:**
+  - Use Read tool to read:
+    - spec.md: Full content (user stories, acceptance criteria, user flows, functional requirements, API specs)
+    - plan.md: Full content (components, routes, implementation phases, data models)
+    - tasks.md: Full content (task descriptions, acceptance criteria, user story mappings)
+
+  **B2. Extract Key Information:**
+  - From spec.md:
+    - Parse ## User Stories section → extract story ID, title, scenario, acceptance criteria
+    - Parse ### User Flow sections → extract step-by-step interaction sequences
+    - Parse ## Functional Requirements → identify P0/P1 requirements
+    - Parse ## User Interface → identify pages, components, user flows
+    - Parse ## API Specification → identify endpoints, auth requirements
+
+  - From plan.md:
+    - Extract component names from ### Components section
+    - Extract route paths from ### Routes section
+    - Extract API endpoint paths from ### API Endpoints section
+
+  - From tasks.md:
+    - Extract task IDs, descriptions, acceptance criteria
+    - Map tasks to user stories
+    - Identify implemented components and features
+
+  **B3. Feature Type Detection:**
+  - Analyze extracted information to detect feature type:
+    - **shopping_cart**: Keywords: cart, checkout, purchase, order, product
+    - **social_feed**: Keywords: feed, post, tweet, like, comment, share
+    - **authentication**: Keywords: login, signin, signup, register, auth
+    - **profile**: Keywords: profile, settings, account, user info
+    - **search**: Keywords: search, filter, query, results
+    - **crud**: Keywords: create, read, update, delete, edit, list
+    - **form**: Keywords: form, submit, input, validate, field
+  - Use keyword frequency and context to determine primary feature type
+  - Report detected type: "🎯 Detected feature type: ${feature_type}"
+
+  **B4. Generate AI Flows Based on Feature Type:**
+
+  **For ALL Features (baseline flows):**
+  - Generate navigation flow:
+    - Test all routes mentioned in plan.md
+    - Click navigation links found in spec.md user flows
+    - Verify page loads without errors
+
+  **For shopping_cart features:**
+  - Generate "Browse Products" flow:
+    - Navigate to /products (or equivalent from routes)
+    - Wait for product grid/list to load
+    - Screenshot products page
+  - Generate "Add to Cart" flow:
+    - Navigate to products
+    - Click "Add to Cart" button (use data-testid or button text from acceptance criteria)
+    - Verify cart badge increments
+    - Open cart view
+    - Verify item appears in cart
+    - Screenshot cart with item
+  - Generate "Remove from Cart" flow:
+    - Add item to cart
+    - Open cart
+    - Click remove button
+    - Verify cart badge decrements
+    - Verify empty cart message (if mentioned in requirements)
+  - Generate "Checkout" flow:
+    - Add item to cart
+    - Proceed to checkout
+    - Fill shipping form fields (use field names from plan.md)
+    - Fill payment form fields
+    - Submit order
+    - Verify confirmation page/message
+    - Screenshot confirmation
+
+  **For social_feed features:**
+  - Generate "View Feed" flow:
+    - Navigate to feed route
+    - Wait for posts/tweets to load
+    - Screenshot feed
+  - Generate "Post Content" flow:
+    - Navigate to feed
+    - Find post composer (from components in plan.md)
+    - Type content into textarea
+    - Verify character counter (if mentioned)
+    - Click submit
+    - Verify new post appears at top
+  - Generate "Interaction" flow (if like/comment mentioned):
+    - Navigate to feed
+    - Click like button on first post
+    - Verify like count increments
+    - Verify button state changes
+
+  **For authentication features:**
+  - Generate "Sign Up" flow:
+    - Navigate to signup route
+    - Fill registration form fields
+    - Submit form
+    - Verify success message or redirect
+  - Generate "Login" flow:
+    - Navigate to login route
+    - Fill credentials (test data)
+    - Submit form
+    - Verify redirect to authenticated area
+  - Generate "Logout" flow:
+    - Login first
+    - Click logout button
+    - Verify redirect to public page
+
+  **For form features:**
+  - Generate "Form Validation" flow:
+    - Navigate to form route
+    - Submit empty form
+    - Verify validation errors appear
+    - Fill required fields
+    - Submit form
+    - Verify success message
+
+  **For crud features:**
+  - Generate "Create" flow:
+    - Navigate to create route
+    - Fill form fields
+    - Submit
+    - Verify item appears in list
+  - Generate "Read/List" flow:
+    - Navigate to list route
+    - Verify items load
+    - Click item to view details
+  - Generate "Update" flow:
+    - Navigate to edit route
+    - Modify fields
+    - Save
+    - Verify changes reflected
+  - Generate "Delete" flow:
+    - Navigate to list
+    - Click delete on item
+    - Verify item removed from list
+
+  **B5. Map User Stories to Custom Flows:**
+  - For each user story in spec.md:
+    - Extract acceptance criteria
+    - Generate flow steps from criteria:
+      - "User can [action]" → generate action step
+      - "User sees [element]" → generate verify_visible step
+      - "System displays [message]" → generate verify_text step
+    - Name flow: "${user_story.title} Flow"
+    - Set priority based on story priority (primary=critical, secondary=high)
+    - Link to user story ID
+  - Report: "🤖 Generated ${ai_flow_count} AI flows from feature analysis"
+
+  **C. Merge User-Defined + AI Flows**
+
+  **C1. ID-Based Deduplication:**
+  - Create flow map with user-defined flows first
+  - For each AI flow:
+    - If ID already exists → skip (user override)
+    - Else → add to map
+  - Report any overrides: "ℹ️ User flow '${id}' overrides AI flow"
+
+  **C2. Semantic Similarity Detection:**
+  - For each flow pair in map:
+    - Create signature from step actions and targets
+    - Compare signatures for similarity > 0.8
+    - If similar:
+      - Keep user-defined version if present
+      - Else keep first AI version
+      - Report: "ℹ️ Merged similar flows: '${flow1.id}' and '${flow2.id}'"
+
+  **C3. Priority Sorting:**
+  - Sort merged flows by:
+    - Priority (critical → high → medium → low)
+    - Source (user-defined before ai-generated at same priority)
+
+  **C4. Write Merged Flows:**
+  - Use Write tool to create: ${PROJECT_PATH}/.speclabs/validation/flows.json
+  - Write array of merged flows with metadata:
+    ```json
+    [
+      {
+        "id": "flow-id",
+        "name": "Flow Name",
+        "description": "What this tests",
+        "priority": "critical",
+        "user_story": "US1",
+        "requires_auth": false,
+        "source": "user-defined",
+        "steps": [...]
+      },
+      ...
+    ]
+    ```
+
+  **D. Flow Execution Summary**
+  - Report flow merge summary:
+    - "📋 Flow Generation Summary:"
+    - "   User-defined flows: ${user_count}"
+    - "   AI-generated flows: ${ai_count}"
+    - "   Total flows after merge: ${total_count} (${duplicates_removed} duplicates removed)"
+    - ""
+    - "🎯 Execution Order:"
+    - For each flow: "   ${index}. [${priority}] ${name} (${source})"
+
+  **E. Install Playwright:**
   - Install Playwright if not present:
     ```bash
     cd ${PROJECT_PATH} && npx playwright install chromium --with-deps
     ```
+  - Report: "✅ Playwright ready"
 
   ### Step 2.5.2: Start Development Server
   - Use Bash tool to start dev server in background:
@@ -280,105 +498,182 @@ IF ${RUN_VALIDATE} = true:
 
   WHILE error_retry_count < max_error_retries:
 
-    **Create Playwright Test Script:**
-    - Use Write tool to create: ${PROJECT_PATH}/.speclabs/validation/error-detection-test.js
+    **Create Flow-Based Playwright Test Script:**
+    - Use Write tool to create: ${PROJECT_PATH}/.speclabs/validation/flow-validation-test.js
     - Script content:
       ```javascript
       const { chromium } = require('playwright');
       const fs = require('fs');
 
-      (async () => {
-        const consoleErrors = [];
-        const pageErrors = [];
+      // Load flows from JSON
+      const flows = JSON.parse(fs.readFileSync('.speclabs/validation/flows.json', 'utf-8'));
 
-        // Launch browser
+      (async () => {
+        const results = {
+          flows: [],
+          summary: { total: 0, passed: 0, failed: 0 },
+          errors: []
+        };
+
         const browser = await chromium.launch({ headless: true });
         const context = await browser.newContext({
           viewport: { width: 1280, height: 720 }
         });
-        const page = await context.newPage();
 
-        // Listen for console errors
+        // Execute each flow
+        for (const flow of flows) {
+          console.log(\`\n🧪 Running: \${flow.name} (\${flow.source})\`);
+
+          const page = await context.newPage();
+          const flowResult = await executeFlow(page, flow);
+
+          results.flows.push(flowResult);
+          results.summary.total++;
+
+          if (flowResult.success) {
+            results.summary.passed++;
+            console.log(\`   ✅ PASSED\`);
+          } else {
+            results.summary.failed++;
+            results.errors.push(...flowResult.errors);
+            console.log(\`   ❌ FAILED: \${flowResult.errors[0]?.message}\`);
+          }
+
+          await page.close();
+        }
+
+        // Save results
+        fs.writeFileSync('.speclabs/validation/flow-results.json', JSON.stringify(results, null, 2));
+
+        await browser.close();
+
+        // Exit with appropriate code
+        process.exit(results.summary.failed > 0 ? 1 : 0);
+      })();
+
+      async function executeFlow(page, flow) {
+        const flowResult = {
+          id: flow.id,
+          name: flow.name,
+          source: flow.source,
+          success: true,
+          errors: [],
+          stepResults: []
+        };
+
+        // Setup console/page error listeners
+        let currentStep = 0;
         page.on('console', msg => {
           if (msg.type() === 'error') {
-            consoleErrors.push({
+            flowResult.errors.push({
               type: 'console',
               message: msg.text(),
-              location: msg.location()
+              location: msg.location(),
+              step: currentStep
             });
           }
         });
 
-        // Listen for uncaught exceptions
         page.on('pageerror', exception => {
-          pageErrors.push({
+          flowResult.errors.push({
             type: 'exception',
             message: exception.message,
-            stack: exception.stack
+            stack: exception.stack,
+            step: currentStep
           });
         });
 
-        // Interaction Flow Testing
-        try {
-          // Navigate to homepage
-          await page.goto('http://localhost:5173', { waitUntil: 'networkidle', timeout: 30000 });
-          await page.waitForTimeout(2000);
+        // Execute each step
+        for (let i = 0; i < flow.steps.length; i++) {
+          const step = flow.steps[i];
+          currentStep = i + 1;
 
-          // Take screenshot of initial state
-          await page.screenshot({ path: '.speclabs/validation/screenshot-home.png', fullPage: true });
-
-          // Auto-detect and test navigation links (if any)
-          const navLinks = await page.$$('nav a, header a, [role="navigation"] a');
-          for (let i = 0; i < Math.min(navLinks.length, 5); i++) {
-            try {
-              await navLinks[i].click();
-              await page.waitForTimeout(1000);
-              await page.screenshot({ path: \`.speclabs/validation/screenshot-nav-\${i}.png\` });
-              await page.goBack();
-              await page.waitForTimeout(500);
-            } catch (e) {
-              console.log(\`Navigation test \${i} failed: \${e.message}\`);
-            }
+          try {
+            await executeStep(page, step, flowResult);
+            flowResult.stepResults.push({ step: currentStep, success: true });
+          } catch (error) {
+            flowResult.success = false;
+            flowResult.errors.push({
+              type: 'step-failure',
+              step: currentStep,
+              action: step.action,
+              message: error.message
+            });
+            flowResult.stepResults.push({ step: currentStep, success: false, error: error.message });
+            break; // Stop flow on first failure
           }
-
-          // Test any buttons on the page
-          const buttons = await page.$$('button:visible');
-          for (let i = 0; i < Math.min(buttons.length, 3); i++) {
-            try {
-              await buttons[i].click();
-              await page.waitForTimeout(1000);
-            } catch (e) {
-              console.log(\`Button test \${i} failed: \${e.message}\`);
-            }
-          }
-
-        } catch (error) {
-          pageErrors.push({
-            type: 'test-error',
-            message: error.message,
-            stack: error.stack
-          });
         }
 
-        // Save errors to JSON
-        const allErrors = [...consoleErrors, ...pageErrors];
-        fs.writeFileSync('.speclabs/validation/errors-${error_retry_count}.json',
-          JSON.stringify(allErrors, null, 2));
+        return flowResult;
+      }
 
-        // Close browser
-        await browser.close();
+      async function executeStep(page, step, flowResult) {
+        console.log(\`      \${step.action}: \${step.description}\`);
 
-        // Exit with error count
-        process.exit(allErrors.length > 0 ? 1 : 0);
-      })();
+        switch (step.action) {
+          case 'navigate':
+            await page.goto('http://localhost:5173' + step.target, { waitUntil: 'networkidle', timeout: 30000 });
+            break;
+
+          case 'click':
+            await page.click(step.selector);
+            break;
+
+          case 'type':
+            await page.fill(step.selector, step.text);
+            break;
+
+          case 'verify_text':
+            const actualText = await page.textContent(step.selector);
+            if (actualText !== step.expected) {
+              throw new Error(\`Expected "\${step.expected}", got "\${actualText}"\`);
+            }
+            break;
+
+          case 'verify_visible':
+            const isVisible = await page.isVisible(step.selector);
+            if (!isVisible) {
+              throw new Error(\`Element not visible: \${step.selector}\`);
+            }
+            break;
+
+          case 'wait_for_selector':
+            await page.waitForSelector(step.selector, { timeout: step.timeout || 5000 });
+            break;
+
+          case 'screenshot':
+            await page.screenshot({
+              path: \`.speclabs/validation/screenshots/\${step.filename}.png\`,
+              fullPage: true
+            });
+            break;
+
+          case 'scroll':
+            await page.locator(step.selector).scrollIntoViewIfNeeded();
+            break;
+
+          case 'hover':
+            await page.hover(step.selector);
+            break;
+
+          case 'select':
+            await page.selectOption(step.selector, step.value);
+            break;
+        }
+
+        // Wait after step if specified
+        if (step.wait) {
+          await page.waitForTimeout(step.wait);
+        }
+      }
       ```
 
-    **Run Playwright Test:**
+    **Run Flow-Based Validation:**
     - Use Bash tool:
       ```bash
-      cd ${PROJECT_PATH} && node .speclabs/validation/error-detection-test.js 2>&1 | tee .speclabs/validation/test-output-${error_retry_count}.log
+      mkdir -p ${PROJECT_PATH}/.speclabs/validation/screenshots && cd ${PROJECT_PATH} && node .speclabs/validation/flow-validation-test.js 2>&1 | tee .speclabs/validation/test-output-${error_retry_count}.log
       ```
-    - Capture exit code to determine if errors were found
+    - Capture exit code to determine if flows passed/failed
 
     **Monitor Terminal Output:**
     - Use Read tool to read last 100 lines of dev-server.log
@@ -389,24 +684,35 @@ IF ${RUN_VALIDATE} = true:
       - Module not found errors
     - Document any terminal errors found
 
-    **Parse Playwright Errors:**
-    - Use Read tool to read: .speclabs/validation/errors-${error_retry_count}.json
-    - Count total errors (consoleErrors + pageErrors + terminal errors)
-    - Create human-readable error report
+    **Parse Flow Results:**
+    - Use Read tool to read: .speclabs/validation/flow-results.json
+    - Extract summary: total_flows, passed_flows, failed_flows
+    - Extract all errors from results.errors array
+    - Count errors by type (console, exception, step-failure)
+    - Count terminal errors from dev-server.log
+    - Create total error count (flow errors + terminal errors)
 
     **Decision Point:**
-    - IF no errors found (browser + terminal clean):
-      - Report: "✅ No errors detected - browser console and terminal clean"
+    - IF all flows passed AND no errors found (browser + terminal clean):
+      - Report: "✅ All ${total_flows} interaction flows passed - no errors detected"
       - BREAK out of retry loop
       - Continue to Step 2.5.4
 
-    - IF errors found:
-      - Report: "⚠️ Found ${error_count} errors (attempt ${error_retry_count + 1}/${max_error_retries})"
-      - Report error breakdown:
-        - Console errors: ${console_error_count}
-        - Uncaught exceptions: ${page_error_count}
-        - Terminal errors: ${terminal_error_count}
-      - Create detailed error report: .speclabs/validation/error-report-${error_retry_count}.md
+    - IF flows failed OR errors found:
+      - Report: "⚠️ Flow validation results (attempt ${error_retry_count + 1}/${max_error_retries}):"
+      - Report: "   Flows: ${passed_flows}/${total_flows} passed, ${failed_flows}/${total_flows} failed"
+      - Report: "   Errors: ${total_error_count} total"
+      - Report error breakdown by type:
+        - "      Console errors: ${console_error_count}"
+        - "      Uncaught exceptions: ${exception_error_count}"
+        - "      Step failures: ${step_failure_count}"
+        - "      Terminal errors: ${terminal_error_count}"
+      - Create detailed flow-aware error report: .speclabs/validation/error-report-${error_retry_count}.md
+      - Include for each failed flow:
+        - Flow name, ID, source
+        - Failed step number and description
+        - Error message and stack trace
+        - Console/page errors captured during that flow
 
       **Attempt Auto-Fix:**
       1. Analyze errors to identify fixable issues:
@@ -451,29 +757,51 @@ IF ${RUN_VALIDATE} = true:
     ```
   - Report: "✅ Dev server stopped (port available for user)"
 
-  ### Step 2.5.5: Validation Summary
+  ### Step 2.5.5: Flow-Based Validation Summary
   - Create summary report: .speclabs/validation/validation-summary.md
   - Include:
-    - Total retry attempts: ${error_retry_count}
-    - Errors found initially: ${initial_error_count}
-    - Errors fixed: ${fixed_error_count}
-    - Errors remaining: ${remaining_error_count}
-    - Screenshots captured: List all .png files
-    - Test scenarios executed: Homepage + ${nav_tests} navigation + ${button_tests} interactions
+    - **Flow Generation**:
+      - User-defined flows: ${user_flow_count}
+      - AI-generated flows: ${ai_flow_count}
+      - Total flows executed: ${total_flow_count}
+      - Detected feature type: ${feature_type}
+    - **Execution Results**:
+      - Total retry attempts: ${error_retry_count}
+      - Flows passed: ${final_passed_flows}/${total_flow_count} (${pass_rate}%)
+      - Flows failed: ${final_failed_flows}/${total_flow_count}
+      - Errors found initially: ${initial_error_count}
+      - Errors fixed: ${fixed_error_count}
+      - Errors remaining: ${remaining_error_count}
+    - **Artifacts Generated**:
+      - Screenshots captured: List all .speclabs/validation/screenshots/*.png files
+      - Flow results: flow-results.json
+      - Test output logs: test-output-*.log
+      - Error reports: error-report-*.md (if errors found)
+      - Fix documentation: fixes-applied-*.md (if fixes attempted)
   - Report final status:
-    - IF remaining_error_count = 0:
-      - "✅ INTERACTIVE VALIDATION PASSED"
+    - IF all flows passed AND remaining_error_count = 0:
+      - "✅ FLOW-BASED VALIDATION PASSED"
+      - "   - Flows executed: ${total_flow_count}"
+      - "   - All flows passed: ${total_flow_count}/${total_flow_count}"
       - "   - Browser console: Clean"
       - "   - Terminal output: Clean"
-      - "   - Navigation tested: ${nav_tests} links"
-      - "   - Interactions tested: ${button_tests} buttons"
+      - "   - Feature type: ${feature_type}"
+      - "   - User flows: ${user_flow_count}, AI flows: ${ai_flow_count}"
     - ELSE:
-      - "⚠️ Validation completed with ${remaining_error_count} errors remaining"
+      - "⚠️ Flow validation completed with issues:"
+      - "   - Flows passed: ${final_passed_flows}/${total_flow_count} (${pass_rate}%)"
+      - "   - Flows failed: ${final_failed_flows}/${total_flow_count}"
+      - "   - Errors remaining: ${remaining_error_count}"
+      - ""
+      - "   Failed flows:"
+      - For each failed flow: "      - [${priority}] ${flow_name} (${source})"
+      - ""
       - "   See .speclabs/validation/ for:"
-      - "   - error-report-*.md (detailed error analysis)"
-      - "   - screenshot-*.png (visual states)"
+      - "   - flow-results.json (complete flow execution data)"
+      - "   - error-report-*.md (detailed error analysis with flow context)"
+      - "   - screenshots/*.png (visual states at each step)"
       - "   - dev-server.log (terminal output)"
-      - "   - fixes-applied-*.md (attempted fixes)"
+      - "   - fixes-applied-*.md (attempted fixes documentation)"
 
 ELSE:
   - Skip interactive error detection (--validate not specified)
