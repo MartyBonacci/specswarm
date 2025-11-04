@@ -5,6 +5,35 @@ All notable changes to SpecSwarm and SpecLabs plugins will be documented in this
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.7.1] - 2025-11-04
+
+### Fixed - SpecLabs
+
+#### Orchestrate-Feature Autonomous Execution
+
+**Problem**: The `/speclabs:orchestrate-feature` command was designed to execute autonomously but was pausing and requiring user confirmation between phases.
+
+**Root Cause**: The command prompt contained narrative/explanatory text ("I'll now launch...", "I'm using the Task tool...") that Claude interpreted as descriptive acknowledgment rather than imperative execution directives.
+
+**Fix**:
+- **Replaced narrative text** with explicit execution directives at command start and end
+- **Added "CRITICAL: EXECUTE IMMEDIATELY"** warnings to prevent pause-and-explain behavior
+- **Explicit DO NOT list**: Don't acknowledge, don't explain, don't report status, don't wait
+- **Explicit DO list**: Execute Task tool immediately, run autonomously, return only final report
+- **Updated version**: Feature Orchestrator v2.6.1 → v2.7.1
+
+**Impact**:
+- ✅ Commands now execute fully autonomously as designed
+- ✅ No user intervention required during orchestration
+- ✅ Better UX - users get complete execution without manual "continue" prompts
+- ✅ All future plugin installations get the fix
+
+**Files Modified**:
+- `plugins/speclabs/commands/orchestrate-feature.md` (lines 110-133, 470-494)
+- `marketplace.json` (version 2.7.0 → 2.7.1)
+
+**Testing**: Verified with customcult2 FP conversion feature orchestration in Instance B.
+
 ## [2.7.0] - 2025-11-03
 
 ### Added - SpecLabs

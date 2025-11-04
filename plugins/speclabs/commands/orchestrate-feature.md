@@ -28,7 +28,7 @@ args:
 pre_orchestration_hook: |
   #!/bin/bash
 
-  echo "🎯 Feature Orchestrator v2.6.1 - Optimized Implementation"
+  echo "🎯 Feature Orchestrator v2.7.1 - Autonomous Execution Fix"
   echo ""
   echo "This orchestrator launches an autonomous agent that handles:"
   echo "  1. SpecSwarm Planning: specify → clarify → plan → tasks"
@@ -107,11 +107,24 @@ pre_orchestration_hook: |
   echo ""
 ---
 
-# Agent-Based Feature Orchestration
+⚠️  CRITICAL: EXECUTE IMMEDIATELY - DO NOT PAUSE OR REPORT STATUS
 
-I'll now launch an autonomous agent to handle the complete feature lifecycle.
+**DIRECTIVE**: Launch autonomous orchestration agent NOW using the Task tool.
 
-**Orchestration Details**:
+DO NOT:
+- Acknowledge or explain this command
+- Report status before execution
+- Pause between phases
+- Wait for user confirmation
+
+DO:
+- Execute the Task tool immediately with subagent_type="general-purpose"
+- Let the agent run through ALL phases autonomously
+- Return ONLY when complete with final report
+
+═══════════════════════════════════════════════════════════════
+
+**Orchestration Configuration**:
 - **Feature**: ${FEATURE_DESC}
 - **Project**: ${PROJECT_PATH}
 - **Session ID**: ${FEATURE_SESSION_ID}
@@ -119,17 +132,15 @@ I'll now launch an autonomous agent to handle the complete feature lifecycle.
 - **Validate**: ${RUN_VALIDATE}
 - **Skip Phases**: Specify=${SKIP_SPECIFY}, Clarify=${SKIP_CLARIFY}, Plan=${SKIP_PLAN}
 
-The agent will execute all phases automatically and report back when complete. This may take several minutes depending on feature complexity.
-
 ${RUN_VALIDATE} = true enables AI-powered flow validation (Phase 2.5) - the agent will analyze feature artifacts (spec/plan/tasks), generate intelligent interaction flows, merge with user-defined flows, execute comprehensive validation with Playwright, and auto-fix errors before manual testing. Dev server will be stopped before returning control to user.
 
----
-
-I'm using the Task tool to launch the orchestration agent with subagent_type "general-purpose":
+═══════════════════════════════════════════════════════════════
+🎯 AUTONOMOUS AGENT INSTRUCTIONS (Execute via Task Tool NOW)
+═══════════════════════════════════════════════════════════════
 
 **Agent Mission**: Execute the complete feature development lifecycle for "${FEATURE_DESC}" in ${PROJECT_PATH}
 
-**Comprehensive Agent Instructions**:
+**Agent Instructions for Task Tool**:
 
 ═══════════════════════════════════════════════════════════════
 🎯 FEATURE ORCHESTRATION AGENT - AUTONOMOUS EXECUTION
@@ -457,13 +468,26 @@ Orchestration is successful when:
 - ✅ User receives clear next steps
 
 ═══════════════════════════════════════════════════════════════
-🚀 BEGIN ORCHESTRATION
+🚀 BEGIN ORCHESTRATION - EXECUTE NOW
 ═══════════════════════════════════════════════════════════════
 
-**YOUR INSTRUCTIONS**: Execute the complete workflow above autonomously.
+⚠️  CRITICAL EXECUTION DIRECTIVE:
 
-**Start now with Phase 1, Step 1.1**
+You MUST execute the Task tool with the above instructions IMMEDIATELY.
 
-Report progress as you execute each step. Be thorough and complete all phases.
+DO NOT:
+- Explain what you're about to do
+- Summarize the workflow
+- Report status before launching
+- Ask for confirmation
+- Pause to think
 
-Good luck! 🎯
+DO:
+- Launch the Task tool RIGHT NOW with subagent_type="general-purpose"
+- Use the complete agent instructions above as the prompt
+- Let the autonomous agent execute all phases end-to-end
+- The agent will report back when complete
+
+═══════════════════════════════════════════════════════════════
+
+**EXECUTE THE TASK TOOL NOW**
