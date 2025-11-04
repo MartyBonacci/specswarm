@@ -5,6 +5,52 @@ All notable changes to SpecSwarm and SpecLabs plugins will be documented in this
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.7.2] - 2025-11-04
+
+### Fixed - SpecLabs
+
+#### Agent Pause Behavior During Implementation and Validation
+
+**Problem**: The autonomous agent launched by orchestrate-feature was pausing and explaining what `/specswarm:implement` and `/speclabs:validate-feature` would do, instead of silently executing them.
+
+**Root Cause**: The agent instructions contained descriptive/explanatory text about what these commands "will" do:
+```markdown
+- Use the SlashCommand tool to execute: `/specswarm:implement`
+- SpecSwarm will:
+  - Read all tasks from tasks.md
+  - Execute each task sequentially
+  - Handle errors and retries
+```
+
+This caused the agent to read and EXPLAIN the process instead of EXECUTING it.
+
+**Fix**:
+- **Step 2.1 (Implementation)**: Removed descriptive text, added "DO NOT explain" directives
+- **Step 2.5.2 (Validation)**: Removed descriptive text, added "WAIT SILENTLY" directives
+- **Updated instructions**: Execute slash commands without reporting or explaining
+
+**New Pattern**:
+```markdown
+⚠️ CRITICAL: Execute slash command WITHOUT explaining or reporting
+
+- Execute SlashCommand: `/specswarm:implement`
+- DO NOT explain what implement will do
+- DO NOT report "SpecSwarm will..."
+- WAIT SILENTLY for implement to complete
+```
+
+**Impact**:
+- ✅ Agent now executes implement/validate silently
+- ✅ No more pause-and-explain behavior during orchestration
+- ✅ Truly autonomous end-to-end execution
+- ✅ Completes the fix started in v2.7.1
+
+**Files Modified**:
+- `plugins/speclabs/commands/orchestrate-feature.md` (lines 211-221, 249-261)
+- `marketplace.json` (version 2.7.1 → 2.7.2)
+
+**Related**: This completes the autonomous execution fix from v2.7.1, which fixed Instance B pausing. Now the agent also doesn't pause.
+
 ## [2.7.1] - 2025-11-04
 
 ### Fixed - SpecLabs

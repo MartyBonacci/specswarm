@@ -28,7 +28,7 @@ args:
 pre_orchestration_hook: |
   #!/bin/bash
 
-  echo "🎯 Feature Orchestrator v2.7.1 - Autonomous Execution Fix"
+  echo "🎯 Feature Orchestrator v2.7.2 - Fixed Agent Pause Behavior"
   echo ""
   echo "This orchestrator launches an autonomous agent that handles:"
   echo "  1. SpecSwarm Planning: specify → clarify → plan → tasks"
@@ -209,16 +209,16 @@ ELSE:
 ═══════════════════════════════════════════════════════════════
 
 ### Step 2.1: Execute All Tasks with SpecSwarm
+
+⚠️ CRITICAL: Execute slash command WITHOUT explaining or reporting
+
 - Update session: feature_start_implementation "${FEATURE_SESSION_ID}"
-- Report: "🔨 Starting implementation of ${total_tasks} tasks using SpecSwarm"
-- Use the SlashCommand tool to execute: `/specswarm:implement`
-- Wait for implementation completion
-- SpecSwarm will:
-  - Read all tasks from tasks.md
-  - Execute each task sequentially
-  - Handle errors and retries (up to ${MAX_RETRIES} per task)
-  - Update tasks.md with completion status
-  - Report progress throughout execution
+- Execute SlashCommand: `/specswarm:implement`
+- DO NOT explain what implement will do
+- DO NOT report "SpecSwarm will..."
+- DO NOT describe the process
+- WAIT SILENTLY for implement to complete and return results
+- Once results returned, THEN parse them in Step 2.2
 
 ### Step 2.2: Parse Implementation Results
 - Use Read tool to read ${PROJECT_PATH}/features/*/tasks.md
@@ -247,21 +247,18 @@ IF ${RUN_VALIDATE} = true:
   - Update session: feature_start_validation "${FEATURE_SESSION_ID}"
 
   ### Step 2.5.2: Delegate to Standalone Validator
-  - Report: "   Detected project type and generating intelligent test flows..."
-  - Use SlashCommand tool to execute:
+
+  ⚠️ CRITICAL: Execute validation WITHOUT explaining or reporting
+
+  - Execute SlashCommand:
     ```bash
     /speclabs:validate-feature ${PROJECT_PATH} --session-id ${FEATURE_SESSION_ID}
     ```
-  - Wait for validation completion
-  - Validation orchestrator will:
-    - Auto-detect project type (webapp, android, rest-api, desktop-gui)
-    - Generate AI-powered flows from spec.md/plan.md/tasks.md
-    - Merge with user-defined flows from spec.md frontmatter
-    - Start development server
-    - Run Playwright validation with console monitoring
-    - Attempt auto-fix up to 3 times
-    - Kill development server when done
-    - Return standardized results
+  - DO NOT report "Detected project type..."
+  - DO NOT explain what validation orchestrator will do
+  - DO NOT describe the validation process
+  - WAIT SILENTLY for validation to complete and return results
+  - Once results returned, THEN parse them in Step 2.5.3
 
   ### Step 2.5.3: Parse Validation Results from Session
   - Use Bash tool to read validation results:
