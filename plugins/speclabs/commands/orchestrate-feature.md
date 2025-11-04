@@ -28,7 +28,7 @@ args:
 pre_orchestration_hook: |
   #!/bin/bash
 
-  echo "🎯 Feature Orchestrator v2.7.2 - Fixed Agent Pause Behavior"
+  echo "🎯 Feature Orchestrator v2.7.3 - Truly Silent Autonomous Execution"
   echo ""
   echo "This orchestrator launches an autonomous agent that handles:"
   echo "  1. SpecSwarm Planning: specify → clarify → plan → tasks"
@@ -198,11 +198,13 @@ ELSE:
 - Wait for tasks.md generation
 - Update session: feature_complete_specswarm_phase "${FEATURE_SESSION_ID}" "tasks"
 
-### Step 1.5: Parse Tasks
+### Step 1.5: Parse Tasks (Silent)
 - Use the Read tool to read ${PROJECT_PATH}/features/*/tasks.md
 - Count total tasks (look for task IDs like T001, T002, etc.)
 - Extract task list
-- Report: "Found X tasks to execute"
+- Store total as ${total_tasks}
+- DO NOT report task count
+- Silently proceed to Phase 2
 
 ═══════════════════════════════════════════════════════════════
 🔨 PHASE 2: IMPLEMENTATION (SpecSwarm Implement)
@@ -220,21 +222,29 @@ ELSE:
 - WAIT SILENTLY for implement to complete and return results
 - Once results returned, THEN parse them in Step 2.2
 
-### Step 2.2: Parse Implementation Results
+### Step 2.2: Parse Implementation Results (Silent)
+
+⚠️ DO NOT REPORT - Only parse for decision-making
+
 - Use Read tool to read ${PROJECT_PATH}/features/*/tasks.md
 - Parse task completion status from tasks.md:
   - Look for task status markers (✅ completed, ❌ failed, ⏳ in progress)
   - Count completed tasks
   - Count failed tasks
   - Extract error messages for failed tasks
-- Report statistics:
-  - "✅ Completed: ${completed}/${total} tasks"
-  - "❌ Failed: ${failed}/${total} tasks"
-  - If failed > 0: List failed task IDs with error summaries
+- Store counts in variables (${completed}, ${failed}, ${total})
+- DO NOT report statistics to user
+- DO NOT display task counts
+- Silently proceed to Step 2.3
 
-### Step 2.3: Update Session
+### Step 2.3: Update Session (Silent)
 - Update session: feature_complete_implementation "${FEATURE_SESSION_ID}" "${completed}" "${failed}"
-- If failed > 0: Prepare for bugfix phase (Phase 3)
+- Determine next phase based on results:
+  - If failed > 0: Proceed to Phase 3 (Bugfix)
+  - If ${RUN_VALIDATE} = true: Proceed to Phase 2.5 (Validation)
+  - Otherwise: Proceed to Phase 5 (Completion Report)
+- DO NOT report to user
+- Silently continue to next phase
 
 ═══════════════════════════════════════════════════════════════
 🔍 PHASE 2.5: INTERACTIVE ERROR DETECTION (Conditional - If ${RUN_VALIDATE}=true)
@@ -242,9 +252,10 @@ ELSE:
 
 IF ${RUN_VALIDATE} = true:
 
-  ### Step 2.5.1: Initialize Validation Phase
-  - Report: "🔍 Starting interactive error detection (--validate enabled)"
+  ### Step 2.5.1: Initialize Validation Phase (Silent)
   - Update session: feature_start_validation "${FEATURE_SESSION_ID}"
+  - DO NOT report to user
+  - Silently proceed to Step 2.5.2
 
   ### Step 2.5.2: Delegate to Standalone Validator
 
@@ -260,7 +271,10 @@ IF ${RUN_VALIDATE} = true:
   - WAIT SILENTLY for validation to complete and return results
   - Once results returned, THEN parse them in Step 2.5.3
 
-  ### Step 2.5.3: Parse Validation Results from Session
+  ### Step 2.5.3: Parse Validation Results from Session (Silent)
+
+  ⚠️ DO NOT REPORT - Only parse for Phase 5
+
   - Use Bash tool to read validation results:
     ```bash
     source ${PLUGIN_DIR}/lib/feature-orchestrator.sh
@@ -273,34 +287,16 @@ IF ${RUN_VALIDATE} = true:
     failed_flows=$(jq -r '.validation.summary.failed_flows' "$SESSION_FILE")
     error_count=$(jq -r '.validation.error_count' "$SESSION_FILE")
     ```
-
-  ### Step 2.5.4: Report Validation Summary
-  - Display validation results:
-    - IF validation_status = "passed":
-      - "✅ VALIDATION PASSED"
-      - "   Type: ${validation_type}"
-      - "   Flows: ${passed_flows}/${total_flows} passed"
-      - "   Errors: 0"
-      - ""
-      - "All interaction flows passed with no errors detected."
-    - ELSE IF validation_status = "failed":
-      - "⚠️  VALIDATION COMPLETED WITH ISSUES"
-      - "   Type: ${validation_type}"
-      - "   Flows: ${passed_flows}/${total_flows} passed, ${failed_flows}/${total_flows} failed"
-      - "   Errors: ${error_count}"
-      - ""
-      - "See ${PROJECT_PATH}/.speclabs/validation/ for:"
-      - "  - flow-results.json (complete execution data)"
-      - "  - screenshots/*.png (visual states)"
-      - "  - dev-server.log (terminal output)"
-    - ELSE:
-      - "❌ VALIDATION ERROR"
-      - "   Validation failed to execute properly"
-      - "   Check ${PROJECT_PATH}/.speclabs/validation/ for logs"
+  - Store validation results in variables
+  - DO NOT display validation results
+  - DO NOT report status to user
+  - Results will be included in Phase 5 final report
+  - Silently proceed to next phase (Phase 3 if bugs, else Phase 5)
 
 ELSE:
   - Skip interactive error detection (--validate not specified)
-  - Report: "⏭️ Skipping interactive error detection (use --validate to enable)"
+  - DO NOT report to user
+  - Silently proceed to next phase
 
 ═══════════════════════════════════════════════════════════════
 🔧 PHASE 2.5.1: WEBAPP VALIDATOR FEATURES (Informational)
