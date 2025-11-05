@@ -137,7 +137,19 @@ echo "🔍 Analyzing git workflow..."
 echo ""
 
 # Detect main branch name
-MAIN_BRANCH=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@' || echo "main")
+MAIN_BRANCH=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@')
+if [ -z "$MAIN_BRANCH" ]; then
+  # Fallback: try common names or use git's default branch
+  if git show-ref --verify --quiet refs/heads/main; then
+    MAIN_BRANCH="main"
+  elif git show-ref --verify --quiet refs/heads/master; then
+    MAIN_BRANCH="master"
+  else
+    # Use current branch as fallback
+    MAIN_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+    echo "⚠️  Warning: Could not detect main branch, using current branch: $MAIN_BRANCH"
+  fi
+fi
 
 # Detect if we're in a sequential upgrade branch workflow
 SEQUENTIAL_BRANCH=false
@@ -161,11 +173,15 @@ fi
 # If not sequential, determine parent branch
 if [ "$SEQUENTIAL_BRANCH" = "false" ]; then
   # Check for stored parent branch (v2.1.1+)
+  echo "Determining parent branch..."
+  echo "  Stored parent branch: ${STORED_PARENT_BRANCH:-<empty>}"
+
   if [ -n "$STORED_PARENT_BRANCH" ] && [ "$STORED_PARENT_BRANCH" != "unknown" ]; then
     PARENT_BRANCH="$STORED_PARENT_BRANCH"
-    echo "✓ Parent branch (from spec.md): $PARENT_BRANCH"
+    echo "✓ Using parent branch from spec.md: $PARENT_BRANCH"
     echo ""
   else
+    echo "⚠️  No valid parent branch in spec.md, checking fallback options..."
     # Fallback: Check if there's a previous feature branch this might merge into
     PREV_FEATURE_NUM=$(printf "%03d" $((10#$FEATURE_NUM - 1)))
     PREV_FEATURE_BRANCH=$(git branch -a 2>/dev/null | grep -E "^  (remotes/origin/)?${PREV_FEATURE_NUM}-" | head -1 | sed 's/^[* ]*//' | sed 's/remotes\/origin\///' || echo "")
@@ -501,13 +517,29 @@ elif [ "$CURRENT_BRANCH" = "$PARENT_BRANCH" ]; then
 else
   SKIP_MERGE=false
 
-  echo "Ready to merge to $PARENT_BRANCH branch."
+  # Validation: Show merge details
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo "Merge Plan"
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo "  Source branch: $CURRENT_BRANCH"
+  echo "  Target branch: $PARENT_BRANCH"
+  if [ -n "$STORED_PARENT_BRANCH" ]; then
+    echo "  Source: spec.md parent_branch field"
+  elif [ -n "$PREV_FEATURE_BRANCH" ]; then
+    echo "  Source: Previous feature branch detected"
+  else
+    echo "  Source: Default main branch"
+  fi
+  echo ""
+
   if [ "$PARENT_BRANCH" != "$MAIN_BRANCH" ]; then
-    echo "ℹ️  Note: Merging into '$PARENT_BRANCH' (not main)"
+    echo "ℹ️  Note: Merging into '$PARENT_BRANCH' (not $MAIN_BRANCH)"
+    echo "   This is an intermediate merge in a feature branch hierarchy."
   fi
   echo ""
   echo "⚠️  IMPORTANT: This will merge your changes to $PARENT_BRANCH."
   echo "    Make sure you've tested the feature thoroughly."
+  echo "    If the target branch looks wrong, press 'n' and check spec.md"
   echo ""
   read -p "Proceed with merge? (y/n): " merge_choice
 

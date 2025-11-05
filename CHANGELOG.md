@@ -5,6 +5,80 @@ All notable changes to SpecSwarm and SpecLabs plugins will be documented in this
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.2] - 2025-11-04
+
+### Fixed - SpecSwarm
+
+#### Parent Branch Detection and Merge Validation
+
+**Problem**: The `/specswarm:complete` command merged features to the wrong parent branch due to multiple bugs in git workflow detection:
+
+1. **MAIN_BRANCH Fallback Bug**: The `|| echo "main"` fallback didn't work because `sed` returns exit code 0 even with no input from failed `git symbolic-ref` command, leaving MAIN_BRANCH empty
+2. **Insufficient Validation**: No visual confirmation of merge target before execution
+3. **No Branch Confirmation**: Users could unknowingly create features from wrong parent branch
+
+**Root Causes**:
+- Bash pipe behavior: `command1 | command2 || fallback` only checks exit code of command2, not command1
+- Missing user feedback showing which branch would be used for merge
+- No verification prompt in specify showing parent branch before feature creation
+
+**Fixes**:
+
+**1. Robust MAIN_BRANCH Detection** (complete.md lines 140-152):
+```bash
+MAIN_BRANCH=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@')
+if [ -z "$MAIN_BRANCH" ]; then
+  # Fallback: try common names or use git's default branch
+  if git show-ref --verify --quiet refs/heads/main; then
+    MAIN_BRANCH="main"
+  elif git show-ref --verify --quiet refs/heads/master; then
+    MAIN_BRANCH="master"
+  else
+    MAIN_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+    echo "⚠️  Warning: Could not detect main branch, using current branch"
+  fi
+fi
+```
+
+**2. Enhanced Parent Branch Logging** (complete.md lines 176-184):
+- Shows stored parent branch value (or `<empty>` if missing)
+- Explains which source was used (spec.md, previous feature, or default)
+- Warns when falling back to default main branch
+
+**3. Merge Plan Validation** (complete.md lines 520-544):
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Merge Plan
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Source branch: 014-convert-...
+  Target branch: sprint-3
+  Source: spec.md parent_branch field
+
+ℹ️  Note: Merging into 'sprint-3' (not main)
+   This is an intermediate merge in a feature branch hierarchy.
+
+⚠️  IMPORTANT: This will merge your changes to sprint-3.
+    Make sure you've tested the feature thoroughly.
+    If the target branch looks wrong, press 'n' and check spec.md
+```
+
+**4. Branch Confirmation in Specify** (specify.md lines 65-85):
+- Shows parent branch (current branch) before creating feature branch
+- Displays feature branch that will be created
+- Explains merge-back behavior
+- Allows cancellation if user is on wrong branch
+
+**Impact**:
+- ✅ MAIN_BRANCH detection works reliably across all git configurations
+- ✅ Users can verify merge target before proceeding
+- ✅ Branch hierarchy mistakes caught during feature creation
+- ✅ Clear visibility into parent branch selection logic
+- ✅ Prevents accidental merges to wrong branch
+
+**Migration**: Update to v2.1.2 to get these fixes. No breaking changes.
+
+---
+
 ## [2.7.3] - 2025-11-04
 
 ### Fixed - SpecLabs
