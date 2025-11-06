@@ -56,9 +56,9 @@ This single command will autonomously: generate spec, create plan, build tasks, 
 
 ## What's Included?
 
-### SpecSwarm v2.1.1 (Production-Ready) ⭐
+### SpecSwarm v2.1.2 (Production-Ready) ⭐
 
-Complete software development lifecycle toolkit with 17 commands covering:
+Complete software development lifecycle toolkit with 18 commands covering:
 
 - **New Features**: `specify` → `plan` → `tasks` → `implement` → `complete`
 - **Bug Fixing**: `bugfix` with regression testing, `hotfix` for emergencies
@@ -67,7 +67,7 @@ Complete software development lifecycle toolkit with 17 commands covering:
 
 **Status**: ✅ Production-ready | Stable | Safe for critical work
 
-### SpecLabs v2.7.1 (Experimental) 🧪
+### SpecLabs v2.7.3 (Experimental) 🧪
 
 Autonomous orchestration and advanced debugging:
 
@@ -223,7 +223,7 @@ max_initial_load: 1000    # KB initial load
 ## All Commands
 
 <details>
-<summary><strong>SpecSwarm Commands (17)</strong></summary>
+<summary><strong>SpecSwarm Commands (18)</strong></summary>
 
 ### New Feature Development
 - `/specswarm:specify` - Create feature specification
@@ -254,7 +254,7 @@ max_initial_load: 1000    # KB initial load
 </details>
 
 <details>
-<summary><strong>SpecLabs Commands (5)</strong></summary>
+<summary><strong>SpecLabs Commands (6)</strong></summary>
 
 ### Autonomous Orchestration
 - `/speclabs:orchestrate-feature` - Complete feature lifecycle automation
@@ -262,11 +262,11 @@ max_initial_load: 1000    # KB initial load
 
 ### Task & Workflow Automation
 - `/speclabs:orchestrate` - Task workflow orchestration
-- `/speclabs:orchestrate-validate` - Validation suite
+- `/speclabs:orchestrate-validate` - Validation suite orchestrator
 
 ### Debugging & Analytics
 - `/speclabs:coordinate` - Multi-bug systematic debugging
-- `/speclabs:metrics` - Orchestration analytics
+- `/speclabs:metrics` - Export orchestration metrics to CSV
 
 </details>
 
@@ -282,18 +282,29 @@ max_initial_load: 1000    # KB initial load
 
 ## What's New?
 
+### v2.7.3 (November 4, 2025) - SpecLabs
+- **Fixed**: Silent autonomous execution - eliminated all mid-phase reporting
+- **Better UX**: Agent runs end-to-end without pausing to report statistics
+- **Performance**: Complete features without interruption
+
+### v2.7.2 (November 4, 2025) - SpecLabs
+- **Fixed**: Agent pause behavior during implement/validate slash command execution
+- **Improvement**: More reliable autonomous orchestration
+
 ### v2.7.1 (November 4, 2025) - SpecLabs
-- **Fixed**: Orchestrate-feature now executes fully autonomously without pausing
+- **Fixed**: Orchestrate-feature execution without pausing before Task tool launch
 - **Better UX**: No more manual "continue" prompts during orchestration
+
+### v2.1.2 (November 4, 2025) - SpecSwarm ⭐
+- **Fixed**: Parent branch detection bugs - robust MAIN_BRANCH fallback
+- **New**: Branch confirmation prompts during feature creation
+- **New**: Detailed merge validation before executing complete
+- **Safety**: Prevents accidental merges to wrong branches
 
 ### v2.7.0 (November 3, 2025) - SpecLabs
 - **New Command**: `/speclabs:validate-feature` - Standalone multi-type validation
 - **Auto-Detection**: Automatically detects project type (webapp, android, REST API, desktop)
 - **Modular Architecture**: Extensible validator interface for future types
-
-### v2.1.1 (October 30, 2025) - SpecSwarm
-- **Enhanced Git**: Parent branch tracking - features merge back to origin branch
-- **Improved**: Complete workflow now respects branch hierarchy
 
 [View full changelog →](CHANGELOG.md)
 

@@ -1,4 +1,4 @@
-# SpecSwarm v2.0.0
+# SpecSwarm v2.1.2
 
 **Complete Software Development Toolkit**
 
@@ -262,6 +262,23 @@ export function getApiUrl(path: string): string {
 
 ## Version History
 
+### v2.1.2 (2025-11-04) - Git Workflow Safety ⭐
+- **Fixed**: Parent branch detection bugs - robust MAIN_BRANCH fallback
+- **New**: Branch confirmation prompts during feature creation
+- **New**: Detailed merge validation before completing features
+- **Safety**: Prevents accidental merges to wrong branches
+- **UX**: Clear visibility into parent branch selection logic
+
+### v2.1.1 (2025-10-30) - Parent Branch Tracking
+- **Enhanced**: Parent branch tracking - features merge back to origin branch
+- **Improved**: Complete workflow respects branch hierarchy
+- **New**: Stores parent_branch in spec.md YAML frontmatter
+
+### v2.1.0 (2025-10-20) - Enhanced Git Workflow
+- **New**: Improved git branch detection and management
+- **Fixed**: Branch detection edge cases
+- **Improved**: Sequential branch workflow support
+
 ### v2.0.0 (2025-10-15) - Major Consolidation
 - Merged SpecLab lifecycle workflows (9 commands)
 - Added chain bug detection
@@ -322,6 +339,6 @@ MIT License - See LICENSE file for details
 
 ---
 
-**SpecSwarm v2.0.0** - Your complete software development toolkit. 🚀
+**SpecSwarm v2.1.2** - Your complete software development toolkit. 🚀
 
 Build it. Fix it. Maintain it. Analyze it. All in one place.
