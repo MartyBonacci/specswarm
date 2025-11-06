@@ -1,7 +1,7 @@
 {
   "name": "speclabs",
-  "version": "2.7.0",
-  "description": "Advanced automation suite for production-ready autonomous development. v2.7.0: Versatile validation orchestrator with multi-type support. v2.6.1: Optimized implementation. v2.6.0: AI-powered flows. v2.5.0: Playwright integration.",
+  "version": "2.7.3",
+  "description": "Advanced automation suite for production-ready autonomous development. v2.7.3: Silent autonomous execution - no mid-phase reporting. v2.7.2: Fixed agent pause behavior. v2.7.1: Fixed orchestrator execution. v2.7.0: Multi-type validation.",
   "author": {
     "name": "Marty Bonacci",
     "url": "https://github.com/MartyBonacci"
