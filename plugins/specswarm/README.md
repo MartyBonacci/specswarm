@@ -58,6 +58,81 @@ SpecSwarm is a comprehensive plugin that provides everything you need for the co
 
 ---
 
+## Getting Started Workflow
+
+### First-Time Project Setup
+
+Before using SpecSwarm commands, establish your project foundation:
+
+1. **Create Tech Stack Definition** (`/memory/tech-stack.md`):
+   ```markdown
+   ## Core Technologies
+   - React 19.x
+   - React Router v7
+
+   ## Approved Libraries
+   - Zod v4+ (validation)
+
+   ## Prohibited
+   - ❌ Redux (use React Router loaders/actions)
+   ```
+
+   This prevents 95% of technology drift across features.
+
+2. **Set Quality Standards** (`/memory/quality-standards.md`):
+   ```yaml
+   min_test_coverage: 80
+   min_quality_score: 85
+   enforce_budgets: true
+   max_bundle_size: 500  # KB
+   ```
+
+3. **Establish Project Governance**:
+   ```bash
+   /specswarm:constitution
+   ```
+
+### Feature Development Workflow
+
+**Step 1: Get Workflow Recommendation**
+```bash
+/specswarm:suggest "add user authentication"
+```
+SpecSwarm analyzes your request and recommends the best workflow.
+
+**Step 2: Execute Recommended Workflow**
+
+For most features:
+```bash
+/specswarm:specify → /specswarm:clarify → /specswarm:plan →
+/specswarm:tasks → /specswarm:implement
+```
+
+**Step 3: Quality Check & Complete**
+```bash
+# Check quality before merge
+/specswarm:analyze-quality
+
+# Merge to parent branch (shows confirmation with v2.1.2+)
+/specswarm:complete
+```
+
+### When to Use Each Command
+
+| Command | When to Use | Example |
+|---------|-------------|---------|
+| `/specswarm:suggest` | Starting any task | Get workflow recommendation |
+| `/specswarm:specify` | New features | "Add shopping cart" |
+| `/specswarm:bugfix` | Fixing bugs | "Login fails with +" |
+| `/specswarm:hotfix` | Production emergencies | "API down in prod" |
+| `/specswarm:modify` | Changing features | "Update cart logic" |
+| `/specswarm:refactor` | Improving code | "Optimize auth" |
+| `/specswarm:deprecate` | Removing features | "Sunset old API" |
+| `/specswarm:analyze-quality` | Before merging | Quality check |
+| `/specswarm:complete` | Finishing features | Merge & cleanup |
+
+---
+
 ## Commands Reference
 
 ### 🆕 New Feature Workflows (8 commands)

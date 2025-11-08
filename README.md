@@ -54,6 +54,98 @@ This single command will autonomously: generate spec, create plan, build tasks, 
 
 ---
 
+## Getting Started: Your First Feature
+
+### One-Time Project Setup
+
+Before building features, set up your project foundation:
+
+1. **Initialize Claude Code and Install Plugins**:
+   ```bash
+   /init
+   /plugin https://github.com/MartyBonacci/specswarm
+   /plugin install specswarm
+   /plugin install speclabs
+   ```
+
+2. **Define Your Tech Stack** (Prevents 95% of technology drift):
+
+   Create `/memory/tech-stack.md`:
+   ```markdown
+   ## Core Technologies
+   - React 19.x (functional components only)
+   - React Router v7 (framework mode)
+   - TypeScript 5.x
+
+   ## Approved Libraries
+   - Zod v4+ (validation)
+   - Tailwind CSS (styling)
+
+   ## Prohibited
+   - ❌ Redux (use React Router loaders/actions)
+   - ❌ Class components (use functional with hooks)
+   ```
+
+3. **Set Quality Standards** (Optional but recommended):
+
+   Create `/memory/quality-standards.md`:
+   ```yaml
+   min_test_coverage: 80
+   min_quality_score: 85
+   enforce_budgets: true
+   max_bundle_size: 500
+   ```
+
+4. **Establish Project Governance**:
+   ```bash
+   /specswarm:constitution
+   ```
+
+### Building a Feature (Autonomous - Fast Track)
+
+```bash
+# 1. Ensure you're on the right parent branch
+git checkout develop  # or sprint-X
+
+# 2. Get AI workflow recommendation
+/specswarm:suggest "add user authentication with email/password"
+
+# 3. Execute autonomous orchestration
+/speclabs:orchestrate-feature "Add user authentication with email/password login, JWT tokens, and protected routes" --validate
+
+# 4. Respond to planning questions, let it run
+
+# 5. Manual testing (CRITICAL - always test yourself)
+
+# 6. Fix any bugs found
+/specswarm:bugfix "Bug: Login fails with special characters..."
+
+# 7. Check quality before merge
+/specswarm:analyze-quality
+
+# 8. Complete and merge to parent branch
+/specswarm:complete
+```
+
+### Building a Feature (Manual Control)
+
+```bash
+# For complex features where you want more control:
+/specswarm:specify "Add user authentication..."
+/specswarm:clarify  # Answer clarification questions
+/specswarm:plan
+/specswarm:tasks
+/specswarm:implement
+/specswarm:analyze-quality
+/specswarm:complete
+```
+
+**📖 Full Workflow Guide**: See [WORKFLOW.md](docs/WORKFLOW.md) for detailed instructions, examples, and troubleshooting
+
+**📋 Quick Reference**: See [CHEATSHEET.md](docs/CHEATSHEET.md) for a visual command reference
+
+---
+
 ## What's Included?
 
 ### SpecSwarm v2.1.2 (Production-Ready) ⭐
@@ -274,8 +366,15 @@ max_initial_load: 1000    # KB initial load
 
 ## Documentation
 
-- **[SpecSwarm Documentation](plugins/specswarm/README.md)** - Detailed SpecSwarm guide
-- **[SpecLabs Documentation](plugins/speclabs/README.md)** - Experimental features guide
+### Getting Started Guides
+- **[Complete Workflow Guide](docs/WORKFLOW.md)** - Step-by-step guide with examples ⭐ START HERE
+- **[Quick Reference Cheat Sheet](docs/CHEATSHEET.md)** - Visual command reference and templates
+
+### Plugin Documentation
+- **[SpecSwarm Documentation](plugins/specswarm/README.md)** - Detailed SpecSwarm command reference
+- **[SpecLabs Documentation](plugins/speclabs/README.md)** - Experimental autonomous features guide
+
+### Project Information
 - **[CHANGELOG.md](CHANGELOG.md)** - Version history and updates
 
 ---
@@ -312,23 +411,30 @@ max_initial_load: 1000    # KB initial load
 
 ## Best Practices
 
-### Getting Started
-1. **Start with SpecSwarm** - Learn the manual workflow first
-2. **Define tech-stack.md** - Prevent drift from day 1
-3. **Set quality gates** - Maintain >80% scores
-4. **Use small features** - Test with 2-3 task features first
+### Project Setup (Do This First!)
+1. **Define tech-stack.md** - Prevents 95% of technology drift across features
+2. **Set quality gates** - Maintain >80% quality scores automatically
+3. **Run /specswarm:constitution** - Establishes project governance and coding standards
+4. **Always work from correct parent branch** - Ensures features merge to the right place
+
+### Feature Development
+1. **Use /specswarm:suggest first** - Get AI recommendation on which workflow to use
+2. **Autonomous for speed** - Use `/speclabs:orchestrate-feature --validate` for straightforward features
+3. **Manual for control** - Use SpecSwarm step-by-step workflow for complex architectural changes
+4. **Always test manually** - Never skip manual testing, even with --validate flag
+5. **Run /specswarm:analyze-quality before merge** - Catches quality issues early
 
 ### Production Workflow
-1. **Always commit before experiments** - Easy rollback if needed
-2. **Review specs before implementation** - Catch issues early
-3. **Run analyze-quality regularly** - Maintain quality
-4. **Test autonomous features** - Verify SpecLabs results carefully
+1. **Always commit before features** - Clean git state enables easy rollback
+2. **Review planning artifacts** - Check spec.md, plan.md, tasks.md before implementation
+3. **Use /specswarm:bugfix for bugs** - Creates regression tests automatically
+4. **Verify parent branch** - Our v2.1.2 update shows merge plan before executing
 
 ### Advanced Usage
-1. **Custom quality standards** - Tailor to your project
-2. **Performance budgets** - Keep bundles small
-3. **Chain bug prevention** - Use bugfix workflow
-4. **Orchestration sessions** - Track complex workflows
+1. **Custom quality standards** - Define project-specific thresholds in quality-standards.md
+2. **Performance budgets** - Enforce bundle size limits to prevent bloat
+3. **Chain bug prevention** - Use bugfix workflow to prevent cascading failures
+4. **Tech stack enforcement** - Let SpecSwarm block incompatible technology choices
 
 ---
 

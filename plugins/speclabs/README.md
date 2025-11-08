@@ -56,6 +56,119 @@ SpecLabs is the experimental wing of SpecSwarm, focused on **autonomous feature 
 
 ---
 
+## When to Use SpecLabs vs SpecSwarm
+
+### Use SpecLabs (Autonomous) When:
+
+✅ **Feature is well-defined** - You can describe it clearly in 2-3 sentences
+✅ **Straightforward implementation** - No complex architectural decisions needed
+✅ **Speed is priority** - 50-67% faster than manual workflow
+✅ **You're comfortable with experimental** - Can handle occasional unexpected results
+✅ **Want browser validation** - Playwright testing included with `--validate`
+
+**Best For**: Standard CRUD operations, UI components, API endpoints, form validation, data transformations
+
+### Use SpecSwarm (Manual) When:
+
+✅ **Complex architectural changes** - Framework upgrades, major refactoring
+✅ **Production-critical work** - Zero tolerance for mistakes
+✅ **Learning the codebase** - Step-by-step gives you control and understanding
+✅ **Unclear requirements** - Need to refine specs through clarify workflow
+✅ **Multi-stakeholder approval** - Need to review plans before implementation
+
+**Best For**: Database migrations, auth system changes, performance optimization, security fixes
+
+### Decision Tree
+
+```
+Start → Can you describe feature in 2-3 sentences?
+  ├─ Yes → Is it production-critical with zero error tolerance?
+  │   ├─ Yes → Use SpecSwarm (manual)
+  │   └─ No  → Use SpecLabs (autonomous) ✨
+  └─ No  → Use SpecSwarm (manual) - use /clarify to refine
+```
+
+### Hybrid Approach (Recommended)
+
+1. Use **SpecSwarm /suggest** to get recommendation
+2. Use **SpecLabs orchestrate-feature** for initial implementation
+3. Use **SpecSwarm /bugfix** for fixing issues (creates regression tests)
+4. Use **SpecSwarm /analyze-quality** before merge
+
+---
+
+## Getting Started with SpecLabs
+
+### Prerequisites
+
+Before using SpecLabs, ensure you have:
+1. ✅ Created `/memory/tech-stack.md` (SpecLabs enforces this during planning)
+2. ✅ Set up project with `/init`
+3. ✅ On correct parent branch (e.g., `develop` or `sprint-X`)
+
+### Your First Autonomous Feature
+
+**Step 1: Draft Your Prompt (Use Plan Mode)**
+```
+Based on SpecSwarm/SpecLabs plugins, help me write a
+/speclabs:orchestrate-feature prompt for adding user login with email/password.
+```
+Refine in plan mode until prompt is clear and detailed.
+
+**Step 2: Execute Autonomous Orchestration**
+```bash
+/speclabs:orchestrate-feature "Add user login with email/password, JWT authentication, protected routes, and login/signup forms with validation" --validate
+```
+
+**Step 3: Respond to Planning Questions**
+- SpecLabs will ask clarification questions during planning
+- Answer these to refine the specification
+- Let it run autonomously after planning completes
+
+**Step 4: Manual Testing (ALWAYS DO THIS!)**
+- Test the feature yourself in browser/app
+- Check edge cases and error states
+- Take screenshots of any bugs
+
+**Step 5: Fix Bugs If Needed**
+```bash
+/specswarm:bugfix "Bug: Login fails with special characters in password
+
+Console errors: [paste errors]
+Terminal errors: [paste errors]"
+```
+
+**Step 6: Complete & Merge**
+```bash
+/specswarm:analyze-quality  # Check quality score
+/specswarm:complete         # Merge to parent branch
+```
+
+### Understanding `--validate` Flag
+
+When you use `--validate`:
+- ✅ Playwright launches a real browser
+- ✅ AI generates test flows from your spec
+- ✅ Tests critical user journeys automatically
+- ✅ Monitors console for errors
+- ✅ Auto-fixes issues (up to 3 retries)
+- ⚠️ **Still requires manual testing** - automated tests don't catch everything!
+
+**Example with validation**:
+```bash
+/speclabs:orchestrate-feature "Add shopping cart with add/remove items, quantity adjustment, and total calculation" --validate
+```
+
+Playwright will:
+1. Start your dev server
+2. Navigate to the app
+3. Test add-to-cart flow
+4. Test quantity adjustments
+5. Verify total calculations
+6. Check for console errors
+
+---
+
 ## Commands
 
 ### `/speclabs:orchestrate-feature` - Autonomous Feature Lifecycle
