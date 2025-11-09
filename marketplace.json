@@ -4,7 +4,7 @@
     "name": "MartyBonacci",
     "url": "https://github.com/MartyBonacci"
   },
-  "description": "Complete software development lifecycle with spec-driven workflows, autonomous orchestration, quality validation, and performance monitoring. v3.0.0-alpha: Consolidating SpecLabs into SpecSwarm for unified experience.",
+  "description": "Complete software development lifecycle with spec-driven workflows, autonomous orchestration, quality validation, and performance monitoring. v3.0.0: Unified experience with 70% fewer commands for common workflows.",
   "author": {
     "name": "Marty Bonacci",
     "url": "https://github.com/MartyBonacci"
@@ -14,8 +14,8 @@
     {
       "name": "specswarm",
       "source": "./plugins/specswarm",
-      "version": "3.0.0-alpha.1",
-      "description": "Complete software development toolkit: spec-driven workflows, autonomous orchestration, lifecycle management (bugfix/modify/refactor), quality validation, and performance monitoring. v3.0.0-alpha.1: Phase 2 - Integrated SpecLabs orchestration capabilities, feature-level metrics, and multi-type validation. Consolidation in progress."
+      "version": "3.0.0",
+      "description": "Complete software development toolkit: spec-driven workflows, autonomous orchestration, lifecycle management (bugfix/modify/refactor), quality validation, and performance monitoring. v3.0.0: Single plugin install with 4 high-level commands (build/fix/upgrade/ship), 70% workflow simplification, and full backward compatibility."
     },
     {
       "name": "speclabs",
