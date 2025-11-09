@@ -1,7 +1,7 @@
 {
   "name": "specswarm",
-  "version": "2.1.2",
-  "description": "Complete software development toolkit: spec-driven workflows, lifecycle management (bugfix/modify/refactor), quality validation, and performance monitoring. v2.1.2: Fixed parent branch detection bugs - robust MAIN_BRANCH fallback, branch confirmation prompts, detailed merge validation. v2.1.1: Parent branch tracking.",
+  "version": "3.0.0-alpha.1",
+  "description": "Complete software development toolkit: spec-driven workflows, autonomous orchestration, lifecycle management (bugfix/modify/refactor), quality validation, and performance monitoring. v3.0.0-alpha.1: Phase 2 - Integrated SpecLabs orchestration capabilities, feature-level metrics, and multi-type validation. Consolidation in progress.",
   "author": {
     "name": "Marty Bonacci",
     "url": "https://github.com/MartyBonacci"
@@ -16,6 +16,8 @@
     "planning",
     "implementation",
     "workflow",
+    "autonomous-orchestration",
+    "feature-orchestration",
     "tech-stack",
     "drift-prevention",
     "architecture",
@@ -29,6 +31,10 @@
     "bundle-monitoring",
     "performance-budgets",
     "ssr-validation",
-    "multi-framework"
+    "multi-framework",
+    "metrics",
+    "analytics",
+    "validation"
   ]
+
 }
