@@ -20,8 +20,8 @@
     {
       "name": "speclabs",
       "source": "./plugins/speclabs",
-      "version": "2.8.0",
-      "description": "Advanced automation suite for production-ready autonomous development. v2.8.0: Feature-level metrics analytics - tracks completion rates, test results, and git history from actual project artifacts. v2.7.3: Silent autonomous execution - no mid-phase reporting. v2.7.2: Fixed agent pause behavior."
+      "version": "3.0.0-aliases",
+      "description": "⚠️ DEPRECATED - All functionality moved to SpecSwarm v3.0.0+. This plugin now provides backward compatibility aliases only (/speclabs:* → /specswarm:*). Aliases will be removed in v3.2.0. Please migrate to SpecSwarm commands."
     },
     {
       "name": "speckit",
