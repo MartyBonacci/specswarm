@@ -20,8 +20,8 @@
     {
       "name": "speclabs",
       "source": "./plugins/speclabs",
-      "version": "2.7.3",
-      "description": "Advanced automation suite for production-ready autonomous development. v2.7.3: Silent autonomous execution - no mid-phase reporting. v2.7.2: Fixed agent pause behavior. v2.7.1: Fixed orchestrator execution. v2.7.0: Multi-type validation."
+      "version": "2.8.0",
+      "description": "Advanced automation suite for production-ready autonomous development. v2.8.0: Feature-level metrics analytics - tracks completion rates, test results, and git history from actual project artifacts. v2.7.3: Silent autonomous execution - no mid-phase reporting. v2.7.2: Fixed agent pause behavior."
     },
     {
       "name": "speckit",
