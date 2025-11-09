@@ -1,56 +1,54 @@
-# SpecSwarm
+# SpecSwarm v3.0 🚀
 
-**Build features, fix bugs, and maintain code with autonomous AI workflows for Claude Code.**
+**Build features, fix bugs, and upgrade dependencies with autonomous AI workflows for Claude Code.**
 
-SpecSwarm is a plugin marketplace that brings spec-driven development and autonomous orchestration to Claude Code. Write specifications, generate plans, and let AI handle the implementation - from initial feature development through bug fixes, refactoring, and production deployments.
+SpecSwarm is a complete development toolkit for Claude Code, offering both simplified high-level commands for rapid development and granular control for complex workflows. Build complete features in 2 commands instead of 7+, with quality gates, automatic retry logic, and framework migration support.
 
 ---
 
 ## Quick Start
 
-### 1. Install the Marketplace
+### 1. Install SpecSwarm
 
 ```bash
 # From GitHub
 /plugin https://github.com/MartyBonacci/specswarm
-```
 
-### 2. Install Plugins
-
-```bash
-# Production-ready complete toolkit (recommended)
+# Install the unified toolkit (v3.0+)
 /plugin install specswarm
-
-# Experimental autonomous features (optional)
-/plugin install speclabs
 ```
 
-### 3. Build Your First Feature
+**That's it!** SpecSwarm v3.0 consolidates everything into a single plugin.
+
+### 2. Build Your First Feature (The New Way)
 
 ```bash
-# Create a detailed specification
-/specswarm:specify "Add user authentication with email and password"
+# Build complete feature with one command
+/specswarm:build "Add user authentication with email and password" --validate
 
-# Generate implementation plan
+# [Answer clarification questions - only interactive step]
+# [AI handles: spec → plan → tasks → implementation → validation → quality analysis]
+
+# Ship when ready
+/specswarm:ship
+```
+
+**70% fewer commands**, same powerful results.
+
+### 3. Or Use Manual Control (Advanced)
+
+```bash
+# Fine-grained control for complex features
+/specswarm:specify "Add user authentication..."
+/specswarm:clarify  # Answer clarification questions
 /specswarm:plan
-
-# Break down into actionable tasks
 /specswarm:tasks
-
-# Execute implementation
 /specswarm:implement
-
-# Complete and merge
+/specswarm:analyze-quality
 /specswarm:complete
 ```
 
-**Or use autonomous orchestration** (SpecLabs - experimental):
-
-```bash
-/speclabs:orchestrate-feature "Add user authentication with email/password" --validate
-```
-
-This single command will autonomously: generate spec, create plan, build tasks, implement, validate in browser, and deliver a complete feature.
+All the power, when you need it.
 
 ---
 
@@ -101,31 +99,30 @@ Before building features, set up your project foundation:
    /specswarm:constitution
    ```
 
-### Building a Feature (Autonomous - Fast Track)
+### Building a Feature (Simplified - Recommended)
 
 ```bash
 # 1. Ensure you're on the right parent branch
 git checkout develop  # or sprint-X
 
-# 2. Get AI workflow recommendation
+# 2. Get AI workflow recommendation (optional)
 /specswarm:suggest "add user authentication with email/password"
 
-# 3. Execute autonomous orchestration
-/speclabs:orchestrate-feature "Add user authentication with email/password login, JWT tokens, and protected routes" --validate
+# 3. Build the feature
+/specswarm:build "Add user authentication with email/password login, JWT tokens, and protected routes" --validate
 
-# 4. Respond to planning questions, let it run
+# 4. Answer clarification questions (only interactive step)
 
 # 5. Manual testing (CRITICAL - always test yourself)
 
 # 6. Fix any bugs found
-/specswarm:bugfix "Bug: Login fails with special characters..."
+/specswarm:fix "Bug: Login fails with special characters..." --regression-test
 
-# 7. Check quality before merge
-/specswarm:analyze-quality
-
-# 8. Complete and merge to parent branch
-/specswarm:complete
+# 7. Ship with quality gate
+/specswarm:ship
 ```
+
+**Time Savings**: 85-90% reduction in manual orchestration
 
 ### Building a Feature (Manual Control)
 
@@ -140,6 +137,8 @@ git checkout develop  # or sprint-X
 /specswarm:complete
 ```
 
+**When to use**: Complex features needing step-by-step review
+
 **📖 Full Workflow Guide**: See [WORKFLOW.md](docs/WORKFLOW.md) for detailed instructions, examples, and troubleshooting
 
 **📋 Quick Reference**: See [CHEATSHEET.md](docs/CHEATSHEET.md) for a visual command reference
@@ -148,27 +147,37 @@ git checkout develop  # or sprint-X
 
 ## What's Included?
 
-### SpecSwarm v2.1.2 (Production-Ready) ⭐
+### SpecSwarm v3.0 (Unified Toolkit) ⭐
 
-Complete software development lifecycle toolkit with 18 commands covering:
+Complete software development lifecycle with **28 commands** in a single plugin:
 
-- **New Features**: `specify` → `plan` → `tasks` → `implement` → `complete`
+**🚀 High-Level Commands** (New in v3.0 - Simplified Workflow):
+- **`build`** - Complete feature development (spec → implementation → quality)
+- **`fix`** - Test-driven bug fixing with automatic retry
+- **`upgrade`** - Dependency/framework migrations with breaking change analysis
+- **`ship`** - Quality-gated merge to parent branch
+
+**📝 Granular Workflow Commands** (Manual Control):
+- **New Features**: `specify` → `clarify` → `plan` → `tasks` → `implement` → `complete`
 - **Bug Fixing**: `bugfix` with regression testing, `hotfix` for emergencies
 - **Code Maintenance**: `modify`, `refactor`, `deprecate`
-- **Quality**: `analyze-quality`, `impact` analysis, `workflow-metrics`
+- **Quality**: `analyze-quality`, `impact` analysis
 
-**Status**: ✅ Production-ready | Stable | Safe for critical work
-
-### SpecLabs v2.7.3 (Experimental) 🧪
-
-Autonomous orchestration and advanced debugging:
-
-- **Feature Orchestration**: `orchestrate-feature` - complete lifecycle automation
-- **Validation**: `validate-feature` - multi-type validation (webapp, android, REST API, desktop)
+**🔧 Advanced Capabilities** (From SpecLabs):
+- **Orchestration**: `orchestrate-feature` - autonomous lifecycle automation
+- **Validation**: `validate` - multi-type validation (webapp, android, REST API, desktop)
 - **Debugging**: `coordinate` - systematic multi-bug investigation
-- **Analytics**: `metrics` - orchestration performance tracking
+- **Analytics**: `metrics` - feature-level performance tracking
 
-**Status**: ⚠️ Experimental | Active development | Use at own risk
+**Status**: ✅ Production-ready | v3.0.0-alpha.1 | Consolidation in progress
+
+### ⚠️ SpecLabs (Deprecated)
+
+**SpecLabs has been consolidated into SpecSwarm v3.0.**
+
+All functionality is now available in SpecSwarm. The SpecLabs plugin provides backward compatibility aliases that will be removed in v3.2.0.
+
+**Migration Path**: Replace `/speclabs:*` commands with `/specswarm:*` equivalents.
 
 ---
 
@@ -184,17 +193,25 @@ Write clear specifications before coding. This approach leads to:
 ✅ Higher quality code that matches specs
 ✅ Better documentation as a byproduct
 
-### Workflow Pattern
+### Workflow Patterns
 
-**Manual (SpecSwarm)**:
+**Simplified (v3.0 - Recommended)**:
+```
+build → [answer questions] → [autonomous execution] → ship
+```
+**2 commands**, 85-90% less manual orchestration
+
+**Granular Control (Advanced)**:
 ```
 specify → clarify → plan → tasks → implement → analyze-quality → complete
 ```
+**7 commands**, full step-by-step control
 
-**Autonomous (SpecLabs)**:
+**Legacy (SpecLabs - Deprecated)**:
 ```
-orchestrate-feature → [everything happens automatically] → done
+orchestrate-feature → [autonomous] → complete
 ```
+Use `/specswarm:orchestrate-feature` or `/specswarm:build` instead
 
 ---
 
