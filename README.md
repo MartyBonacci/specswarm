@@ -1,8 +1,10 @@
-# SpecSwarm v3.0 🚀
+# SpecSwarm v3.1 🚀
 
 **Build features, fix bugs, and upgrade dependencies with autonomous AI workflows for Claude Code.**
 
 SpecSwarm is a complete development toolkit for Claude Code, offering both simplified high-level commands for rapid development and granular control for complex workflows. Build complete features in 2 commands instead of 7+, with quality gates, automatic retry logic, and framework migration support.
+
+**New in v3.1**: Project initialization (`/specswarm:init`), rollback safety (`/specswarm:rollback`), security audits (`/specswarm:security-audit`), and release automation (`/specswarm:release`).
 
 ---
 
@@ -63,12 +65,26 @@ Before building features, set up your project foundation:
    /init
    /plugin https://github.com/MartyBonacci/specswarm
    /plugin install specswarm
-   /plugin install speclabs
    ```
 
-2. **Define Your Tech Stack** (Prevents 95% of technology drift):
+2. **Initialize Your Project** (NEW in v3.1 - recommended):
+   ```bash
+   /specswarm:init
 
-   Create `/memory/tech-stack.md`:
+   # This creates 3 foundation files:
+   # - .specswarm/constitution.md (coding principles)
+   # - .specswarm/tech-stack.md (approved technologies)
+   # - .specswarm/quality-standards.md (quality gates)
+   #
+   # Auto-detects tech stack from package.json
+   # Interactive configuration with smart defaults
+   ```
+
+   **Alternative (Manual Setup)**:
+
+   If you prefer manual control, create these files yourself:
+
+   **Tech Stack** (`.specswarm/tech-stack.md`):
    ```markdown
    ## Core Technologies
    - React 19.x (functional components only)
@@ -84,9 +100,7 @@ Before building features, set up your project foundation:
    - ❌ Class components (use functional with hooks)
    ```
 
-3. **Set Quality Standards** (Optional but recommended):
-
-   Create `/memory/quality-standards.md`:
+   **Quality Standards** (`.specswarm/quality-standards.md`):
    ```yaml
    min_test_coverage: 80
    min_quality_score: 85
@@ -94,7 +108,7 @@ Before building features, set up your project foundation:
    max_bundle_size: 500
    ```
 
-4. **Establish Project Governance**:
+   **Project Constitution**:
    ```bash
    /specswarm:constitution
    ```

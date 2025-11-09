@@ -4,7 +4,7 @@
     "name": "MartyBonacci",
     "url": "https://github.com/MartyBonacci"
   },
-  "description": "Complete software development lifecycle with spec-driven workflows, autonomous orchestration, quality validation, and performance monitoring. v3.0.0: Unified experience with 70% fewer commands for common workflows.",
+  "description": "Complete software development lifecycle with spec-driven workflows, autonomous orchestration, quality validation, and performance monitoring. v3.1.0: Project initialization, rollback safety, security auditing, and release automation.",
   "author": {
     "name": "Marty Bonacci",
     "url": "https://github.com/MartyBonacci"
@@ -14,8 +14,8 @@
     {
       "name": "specswarm",
       "source": "./plugins/specswarm",
-      "version": "3.0.0",
-      "description": "Complete software development toolkit: spec-driven workflows, autonomous orchestration, lifecycle management (bugfix/modify/refactor), quality validation, and performance monitoring. v3.0.0: Single plugin install with 4 high-level commands (build/fix/upgrade/ship), 70% workflow simplification, and full backward compatibility."
+      "version": "3.1.0",
+      "description": "Complete software development toolkit: spec-driven workflows, autonomous orchestration, lifecycle management (bugfix/modify/refactor), quality validation, and performance monitoring. v3.1.0: NEW - Project init, rollback safety, security audits, release automation. Core features: 4 high-level commands (build/fix/upgrade/ship), 70% workflow simplification, full backward compatibility."
     },
     {
       "name": "speclabs",
