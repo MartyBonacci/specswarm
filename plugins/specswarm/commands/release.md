@@ -1,10 +1,29 @@
-# Release Command
+---
+description: Comprehensive release preparation workflow including quality gates, security audit, changelog generation, version bumping, tagging, and publishing
+args:
+  - name: --patch
+    description: Create patch release (bug fixes, 1.0.0 → 1.0.1)
+    required: false
+  - name: --minor
+    description: Create minor release (new features, 1.0.0 → 1.1.0)
+    required: false
+  - name: --major
+    description: Create major release (breaking changes, 1.0.0 → 2.0.0)
+    required: false
+  - name: --skip-audit
+    description: Skip security audit (not recommended for production)
+    required: false
+---
 
-Comprehensive release preparation workflow including quality gates, security audit, changelog generation, version bumping, tagging, and publishing.
+## Goal
 
-**Version**: 3.1.0
-**Author**: SpecSwarm
-**Category**: Release Management
+Orchestrate a complete release workflow with quality gates, version bumping, and publishing automation.
+
+## User Input
+
+```text
+$ARGUMENTS
+```
 
 ---
 

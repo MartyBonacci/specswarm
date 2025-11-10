@@ -1,10 +1,23 @@
-# Security Audit Command
+---
+description: Comprehensive security scanning including dependency vulnerabilities, secret detection, OWASP Top 10 analysis, and configuration checks
+args:
+  - name: --quick
+    description: Quick scan (dependency check and basic secret detection only)
+    required: false
+  - name: --thorough
+    description: Thorough scan (extensive pattern matching and deep analysis)
+    required: false
+---
 
-Comprehensive security scanning for your project including dependency vulnerabilities, secret detection, OWASP Top 10 analysis, and configuration checks.
+## Goal
 
-**Version**: 3.1.0
-**Author**: SpecSwarm
-**Category**: Security & Quality
+Perform a comprehensive security audit of your codebase to identify vulnerabilities before merging or releasing.
+
+## User Input
+
+```text
+$ARGUMENTS
+```
 
 ---
 
