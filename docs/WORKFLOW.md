@@ -30,6 +30,55 @@ This guide shows you how to use SpecSwarm and SpecLabs in your daily development
 
 These steps are done **once per project**. They establish the foundation for all future work.
 
+### Prerequisites: Starting a New Project
+
+⚠️ **IMPORTANT**: SpecSwarm is designed for **feature development in existing projects**. Before using SpecSwarm, you need:
+
+**Required**:
+- ✅ **Git repository initialized** with at least one commit
+- ✅ **Project structure** in place (src/, package.json, etc.)
+- ✅ **Tech stack established** (React, Vue, Next.js, Astro, etc.)
+
+**If you're starting from scratch**, scaffold your project first:
+
+```bash
+# Choose your framework:
+
+# React + Vite
+npm create vite@latest my-app -- --template react-ts
+cd my-app
+
+# Next.js
+npx create-next-app@latest my-app
+cd my-app
+
+# Astro
+npm create astro@latest my-app
+cd my-app
+
+# Vue
+npm create vue@latest my-app
+cd my-app
+
+# Then initialize git
+git init
+git add .
+git commit -m "Initial project scaffold"
+```
+
+**For existing projects**, just ensure you have a git repository:
+
+```bash
+# If not already initialized
+git init
+git add .
+git commit -m "Initial commit"
+```
+
+✅ **Now you're ready to use SpecSwarm!**
+
+---
+
 ### Step 1: Initialize Claude Code
 
 ```bash

@@ -8,6 +8,56 @@ SpecSwarm is a complete development toolkit for Claude Code, offering both simpl
 
 ---
 
+## Prerequisites
+
+⚠️ **IMPORTANT**: SpecSwarm is designed for **feature development in existing projects**. It requires:
+
+### Required
+- ✅ **Git repository initialized** (`git init`)
+- ✅ **At least one commit** on a parent branch (main/develop/sprint-X)
+- ✅ **Working directory** on the correct parent branch
+
+### Recommended
+- ✅ **package.json exists** (enables auto-detection in `/specswarm:init`)
+- ✅ **Tech stack established** (React, Vue, Next.js, Astro, etc.)
+- ✅ **Project structure in place** (src/, public/, package.json, etc.)
+
+### Starting a Brand New Project?
+
+**SpecSwarm doesn't scaffold projects** - it manages feature development. If you're starting from scratch:
+
+1. **First, scaffold your project** using your framework's official CLI:
+   ```bash
+   # React + Vite
+   npm create vite@latest my-app -- --template react-ts
+
+   # Next.js
+   npx create-next-app@latest
+
+   # Astro
+   npm create astro@latest
+
+   # Vue
+   npm create vue@latest
+   ```
+
+2. **Initialize git and make your first commit**:
+   ```bash
+   cd my-app
+   git init
+   git add .
+   git commit -m "Initial project scaffold"
+   ```
+
+3. **Then initialize SpecSwarm**:
+   ```bash
+   /specswarm:init
+   ```
+
+4. **Now you're ready to build features** with SpecSwarm! Continue to Quick Start below.
+
+---
+
 ## Quick Start
 
 ### 1. Install SpecSwarm
