@@ -42,7 +42,7 @@ Phase 1a is **COMPLETE**! We've built the complete foundation for intelligent te
 - Session cleanup
 
 **Key Functions**: 13 core functions
-**Storage**: `/memory/orchestrator/sessions/`
+**Storage**: `.specswarm/orchestrator/sessions/`
 **Performance**: <10ms operations
 
 ---

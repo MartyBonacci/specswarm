@@ -1,8 +1,47 @@
-# SpecLabs v2.7.3
+# ⛔ SpecLabs - DEPRECATED
 
-**Experimental autonomous orchestration and advanced debugging for Claude Code.**
+## 🚨 THIS PLUGIN IS DEPRECATED AND WILL BE REMOVED IN v3.3.0
 
-⚠️ **EXPERIMENTAL** - Active development - Use at your own risk
+**All SpecLabs functionality has been consolidated into SpecSwarm v3.0+**
+
+### ⚠️ IMMEDIATE ACTION REQUIRED
+
+1. **Uninstall SpecLabs**: `/plugin uninstall speclabs`
+2. **Use SpecSwarm instead**: All commands available as `/specswarm:orchestrate-feature`, etc.
+3. **Update scripts**: Replace `/speclabs:*` with `/specswarm:*`
+
+### Why This Change?
+
+- ✅ **Unified Plugin**: All features now in SpecSwarm (easier installation)
+- ✅ **Better Maintenance**: Single codebase, faster bug fixes
+- ✅ **No Feature Loss**: All SpecLabs commands work in SpecSwarm
+- ✅ **Multi-Language Support**: SpecSwarm v3.2 adds Python, PHP, Go, Ruby, Rust
+
+### Deprecation Timeline
+
+- **v3.0.0** (Nov 2025): SpecLabs consolidated into SpecSwarm
+- **v3.2.0** (Jan 2025): SpecLabs marked as deprecated ← **YOU ARE HERE**
+- **v3.3.0** (Planned): SpecLabs plugin removed from marketplace
+
+### Migration Guide
+
+All SpecLabs commands are available in SpecSwarm with the same names:
+
+| Old SpecLabs Command | New SpecSwarm Command |
+|---------------------|----------------------|
+| `/speclabs:orchestrate-feature` | `/specswarm:orchestrate-feature` |
+| `/speclabs:orchestrate` | `/specswarm:orchestrate` |
+| `/speclabs:validate-feature` | `/specswarm:validate` |
+| `/speclabs:coordinate` | `/specswarm:coordinate` |
+| `/speclabs:metrics` | `/specswarm:metrics` |
+
+**Simply replace `/speclabs:` with `/specswarm:` in all your workflows!**
+
+---
+
+## Historical Documentation Below (v2.7.3)
+
+⚠️ **DO NOT USE** - For reference only
 
 ---
 
@@ -102,7 +141,7 @@ Start → Can you describe feature in 2-3 sentences?
 ### Prerequisites
 
 Before using SpecLabs, ensure you have:
-1. ✅ Created `/memory/tech-stack.md` (SpecLabs enforces this during planning)
+1. ✅ Created `.specswarm/tech-stack.md` (SpecLabs enforces this during planning)
 2. ✅ Set up project with `/init`
 3. ✅ On correct parent branch (e.g., `develop` or `sprint-X`)
 
@@ -367,7 +406,7 @@ View orchestration session metrics and performance analytics.
 
 ## Session Tracking
 
-All orchestrations create session files in `/memory/feature-orchestrator/sessions/`:
+All orchestrations create session files in `.specswarm/feature-orchestrator/sessions/`:
 
 ```json
 {
@@ -401,7 +440,7 @@ Access sessions with:
 
 ## Configuration
 
-### Quality Standards (`/memory/quality-standards.md`)
+### Quality Standards (`.specswarm/quality-standards.md`)
 
 ```yaml
 # Orchestration Settings
@@ -410,7 +449,7 @@ auto_bugfix_enabled: true
 validation_enabled: true
 ```
 
-### Tech Stack (`/memory/tech-stack.md`)
+### Tech Stack (`.specswarm/tech-stack.md`)
 
 Enforced during planning phase when orchestrate-feature integrates with SpecSwarm.
 
@@ -496,7 +535,7 @@ Enforced during planning phase when orchestrate-feature integrates with SpecSwar
 
 ### Session Not Found
 
-Sessions are in `/memory/feature-orchestrator/sessions/`
+Sessions are in `.specswarm/feature-orchestrator/sessions/`
 - Check session ID is correct
 - Verify session file exists
 - Use `/speclabs:metrics` without args to list recent sessions

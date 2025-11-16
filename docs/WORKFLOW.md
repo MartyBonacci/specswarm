@@ -108,7 +108,7 @@ You should see specswarm v2.1.2 and speclabs v2.7.3
 
 **Why**: Prevents 95% of technology drift across features
 
-Create `/memory/tech-stack.md`:
+Create `.specswarm/tech-stack.md`:
 
 ```markdown
 # Tech Stack v1.0.0
@@ -164,7 +164,7 @@ Create `/memory/tech-stack.md`:
 
 **Why**: Maintains code quality automatically
 
-Create `/memory/quality-standards.md`:
+Create `.specswarm/quality-standards.md`:
 
 ```yaml
 # Quality Gates
@@ -208,13 +208,13 @@ enforce_typescript: true
 - What coding standards should be enforced?
 - What architectural patterns are preferred?
 
-**Result**: Creates `/memory/constitution.md`
+**Result**: Creates `.specswarm/constitution.md`
 
 ### Step 6: Verify Setup
 
 ```bash
 # Check all configuration files exist
-ls -la /memory/
+ls -la .specswarm/
 
 # You should see:
 # - tech-stack.md
@@ -720,7 +720,7 @@ npm run dev
 **Solution**:
 ```bash
 # Option 1: Update tech-stack.md if the new tech is approved
-# Edit /memory/tech-stack.md
+# Edit .specswarm/tech-stack.md
 # Add the new technology
 # Bump version number
 

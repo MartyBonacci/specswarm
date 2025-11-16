@@ -21,7 +21,7 @@ if ! declare -f state_get >/dev/null 2>&1; then
 fi
 
 # Configuration
-VISION_SCREENSHOTS_DIR="${ORCHESTRATOR_STATE_DIR:-/home/marty/code-projects/specswarm/memory/orchestrator}/screenshots"
+VISION_SCREENSHOTS_DIR="${ORCHESTRATOR_STATE_DIR:-/home/marty/code-projects/specswarm.specswarm/orchestrator}/screenshots"
 mkdir -p "$VISION_SCREENSHOTS_DIR"
 
 #######################################

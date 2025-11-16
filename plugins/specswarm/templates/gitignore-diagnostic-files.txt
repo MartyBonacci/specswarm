@@ -36,8 +36,8 @@ diagnostic-results-*.json
 
 # Uncomment to exclude memory files from version control
 # (only do this if memory is project-specific, not shared)
-# memory/
-# .specswarm/memory/
+# .specswarm/
+# .specswarm.specswarm/
 
 # ============================================================
 # Build Artifacts (project-specific)
@@ -63,7 +63,7 @@ diagnostic-results-*.json
 #    - This keeps diagnostics accessible but out of version control
 
 # 3. Memory Files
-#    - memory/ contains project-specific settings
+#    - .specswarm/ contains project-specific settings
 #    - Usually SHOULD be committed (shared across team)
 #    - Only gitignore if memory is personal/local only
 

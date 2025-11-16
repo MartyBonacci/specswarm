@@ -377,7 +377,7 @@ if [ "$ENABLE_METRICS" = "true" ]; then
   echo "⏱️  Time to Resolution: ${WORKFLOW_MINUTES} minutes"
 
   # Update metrics
-  METRICS_FILE="/memory/workflow-metrics.json"
+  METRICS_FILE=".specswarm/workflow-metrics.json"
   echo "📊 Emergency metrics saved: ${METRICS_FILE}"
 
   echo ""

@@ -37,7 +37,7 @@
 - Manual corrections needed: _____
 
 ### Tech Stack File Quality
-- `/memory/tech-stack.md` created: ✅ / ❌
+- `.specswarm/tech-stack.md` created: ✅ / ❌
 - Accuracy: ⭐⭐⭐⭐⭐
 - Completeness: ⭐⭐⭐⭐⭐
 

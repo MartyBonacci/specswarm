@@ -208,12 +208,12 @@ Check that migrated libraries no longer reference old paths:
 ```bash
 # Should return no results (no old paths)
 grep -r "plugins/speclabs" plugins/specswarm/lib/ || echo "✅ No old plugin paths"
-grep -r "/memory/orchestrator/" plugins/specswarm/lib/ || echo "✅ No old memory paths (orchestrator)"
-grep -r "/memory/feature-orchestrator/" plugins/specswarm/lib/ || echo "✅ No old memory paths (feature-orchestrator)"
+grep -r ".specswarm/orchestrator/" plugins/specswarm/lib/ || echo "✅ No old memory paths (orchestrator)"
+grep -r ".specswarm/feature-orchestrator/" plugins/specswarm/lib/ || echo "✅ No old memory paths (feature-orchestrator)"
 
 # Should find new paths
 grep -r "plugins/specswarm" plugins/specswarm/lib/ | wc -l  # Should be > 0
-grep -r "/memory/specswarm/orchestration/" plugins/specswarm/lib/ | wc -l  # Should be > 0
+grep -r ".specswarm/specswarm/orchestration/" plugins/specswarm/lib/ | wc -l  # Should be > 0
 ```
 
 ### Phase 6C: Integration Testing
@@ -290,7 +290,7 @@ grep -r "/memory/specswarm/orchestration/" plugins/specswarm/lib/ | wc -l  # Sho
   - Only 2 references in migrate-sessions.sh (intentional, as source paths)
 - [x] All new paths present in code - **PASSED**
   - New plugin paths: plugins/specswarm ✅
-  - New memory paths: /memory/specswarm/orchestration/ ✅
+  - New memory paths: .specswarm/specswarm/orchestration/ ✅
 - [x] Backward compatibility maintained - **PASSED**
   - All 7 aliases properly redirect to SpecSwarm equivalents
 - [x] Deprecation warnings clear - **PASSED**
@@ -351,15 +351,15 @@ Status: ✅ PASSED (3/3)
 ### Test 7: Old Path Reference Check
 ```
 Old plugin paths (plugins/speclabs): 0 occurrences ✅
-Old memory paths (/memory/orchestrator/): 1 occurrence (migrate-sessions.sh line 5 - INTENTIONAL) ✅
-Old memory paths (/memory/feature-orchestrator/): 1 occurrence (migrate-sessions.sh line 6 - INTENTIONAL) ✅
+Old memory paths (.specswarm/orchestrator/): 1 occurrence (migrate-sessions.sh line 5 - INTENTIONAL) ✅
+Old memory paths (.specswarm/feature-orchestrator/): 1 occurrence (migrate-sessions.sh line 6 - INTENTIONAL) ✅
 Status: ✅ PASSED (migration script correctly references old paths as sources)
 ```
 
 ### Test 8: New Path Reference Check
 ```
 New plugin paths (plugins/specswarm): 2+ occurrences ✅
-New memory paths (/memory/specswarm/orchestration/): 2+ occurrences ✅
+New memory paths (.specswarm/specswarm/orchestration/): 2+ occurrences ✅
 Status: ✅ PASSED
 ```
 

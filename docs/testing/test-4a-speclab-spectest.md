@@ -375,7 +375,7 @@ Phase 4: Validation (sequential)
 ✓ All 6 tasks completed
 ✓ Tests passing: [N]/[N]
 ✓ No tech violations
-📊 Metrics saved to /memory/metrics.json
+📊 Metrics saved to .specswarm/metrics.json
 
 ⚡ Performance Summary:
 - Total time: ~9 minutes
@@ -982,7 +982,7 @@ Phase 4: Testing & Integration (sequential)
 ✓ No tech violations
 ✓ Breaking changes handled correctly
 ✓ Backward compatibility maintained
-📊 Metrics saved to /memory/metrics.json
+📊 Metrics saved to .specswarm/metrics.json
 
 ⚡ Performance Summary:
 - Total time: ~27 minutes

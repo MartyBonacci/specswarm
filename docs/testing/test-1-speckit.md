@@ -241,7 +241,7 @@ git commit -m "Initial project definition for Tweeter"
 
 **Expected Outcome:**
 ```
-✓ Constitution created: /memory/constitution.md
+✓ Constitution created: .specswarm/constitution.md
 ✓ Project mission defined
 ✓ Core principles established
 ✓ Development standards set

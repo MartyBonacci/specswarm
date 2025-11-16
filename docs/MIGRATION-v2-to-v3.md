@@ -292,7 +292,7 @@ If you have team documentation:
 # - Clear remediation steps if failing
 ```
 
-**Configuration** (`/memory/quality-standards.md`):
+**Configuration** (`.specswarm/quality-standards.md`):
 ```yaml
 quality_threshold: 85
 enforce_gates: true

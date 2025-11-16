@@ -25,7 +25,7 @@ The State Manager is the foundation for Phase 1a: Test Orchestrator Foundation. 
 
 **Key Features**:
 - ✅ Create and track sessions
-- ✅ Persist state to `/memory/orchestrator/`
+- ✅ Persist state to `.specswarm/orchestrator/`
 - ✅ Atomic updates (no data loss)
 - ✅ Resume sessions (retry logic)
 - ✅ State validation
@@ -143,7 +143,7 @@ The State Manager is the foundation for Phase 1a: Test Orchestrator Foundation. 
 
 Sessions stored in:
 ```
-/memory/orchestrator/sessions/<session-id>/
+.specswarm/orchestrator/sessions/<session-id>/
 ├── state.json              # Session state
 └── agent-output.log        # Agent output (optional)
 ```

@@ -1,0 +1,54 @@
+{
+  "session_id": "orch-20251016-100116-743",
+  "status": "in_progress",
+  "created_at": "2025-10-16T16:01:16Z",
+  "updated_at": "2025-10-16T16:01:16Z",
+
+  "workflow": {
+    "file": "a.md",
+    "task_name": "Task 1",
+    "project_path": "/a"
+  },
+
+  "agent": {
+    "id": null,
+    "status": "pending",
+    "started_at": null,
+    "completed_at": null,
+    "error": null,
+    "output_summary": null
+  },
+
+  "validation": {
+    "status": "pending",
+    "playwright": {
+      "console_errors": null,
+      "network_errors": null,
+      "screenshot": null
+    },
+    "vision_api": {
+      "analysis": null,
+      "issues_found": [],
+      "score": null
+    }
+  },
+
+  "retries": {
+    "count": 0,
+    "max": 3,
+    "history": []
+  },
+
+  "decision": {
+    "action": null,
+    "reason": null,
+    "timestamp": null
+  },
+
+  "metrics": {
+    "total_time_seconds": null,
+    "agent_time_seconds": null,
+    "validation_time_seconds": null,
+    "started_at": "2025-10-16T16:01:16Z"
+  }
+}

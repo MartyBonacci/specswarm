@@ -212,7 +212,7 @@ analyze_bundles() {
 # Track bundle sizes over time
 track_bundle_sizes() {
     local repo_root="${1:-$(pwd)}"
-    local metrics_file="$repo_root/memory/metrics.json"
+    local metrics_file="$repo_root.specswarm/metrics.json"
 
     if [ ! -f "$metrics_file" ]; then
         return 0

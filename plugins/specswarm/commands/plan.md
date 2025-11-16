@@ -60,8 +60,8 @@ You **MUST** consider the user input before proceeding (if not empty).
 
 2. **Load context**:
    - Read FEATURE_SPEC (spec.md)
-   - Read `/memory/constitution.md` if it exists
-   - Check for `/memory/tech-stack.md`
+   - Read `.specswarm/constitution.md` if it exists
+   - Check for `.specswarm/tech-stack.md`
    - Load plan template from `templates/plan-template.md` or use embedded template
 
 <!-- ========== TECH STACK MANAGEMENT (SpecSwarm Enhancement) ========== -->
@@ -71,7 +71,7 @@ You **MUST** consider the user input before proceeding (if not empty).
 
    **Check if tech stack file exists**:
    ```bash
-   if [ ! -f "${REPO_ROOT}/memory/tech-stack.md" ]; then
+   if [ ! -f "${REPO_ROOT}.specswarm/tech-stack.md" ]; then
      FIRST_FEATURE=true
    else
      FIRST_FEATURE=false
@@ -114,7 +114,7 @@ You **MUST** consider the user input before proceeding (if not empty).
       ```
       🎯 TECH STACK FILE CREATED
 
-      This is your FIRST feature using SpecSwarm. I've created `/memory/tech-stack.md`
+      This is your FIRST feature using SpecSwarm. I've created `.specswarm/tech-stack.md`
       based on your project files and plan.md Technical Context.
 
       **Detected Stack:**
@@ -124,7 +124,7 @@ You **MUST** consider the user input before proceeding (if not empty).
       - Key Libraries: {detected_libraries}
 
       **Action Required:**
-      1. Review `/memory/tech-stack.md`
+      1. Review `.specswarm/tech-stack.md`
       2. Add any PROHIBITED technologies (important for drift prevention!)
       3. Confirm accuracy of detected stack
 
@@ -181,14 +181,14 @@ You **MUST** consider the user input before proceeding (if not empty).
       ```bash
       for TECH in "${NEW_TECHNOLOGIES[@]}"; do
         # Check 1: Is it PROHIBITED?
-        if grep -qi "❌.*${TECH}" "${REPO_ROOT}/memory/tech-stack.md"; then
+        if grep -qi "❌.*${TECH}" "${REPO_ROOT}.specswarm/tech-stack.md"; then
           TECH_STATUS[$TECH]="PROHIBITED"
-          CONFLICTS_WITH[$TECH]=$(grep "❌.*${TECH}" "${REPO_ROOT}/memory/tech-stack.md" | sed 's/.*use \(.*\) instead.*/\1/')
+          CONFLICTS_WITH[$TECH]=$(grep "❌.*${TECH}" "${REPO_ROOT}.specswarm/tech-stack.md" | sed 's/.*use \(.*\) instead.*/\1/')
           continue
         fi
 
         # Check 2: Is it already APPROVED?
-        if grep -qi "${TECH}" "${REPO_ROOT}/memory/tech-stack.md" | grep -v "❌"; then
+        if grep -qi "${TECH}" "${REPO_ROOT}.specswarm/tech-stack.md" | grep -v "❌"; then
           TECH_STATUS[$TECH]="APPROVED"
           continue
         fi
@@ -198,7 +198,7 @@ You **MUST** consider the user input before proceeding (if not empty).
         TECH_PURPOSE=$(get_library_purpose "${TECH}")
 
         if [ -n "$TECH_PURPOSE" ]; then
-          EXISTING_WITH_PURPOSE=$(grep -i "PURPOSE:${TECH_PURPOSE}" "${REPO_ROOT}/memory/tech-stack.md" | grep -v "❌" | head -1)
+          EXISTING_WITH_PURPOSE=$(grep -i "PURPOSE:${TECH_PURPOSE}" "${REPO_ROOT}.specswarm/tech-stack.md" | grep -v "❌" | head -1)
           if [ -n "$EXISTING_WITH_PURPOSE" ]; then
             TECH_STATUS[$TECH]="CONFLICT"
             CONFLICTS_WITH[$TECH]="${EXISTING_WITH_PURPOSE}"
@@ -268,13 +268,13 @@ You **MUST** consider the user input before proceeding (if not empty).
       2. Add entry to tech-stack.md:
          - {Technology} v{version} ({purpose}) <!-- Auto-added: Feature {FEATURE_NUM}, {DATE} -->
       3. Bump tech-stack.md MINOR version:
-         OLD_VERSION=$(grep "^\*\*Version\*\*:" "${REPO_ROOT}/memory/tech-stack.md" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
+         OLD_VERSION=$(grep "^\*\*Version\*\*:" "${REPO_ROOT}.specswarm/tech-stack.md" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
          MAJOR=$(echo $OLD_VERSION | cut -d. -f1)
          MINOR=$(echo $OLD_VERSION | cut -d. -f2)
          PATCH=$(echo $OLD_VERSION | cut -d. -f3)
          NEW_MINOR=$((MINOR + 1))
          NEW_VERSION="${MAJOR}.${NEW_MINOR}.0"
-         sed -i "s/\*\*Version\*\*: ${OLD_VERSION}/\*\*Version\*\*: ${NEW_VERSION}/" "${REPO_ROOT}/memory/tech-stack.md"
+         sed -i "s/\*\*Version\*\*: ${OLD_VERSION}/\*\*Version\*\*: ${NEW_VERSION}/" "${REPO_ROOT}.specswarm/tech-stack.md"
       4. Update version history section
       5. Notify user in compliance report
       6. Continue with plan generation
@@ -311,7 +311,7 @@ You **MUST** consider the user input before proceeding (if not empty).
          ```
          To use prohibited technology:
          1. Document compelling business justification in research.md
-         2. Update /memory/constitution.md (requires constitutional amendment)
+         2. Update .specswarm/constitution.md (requires constitutional amendment)
          3. Remove from Prohibited section in tech-stack.md
          4. Add to Approved section with justification comment
          5. Bump tech-stack.md MAJOR version (breaking constitutional change)
@@ -405,7 +405,7 @@ You **MUST** consider the user input before proceeding (if not empty).
    c. **Update Agent Context File** (Enhanced by SpecSwarm):
    <!-- Tech stack enforcement added by Marty Bonacci & Claude Code (2025) -->
    - Read existing CONTEXT_FILE (if exists)
-   - **Read `/memory/tech-stack.md` if exists** (SpecSwarm enhancement)
+   - **Read `.specswarm/tech-stack.md` if exists** (SpecSwarm enhancement)
    - Look for markers like `<!-- AUTO-GENERATED-START -->` and `<!-- AUTO-GENERATED-END -->`
    - Replace content between markers with enhanced format:
    - If no markers exist, append new section
@@ -421,7 +421,7 @@ You **MUST** consider the user input before proceeding (if not empty).
 
    ## CRITICAL CONSTRAINTS (from tech-stack.md)
    ⚠️ **BEFORE suggesting ANY library, framework, or pattern:**
-   1. Read `/memory/tech-stack.md`
+   1. Read `.specswarm/tech-stack.md`
    2. Verify your suggestion is APPROVED
    3. If PROHIBITED, suggest approved alternative
    4. If UNAPPROVED, warn user and require justification
@@ -433,7 +433,7 @@ You **MUST** consider the user input before proceeding (if not empty).
    - ❌ Class components → Use: Functional components
    - ❌ Redux → Use: React Router loaders/actions
 
-   **Violation = Constitution violation** (see `/memory/constitution.md` Principle 5)
+   **Violation = Constitution violation** (see `.specswarm/constitution.md` Principle 5)
 
    **Auto-Addition:** Non-conflicting new libraries will be auto-added during `/specswarm:plan`
    <!-- AUTO-GENERATED-END -->

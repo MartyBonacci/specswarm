@@ -414,7 +414,7 @@ Create comprehensive completion report with:
 
 **Session Information**:
 - Session ID: ${FEATURE_SESSION_ID}
-- Session File: /memory/feature-orchestrator/sessions/${FEATURE_SESSION_ID}.json
+- Session File: .specswarm/feature-orchestrator/sessions/${FEATURE_SESSION_ID}.json
 - Feature Branch: ${BRANCH_NAME}
 
 **Next Steps**:

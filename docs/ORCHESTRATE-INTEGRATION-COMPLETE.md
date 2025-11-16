@@ -38,7 +38,7 @@ The `/speclabs:orchestrate` command has been successfully upgraded from a Phase 
 ### After: Phase 1a Integration
 
 **New Capabilities**:
-- ✅ **State Management** - All sessions tracked in /memory/orchestrator/
+- ✅ **State Management** - All sessions tracked in .specswarm/orchestrator/
 - ✅ **Intelligent Retry** - Up to 3 automatic retry attempts
 - ✅ **Failure Analysis** - 9 failure types categorized
 - ✅ **Prompt Refinement** - Context-injected prompts on retry
@@ -222,7 +222,7 @@ state_update "$SESSION_ID" "metrics.total_time_seconds" "$ORCHESTRATION_DURATION
 
 All session state is persisted to:
 ```
-/memory/orchestrator/sessions/<session-id>/
+.specswarm/orchestrator/sessions/<session-id>/
 ├── state.json              # Session state (all data)
 ├── agent-output.log        # Agent output (optional)
 └── refined-prompt-1.md     # Refined prompts for retries
@@ -341,7 +341,7 @@ Retry Count: 0
 
 ⏱️  Total Duration: 5m 23s
 
-📁 Session Directory: /memory/orchestrator/sessions/orch-20251016-143022-123
+📁 Session Directory: .specswarm/orchestrator/sessions/orch-20251016-143022-123
 
 ✅ Orchestration Complete
 

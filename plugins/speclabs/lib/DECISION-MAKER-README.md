@@ -352,7 +352,7 @@ Next Steps:
    - Break the task into smaller subtasks
    - Abandon this approach
 
-Session directory: /memory/orchestrator/sessions/orch-20251016-123456-789
+Session directory: .specswarm/orchestrator/sessions/orch-20251016-123456-789
 
 ╚════════════════════════════════════════════════════════════╝
 ```

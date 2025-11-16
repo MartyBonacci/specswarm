@@ -18,9 +18,9 @@ $ARGUMENTS
 ## Goal
 
 Initialize a new project with SpecSwarm by creating three foundation files:
-1. `/memory/constitution.md` - Project governance and coding principles
-2. `/memory/tech-stack.md` - Approved technologies and prohibited patterns
-3. `/memory/quality-standards.md` - Quality gates and performance budgets
+1. `.specswarm/constitution.md` - Project governance and coding principles
+2. `.specswarm/tech-stack.md` - Approved technologies and prohibited patterns
+3. `.specswarm/quality-standards.md` - Quality gates and performance budgets
 
 This command streamlines project setup from 3 manual steps to a single interactive workflow.
 
@@ -36,22 +36,22 @@ echo ""
 
 EXISTING_FILES=()
 
-if [ -f "/memory/constitution.md" ]; then
+if [ -f ".specswarm/constitution.md" ]; then
   EXISTING_FILES+=("constitution.md")
 fi
 
-if [ -f "/memory/tech-stack.md" ]; then
+if [ -f ".specswarm/tech-stack.md" ]; then
   EXISTING_FILES+=("tech-stack.md")
 fi
 
-if [ -f "/memory/quality-standards.md" ]; then
+if [ -f ".specswarm/quality-standards.md" ]; then
   EXISTING_FILES+=("quality-standards.md")
 fi
 
 if [ ${#EXISTING_FILES[@]} -gt 0 ]; then
   echo "⚠️  Found existing configuration files:"
   for file in "${EXISTING_FILES[@]}"; do
-    echo "   - /memory/$file"
+    echo "   - .specswarm/$file"
   done
   echo ""
 fi
@@ -77,47 +77,71 @@ If `$EXISTING_ACTION` == "Cancel", exit with message.
 If `$EXISTING_ACTION` == "Backup and recreate", create backups:
 
 ```bash
-mkdir -p /memory/.backup/$(date +%Y%m%d-%H%M%S)
+mkdir -p .specswarm/.backup/$(date +%Y%m%d-%H%M%S)
 for file in "${EXISTING_FILES[@]}"; do
-  cp "/memory/$file" "/memory/.backup/$(date +%Y%m%d-%H%M%S)/$file"
+  cp ".specswarm/$file" ".specswarm/.backup/$(date +%Y%m%d-%H%M%S)/$file"
 done
-echo "✅ Backed up existing files to /memory/.backup/"
+echo "✅ Backed up existing files to .specswarm/.backup/"
 ```
 
 ---
 
 ### Step 2: Auto-Detect Technology Stack
 
-**Skip this step if `--skip-detection` flag is present or no package.json exists.**
+**Skip this step if `--skip-detection` flag is present.**
 
 ```bash
 echo "🔍 Auto-detecting technology stack..."
 echo ""
 
-# Check if package.json exists
-if [ ! -f "package.json" ]; then
-  echo "ℹ️  No package.json found - auto-detection disabled"
+# Source the multi-language detector
+PLUGIN_DIR="$(dirname "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")")"
+source "${PLUGIN_DIR}/lib/language-detector.sh"
+
+# Attempt to detect tech stack
+if detect_tech_stack "$(pwd)"; then
+  AUTO_DETECT=true
+
+  # Display detected stack
+  display_detected_stack
+else
+  # No config file detected - manual configuration mode
+  echo "ℹ️  No configuration file detected - auto-detection disabled"
   echo ""
-  echo "📋 Why package.json matters:"
-  echo "   • Enables automatic technology stack detection"
-  echo "   • Reduces setup time and manual configuration"
-  echo "   • Ensures accuracy by reading actual dependencies"
+  echo "📋 Supported configuration files:"
+  echo "   • package.json (JavaScript/TypeScript)"
+  echo "   • requirements.txt / pyproject.toml (Python)"
+  echo "   • composer.json (PHP)"
+  echo "   • go.mod (Go)"
+  echo "   • Gemfile (Ruby)"
+  echo "   • Cargo.toml (Rust)"
   echo ""
   echo "💡 Starting a new project?"
   echo ""
   echo "   Consider scaffolding your project first for automatic setup:"
   echo ""
-  echo "   # React + Vite"
-  echo "   npm create vite@latest . -- --template react-ts"
+  echo "   # JavaScript/TypeScript"
+  echo "   npm create vite@latest . -- --template react-ts  # React + Vite"
+  echo "   npx create-next-app@latest .                     # Next.js"
+  echo "   npm create astro@latest .                        # Astro"
+  echo "   npm create vue@latest .                          # Vue"
   echo ""
-  echo "   # Next.js"
-  echo "   npx create-next-app@latest ."
+  echo "   # Python"
+  echo "   pip install flask && flask init                  # Flask"
+  echo "   django-admin startproject myproject .            # Django"
+  echo "   pip install fastapi && touch main.py             # FastAPI"
   echo ""
-  echo "   # Astro"
-  echo "   npm create astro@latest ."
+  echo "   # PHP"
+  echo "   composer create-project laravel/laravel .        # Laravel"
   echo ""
-  echo "   # Vue"
-  echo "   npm create vue@latest ."
+  echo "   # Go"
+  echo "   go mod init github.com/username/project          # Go"
+  echo ""
+  echo "   # Ruby"
+  echo "   rails new . --skip-bundle                        # Rails"
+  echo ""
+  echo "   # Rust"
+  echo "   cargo init                                        # Rust"
   echo ""
   echo "   Then re-run /specswarm:init for automatic detection."
   echo ""
@@ -126,100 +150,6 @@ if [ ! -f "package.json" ]; then
   read -p "Press Enter to continue with manual setup, or Ctrl+C to scaffold first..."
   echo ""
   AUTO_DETECT=false
-else
-  AUTO_DETECT=true
-
-  # Parse package.json
-  PACKAGE_JSON=$(cat package.json)
-
-  # Detect framework
-  if echo "$PACKAGE_JSON" | jq -e '.dependencies.react' > /dev/null 2>&1; then
-    FRAMEWORK="React"
-    FRAMEWORK_VERSION=$(echo "$PACKAGE_JSON" | jq -r '.dependencies.react' | sed 's/[\^~]//')
-  elif echo "$PACKAGE_JSON" | jq -e '.dependencies.vue' > /dev/null 2>&1; then
-    FRAMEWORK="Vue"
-    FRAMEWORK_VERSION=$(echo "$PACKAGE_JSON" | jq -r '.dependencies.vue' | sed 's/[\^~]//')
-  elif echo "$PACKAGE_JSON" | jq -e '.dependencies.@angular/core' > /dev/null 2>&1; then
-    FRAMEWORK="Angular"
-    FRAMEWORK_VERSION=$(echo "$PACKAGE_JSON" | jq -r '.dependencies."@angular/core"' | sed 's/[\^~]//')
-  elif echo "$PACKAGE_JSON" | jq -e '.dependencies.next' > /dev/null 2>&1; then
-    FRAMEWORK="Next.js"
-    FRAMEWORK_VERSION=$(echo "$PACKAGE_JSON" | jq -r '.dependencies.next' | sed 's/[\^~]//')
-  else
-    FRAMEWORK="Node.js"
-    FRAMEWORK_VERSION=$(node --version 2>/dev/null || echo "unknown")
-  fi
-
-  # Detect TypeScript
-  if echo "$PACKAGE_JSON" | jq -e '.devDependencies.typescript' > /dev/null 2>&1; then
-    LANGUAGE="TypeScript"
-    LANGUAGE_VERSION=$(echo "$PACKAGE_JSON" | jq -r '.devDependencies.typescript' | sed 's/[\^~]//')
-  else
-    LANGUAGE="JavaScript"
-    LANGUAGE_VERSION="ES2020+"
-  fi
-
-  # Detect build tool
-  if echo "$PACKAGE_JSON" | jq -e '.devDependencies.vite' > /dev/null 2>&1; then
-    BUILD_TOOL="Vite"
-    BUILD_TOOL_VERSION=$(echo "$PACKAGE_JSON" | jq -r '.devDependencies.vite' | sed 's/[\^~]//')
-  elif echo "$PACKAGE_JSON" | jq -e '.devDependencies.webpack' > /dev/null 2>&1; then
-    BUILD_TOOL="Webpack"
-    BUILD_TOOL_VERSION=$(echo "$PACKAGE_JSON" | jq -r '.devDependencies.webpack' | sed 's/[\^~]//')
-  elif echo "$PACKAGE_JSON" | jq -e '.dependencies.next' > /dev/null 2>&1; then
-    BUILD_TOOL="Next.js (built-in)"
-    BUILD_TOOL_VERSION="$FRAMEWORK_VERSION"
-  else
-    BUILD_TOOL="None detected"
-    BUILD_TOOL_VERSION=""
-  fi
-
-  # Detect state management
-  STATE_MGMT=""
-  if echo "$PACKAGE_JSON" | jq -e '.dependencies.zustand' > /dev/null 2>&1; then
-    STATE_MGMT="Zustand $(echo "$PACKAGE_JSON" | jq -r '.dependencies.zustand' | sed 's/[\^~]//')"
-  elif echo "$PACKAGE_JSON" | jq -e '.dependencies."@reduxjs/toolkit"' > /dev/null 2>&1; then
-    STATE_MGMT="Redux Toolkit $(echo "$PACKAGE_JSON" | jq -r '.dependencies."@reduxjs/toolkit"' | sed 's/[\^~]//')"
-  elif echo "$PACKAGE_JSON" | jq -e '.dependencies.jotai' > /dev/null 2>&1; then
-    STATE_MGMT="Jotai $(echo "$PACKAGE_JSON" | jq -r '.dependencies.jotai' | sed 's/[\^~]//')"
-  fi
-
-  # Detect styling
-  STYLING=""
-  if echo "$PACKAGE_JSON" | jq -e '.devDependencies.tailwindcss' > /dev/null 2>&1; then
-    STYLING="Tailwind CSS $(echo "$PACKAGE_JSON" | jq -r '.devDependencies.tailwindcss' | sed 's/[\^~]//')"
-  elif echo "$PACKAGE_JSON" | jq -e '.dependencies."styled-components"' > /dev/null 2>&1; then
-    STYLING="Styled Components $(echo "$PACKAGE_JSON" | jq -r '.dependencies."styled-components"' | sed 's/[\^~]//')"
-  elif echo "$PACKAGE_JSON" | jq -e '.dependencies."@emotion/react"' > /dev/null 2>&1; then
-    STYLING="Emotion $(echo "$PACKAGE_JSON" | jq -r '.dependencies."@emotion/react"' | sed 's/[\^~]//')"
-  fi
-
-  # Detect testing frameworks
-  UNIT_TEST=""
-  if echo "$PACKAGE_JSON" | jq -e '.devDependencies.vitest' > /dev/null 2>&1; then
-    UNIT_TEST="Vitest $(echo "$PACKAGE_JSON" | jq -r '.devDependencies.vitest' | sed 's/[\^~]//')"
-  elif echo "$PACKAGE_JSON" | jq -e '.devDependencies.jest' > /dev/null 2>&1; then
-    UNIT_TEST="Jest $(echo "$PACKAGE_JSON" | jq -r '.devDependencies.jest' | sed 's/[\^~]//')"
-  fi
-
-  E2E_TEST=""
-  if echo "$PACKAGE_JSON" | jq -e '.devDependencies.playwright' > /dev/null 2>&1; then
-    E2E_TEST="Playwright $(echo "$PACKAGE_JSON" | jq -r '.devDependencies.playwright' | sed 's/[\^~]//')"
-  elif echo "$PACKAGE_JSON" | jq -e '.devDependencies.cypress' > /dev/null 2>&1; then
-    E2E_TEST="Cypress $(echo "$PACKAGE_JSON" | jq -r '.devDependencies.cypress' | sed 's/[\^~]//')"
-  fi
-
-  # Display detected stack
-  echo "📦 Detected Technology Stack:"
-  echo ""
-  echo "  Framework:     $FRAMEWORK $FRAMEWORK_VERSION"
-  echo "  Language:      $LANGUAGE $LANGUAGE_VERSION"
-  echo "  Build Tool:    $BUILD_TOOL $BUILD_TOOL_VERSION"
-  [ -n "$STATE_MGMT" ] && echo "  State:         $STATE_MGMT"
-  [ -n "$STYLING" ] && echo "  Styling:       $STYLING"
-  [ -n "$UNIT_TEST" ] && echo "  Unit Tests:    $UNIT_TEST"
-  [ -n "$E2E_TEST" ] && echo "  E2E Tests:     $E2E_TEST"
-  echo ""
 fi
 ```
 
@@ -319,12 +249,12 @@ If `$PRINCIPLES_CHOICE` == "Let me provide custom":
 
 ---
 
-### Step 4: Create /memory/constitution.md
+### Step 4: Create .specswarm/constitution.md
 
 Use the **SlashCommand** tool to execute the existing constitution command with the gathered information:
 
 ```bash
-echo "📝 Creating /memory/constitution.md..."
+echo "📝 Creating .specswarm/constitution.md..."
 
 # If custom principles provided, pass them to constitution command
 if [ "$PRINCIPLES_CHOICE" = "custom" ]; then
@@ -335,7 +265,7 @@ else
   # /specswarm:constitution (will use defaults)
 fi
 
-echo "✅ Created /memory/constitution.md"
+echo "✅ Created .specswarm/constitution.md"
 ```
 
 Use the **SlashCommand** tool:
@@ -345,10 +275,10 @@ Use the **SlashCommand** tool:
 
 ---
 
-### Step 5: Create /memory/tech-stack.md
+### Step 5: Create .specswarm/tech-stack.md
 
 ```bash
-echo "📝 Creating /memory/tech-stack.md..."
+echo "📝 Creating .specswarm/tech-stack.md..."
 
 # Read template
 TEMPLATE=$(cat plugins/specswarm/templates/tech-stack.template.md)
@@ -431,17 +361,17 @@ OUTPUT="${OUTPUT//\[NOTES_SECTION\]/$NOTES_SECTION}"
 
 # Write file
 mkdir -p /memory
-echo "$OUTPUT" > /memory/tech-stack.md
+echo "$OUTPUT" > .specswarm/tech-stack.md
 
-echo "✅ Created /memory/tech-stack.md"
+echo "✅ Created .specswarm/tech-stack.md"
 ```
 
 ---
 
-### Step 6: Create /memory/quality-standards.md
+### Step 6: Create .specswarm/quality-standards.md
 
 ```bash
-echo "📝 Creating /memory/quality-standards.md..."
+echo "📝 Creating .specswarm/quality-standards.md..."
 
 # Read template
 TEMPLATE=$(cat plugins/specswarm/templates/quality-standards.template.md)
@@ -527,9 +457,9 @@ NOTES="- Quality level: $QUALITY_LEVEL
 OUTPUT="${OUTPUT//\[NOTES_SECTION\]/$NOTES}"
 
 # Write file
-echo "$OUTPUT" > /memory/quality-standards.md
+echo "$OUTPUT" > .specswarm/quality-standards.md
 
-echo "✅ Created /memory/quality-standards.md"
+echo "✅ Created .specswarm/quality-standards.md"
 ```
 
 ---
@@ -543,9 +473,9 @@ echo "         ✅ PROJECT INITIALIZATION COMPLETE"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 echo "📁 Created Configuration Files:"
-echo "   ✓ /memory/constitution.md      (governance & principles)"
-echo "   ✓ /memory/tech-stack.md        (approved technologies)"
-echo "   ✓ /memory/quality-standards.md (quality gates)"
+echo "   ✓ .specswarm/constitution.md      (governance & principles)"
+echo "   ✓ .specswarm/tech-stack.md        (approved technologies)"
+echo "   ✓ .specswarm/quality-standards.md (quality gates)"
 echo ""
 echo "📊 Configuration Summary:"
 echo "   Project:        $PROJECT_NAME"
@@ -557,7 +487,7 @@ echo "   Min Coverage:   $MIN_COVERAGE%"
 echo ""
 echo "📚 Next Steps:"
 echo ""
-echo "   1. Review the created files in /memory/"
+echo "   1. Review the created files in .specswarm/"
 echo "   2. Customize as needed for your team"
 echo "   3. Build your first feature:"
 echo "      /specswarm:build \"your feature description\""
@@ -592,7 +522,7 @@ Detection is **best-effort** - users can always modify or override detected valu
 
 If configuration files already exist:
 - **Update**: Merges new values with existing (preserves custom edits)
-- **Backup**: Saves to `/memory/.backup/[timestamp]/` before recreating
+- **Backup**: Saves to `.specswarm/.backup/[timestamp]/` before recreating
 - **Cancel**: Aborts initialization, keeps existing files
 
 ### Template Customization

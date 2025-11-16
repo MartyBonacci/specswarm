@@ -9,7 +9,7 @@ The State Manager handles orchestration session state, persistence, and resume f
 ## Features
 
 - ✅ Create and track orchestration sessions
-- ✅ Persist state to disk (`/memory/orchestrator/`)
+- ✅ Persist state to disk (`.specswarm/orchestrator/`)
 - ✅ Resume sessions after failures (retry logic)
 - ✅ Atomic state updates (no data loss)
 - ✅ State validation and error handling
@@ -438,7 +438,7 @@ Each session has the following JSON structure:
 
 Sessions are stored in:
 ```
-/memory/orchestrator/sessions/<session-id>/
+.specswarm/orchestrator/sessions/<session-id>/
 ├── state.json              # Session state
 ├── agent-output.log        # Agent output (optional)
 └── ... (other artifacts)
@@ -652,10 +652,10 @@ Run periodic cleanup:
 
 ### Backup
 
-Session state is already on disk in `/memory/orchestrator/`. For additional backup:
+Session state is already on disk in `.specswarm/orchestrator/`. For additional backup:
 ```bash
 # Backup all sessions
-tar -czf orchestrator-sessions-backup.tar.gz /memory/orchestrator/sessions/
+tar -czf orchestrator-sessions-backup.tar.gz .specswarm/orchestrator/sessions/
 ```
 
 ---

@@ -323,4 +323,4 @@ fi
 - Phase duration breakdowns
 - Session history and trends
 
-**Data Source**: Orchestration session data stored in `/memory/orchestrator/sessions/` and `/memory/feature-orchestrator/sessions/`
+**Data Source**: Orchestration session data stored in `.specswarm/orchestrator/sessions/` and `.specswarm/feature-orchestrator/sessions/`

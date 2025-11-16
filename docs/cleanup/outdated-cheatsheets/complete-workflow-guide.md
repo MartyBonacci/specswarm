@@ -234,7 +234,7 @@ claude plugin install speckit     # Original methodology
 # Output:
 🎯 Smart Integration: SpecSwarm detected
 ✓ Tech stack enforcement enabled
-✓ Loading tech stack: /memory/tech-stack.md
+✓ Loading tech stack: .specswarm/tech-stack.md
 
 [... regression-test-first workflow ...]
 
@@ -287,7 +287,7 @@ Phase 2: Implementation (5 tasks) - Parallel Batch
 🎯 Smart Integration Detected
 ✓ SpecSwarm installed: Tech stack enforcement enabled
 ✓ SpecTest installed: Parallel execution enabled
-✓ Loading tech stack: /memory/tech-stack.md
+✓ Loading tech stack: .specswarm/tech-stack.md
 
 [... impact analysis with tech validation ...]
 

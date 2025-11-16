@@ -35,7 +35,7 @@ You **MUST** consider the user input before proceeding (if not empty).
 2. **Load design documents**: Read from FEATURE_DIR:
    - **Required**: plan.md (tech stack, libraries, structure), spec.md (user stories with priorities)
    - **Optional**: data-model.md (entities), contracts/ (API endpoints), research.md (decisions), quickstart.md (test scenarios)
-   - **Load `/memory/tech-stack.md` for validation** (if exists)
+   - **Load `.specswarm/tech-stack.md` for validation** (if exists)
    - Note: Not all projects have all documents. Generate tasks based on what's available.
 
 <!-- ========== TECH STACK VALIDATION (SpecSwarm Enhancement) ========== -->
@@ -67,7 +67,7 @@ You **MUST** consider the user input before proceeding (if not empty).
         if grep -q "**Cannot proceed**" "${FEATURE_DIR}/plan.md"; then
           ERROR "Prohibited technologies found in plan.md"
           MESSAGE "Remove prohibited technologies from plan.md Technical Context"
-          MESSAGE "See /memory/tech-stack.md for approved alternatives"
+          MESSAGE "See .specswarm/tech-stack.md for approved alternatives"
           HALT
         fi
       fi
@@ -81,11 +81,11 @@ You **MUST** consider the user input before proceeding (if not empty).
         TASK_DESC=$(echo "$TASK" | grep -oE 'Install.*|Add.*|Use.*|Import.*')
 
         # Check against prohibited list
-        for PROHIBITED in $(grep "❌" "${REPO_ROOT}/memory/tech-stack.md" | sed 's/.*❌ \([^ ]*\).*/\1/'); do
+        for PROHIBITED in $(grep "❌" "${REPO_ROOT}.specswarm/tech-stack.md" | sed 's/.*❌ \([^ ]*\).*/\1/'); do
           if echo "$TASK_DESC" | grep -qi "$PROHIBITED"; then
             WARNING "Task references prohibited technology: $PROHIBITED"
             MESSAGE "Task: $TASK_DESC"
-            APPROVED_ALT=$(grep "❌.*${PROHIBITED}" "${REPO_ROOT}/memory/tech-stack.md" | sed 's/.*use \(.*\) instead.*/\1/')
+            APPROVED_ALT=$(grep "❌.*${PROHIBITED}" "${REPO_ROOT}.specswarm/tech-stack.md" | sed 's/.*use \(.*\) instead.*/\1/')
             MESSAGE "Replace with approved alternative: $APPROVED_ALT"
             # Auto-correct task description
             TASK_DESC=$(echo "$TASK_DESC" | sed -i "s/${PROHIBITED}/${APPROVED_ALT}/gi")
@@ -93,7 +93,7 @@ You **MUST** consider the user input before proceeding (if not empty).
         done
 
         # Check against unapproved list (warn but allow)
-        if ! grep -qi "$TECH_MENTIONED" "${REPO_ROOT}/memory/tech-stack.md" 2>/dev/null; then
+        if ! grep -qi "$TECH_MENTIONED" "${REPO_ROOT}.specswarm/tech-stack.md" 2>/dev/null; then
           INFO "Task mentions unapproved technology: $TECH_MENTIONED"
           INFO "This will be validated during /specswarm:implement"
         fi
@@ -104,7 +104,7 @@ You **MUST** consider the user input before proceeding (if not empty).
       Add validation summary to tasks.md header:
       ```markdown
       <!-- Tech Stack Validation: PASSED -->
-      <!-- Validated against: /memory/tech-stack.md v{version} -->
+      <!-- Validated against: .specswarm/tech-stack.md v{version} -->
       <!-- No prohibited technologies found -->
       <!-- {N} unapproved technologies require runtime validation -->
       ```

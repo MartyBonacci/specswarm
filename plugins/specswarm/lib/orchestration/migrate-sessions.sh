@@ -2,11 +2,11 @@
 # Migrate sessions from old SpecLabs paths to new SpecSwarm structure
 
 OLD_PATHS=(
-  "/memory/orchestrator/sessions"
-  "/memory/feature-orchestrator/sessions"
+  ".specswarm/orchestrator/sessions"
+  ".specswarm/feature-orchestrator/sessions"
 )
 
-NEW_PATH="/memory/specswarm/orchestration/sessions"
+NEW_PATH=".specswarm/specswarm/orchestration/sessions"
 
 mkdir -p "$NEW_PATH"
 

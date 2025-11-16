@@ -1,4 +1,4 @@
-# SpecSwarm v2.1.2
+# SpecSwarm v3.2.0
 
 **Complete Software Development Toolkit**
 
@@ -8,16 +8,18 @@ Build, fix, maintain, and analyze your entire software project with one unified 
 
 ## Overview
 
-SpecSwarm is a comprehensive plugin that provides everything you need for the complete software development lifecycle:
+SpecSwarm is a comprehensive plugin that provides everything you need for the complete software development lifecycle across **6 languages** (JavaScript/TypeScript, Python, PHP, Go, Ruby, Rust):
 
 - ✅ **Spec-Driven Development** - From specification to implementation
+- 🌐 **Multi-Language Support** - Auto-detection for 6 languages and frameworks
 - 🐛 **Bug & Issue Management** - Systematic fixing with regression testing
 - 🔧 **Code Maintenance** - Refactoring and modernization
 - 📊 **Quality Assurance** - Automated testing and validation
 - 🚀 **Performance Monitoring** - Bundle size tracking and budgets
 - 🏗️ **Architecture Validation** - SSR patterns, tech stack compliance
+- 📖 **Context-Aware** - Reads README.md for better project understanding
 
-**18 Commands** | **8 Utilities** | **Production Ready**
+**32 Commands** | **4 High-Level** + **28 Granular** | **Production Ready**
 
 ---
 
@@ -64,7 +66,7 @@ SpecSwarm is a comprehensive plugin that provides everything you need for the co
 
 Before using SpecSwarm commands, establish your project foundation:
 
-1. **Create Tech Stack Definition** (`/memory/tech-stack.md`):
+1. **Create Tech Stack Definition** (`.specswarm/tech-stack.md`):
    ```markdown
    ## Core Technologies
    - React 19.x
@@ -79,7 +81,7 @@ Before using SpecSwarm commands, establish your project foundation:
 
    This prevents 95% of technology drift across features.
 
-2. **Set Quality Standards** (`/memory/quality-standards.md`):
+2. **Set Quality Standards** (`.specswarm/quality-standards.md`):
    ```yaml
    min_test_coverage: 80
    min_quality_score: 85
@@ -186,7 +188,7 @@ Automated quality scoring across 6 dimensions:
 Prevents technology drift across features:
 
 ```yaml
-# /memory/tech-stack.md
+# .specswarm/tech-stack.md
 Core Technologies:
   - TypeScript 5.x
   - React Router v7
@@ -243,7 +245,7 @@ Automatic performance tracking:
 
 ### Quality Standards
 
-Enable quality gates by creating `/memory/quality-standards.md`:
+Enable quality gates by creating `.specswarm/quality-standards.md`:
 
 ```yaml
 # Quality Gates
@@ -259,7 +261,7 @@ max_initial_load: 1000    # KB initial load
 
 ### Tech Stack
 
-Define your stack in `/memory/tech-stack.md`:
+Define your stack in `.specswarm/tech-stack.md`:
 
 ```markdown
 ## Core Technologies
@@ -310,7 +312,7 @@ See [SpecLabs](../speclabs/README.md) for experimental features.
 
 ### Quality Validation Not Running
 
-Create `/memory/quality-standards.md` to enable quality gates.
+Create `.specswarm/quality-standards.md` to enable quality gates.
 
 ### SSR Validation Fails
 

@@ -48,7 +48,7 @@ Switched to a new branch 'bugfix/042-login-timeout'
 🎯 Smart Integration Detected
 ✓ SpecSwarm installed: Tech stack enforcement enabled
 ✓ SpecTest installed: Parallel execution enabled
-✓ Loading tech stack: /memory/tech-stack.md
+✓ Loading tech stack: .specswarm/tech-stack.md
 
 📋 Creating Bugfix Specification
 
@@ -157,7 +157,7 @@ login attempts. Started happening after recent database migration.
 
 ## Tech Stack Compliance
 
-**Tech Stack File**: /memory/tech-stack.md
+**Tech Stack File**: .specswarm/tech-stack.md
 **Validation Status**: Pending
 **Expected**: TypeScript, PostgreSQL (existing stack)
 
@@ -404,7 +404,7 @@ describe('Bug 042: Login Timeout Regression Test', () => {
 ```
 🎣 Pre-Bugfix Hook
 ✓ Checking repository status...
-✓ Loading tech stack: /memory/tech-stack.md
+✓ Loading tech stack: .specswarm/tech-stack.md
 ✓ Tech stack validation enabled
 ✓ Metrics initialized
 
@@ -569,7 +569,7 @@ Duration: 1h 12min
 ✓ Performance validated under load
 ✓ Tech stack compliant (PostgreSQL, TypeScript)
 
-📊 Metrics saved: /memory/workflow-metrics.json
+📊 Metrics saved: .specswarm/workflow-metrics.json
 
 ─────────────────────────────────────────────────
 

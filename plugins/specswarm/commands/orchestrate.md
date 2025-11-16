@@ -31,7 +31,7 @@ BENEFITS:
 - Comprehensive metrics on every run
 - Rapid refinement and improvement
 
-All session state persisted to: /memory/orchestrator/sessions/
+All session state persisted to: .specswarm/orchestrator/sessions/
 -->
 
 ## User Input
@@ -677,7 +677,7 @@ echo ""
 ✅ Escalation handling when needed
 ✅ Metrics tracked and reported
 ✅ Orchestration report generated with Phase 1a data
-✅ Session state persisted to /memory/orchestrator/
+✅ Session state persisted to .specswarm/orchestrator/
 
 ---
 
@@ -718,7 +718,7 @@ echo ""
 - ✅ **Failure Analysis** - 9 failure types categorized
 - ✅ **Escalation Handling** - Automatic human escalation when needed
 - ✅ **Metrics Tracking** - Session analytics and metrics
-- ✅ **State Persistence** - All state saved to /memory/orchestrator/
+- ✅ **State Persistence** - All state saved to .specswarm/orchestrator/
 - ✅ **Full Automation** - No manual steps during orchestration
 
 **Key Phase 1b Improvements**:

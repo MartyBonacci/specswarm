@@ -333,7 +333,7 @@ save_quality_metrics() {
   local BROWSER_RESULT="$7"
 
   local REPO_ROOT="${8:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
-  local METRICS_FILE="${REPO_ROOT}/memory/metrics.json"
+  local METRICS_FILE="${REPO_ROOT}.specswarm/metrics.json"
 
   # Create metrics file if it doesn't exist
   if [ ! -f "$METRICS_FILE" ]; then

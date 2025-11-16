@@ -589,7 +589,7 @@ Result:
 
 Feature sessions are stored in:
 ```
-/home/marty/code-projects/specswarm/memory/orchestrator/features/
+/home/marty/code-projects/specswarm.specswarm/orchestrator/features/
 └── feature_20251016_143022/
     └── feature_20251016_143022.json      # Session state
     └── feature_20251016_143022_report.md # Generated report
@@ -597,7 +597,7 @@ Feature sessions are stored in:
 
 Task sessions (Phase 1b) are stored in:
 ```
-/home/marty/code-projects/specswarm/memory/orchestrator/sessions/
+/home/marty/code-projects/specswarm.specswarm/orchestrator/sessions/
 └── orch-20251016-143100-123/
     └── state.json                        # Task session state
 ```
@@ -1038,8 +1038,8 @@ Phase 2 builds on the foundation of:
 
 ### Session Data
 
-- `/memory/orchestrator/features/` - Feature sessions
-- `/memory/orchestrator/sessions/` - Task sessions (Phase 1b)
+- `.specswarm/orchestrator/features/` - Feature sessions
+- `.specswarm/orchestrator/sessions/` - Task sessions (Phase 1b)
 
 ---
 

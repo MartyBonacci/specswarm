@@ -37,7 +37,7 @@ diagnostic-results-*.json
 # Uncomment to exclude memory files from version control
 # (only do this if memory is project-specific, not shared)
 # memory/
-# .specswarm/memory/
+# .specswarm.specswarm/
 
 # ============================================================
 # Build Artifacts (project-specific)

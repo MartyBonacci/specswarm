@@ -25,7 +25,7 @@
 - ✅ Drift prevention effectiveness
 - 📊 Overhead of tech enforcement
 - 💻 Code quality (compare with Test 1)
-- 📁 `/memory/tech-stack.md` accuracy
+- 📁 `.specswarm/tech-stack.md` accuracy
 
 ---
 
@@ -235,7 +235,7 @@ git commit -m "Initial project definition for Tweeter"
 1. Read your README.md
 2. **AUTO-DETECT tech stack** from README
 3. Create constitution with project standards
-4. **Create `/memory/tech-stack.md`** with detected technologies
+4. **Create `.specswarm/tech-stack.md`** with detected technologies
 
 **Expected Outcome:**
 ```
@@ -249,8 +249,8 @@ git commit -m "Initial project definition for Tweeter"
   - Storage: Cloudinary
   - Pattern: Functional programming (not OOP)
 
-✓ Constitution created: /memory/constitution.md
-✓ Tech stack file created: /memory/tech-stack.md
+✓ Constitution created: .specswarm/constitution.md
+✓ Tech stack file created: .specswarm/tech-stack.md
 ✓ Project mission defined
 ✓ Core principles established (including tech enforcement)
 ✓ Development standards set
@@ -262,7 +262,7 @@ git commit -m "Initial project definition for Tweeter"
 - ✅ Programmatic routing (not file-based) captured?
 - ✅ httpOnly cookie auth pattern captured?
 
-**Review `/memory/tech-stack.md`:**
+**Review `.specswarm/tech-stack.md`:**
 ```bash
 cat memory/tech-stack.md
 ```
@@ -777,7 +777,7 @@ grep -r "cloudinary" server/ package.json
 # Expected: Found
 ```
 
-**Review `/memory/tech-stack.md`:**
+**Review `.specswarm/tech-stack.md`:**
 ```bash
 cat memory/tech-stack.md
 ```
@@ -825,7 +825,7 @@ cat memory/tech-stack.md
 - Manual corrections needed: _____
 
 **Tech Stack File Quality:**
-- `/memory/tech-stack.md` accuracy: ⭐⭐⭐⭐⭐
+- `.specswarm/tech-stack.md` accuracy: ⭐⭐⭐⭐⭐
 - Completeness: ⭐⭐⭐⭐⭐
 - Clarity: ⭐⭐⭐⭐⭐
 
@@ -978,7 +978,7 @@ cat memory/tech-stack.md
 - [ ] End-to-end user flow works
 - [ ] Tech stack auto-detected accurately
 - [ ] Zero tech violations detected
-- [ ] `/memory/tech-stack.md` accurate and complete
+- [ ] `.specswarm/tech-stack.md` accurate and complete
 - [ ] All metrics collected
 - [ ] Comparison with Test 1 documented
 - [ ] Ready for Test 3 (SpecTest)

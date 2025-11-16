@@ -26,7 +26,7 @@ detect_chain_bugs() {
     # 1. Compare test results
     local tests_before tests_after
     tests_before=$(git show "$before_commit:memory/metrics.json" 2>/dev/null | grep -o '"tests_passing":[0-9]*' | grep -o '[0-9]*' || echo "0")
-    tests_after=$(grep -o '"tests_passing":[0-9]*' "$repo_root/memory/metrics.json" 2>/dev/null | grep -o '[0-9]*' || echo "0")
+    tests_after=$(grep -o '"tests_passing":[0-9]*' "$repo_root.specswarm/metrics.json" 2>/dev/null | grep -o '[0-9]*' || echo "0")
 
     # 2. Run SSR validator
     local ssr_issues=0

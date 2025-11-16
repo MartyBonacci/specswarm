@@ -720,7 +720,7 @@ fi
 
 **4. Metrics Tracking**
 ```bash
-# Record in /memory/metrics.json
+# Record in .specswarm/metrics.json
 {
   "git_workflow": {
     "merge_time": "2025-10-14T15:30:00Z",

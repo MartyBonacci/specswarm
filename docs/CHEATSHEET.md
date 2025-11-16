@@ -1,19 +1,23 @@
 # SpecSwarm Quick Reference Cheat Sheet
 
-**Fast reference for common SpecSwarm and SpecLabs commands and workflows.**
+**Fast reference for common SpecSwarm commands and workflows.**
+
+**Version**: v3.2.0 | **Commands**: 32 total | **Languages**: 6 supported
 
 ---
 
 ## Quick Installation
 
 ```bash
-# Install plugins
+# Install SpecSwarm (unified plugin - includes all functionality)
 /plugin https://github.com/MartyBonacci/specswarm
-/plugin install specswarm speclabs
+/plugin install specswarm
 
 # Verify
 /plugin list
-# Should show: specswarm v2.1.2, speclabs v2.7.3
+# Should show: specswarm v3.2.0
+
+# Note: SpecLabs is deprecated - all functionality now in SpecSwarm
 ```
 
 ---
@@ -25,8 +29,8 @@
 │                    PROJECT SETUP (Once)                     │
 ├─────────────────────────────────────────────────────────────┤
 │  /init                                                      │
-│  Create /memory/tech-stack.md                              │
-│  Create /memory/quality-standards.md                       │
+│  Create .specswarm/tech-stack.md                              │
+│  Create .specswarm/quality-standards.md                       │
 │  /specswarm:constitution                                    │
 └─────────────────────────────────────────────────────────────┘
                             ↓
@@ -195,7 +199,7 @@ Steps:
 
 ## Configuration Templates
 
-### /memory/tech-stack.md Template
+### .specswarm/tech-stack.md Template
 
 ```markdown
 # Tech Stack v1.0.0
@@ -216,7 +220,7 @@ Steps:
 - ❌ PropTypes (use TypeScript)
 ```
 
-### /memory/quality-standards.md Template
+### .specswarm/quality-standards.md Template
 
 ```yaml
 # Quality Gates
@@ -276,7 +280,7 @@ main
 # When complete:
 /specswarm:complete
 # → Merges 015-feature-branch → sprint-3
-# → v2.1.2 shows merge plan BEFORE executing
+# → v3.2.0 shows merge plan BEFORE executing
 ```
 
 **Important**: Always check out parent branch BEFORE starting feature!
@@ -324,7 +328,7 @@ Score Breakdown:
 
 ```bash
 # Fix: Update tech-stack.md
-# Edit /memory/tech-stack.md
+# Edit .specswarm/tech-stack.md
 # Add approved technology or use alternative
 ```
 
@@ -355,10 +359,10 @@ cat features/015-*/spec.md | grep parent_branch
 ### ❌ "Orchestration pauses mid-execution"
 
 ```bash
-# Fix: Update to v2.7.3+
-/plugin update speclabs
+# Fix: Update to v3.2.0+
+/plugin update specswarm
 
-# v2.7.3 eliminated all mid-phase pausing
+# v3.0+ eliminated all mid-phase pausing (autonomous execution)
 ```
 
 ---
@@ -408,18 +412,23 @@ project-root/
 ## Version Information
 
 This cheat sheet is for:
-- **SpecSwarm**: v2.1.2 (Parent branch safety)
-- **SpecLabs**: v2.7.3 (Silent autonomous execution)
+- **SpecSwarm**: v3.2.0
+  - Multi-language support (Python, PHP, Go, Ruby, Rust)
+  - README.md context reading
+  - 32 commands total (4 high-level + 28 granular)
+  - Autonomous execution (no mid-phase pausing)
+  - Parent branch safety
+
+**Note**: SpecLabs is deprecated - all functionality consolidated into SpecSwarm v3.0+
 
 Check your version:
 ```bash
 /plugin list
 ```
 
-Update plugins:
+Update plugin:
 ```bash
 /plugin update specswarm
-/plugin update speclabs
 ```
 
 ---

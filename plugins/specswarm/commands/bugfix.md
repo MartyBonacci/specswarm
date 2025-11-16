@@ -75,8 +75,8 @@ if [ "$ENABLE_HOOKS" = "true" ]; then
 
   # Load tech stack (if SpecSwarm also installed)
   if [ "$SPECSWARM_INSTALLED" = "true" ]; then
-    echo "✓ Loading tech stack: /memory/tech-stack.md"
-    TECH_STACK_EXISTS=$([ -f "/memory/tech-stack.md" ] && echo "true" || echo "false")
+    echo "✓ Loading tech stack: .specswarm/tech-stack.md"
+    TECH_STACK_EXISTS=$([ -f ".specswarm/tech-stack.md" ] && echo "true" || echo "false")
     if [ "$TECH_STACK_EXISTS" = "true" ]; then
       echo "✓ Tech stack validation enabled"
     fi
@@ -254,7 +254,7 @@ Before documenting the root cause, you MUST:
 
 [If SpecSwarm installed, validate solution against tech stack]
 
-**Tech Stack File**: /memory/tech-stack.md
+**Tech Stack File**: .specswarm/tech-stack.md
 **Validation Status**: [Pending/Compliant/Non-Compliant]
 
 ---
@@ -709,7 +709,7 @@ Phase 2: Bug Fix Implementation
 T003: Implement Fix
   [execute task]
   🔍 Tech Stack Validation
-  ✓ Loading tech stack: /memory/tech-stack.md
+  ✓ Loading tech stack: .specswarm/tech-stack.md
   ✓ Validating fix against tech stack
   ✓ Compliant: All changes follow tech stack
 T004: Verify Test Passes
@@ -764,7 +764,7 @@ if [ "$ENABLE_HOOKS" = "true" ]; then
   fi
 
   # Update metrics file
-  METRICS_FILE="/memory/workflow-metrics.json"
+  METRICS_FILE=".specswarm/workflow-metrics.json"
   # [Update JSON with bugfix metrics]
   echo "📊 Metrics saved: ${METRICS_FILE}"
 
@@ -783,7 +783,7 @@ fi
 **YOU MUST NOW validate quality impact using these steps:**
 
 1. **Check if quality standards exist** using the Read tool:
-   - Try to read `${REPO_ROOT}/memory/quality-standards.md`
+   - Try to read `${REPO_ROOT}.specswarm/quality-standards.md`
    - If file doesn't exist: Skip quality validation, go to Final Output
    - If file exists: Continue with validation
 
@@ -815,7 +815,7 @@ fi
 3. **Compare before/after quality:**
 
    a. **Load previous quality score** from metrics.json:
-      - Read `${REPO_ROOT}/memory/metrics.json`
+      - Read `${REPO_ROOT}.specswarm/metrics.json`
       - Find most recent quality score before this bugfix
       - Store as BEFORE_SCORE
 
@@ -874,7 +874,7 @@ fi
       - Continue to Final Output
 
 6. **Save quality metrics:**
-   - Update `${REPO_ROOT}/memory/metrics.json`
+   - Update `${REPO_ROOT}.specswarm/metrics.json`
    - Add quality_delta field to bugfix record
    - Include before/after scores
 

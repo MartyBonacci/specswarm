@@ -75,8 +75,8 @@ if [ "$ENABLE_HOOKS" = "true" ]; then
 
   # Load tech stack (if SpecSwarm also installed)
   if [ "$SPECSWARM_INSTALLED" = "true" ]; then
-    echo "✓ Loading tech stack: /memory/tech-stack.md"
-    TECH_STACK_EXISTS=$([ -f "/memory/tech-stack.md" ] && echo "true" || echo "false")
+    echo "✓ Loading tech stack: .specswarm/tech-stack.md"
+    TECH_STACK_EXISTS=$([ -f ".specswarm/tech-stack.md" ] && echo "true" || echo "false")
     if [ "$TECH_STACK_EXISTS" = "true" ]; then
       echo "✓ Tech stack validation enabled"
     fi
@@ -459,7 +459,7 @@ Components that depend on direct dependencies:
 
 [If SpecSwarm installed, validate modification against tech stack]
 
-**Tech Stack File**: /memory/tech-stack.md
+**Tech Stack File**: .specswarm/tech-stack.md
 **Validation Status**: [Pending/Compliant/Non-Compliant]
 **Concerns**: [Any tech stack violations?]
 
@@ -699,7 +699,7 @@ How will we know the modification is successful?
 
 [If SpecSwarm installed, validate against tech stack]
 
-**Tech Stack File**: /memory/tech-stack.md
+**Tech Stack File**: .specswarm/tech-stack.md
 **Compliance Status**: [Compliant/Non-Compliant]
 **Changes to Tech Stack**: [Any new dependencies/patterns?]
 
@@ -925,7 +925,7 @@ if [ "$ENABLE_HOOKS" = "true" ]; then
   fi
 
   # Update metrics
-  METRICS_FILE="/memory/workflow-metrics.json"
+  METRICS_FILE=".specswarm/workflow-metrics.json"
   # [Update JSON with modify metrics]
   echo "📊 Metrics saved: ${METRICS_FILE}"
 

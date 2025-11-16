@@ -5,6 +5,102 @@ All notable changes to SpecSwarm and SpecLabs plugins will be documented in this
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.2.0] - 2025-01-16
+
+### 🌐 Multi-Language Support & Enhanced Context Reading
+
+**SpecSwarm v3.2 adds support for Python, PHP, Go, Ruby, and Rust projects with intelligent auto-detection and README.md context reading.**
+
+**Key Changes**:
+- ✅ Multi-language support (6 languages total)
+- ✅ README.md context extraction for better initialization
+- ✅ Shared language-detector library for consistency
+- ✅ Enhanced auto-detection for all supported languages
+- ✅ Two initialization modes (auto-detect vs manual)
+
+### Added
+
+#### 🔧 Multi-Language Detection Library
+**New File**: `plugins/specswarm/lib/language-detector.sh`
+- Detects JavaScript/TypeScript (React, Vue, Angular, Next.js, Astro, Express)
+- Detects Python (Django, Flask, FastAPI)
+- Detects PHP (Laravel, Symfony)
+- Detects Go (Gin, Echo, Fiber)
+- Detects Ruby (Rails, Sinatra)
+- Detects Rust (Actix Web, Rocket, Axum)
+- Exports: `detect_tech_stack()`, `display_detected_stack()`
+- Used by `/specswarm:init` for unified detection logic
+
+#### 📖 README.md Context Reading
+**Modified**: `plugins/specswarm/commands/constitution.md`
+- Now reads README.md automatically for project context
+- Extracts project name from first heading
+- Extracts project description from first paragraph
+- Looks for Goals, Vision, Purpose, Standards sections
+- Populates constitution template with extracted context
+- Benefits both init delegation AND standalone runs
+
+### Changed
+
+#### `/specswarm:init` - Multi-Language Support
+**Modified**: `plugins/specswarm/commands/init.md`
+- Sources `lib/language-detector.sh` for multi-language detection
+- Supports Python, PHP, Go, Ruby, Rust (in addition to JavaScript/TypeScript)
+- Updated scaffolding suggestions for all 6 languages
+- More helpful error messages listing supported config files
+- Clearer distinction between auto-detect and manual modes
+
+#### Documentation Updates
+**Modified**: `README.md`
+- Added supported languages table with config files and frameworks
+- Clarified two initialization modes (Auto-Detect vs Manual)
+- Added "Vision-First" workflow option (no scaffolding required)
+- Updated "Scaffold-First" examples for all languages
+- Changed version to v3.2
+- Removed JavaScript-only bias
+
+**Modified**: Website (`specswarm.com/src/pages/quick-start.astro`)
+- Fixed typo: "orhuhiginal branc" → "original branch"
+- Updated Project Context description with multi-language support
+- Clarified README.md context reading functionality
+
+### Fixed
+
+- Constitution command now actually reads README.md (previously documented but not implemented)
+- Language detection no longer JavaScript-only
+- Scaffolding guidance now includes Python, PHP, Go, Ruby, Rust examples
+- File paths standardized to `.specswarm/` (from previous `/memory/` migration)
+
+### Deprecated
+
+**SpecLabs Plugin - Removal Planned for v3.3.0**
+- SpecLabs has been fully consolidated into SpecSwarm since v3.0
+- The separate SpecLabs plugin is no longer maintained
+- All functionality available in SpecSwarm with `/specswarm:` prefix
+- **Action**: Uninstall SpecLabs with `/plugin uninstall speclabs`
+- **Timeline**: Plugin will be removed from marketplace in v3.3.0
+
+### Technical Details
+
+**Command Count**: 32 total commands (up from 28 in v3.0)
+- v3.0: 28 commands
+- v3.1: +4 commands (init, rollback, release, security-audit) = 32 commands
+- v3.2: 32 commands (no new commands, enhanced existing ones)
+
+**Files Modified** (5):
+1. `plugins/specswarm/lib/language-detector.sh` - NEW
+2. `plugins/specswarm/commands/constitution.md` - Enhanced
+3. `plugins/specswarm/commands/init.md` - Multi-language
+4. `README.md` - Documentation (updated command count to 32)
+5. `specswarm.com/src/pages/quick-start.astro` - Website
+
+**Backward Compatibility**: ✅ Full backward compatibility maintained
+- Existing JavaScript/TypeScript projects work unchanged
+- Auto-detection behavior for package.json identical
+- No breaking changes to command interfaces
+
+---
+
 ## [3.0.0] - 2025-11-08
 
 ### 🚀 Major Release - Plugin Consolidation & Simplified Workflow
@@ -80,7 +176,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
    - Replaces: analyze-quality → complete
    - Enforces quality thresholds (default 80%)
    - Configurable via `--force-quality N` flag
-   - Reads `/memory/quality-standards.md` for project thresholds
+   - Reads `.specswarm/quality-standards.md` for project thresholds
    - Blocks merge if quality below threshold
    - Clear remediation steps if failing
 
@@ -294,7 +390,7 @@ This release has been validated in production with a comprehensive testing infra
    - ✅ Quality validation passed automatically
    - **Proof**: The silent execution improvements in v2.7.3 work perfectly
 
-3. **Tech Stack Enforcement** (/memory/tech-stack.md):
+3. **Tech Stack Enforcement** (.specswarm/tech-stack.md):
    - ✅ Detected version conflict (Jest vs Vitest)
    - ✅ Presented options to user with clear recommendations
    - ✅ Updated tech-stack.md automatically (v6.0.0 → v7.0.0)
@@ -353,7 +449,7 @@ This release has been validated in production with a comprehensive testing infra
    - Complex branch hierarchies supported (main → develop → sprint-4 → feature)
 
 3. **Tech Stack Governance**:
-   - /memory/tech-stack.md prevents technology drift
+   - .specswarm/tech-stack.md prevents technology drift
    - Conflict detection and resolution works
    - Automatic version tracking maintains consistency
 
@@ -1577,7 +1673,7 @@ User → orchestrate-feature.md → Launch Task tool → Agent autonomously exec
 - ✅ Comprehensive progress reporting
 
 **Session Tracking** (FINALLY WORKING):
-- Creates session file: `/memory/feature-orchestrator/sessions/${SESSION_ID}.json`
+- Creates session file: `.specswarm/feature-orchestrator/sessions/${SESSION_ID}.json`
 - Tracks all phases: planning, implementation, bugfix, audit
 - Records task success/failure counts
 - Maintains quality scores
@@ -1711,7 +1807,7 @@ User → orchestrate-feature.md → Launch Task tool → Agent autonomously exec
    - No manual command execution required
 
 2. **Session Tracking Now Works**:
-   - Check for session file: `/memory/feature-orchestrator/sessions/feature_*.json`
+   - Check for session file: `.specswarm/feature-orchestrator/sessions/feature_*.json`
    - Use `/speclabs:metrics` to view orchestration analytics
    - Quality scores tracked automatically
 
@@ -1836,7 +1932,7 @@ User → orchestrate-feature.md → Launch Task tool → Agent autonomously exec
 ### Testing Plan
 
 **v2.1.2 will be validated during Feature 009** (React Router v6 upgrade) to ensure:
-- ✅ Session file created automatically in `/memory/feature-orchestrator/sessions/`
+- ✅ Session file created automatically in `.specswarm/feature-orchestrator/sessions/`
 - ✅ All SpecSwarm phases execute without manual intervention
 - ✅ All tasks execute automatically through Phase 1b orchestrator
 - ✅ Audit phase triggers automatically after implementation (if `--audit` flag used)
@@ -1884,7 +1980,7 @@ User → orchestrate-feature.md → Launch Task tool → Agent autonomously exec
 1. Restart Claude Code after upgrading to load v2.1.2
 2. Test with Feature 009 or a small standalone feature
 3. Monitor for automatic command execution (should see SlashCommand tool usage)
-4. Verify session created: `ls /memory/feature-orchestrator/sessions/`
+4. Verify session created: `ls .specswarm/feature-orchestrator/sessions/`
 5. Verify audit report: Check `.speclabs/audit/` if `--audit` was used
 
 ---
@@ -1895,7 +1991,7 @@ User → orchestrate-feature.md → Launch Task tool → Agent autonomously exec
 
 #### Bug Fix: Session Tracking for Feature Orchestration
 - **Issue**: Feature orchestration sessions were not creating session files for metrics dashboard
-- **Root Cause**: Session directory mismatch - sessions saved to `/memory/orchestrator/features/` but metrics expected `/memory/feature-orchestrator/sessions/`
+- **Root Cause**: Session directory mismatch - sessions saved to `.specswarm/orchestrator/features/` but metrics expected `.specswarm/feature-orchestrator/sessions/`
 - **Fix**: Updated `feature-orchestrator.sh` line 16 to use correct directory path
 - **Impact**: `/speclabs:metrics` dashboard can now track feature-level orchestration data
 - **File**: `plugins/speclabs/lib/feature-orchestrator.sh`
@@ -1939,7 +2035,7 @@ User → orchestrate-feature.md → Launch Task tool → Agent autonomously exec
 **Recommended Actions**:
 1. Restart Claude Code after upgrading to load new plugin version
 2. Test with a small feature to verify fixes: `/speclabs:orchestrate-feature "test feature" /path/to/project --audit`
-3. Check session created: `ls /home/marty/code-projects/specswarm/memory/feature-orchestrator/sessions/`
+3. Check session created: `ls /home/marty/code-projects/specswarm.specswarm/feature-orchestrator/sessions/`
 4. Verify audit report generated: Check `.speclabs/audit/` in project
 
 ---

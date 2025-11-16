@@ -253,7 +253,7 @@ interface Metrics {
   prompt_effectiveness: number;
 }
 
-// Store to /memory/orchestrator-metrics/
+// Store to .specswarm/orchestrator-metrics/
 ```
 
 **Current**: ❌ None - No metrics persistence

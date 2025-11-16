@@ -1,0 +1,48 @@
+{
+  "session_id": "orch-20251016-100122-763",
+  "status": "in_progress",
+  "created_at": "2025-10-16T16:01:22Z",
+  "updated_at": "2025-10-16T16:01:22Z",
+  "workflow": {
+    "file": "workflow.md",
+    "task_name": "Test Validation Failure",
+    "project_path": "/project"
+  },
+  "agent": {
+    "id": null,
+    "status": "completed",
+    "started_at": null,
+    "completed_at": null,
+    "error": null,
+    "output_summary": null
+  },
+  "validation": {
+    "status": "failed",
+    "playwright": {
+      "console_errors": 5,
+      "network_errors": null,
+      "screenshot": null
+    },
+    "vision_api": {
+      "analysis": null,
+      "issues_found": [],
+      "score": null
+    }
+  },
+  "retries": {
+    "count": 0,
+    "max": 3,
+    "history": []
+  },
+  "decision": {
+    "action": null,
+    "reason": null,
+    "timestamp": null
+  },
+  "metrics": {
+    "total_time_seconds": null,
+    "agent_time_seconds": null,
+    "validation_time_seconds": null,
+    "started_at": "2025-10-16T16:01:22Z"
+  }
+}

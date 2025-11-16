@@ -13,7 +13,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Feature session directory
 SPECSWARM_ROOT="${SPECSWARM_ROOT:-/home/marty/code-projects/specswarm}"
-FEATURE_SESSION_DIR="${SPECSWARM_ROOT}/memory/specswarm/orchestration/sessions"
+FEATURE_SESSION_DIR="${SPECSWARM_ROOT}.specswarm/specswarm/orchestration/sessions"
 
 # Initialize feature orchestrator
 feature_init() {

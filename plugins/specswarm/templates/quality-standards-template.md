@@ -298,7 +298,7 @@ version_control: git_commits
 
 ### Metrics Tracking
 
-Quality metrics are saved to `/memory/metrics.json` for each feature:
+Quality metrics are saved to `.specswarm/metrics.json` for each feature:
 
 ```json
 {

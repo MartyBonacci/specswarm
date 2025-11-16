@@ -288,7 +288,7 @@ const routes: RouteConfig[] = [
 - [ ] Tech stack auto-detected correctly
 - [ ] No tech stack drift occurred
 - [ ] Conflicts handled appropriately (if any)
-- [ ] `/memory/tech-stack.md` accurate
+- [ ] `.specswarm/tech-stack.md` accurate
 
 **📊 Metrics to Capture:**
 - Time to complete
@@ -373,7 +373,7 @@ const routes: RouteConfig[] = [
 **Solutions:**
 1. Ensure README.md contains clear tech mentions
 2. Re-run `/specswarm:plan` to trigger detection
-3. Manually review `/memory/tech-stack.md` if created
+3. Manually review `.specswarm/tech-stack.md` if created
 
 ---
 

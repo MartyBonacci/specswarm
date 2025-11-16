@@ -9,7 +9,7 @@
 set -euo pipefail
 
 # Configuration
-STATE_DIR="${ORCHESTRATOR_STATE_DIR:-/home/marty/code-projects/specswarm/memory/orchestrator}"
+STATE_DIR="${ORCHESTRATOR_STATE_DIR:-/home/marty/code-projects/specswarm.specswarm/orchestrator}"
 SESSIONS_DIR="$STATE_DIR/sessions"
 
 # Ensure directories exist

@@ -28,7 +28,7 @@ Execute final quality gate validation and merge to parent branch.
 **Quality Gates**:
 - Default threshold: 80% quality score
 - Configurable via `--force-quality` flag
-- Reads `/memory/quality-standards.md` for project-specific thresholds
+- Reads `.specswarm/quality-standards.md` for project-specific thresholds
 
 ---
 
@@ -112,12 +112,12 @@ Store the quality score as QUALITY_SCORE.
 # Determine threshold
 DEFAULT_THRESHOLD=80
 
-# Check for project-specific threshold in /memory/quality-standards.md
+# Check for project-specific threshold in .specswarm/quality-standards.md
 THRESHOLD=$DEFAULT_THRESHOLD
 
-if [ -f "/memory/quality-standards.md" ]; then
+if [ -f ".specswarm/quality-standards.md" ]; then
   # Try to extract threshold from quality standards file
-  PROJECT_THRESHOLD=$(grep -i "^quality_threshold:" /memory/quality-standards.md | grep -oE '[0-9]+' || echo "")
+  PROJECT_THRESHOLD=$(grep -i "^quality_threshold:" .specswarm/quality-standards.md | grep -oE '[0-9]+' || echo "")
   if [ -n "$PROJECT_THRESHOLD" ]; then
     THRESHOLD=$PROJECT_THRESHOLD
     echo "📋 Using project quality threshold: ${THRESHOLD}%"
@@ -228,7 +228,7 @@ If any step fails:
 - Configurable thresholds balance strictness with pragmatism
 - Override flag available but discouraged for production code
 
-**Quality Standards File** (`/memory/quality-standards.md`):
+**Quality Standards File** (`.specswarm/quality-standards.md`):
 ```yaml
 ---
 quality_threshold: 85

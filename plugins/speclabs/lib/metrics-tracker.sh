@@ -15,7 +15,7 @@ if ! declare -f state_get >/dev/null 2>&1; then
 fi
 
 # Configuration
-METRICS_DIR="${ORCHESTRATOR_STATE_DIR:-/home/marty/code-projects/specswarm/memory/orchestrator}/metrics"
+METRICS_DIR="${ORCHESTRATOR_STATE_DIR:-/home/marty/code-projects/specswarm.specswarm/orchestrator}/metrics"
 mkdir -p "$METRICS_DIR"
 
 #######################################

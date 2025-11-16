@@ -434,7 +434,7 @@ Perform comprehensive codebase quality analysis to identify improvement opportun
    ```
 
 2. **Save report** to file:
-   - Write to: `/memory/quality-analysis-{TIMESTAMP}.md`
+   - Write to: `.specswarm/quality-analysis-{TIMESTAMP}.md`
    - Include all sections above
    - Add file-by-file details
    - Include fix commands/examples
@@ -444,7 +444,7 @@ Perform comprehensive codebase quality analysis to identify improvement opportun
    📋 Next Steps
    =============
 
-   1. Review full report: /memory/quality-analysis-{TIMESTAMP}.md
+   1. Review full report: .specswarm/quality-analysis-{TIMESTAMP}.md
    2. Fix critical issues first (security + SSR)
    3. Run quality validation: /specswarm:implement --validate-only
    4. Track improvements in metrics.json
@@ -462,7 +462,7 @@ Perform comprehensive codebase quality analysis to identify improvement opportun
 ✅ All analysis sections completed
 ✅ Issues categorized by priority
 ✅ Recommendations generated with impact estimates
-✅ Report saved to /memory/
+✅ Report saved to .specswarm/
 ✅ Next steps provided
 
 ---

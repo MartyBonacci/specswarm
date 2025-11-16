@@ -101,7 +101,7 @@ You **MUST** consider the user input before proceeding (if not empty).
    - **IF EXISTS**: Read contracts/ for API specifications and test requirements
    - **IF EXISTS**: Read research.md for technical decisions and constraints
    - **IF EXISTS**: Read quickstart.md for integration scenarios
-   - **IF EXISTS**: Read `/memory/tech-stack.md` for runtime validation (SpecSwarm)
+   - **IF EXISTS**: Read `.specswarm/tech-stack.md` for runtime validation (SpecSwarm)
 
 <!-- ========== TECH STACK VALIDATION (SpecSwarm Enhancement) ========== -->
 <!-- Added by Marty Bonacci & Claude Code (2025) -->
@@ -113,7 +113,7 @@ You **MUST** consider the user input before proceeding (if not empty).
    **YOU MUST NOW perform tech stack validation using these steps:**
 
    1. **Check if tech-stack.md exists** using the Read tool:
-      - Try to read `/memory/tech-stack.md`
+      - Try to read `.specswarm/tech-stack.md`
       - If file doesn't exist: Skip this entire section (3b)
       - If file exists: Continue with validation
 
@@ -170,7 +170,7 @@ You **MUST** consider the user input before proceeding (if not empty).
           PROHIBITED_TECHS+=("${BASH_REMATCH[1]}")
           APPROVED_ALTERNATIVES+=("${BASH_REMATCH[2]}")
         fi
-      done < <(grep "❌" "${REPO_ROOT}/memory/tech-stack.md")
+      done < <(grep "❌" "${REPO_ROOT}.specswarm/tech-stack.md")
       ```
 
    5. **Runtime Import/Dependency Validation**:
@@ -195,13 +195,13 @@ You **MUST** consider the user input before proceeding (if not empty).
             MESSAGE "Line: $LINE_CONTENT"
             MESSAGE "❌ Cannot use: $PROHIBITED"
             MESSAGE "✅ Must use: $APPROVED"
-            MESSAGE "See /memory/tech-stack.md for details"
+            MESSAGE "See .specswarm/tech-stack.md for details"
             HALT
           fi
         done
 
         # Check if technology is unapproved (warn but allow)
-        if ! grep -qi "$TECH_NAME" "${REPO_ROOT}/memory/tech-stack.md" 2>/dev/null; then
+        if ! grep -qi "$TECH_NAME" "${REPO_ROOT}.specswarm/tech-stack.md" 2>/dev/null; then
           WARNING "Unapproved technology: $TECH_NAME"
           MESSAGE "File: $FILE_PATH"
           MESSAGE "This library is not in tech-stack.md"
@@ -423,7 +423,7 @@ You **MUST** consider the user input before proceeding (if not empty).
 
    **YOU MUST NOW CHECK FOR AND RUN QUALITY VALIDATION:**
 
-   1. **First**, check if quality standards file exists by reading the file at `${REPO_ROOT}/memory/quality-standards.md` using the Read tool.
+   1. **First**, check if quality standards file exists by reading the file at `${REPO_ROOT}.specswarm/quality-standards.md` using the Read tool.
 
    2. **If the file does NOT exist:**
       - Display this message to the user:
@@ -434,7 +434,7 @@ You **MUST** consider the user input before proceeding (if not empty).
         No quality standards defined. Skipping automated validation.
 
         To enable quality gates:
-          1. Create /memory/quality-standards.md
+          1. Create .specswarm/quality-standards.md
           2. Define minimum coverage and quality score
           3. Configure test requirements
 
@@ -735,7 +735,7 @@ You **MUST** consider the user input before proceeding (if not empty).
            - If block_merge_on_failure is false: Show warning and ask user "Continue with merge anyway? (yes/no)"
          - If score >= minimum: Display "✅ Quality validation passed!"
 
-      j. **Save quality metrics** by updating `${REPO_ROOT}/memory/metrics.json`:
+      j. **Save quality metrics** by updating `${REPO_ROOT}.specswarm/metrics.json`:
          - Add entry for current feature number
          - Include quality score, coverage, test results
          - Use Write tool to update the JSON file

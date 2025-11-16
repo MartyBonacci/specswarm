@@ -100,7 +100,7 @@ REFINED=$(prompt_refine "$SESSION_ID" "$ORIGINAL")
 SAVED_FILE=$(prompt_save "$SESSION_ID" "$REFINED")
 
 echo "Saved to: $SAVED_FILE"
-# Output: /memory/orchestrator/sessions/orch-*/refined-prompt-retry-1.md
+# Output: .specswarm/orchestrator/sessions/orch-*/refined-prompt-retry-1.md
 ```
 
 ---

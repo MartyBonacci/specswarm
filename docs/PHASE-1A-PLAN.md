@@ -27,7 +27,7 @@ Phase 1a transforms our Phase 0 POC into a **production-ready test orchestration
 
 | Component | Phase 0 (Current) | Phase 1a (Goal) |
 |-----------|-------------------|-----------------|
-| **State** | ❌ None (lost on exit) | ✅ Persistent to `/memory/orchestrator/` |
+| **State** | ❌ None (lost on exit) | ✅ Persistent to `.specswarm/orchestrator/` |
 | **Failures** | ❌ Agent fails → game over | ✅ Auto-retry with refined prompt (3x) |
 | **Validation** | ⚠️ Manual screenshot review | ✅ Automated with Vision API |
 | **Metrics** | ❌ No tracking | ✅ All executions tracked, analyzed |
@@ -54,7 +54,7 @@ Phase 1a transforms our Phase 0 POC into a **production-ready test orchestration
               ├──> STATE MANAGER
               │    ├─ Create session
               │    ├─ Track progress
-              │    ├─ Persist state to /memory/
+              │    ├─ Persist state to .specswarm/
               │    └─ Handle resume
               │
               ├──> WORKFLOW PARSER
@@ -91,7 +91,7 @@ Phase 1a transforms our Phase 0 POC into a **production-ready test orchestration
                    ├─ Log all executions
                    ├─ Track success rates
                    ├─ Identify patterns
-                   └─ Persist to /memory/orchestrator-metrics/
+                   └─ Persist to .specswarm/orchestrator-metrics/
 ```
 
 ---
@@ -170,10 +170,10 @@ state_create_session() {
   local session_id="orch-$(date +%Y%m%d-%H%M%S)"
 
   # Create state directory
-  mkdir -p "/memory/orchestrator/sessions/$session_id"
+  mkdir -p ".specswarm/orchestrator/sessions/$session_id"
 
   # Initialize state file
-  cat > "/memory/orchestrator/sessions/$session_id/state.json" <<EOF
+  cat > ".specswarm/orchestrator/sessions/$session_id/state.json" <<EOF
 {
   "session_id": "$session_id",
   "status": "in_progress",
@@ -200,7 +200,7 @@ state_update() {
   local value="$3"
 
   # Use jq to update JSON
-  local state_file="/memory/orchestrator/sessions/$session_id/state.json"
+  local state_file=".specswarm/orchestrator/sessions/$session_id/state.json"
   jq ".$key = $value" "$state_file" > "${state_file}.tmp"
   mv "${state_file}.tmp" "$state_file"
 }
@@ -210,7 +210,7 @@ state_get() {
   local session_id="$1"
   local key="$2"
 
-  local state_file="/memory/orchestrator/sessions/$session_id/state.json"
+  local state_file=".specswarm/orchestrator/sessions/$session_id/state.json"
   jq -r ".$key" "$state_file"
 }
 
@@ -228,7 +228,7 @@ state_resume() {
   local session_id="$1"
 
   # Check if session exists
-  if [ ! -f "/memory/orchestrator/sessions/$session_id/state.json" ]; then
+  if [ ! -f ".specswarm/orchestrator/sessions/$session_id/state.json" ]; then
     echo "ERROR: Session $session_id not found"
     return 1
   fi
@@ -241,7 +241,7 @@ state_resume() {
 }
 ```
 
-**Storage Location**: `/memory/orchestrator/sessions/<session-id>/state.json`
+**Storage Location**: `.specswarm/orchestrator/sessions/<session-id>/state.json`
 
 ---
 
@@ -604,7 +604,7 @@ EOF
   )
 
   # Save to metrics database
-  local metrics_file="/memory/orchestrator-metrics/$(date +%Y-%m).json"
+  local metrics_file=".specswarm/orchestrator-metrics/$(date +%Y-%m).json"
 
   # Append to monthly metrics file
   if [ ! -f "$metrics_file" ]; then
@@ -620,7 +620,7 @@ metrics_analyze_success_patterns() {
   local task_type="$1"
 
   # Query last 30 days of metrics
-  local recent_metrics=$(find /memory/orchestrator-metrics/ -name "*.json" -mtime -30 -exec cat {} \;)
+  local recent_metrics=$(find .specswarm/orchestrator-metrics/ -name "*.json" -mtime -30 -exec cat {} \;)
 
   # Calculate success rate
   local total=$(echo "$recent_metrics" | jq '[.[].results.final_status] | length')
@@ -649,7 +649,7 @@ metrics_get_recommendations() {
 }
 ```
 
-**Storage**: `/memory/orchestrator-metrics/YYYY-MM.json`
+**Storage**: `.specswarm/orchestrator-metrics/YYYY-MM.json`
 
 **Analytics**:
 - Success rates over time
@@ -665,7 +665,7 @@ metrics_get_recommendations() {
 ### Week 1: Foundation
 
 **Days 1-2**: State Manager
-- Create `/memory/orchestrator/` directory structure
+- Create `.specswarm/orchestrator/` directory structure
 - Implement state-manager.sh
 - Test state persistence and retrieval
 - Test session resume
@@ -741,7 +741,7 @@ metrics_get_recommendations() {
 
 ### Functional Requirements
 
-- ✅ State persists to `/memory/orchestrator/`
+- ✅ State persists to `.specswarm/orchestrator/`
 - ✅ Sessions can be resumed after failure
 - ✅ Failed agent executions trigger retry (up to 3x)
 - ✅ Prompts are refined on retry
@@ -859,13 +859,13 @@ export ANTHROPIC_API_KEY="sk-ant-..."
 # Optional (with defaults)
 export ORCHESTRATOR_MAX_RETRIES=3
 export ORCHESTRATOR_VISION_QUALITY_THRESHOLD=70
-export ORCHESTRATOR_STATE_DIR="/memory/orchestrator"
-export ORCHESTRATOR_METRICS_DIR="/memory/orchestrator-metrics"
+export ORCHESTRATOR_STATE_DIR=".specswarm/orchestrator"
+export ORCHESTRATOR_METRICS_DIR=".specswarm/orchestrator-metrics"
 ```
 
 ### User Configuration
 
-`/memory/orchestrator-config.json`:
+`.specswarm/orchestrator-config.json`:
 ```json
 {
   "max_retries": 3,

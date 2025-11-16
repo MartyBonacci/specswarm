@@ -613,7 +613,7 @@ Retry Count: 1
 
 ⏱️  Total Duration: 3m 45s
 
-📁 Session Directory: /memory/orchestrator/sessions/orch-20251016-160000-789
+📁 Session Directory: .specswarm/orchestrator/sessions/orch-20251016-160000-789
 ```
 
 **Total Time**: 3m 45s (vs 30-60 minutes manual)

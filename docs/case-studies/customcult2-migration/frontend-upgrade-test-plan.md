@@ -240,7 +240,7 @@
 **Result**: **FAILED** - No session ID created
 
 **What Happened**:
-- `/memory/feature-orchestrator/sessions/` directory doesn't exist
+- `.specswarm/feature-orchestrator/sessions/` directory doesn't exist
 - No session JSON file created during orchestration
 - `/speclabs:metrics` cannot track Feature 007 data
 - Only task-level sessions exist (from backend migration)
@@ -434,17 +434,17 @@ We released v2.1.1 with fixes and tested during Feature 008 execution.
 **v2.1.1 Fix**: Updated `feature-orchestrator.sh` line 15-16 to correct directory path
 
 **What Happened**:
-- Expected directory: `/memory/feature-orchestrator/sessions/`
+- Expected directory: `.specswarm/feature-orchestrator/sessions/`
 - Actual: Directory does not exist
-- Old directory: `/memory/orchestrator/features/` is empty
+- Old directory: `.specswarm/orchestrator/features/` is empty
 - No session JSON created during Feature 008
 
 **Evidence**:
 ```bash
-$ ls -la /home/marty/code-projects/specswarm/memory/feature-orchestrator/sessions/
-ls: cannot access '/home/marty/code-projects/specswarm/memory/feature-orchestrator/sessions/': No such file or directory
+$ ls -la /home/marty/code-projects/specswarm.specswarm/feature-orchestrator/sessions/
+ls: cannot access '/home/marty/code-projects/specswarm.specswarm/feature-orchestrator/sessions/': No such file or directory
 
-$ ls -la /home/marty/code-projects/specswarm/memory/orchestrator/features/
+$ ls -la /home/marty/code-projects/specswarm.specswarm/orchestrator/features/
 total 8
 drwxrwxr-x 2 marty marty 4096 Oct 16 13:55 .
 drwxrwxr-x 6 marty marty 4096 Oct 16 13:55 ..
@@ -557,17 +557,17 @@ feature-008-complete  ← NEW TAG CREATED ✓
 **Impact**: Metrics dashboard unusable for feature orchestration
 
 **Details**:
-- Expected: Session JSON created in `/memory/feature-orchestrator/sessions/`
+- Expected: Session JSON created in `.specswarm/feature-orchestrator/sessions/`
 - Actual: Directory doesn't exist, no session files created
 - Task-level orchestration creates sessions correctly (backend migration)
 - Feature-level orchestration doesn't create sessions
 
 **Evidence**:
-- Backend sessions: 73 files in `/memory/orchestrator/sessions/`
+- Backend sessions: 73 files in `.specswarm/orchestrator/sessions/`
 - Frontend sessions: 0 files (directory missing)
 
 **Required Fix**:
-1. Create `/memory/feature-orchestrator/sessions/` directory
+1. Create `.specswarm/feature-orchestrator/sessions/` directory
 2. Generate session JSON during feature orchestration
 3. Include: session_id, status, phases, quality_score, task_counts
 4. Update metrics dashboard to read from both session directories

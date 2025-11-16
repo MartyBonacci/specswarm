@@ -18,7 +18,7 @@ NC='\033[0m'
 # Load performance budgets from quality-standards.md
 load_budgets() {
     local repo_root="${1:-$(pwd)}"
-    local standards_file="$repo_root/memory/quality-standards.md"
+    local standards_file="$repo_root.specswarm/quality-standards.md"
 
     # Default budgets
     MAX_BUNDLE_SIZE=500          # KB

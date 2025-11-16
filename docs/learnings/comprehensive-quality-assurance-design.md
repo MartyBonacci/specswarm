@@ -85,11 +85,11 @@ Step 11: Quality Validation (NEW) ← Insert before git workflow
    **Purpose**: Automated quality assurance before merge
 
    # 1. Load quality standards
-   QUALITY_STANDARDS="${REPO_ROOT}/memory/quality-standards.md"
+   QUALITY_STANDARDS="${REPO_ROOT}.specswarm/quality-standards.md"
 
    if [ ! -f "$QUALITY_STANDARDS" ]; then
      echo "ℹ️  No quality standards defined. Skipping validation."
-     echo "   Create /memory/quality-standards.md to enable quality gates"
+     echo "   Create .specswarm/quality-standards.md to enable quality gates"
      # Continue to git workflow
    fi
 
@@ -368,7 +368,7 @@ save_quality_metrics() {
   local COVERAGE_PCT="$3"
   local VISUAL_SCORE="$4"
 
-  local METRICS_FILE="${REPO_ROOT}/memory/metrics.json"
+  local METRICS_FILE="${REPO_ROOT}.specswarm/metrics.json"
 
   # Update metrics.json with quality data
   # (Implementation depends on jq or manual JSON manipulation)

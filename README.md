@@ -1,8 +1,10 @@
-# SpecSwarm v3.1 🚀
+# SpecSwarm v3.2 🚀
 
 **Build features, fix bugs, and upgrade dependencies with autonomous AI workflows for Claude Code.**
 
 SpecSwarm is a complete development toolkit for Claude Code, offering both simplified high-level commands for rapid development and granular control for complex workflows. Build complete features in 2 commands instead of 7+, with quality gates, automatic retry logic, and framework migration support.
+
+**New in v3.2**: Multi-language support (Python, PHP, Go, Ruby, Rust), README.md context reading for better initialization, and enhanced auto-detection for all supported languages.
 
 **New in v3.1**: Project initialization (`/specswarm:init`), rollback safety (`/specswarm:rollback`), security audits (`/specswarm:security-audit`), and release automation (`/specswarm:release`).
 
@@ -10,51 +12,112 @@ SpecSwarm is a complete development toolkit for Claude Code, offering both simpl
 
 ## Prerequisites
 
-⚠️ **IMPORTANT**: SpecSwarm is designed for **feature development in existing projects**. It requires:
+⚠️ **IMPORTANT**: SpecSwarm works with **both new and established projects** across multiple languages.
 
-### Required
+### Required (Minimum)
 - ✅ **Git repository initialized** (`git init`)
 - ✅ **At least one commit** on a parent branch (main/develop/sprint-X)
 - ✅ **Working directory** on the correct parent branch
 
-### Recommended
-- ✅ **package.json exists** (enables auto-detection in `/specswarm:init`)
-- ✅ **Tech stack established** (React, Vue, Next.js, Astro, etc.)
-- ✅ **Project structure in place** (src/, public/, package.json, etc.)
+### Supported Languages & Frameworks
+SpecSwarm auto-detects your tech stack from configuration files:
+
+| Language | Config File | Frameworks Detected |
+|----------|-------------|---------------------|
+| **JavaScript/TypeScript** | `package.json` | React, Vue, Angular, Next.js, Astro, Express |
+| **Python** | `requirements.txt`, `pyproject.toml` | Django, Flask, FastAPI |
+| **PHP** | `composer.json` | Laravel, Symfony |
+| **Go** | `go.mod` | Gin, Echo, Fiber |
+| **Ruby** | `Gemfile` | Rails, Sinatra |
+| **Rust** | `Cargo.toml` | Actix Web, Rocket, Axum |
+
+### Two Initialization Modes
+
+**Auto-Detect Mode** (Recommended - faster setup):
+- Have a configuration file (package.json, requirements.txt, etc.)
+- `/specswarm:init` auto-detects your entire stack
+- Fewer interactive questions
+
+**Manual Mode** (Perfect for new projects):
+- No configuration file needed
+- `/specswarm:init` prompts for framework, testing tools, quality standards
+- Answer 6 questions to set up SpecSwarm
+- Build features immediately - code structure created as you go
+
+**README.md Context**: Constitution command reads your README.md to extract project name, description, and goals for better configuration.
 
 ### Starting a Brand New Project?
 
-**SpecSwarm doesn't scaffold projects** - it manages feature development. If you're starting from scratch:
+You have **two options** for new projects:
 
-1. **First, scaffold your project** using your framework's official CLI:
+#### Option A: Vision-First (No Scaffolding Required)
+
+Start with just your project vision and build iteratively:
+
+1. **Create README.md** with project description:
    ```bash
-   # React + Vite
-   npm create vite@latest my-app -- --template react-ts
-
-   # Next.js
-   npx create-next-app@latest
-
-   # Astro
-   npm create astro@latest
-
-   # Vue
-   npm create vue@latest
+   mkdir my-project && cd my-project
+   echo "# My Project - Task management app with React" > README.md
    ```
 
-2. **Initialize git and make your first commit**:
+2. **Initialize git**:
    ```bash
-   cd my-app
    git init
-   git add .
-   git commit -m "Initial project scaffold"
+   git add README.md
+   git commit -m "Initial vision"
    ```
 
-3. **Then initialize SpecSwarm**:
+3. **Initialize SpecSwarm** (manual mode - answer 6 questions):
    ```bash
    /specswarm:init
    ```
 
-4. **Now you're ready to build features** with SpecSwarm! Continue to Quick Start below.
+4. **Build your first feature** - code structure created as you go:
+   ```bash
+   /specswarm:build "Add task list UI with create/read/update/delete"
+   ```
+
+#### Option B: Scaffold-First (Faster Auto-Detection)
+
+If you prefer starting with a full scaffold:
+
+1. **Scaffold with your framework's CLI**:
+   ```bash
+   # JavaScript/TypeScript
+   npm create vite@latest my-app -- --template react-ts  # React + Vite
+   npx create-next-app@latest                            # Next.js
+
+   # Python
+   django-admin startproject myproject .                 # Django
+
+   # PHP
+   composer create-project laravel/laravel .             # Laravel
+
+   # Go
+   go mod init github.com/username/project               # Go
+
+   # Ruby
+   rails new . --skip-bundle                             # Rails
+   ```
+
+2. **Initialize git**:
+   ```bash
+   git init
+   git add .
+   git commit -m "Initial scaffold"
+   ```
+
+3. **Initialize SpecSwarm** (auto-detects everything):
+   ```bash
+   /specswarm:init
+   ```
+
+4. **Build features** with automatic tech stack enforcement:
+   ```bash
+   /specswarm:build "Add user authentication"
+   ```
+
+**Both workflows work great!** Choose based on your preference.
 
 ---
 
@@ -211,37 +274,54 @@ git checkout develop  # or sprint-X
 
 ## What's Included?
 
-### SpecSwarm v3.0 (Unified Toolkit) ⭐
+### SpecSwarm v3.2 (Unified Toolkit) ⭐
 
-Complete software development lifecycle with **28 commands** in a single plugin:
+Complete software development lifecycle with **32 commands** in a single plugin:
 
-**🚀 High-Level Commands** (New in v3.0 - Simplified Workflow):
+**🚀 High-Level Commands** (Simplified Workflow):
 - **`build`** - Complete feature development (spec → implementation → quality)
 - **`fix`** - Test-driven bug fixing with automatic retry
 - **`upgrade`** - Dependency/framework migrations with breaking change analysis
 - **`ship`** - Quality-gated merge to parent branch
 
+**🏁 Project Lifecycle** (New in v3.1):
+- **`init`** - Initialize SpecSwarm with multi-language auto-detection
+- **`rollback`** - Safely revert features with backup recovery
+- **`release`** - Automated release preparation and deployment
+- **`security-audit`** - Comprehensive security vulnerability scanning
+
 **📝 Granular Workflow Commands** (Manual Control):
 - **New Features**: `specify` → `clarify` → `plan` → `tasks` → `implement` → `complete`
 - **Bug Fixing**: `bugfix` with regression testing, `hotfix` for emergencies
 - **Code Maintenance**: `modify`, `refactor`, `deprecate`
-- **Quality**: `analyze-quality`, `impact` analysis
+- **Quality**: `analyze`, `analyze-quality`, `impact` analysis, `checklist`
 
-**🔧 Advanced Capabilities** (From SpecLabs):
-- **Orchestration**: `orchestrate-feature` - autonomous lifecycle automation
+**🔧 Advanced Capabilities**:
+- **Orchestration**: `orchestrate`, `orchestrate-feature`, `orchestrate-validate`
 - **Validation**: `validate` - multi-type validation (webapp, android, REST API, desktop)
 - **Debugging**: `coordinate` - systematic multi-bug investigation
-- **Analytics**: `metrics` - feature-level performance tracking
+- **Analytics**: `metrics`, `metrics-export` - feature-level performance tracking
+- **Utilities**: `constitution`, `suggest`
 
 **Status**: ✅ Production-ready | v3.0.0-alpha.1 | Consolidation in progress
 
-### ⚠️ SpecLabs (Deprecated)
+### ⚠️ SpecLabs (Deprecated - Removal in v3.3.0)
 
-**SpecLabs has been consolidated into SpecSwarm v3.0.**
+**SpecLabs has been fully consolidated into SpecSwarm v3.0.**
 
-All functionality is now available in SpecSwarm. The SpecLabs plugin provides backward compatibility aliases that will be removed in v3.2.0.
+All SpecLabs functionality is now available in SpecSwarm with the same command names under the `/specswarm:` namespace. The separate SpecLabs plugin is **no longer maintained** and will be removed from the marketplace in v3.3.0.
 
-**Migration Path**: Replace `/speclabs:*` commands with `/specswarm:*` equivalents.
+**⚠️ Action Required**: Uninstall SpecLabs and use SpecSwarm exclusively.
+
+**Migration Path**:
+1. Uninstall SpecLabs: `/plugin uninstall speclabs`
+2. All commands now use `/specswarm:` prefix (e.g., `/specswarm:orchestrate-feature`)
+3. Update any automation scripts or documentation
+
+**Deprecation Timeline**:
+- v3.0.0: SpecLabs consolidated into SpecSwarm
+- v3.2.0: SpecLabs marked as deprecated (current)
+- v3.3.0: SpecLabs plugin removed from marketplace (planned)
 
 ---
 
@@ -366,9 +446,9 @@ SpecSwarm + SpecLabs has been validated in production with exceptional results:
 
 ## Configuration (Optional)
 
-Create these files in your project's `/memory/` directory for customization:
+Create these files in your project's `.specswarm/` directory for customization:
 
-### `/memory/tech-stack.md` - Enforce technology choices
+### `.specswarm/tech-stack.md` - Enforce technology choices
 
 ```markdown
 ## Core Technologies
@@ -385,7 +465,7 @@ Create these files in your project's `/memory/` directory for customization:
 - ❌ Class components (use functional components with hooks)
 ```
 
-### `/memory/quality-standards.md` - Set quality gates
+### `.specswarm/quality-standards.md` - Set quality gates
 
 ```yaml
 # Quality Gates

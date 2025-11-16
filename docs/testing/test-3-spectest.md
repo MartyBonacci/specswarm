@@ -206,7 +206,7 @@ Key principles:
 ```
 
 **Expected Outcome:**
-- Claude creates `/memory/constitution.md`
+- Claude creates `.specswarm/constitution.md`
 - Constitution includes tech stack principles
 - Project principles documented
 - Functional programming emphasized
@@ -244,7 +244,7 @@ Let's build the authentication system first.
 🎣 Pre-Specify Hook
 ✓ Repository detected: Git
 ✓ Tech stack file: Will be created
-✓ Constitution found: /memory/constitution.md
+✓ Constitution found: .specswarm/constitution.md
 ✓ Ready to specify feature
 
 [Claude creates features/001-authentication/spec.md]
@@ -318,7 +318,7 @@ Let's build the authentication system first.
 ✓ Validating against constitution
 
 [Claude creates features/001-authentication/plan.md]
-[Claude creates/updates /memory/tech-stack.md]
+[Claude creates/updates .specswarm/tech-stack.md]
 
 🎣 Post-Plan Hook
 ✓ Plan quality: [assessment]
@@ -482,7 +482,7 @@ Phase 3: Integration (sequential)
 ✓ All [N] tasks completed
 ✓ No violations detected
 ✓ Tests passing: [N]/[N]
-📊 Metrics saved to /memory/metrics.json
+📊 Metrics saved to .specswarm/metrics.json
 
 ⚡ Performance:
 - Total time: [time]
@@ -771,9 +771,9 @@ npm run dev
 
 1. **Fill out [Results Template](results-template.md)**
 2. **Save all artifacts:**
-   - `/memory/constitution.md`
-   - `/memory/tech-stack.md`
-   - `/memory/metrics.json`
+   - `.specswarm/constitution.md`
+   - `.specswarm/tech-stack.md`
+   - `.specswarm/metrics.json`
    - All `features/*/` directories
 3. **Commit final state:**
    ```bash

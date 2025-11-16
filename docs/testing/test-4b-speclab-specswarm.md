@@ -100,7 +100,7 @@ git branch
 ✓ Mode: SpecLab + SpecSwarm (tech-enforced maintenance)
 
 🔒 Tech Stack Loaded
-✓ Loaded from /memory/tech-stack.md
+✓ Loaded from .specswarm/tech-stack.md
 ✓ Will validate all changes against declared stack
 
 📋 Bugfix Workflow Started
@@ -397,7 +397,7 @@ git branch
 ✓ Mode: SpecLab + SpecSwarm (tech-enforced modification)
 
 🔒 Tech Stack Loaded
-✓ Loaded from /memory/tech-stack.md
+✓ Loaded from .specswarm/tech-stack.md
 ✓ Will validate all changes against declared stack
 
 📋 Modify Workflow Started

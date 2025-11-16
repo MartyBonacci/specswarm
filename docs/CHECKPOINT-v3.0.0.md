@@ -32,7 +32,7 @@
    - Keep backward compatibility with aliases (safer approach)
    - Archive experimental libs to /experimental (not delete)
    - Build all 4 high-level commands immediately (complete feature set)
-   - Quality gates configurable via /memory/quality-standards.md
+   - Quality gates configurable via .specswarm/quality-standards.md
 
 5. **Approved 6-Week Implementation Plan**
    - See: `docs/CONSOLIDATION-PLAN.md` (full strategic plan)
@@ -227,12 +227,12 @@ find plugins/specswarm/lib/orchestration -type f -name "*.sh" -exec sed -i 's|/p
 find plugins/specswarm/lib/validators -type f -name "*.sh" -exec sed -i 's|/plugins/speclabs|/plugins/specswarm|g' {} +
 
 # Update memory paths
-find plugins/specswarm/lib/orchestration -type f -name "*.sh" -exec sed -i 's|/memory/orchestrator/|/memory/specswarm/orchestration/|g' {} +
-find plugins/specswarm/lib/orchestration -type f -name "*.sh" -exec sed -i 's|/memory/feature-orchestrator/|/memory/specswarm/orchestration/|g' {} +
+find plugins/specswarm/lib/orchestration -type f -name "*.sh" -exec sed -i 's|.specswarm/orchestrator/|.specswarm/specswarm/orchestration/|g' {} +
+find plugins/specswarm/lib/orchestration -type f -name "*.sh" -exec sed -i 's|.specswarm/feature-orchestrator/|.specswarm/specswarm/orchestration/|g' {} +
 
 # Verify changes
 grep -r "speclabs" plugins/specswarm/lib/orchestration/ || echo "✅ No speclabs references"
-grep -r "/memory/orchestrator/" plugins/specswarm/lib/orchestration/ || echo "✅ No old memory paths"
+grep -r ".specswarm/orchestrator/" plugins/specswarm/lib/orchestration/ || echo "✅ No old memory paths"
 ```
 
 #### Step 4: Create Session Migration Script
@@ -243,11 +243,11 @@ cat > plugins/specswarm/lib/orchestration/migrate-sessions.sh << 'EOF'
 # Migrate sessions from old SpecLabs paths to new SpecSwarm structure
 
 OLD_PATHS=(
-  "/memory/orchestrator/sessions"
-  "/memory/feature-orchestrator/sessions"
+  ".specswarm/orchestrator/sessions"
+  ".specswarm/feature-orchestrator/sessions"
 )
 
-NEW_PATH="/memory/specswarm/orchestration/sessions"
+NEW_PATH=".specswarm/specswarm/orchestration/sessions"
 
 mkdir -p "$NEW_PATH"
 
@@ -371,7 +371,7 @@ Edit `marketplace.json`:
    - `/specswarm:ship` - Quality-gated merge
 
 4. **Quality Gates**: Configurable ✅
-   - Check `/memory/quality-standards.md` for `enforce_gates: true/false`
+   - Check `.specswarm/quality-standards.md` for `enforce_gates: true/false`
    - If true: Block merge if quality < threshold
    - If false: Warn but allow `--force`
 
@@ -383,9 +383,9 @@ Edit `marketplace.json`:
    - `experimental/` - Future enhancements
 
 2. **Memory Path Consolidation**:
-   - Old: `/memory/orchestrator/sessions/`
-   - Old: `/memory/feature-orchestrator/sessions/`
-   - New: `/memory/specswarm/orchestration/sessions/`
+   - Old: `.specswarm/orchestrator/sessions/`
+   - Old: `.specswarm/feature-orchestrator/sessions/`
+   - New: `.specswarm/specswarm/orchestration/sessions/`
 
 3. **Command Naming**:
    - `orchestrate-feature` → `build` (simpler)

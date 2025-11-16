@@ -378,7 +378,7 @@ Continue manual browser testing? [y/n]
 
 ### Enable SpecLabs Suggestions in SpecSwarm
 
-Create `/memory/integration-preferences.md`:
+Create `.specswarm/integration-preferences.md`:
 
 ```markdown
 # SpecSwarm ↔ SpecLabs Integration Preferences
