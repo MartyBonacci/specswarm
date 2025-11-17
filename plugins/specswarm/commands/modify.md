@@ -124,15 +124,21 @@ if [ -z "$FEATURE_NUM" ]; then
   FEATURE_NUM=$(printf "%03d" $FEATURE_NUM)
 fi
 
-# Find feature directory
-FEATURE_DIR=$(find "$REPO_ROOT/features" -maxdepth 1 -type d -name "${FEATURE_NUM}-*" 2>/dev/null | head -1)
+# Source features location helper
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PLUGIN_DIR="$(dirname "$SCRIPT_DIR")"
+source "$PLUGIN_DIR/lib/features-location.sh"
 
-if [ -z "$FEATURE_DIR" ]; then
-  echo "❌ Error: Feature ${FEATURE_NUM} not found in features/ directory"
+# Initialize features directory
+get_features_dir "$REPO_ROOT"
+
+# Find feature directory
+if ! find_feature_dir "$FEATURE_NUM" "$REPO_ROOT"; then
+  echo "❌ Error: Feature ${FEATURE_NUM} not found"
   echo ""
   echo "Modification requires existing feature specification."
   echo "Available features:"
-  ls -1 "${REPO_ROOT}/features" | grep -E '^[0-9]{3}-'
+  list_features "$REPO_ROOT"
   exit 1
 fi
 

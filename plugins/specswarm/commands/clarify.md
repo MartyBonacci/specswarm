@@ -31,11 +31,21 @@ Execution steps:
 1. **Discover Feature Context**:
    ```bash
    REPO_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
+
+   # Source features location helper
+   SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+   PLUGIN_DIR="$(dirname "$SCRIPT_DIR")"
+   source "$PLUGIN_DIR/lib/features-location.sh"
+
+   # Initialize features directory
+   get_features_dir "$REPO_ROOT"
+
    BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
    FEATURE_NUM=$(echo "$BRANCH" | grep -oE '^[0-9]{3}')
-   [ -z "$FEATURE_NUM" ] && FEATURE_NUM=$(ls -1 features/ 2>/dev/null | grep -oE '^[0-9]{3}' | sort -nr | head -1)
-   FEATURE_DIR=$(find features -maxdepth 1 -type d -name "${FEATURE_NUM}-*" 2>/dev/null | head -1)
-   FEATURE_DIR="${REPO_ROOT}/${FEATURE_DIR}"
+   [ -z "$FEATURE_NUM" ] && FEATURE_NUM=$(list_features "$REPO_ROOT" | grep -oE '^[0-9]{3}' | sort -nr | head -1)
+
+   find_feature_dir "$FEATURE_NUM" "$REPO_ROOT"
+   # FEATURE_DIR is now set by find_feature_dir
    FEATURE_SPEC="${FEATURE_DIR}/spec.md"
    ```
 

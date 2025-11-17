@@ -44,17 +44,25 @@ You **MUST** consider the user input before proceeding (if not empty).
       ```
       Store the result as FEATURE_NUM.
 
-   d. **If feature number is empty, find latest feature** by executing:
+   d. **Initialize features directory and find feature**:
       ```bash
-      ls -1 features/ 2>/dev/null | grep -oE '^[0-9]{3}' | sort -nr | head -1
-      ```
-      Store the result as FEATURE_NUM.
+      # Source features location helper
+      SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+      PLUGIN_DIR="$(dirname "$SCRIPT_DIR")"
+      source "$PLUGIN_DIR/lib/features-location.sh"
 
-   e. **Find feature directory** by executing:
-      ```bash
-      find features -maxdepth 1 -type d -name "${FEATURE_NUM}-*" 2>/dev/null | head -1
+      # Initialize features directory
+      get_features_dir "$REPO_ROOT"
+
+      # If feature number is empty, find latest feature
+      if [ -z "$FEATURE_NUM" ]; then
+        FEATURE_NUM=$(list_features "$REPO_ROOT" | grep -oE '^[0-9]{3}' | sort -nr | head -1)
+      fi
+
+      # Find feature directory
+      find_feature_dir "$FEATURE_NUM" "$REPO_ROOT"
+      # FEATURE_DIR is now set by find_feature_dir
       ```
-      Combine with REPO_ROOT to get full path as FEATURE_DIR.
 
    f. **Display to user:**
       ```

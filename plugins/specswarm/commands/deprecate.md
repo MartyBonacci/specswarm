@@ -64,7 +64,15 @@ if [ -z "$DEPRECATE_NUM" ]; then
   DEPRECATE_NUM=$(printf "%03d" $DEPRECATE_NUM)
 fi
 
-FEATURE_DIR="${REPO_ROOT}/features/${DEPRECATE_NUM}-deprecate"
+# Source features location helper
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PLUGIN_DIR="$(dirname "$SCRIPT_DIR")"
+source "$PLUGIN_DIR/lib/features-location.sh"
+
+# Initialize features directory
+ensure_features_dir "$REPO_ROOT"
+
+FEATURE_DIR="${FEATURES_DIR}/${DEPRECATE_NUM}-deprecate"
 mkdir -p "$FEATURE_DIR"
 
 DEPRECATE_SPEC="${FEATURE_DIR}/deprecate.md"

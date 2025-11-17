@@ -69,7 +69,15 @@ if [ -z "$REFACTOR_NUM" ]; then
   REFACTOR_NUM=$(printf "%03d" $REFACTOR_NUM)
 fi
 
-FEATURE_DIR="${REPO_ROOT}/features/${REFACTOR_NUM}-refactor"
+# Source features location helper
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PLUGIN_DIR="$(dirname "$SCRIPT_DIR")"
+source "$PLUGIN_DIR/lib/features-location.sh"
+
+# Initialize features directory
+ensure_features_dir "$REPO_ROOT"
+
+FEATURE_DIR="${FEATURES_DIR}/${REFACTOR_NUM}-refactor"
 mkdir -p "$FEATURE_DIR"
 
 REFACTOR_SPEC="${FEATURE_DIR}/refactor.md"

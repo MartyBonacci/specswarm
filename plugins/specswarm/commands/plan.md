@@ -23,9 +23,17 @@ You **MUST** consider the user input before proceeding (if not empty).
 
 1. **Discover Feature Context**:
 
-   a. **Find Repository Root**:
+   a. **Find Repository Root and Initialize Features Directory**:
    ```bash
    REPO_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
+
+   # Source features location helper
+   SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+   PLUGIN_DIR="$(dirname "$SCRIPT_DIR")"
+   source "$PLUGIN_DIR/lib/features-location.sh"
+
+   # Initialize features directory (handles migration if needed)
+   get_features_dir "$REPO_ROOT"
    ```
 
    b. **Get Current Feature**:
@@ -35,14 +43,14 @@ You **MUST** consider the user input before proceeding (if not empty).
 
    # Fallback for non-git
    if [ -z "$FEATURE_NUM" ]; then
-     FEATURE_NUM=$(ls -1 features/ 2>/dev/null | grep -oE '^[0-9]{3}' | sort -nr | head -1)
+     FEATURE_NUM=$(list_features "$REPO_ROOT" | grep -oE '^[0-9]{3}' | sort -nr | head -1)
    fi
    ```
 
    c. **Locate Feature Directory**:
    ```bash
-   FEATURE_DIR=$(find features -maxdepth 1 -type d -name "${FEATURE_NUM}-*" 2>/dev/null | head -1)
-   FEATURE_DIR="${REPO_ROOT}/${FEATURE_DIR}"
+   find_feature_dir "$FEATURE_NUM" "$REPO_ROOT"
+   # FEATURE_DIR is now set by find_feature_dir
    ```
 
    d. **Set Path Variables**:

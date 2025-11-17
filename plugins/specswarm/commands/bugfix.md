@@ -39,11 +39,37 @@ Execute regression-test-first bug fixing workflow to ensure bugs are fixed corre
 Before starting workflow, detect available plugins for enhanced capabilities:
 
 ```bash
+# Get repository root and plugin directory
+REPO_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PLUGIN_DIR="$(dirname "$SCRIPT_DIR")"
+
 # Check for SpecSwarm (tech stack enforcement)
 SPECSWARM_INSTALLED=$(claude plugin list | grep -q "specswarm" && echo "true" || echo "false")
 
 # Check for SpecLabs (experimental features)
 SPECLABS_INSTALLED=$(claude plugin list | grep -q "speclabs" && echo "true" || echo "false")
+
+# Check for web project and Chrome DevTools MCP (web debugging enhancement)
+if [ -f "$PLUGIN_DIR/lib/web-project-detector.sh" ]; then
+  source "$PLUGIN_DIR/lib/web-project-detector.sh"
+
+  # Determine if Chrome DevTools should be used
+  if should_use_chrome_devtools "$REPO_ROOT"; then
+    CHROME_DEVTOOLS_MODE="enabled"
+    echo "🌐 Web Project Detected: $WEB_FRAMEWORK"
+    echo "🎯 Chrome DevTools MCP: Available for enhanced browser debugging"
+  elif is_web_project "$REPO_ROOT"; then
+    CHROME_DEVTOOLS_MODE="fallback"
+    echo "🌐 Web Project Detected: $WEB_FRAMEWORK"
+    echo "📦 Using Playwright fallback (Chrome DevTools MCP not available)"
+  else
+    CHROME_DEVTOOLS_MODE="disabled"
+    # Non-web project - no message needed
+  fi
+else
+  CHROME_DEVTOOLS_MODE="disabled"
+fi
 
 # Configure workflow based on detection
 if [ "$SPECLABS_INSTALLED" = "true" ]; then
@@ -99,6 +125,14 @@ fi
 # Get repository root
 REPO_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
 
+# Source features location helper
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PLUGIN_DIR="$(dirname "$SCRIPT_DIR")"
+source "$PLUGIN_DIR/lib/features-location.sh"
+
+# Initialize features directory (handles migration if needed)
+get_features_dir "$REPO_ROOT"
+
 # Detect branch
 CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
 
@@ -124,10 +158,8 @@ if [ -z "$FEATURE_NUM" ]; then
   FEATURE_NUM=$(printf "%03d" $FEATURE_NUM)
 fi
 
-# Find or create feature directory
-FEATURE_DIR=$(find "$REPO_ROOT/features" -maxdepth 1 -type d -name "${FEATURE_NUM}-*" 2>/dev/null | head -1)
-
-if [ -z "$FEATURE_DIR" ]; then
+# Find or create feature directory using helper
+if ! find_feature_dir "$FEATURE_NUM" "$REPO_ROOT"; then
   echo "⚠️  Feature directory not found for bug ${FEATURE_NUM}"
   echo ""
   echo "Please provide bug description (kebab-case):"
@@ -139,7 +171,7 @@ if [ -z "$FEATURE_DIR" ]; then
     exit 1
   fi
 
-  FEATURE_DIR="${REPO_ROOT}/features/${FEATURE_NUM}-${BUG_DESC}"
+  FEATURE_DIR="${FEATURES_DIR}/${FEATURE_NUM}-${BUG_DESC}"
   mkdir -p "$FEATURE_DIR"
   echo "✓ Created: $FEATURE_DIR"
 fi
@@ -741,6 +773,75 @@ T005: [execute]
 
 ---
 
+## Chrome DevTools MCP Integration (Web Projects Only)
+
+If `$CHROME_DEVTOOLS_MODE` is "enabled", use Chrome DevTools MCP tools for enhanced debugging during test execution:
+
+### During T002: Verify Test Fails (Bug Reproduction)
+
+When running regression test to reproduce bug:
+
+```bash
+if [ "$CHROME_DEVTOOLS_MODE" = "enabled" ]; then
+  echo ""
+  echo "🌐 Chrome DevTools MCP Available"
+  echo "   Using MCP tools for enhanced browser debugging..."
+  echo ""
+fi
+```
+
+**Available MCP Tools for Bug Investigation:**
+1. **list_console_messages** - Capture console errors during test execution
+2. **list_network_requests** - Monitor API calls and network failures
+3. **get_console_message** - Inspect specific error messages
+4. **take_screenshot** - Visual evidence of bug state
+5. **evaluate_script** - Inspect runtime state (variables, DOM, etc.)
+
+**Example Usage During Test Execution:**
+- After test fails, use `list_console_messages` to capture JavaScript errors
+- Use `list_network_requests` to identify failed API calls
+- Use `take_screenshot` to document visual bugs
+- Use `evaluate_script` to inspect application state when bug occurs
+
+### During T004: Verify Test Passes (Fix Validation)
+
+When validating fix works correctly:
+
+```bash
+if [ "$CHROME_DEVTOOLS_MODE" = "enabled" ]; then
+  echo ""
+  echo "🌐 Validating fix with Chrome DevTools MCP..."
+  echo "   ✓ Monitoring console for errors"
+  echo "   ✓ Checking network requests"
+  echo ""
+fi
+```
+
+**Validation Checklist:**
+- ✅ No console errors (use `list_console_messages`)
+- ✅ All network requests succeed (use `list_network_requests`)
+- ✅ Visual state correct (use `take_screenshot`)
+- ✅ Application state valid (use `evaluate_script`)
+
+### MCP vs Playwright Fallback
+
+**If Chrome DevTools MCP is enabled:**
+- Richer debugging capabilities
+- Persistent browser profile (`~/.cache/chrome-devtools-mcp/`)
+- Real-time console monitoring
+- Network request inspection
+- No Chromium download needed (saves ~200MB)
+
+**If using Playwright fallback:**
+- Standard browser automation
+- Downloads Chromium (~200MB) if not installed
+- Basic screenshot and interaction capabilities
+- Works identically from user perspective
+
+**Important:** Both modes provide full functionality. Chrome DevTools MCP enhances debugging experience but is NOT required.
+
+---
+
 ## Post-Workflow Hook (if SpecTest installed)
 
 ```bash
@@ -961,6 +1062,30 @@ ${PARALLEL_SPEEDUP_RESULT}
 2. Commit changes: git add . && git commit -m "fix: bug ${FEATURE_NUM}"
 3. View metrics: /specswarm:workflow-metrics ${FEATURE_NUM}
 4. ${SUGGEST_NEXT_COMMAND}
+```
+
+**Post-Command Tip** (display only for web projects without Chrome DevTools MCP):
+
+```bash
+if [ "$CHROME_DEVTOOLS_MODE" = "fallback" ]; then
+  echo ""
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo "💡 TIP: Enhanced Web Debugging Available"
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo ""
+  echo "For web projects, Chrome DevTools MCP provides:"
+  echo "  • Real-time console error monitoring"
+  echo "  • Network request inspection"
+  echo "  • Runtime state debugging"
+  echo "  • Saves ~200MB Chromium download"
+  echo ""
+  echo "Install Chrome DevTools MCP:"
+  echo "  claude mcp add ChromeDevTools/chrome-devtools-mcp"
+  echo ""
+  echo "Your workflow will automatically use it next time!"
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo ""
+fi
 ```
 
 ---

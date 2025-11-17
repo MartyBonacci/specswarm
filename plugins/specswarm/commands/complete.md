@@ -79,14 +79,22 @@ if [ -z "$FEATURE_NUM" ]; then
   FEATURE_NUM=$(printf "%03d" $FEATURE_NUM)
 fi
 
+# Source features location helper
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PLUGIN_DIR="$(dirname "$SCRIPT_DIR")"
+source "$PLUGIN_DIR/lib/features-location.sh"
+
+# Initialize features directory
+get_features_dir "$REPO_ROOT"
+
 # Determine workflow type from branch or directory
 if echo "$CURRENT_BRANCH" | grep -qE '^(bugfix|bug|fix)/'; then
   WORKFLOW_TYPE="bugfix"
 elif echo "$CURRENT_BRANCH" | grep -qE '^(feature|feat)/'; then
   WORKFLOW_TYPE="feature"
 else
-  # Check if features directory exists
-  if [ -d "features/${FEATURE_NUM}-"* ] 2>/dev/null; then
+  # Check if feature directory exists
+  if find_feature_dir "$FEATURE_NUM" "$REPO_ROOT" 2>/dev/null; then
     WORKFLOW_TYPE="feature"
   else
     # Ask user
@@ -94,8 +102,8 @@ else
   fi
 fi
 
-# Find feature directory
-FEATURE_DIR=$(find "$REPO_ROOT/features" -maxdepth 1 -type d -name "${FEATURE_NUM}-*" 2>/dev/null | head -1)
+# Find feature directory (re-find since condition above may not have set it)
+find_feature_dir "$FEATURE_NUM" "$REPO_ROOT" 2>/dev/null
 
 if [ -z "$FEATURE_DIR" ]; then
   echo "⚠️  Warning: Feature directory not found for ${WORKFLOW_TYPE} ${FEATURE_NUM}"
@@ -157,8 +165,9 @@ PARENT_BRANCH="$MAIN_BRANCH"
 
 if [ "$CURRENT_BRANCH" != "$MAIN_BRANCH" ]; then
   # Check if current branch contains multiple feature directories
+  # Check both old (features/) and new (.specswarm/features/) locations
   FEATURE_DIRS_ON_BRANCH=$(git log "$CURRENT_BRANCH" --not "$MAIN_BRANCH" --name-only --pretty=format: 2>/dev/null | \
-                            grep '^features/[0-9]\{3\}-' | cut -d'/' -f2 | sort -u | wc -l || echo "0")
+                            grep -E '^(features/|\.specswarm/features/)[0-9]\{3\}-' | sed 's#^\.specswarm/##' | cut -d'/' -f2 | sort -u | wc -l || echo "0")
 
   if [ "$FEATURE_DIRS_ON_BRANCH" -gt 1 ]; then
     SEQUENTIAL_BRANCH=true

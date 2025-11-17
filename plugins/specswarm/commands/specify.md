@@ -28,23 +28,23 @@ Given that feature description, do this:
 
 1. **Create New Feature Structure** (replaces script execution):
 
-   a. **Find Repository Root**:
+   a. **Find Repository Root and Initialize Features Directory**:
    ```bash
    REPO_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
+
+   # Source features location helper
+   SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+   PLUGIN_DIR="$(dirname "$SCRIPT_DIR")"
+   source "$PLUGIN_DIR/lib/features-location.sh"
+
+   # Initialize features directory (handles migration if needed)
+   ensure_features_dir "$REPO_ROOT"
    ```
 
    b. **Determine Next Feature Number**:
    ```bash
-   # Find existing features and get highest number
-   HIGHEST=$(find "${REPO_ROOT}/features" -maxdepth 1 -type d -name '[0-9][0-9][0-9]-*' 2>/dev/null | \
-             sed 's/.*\/\([0-9][0-9][0-9]\)-.*/\1/' | sort -nr | head -1)
-
-   # Increment or start at 001
-   if [ -z "$HIGHEST" ]; then
-     FEATURE_NUM="001"
-   else
-     FEATURE_NUM=$(printf "%03d" $((10#$HIGHEST + 1)))
-   fi
+   # Get next feature number using helper
+   FEATURE_NUM=$(get_next_feature_number "$REPO_ROOT")
    ```
 
    c. **Create Feature Slug from Description**:
@@ -95,7 +95,7 @@ Given that feature description, do this:
 
    e. **Create Feature Directory Structure**:
    ```bash
-   FEATURE_DIR="${REPO_ROOT}/features/${FEATURE_NUM}-${SLUG}"
+   FEATURE_DIR="${FEATURES_DIR}/${FEATURE_NUM}-${SLUG}"
    mkdir -p "${FEATURE_DIR}/checklists"
    mkdir -p "${FEATURE_DIR}/contracts"
    ```

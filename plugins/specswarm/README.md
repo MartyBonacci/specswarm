@@ -66,6 +66,31 @@ SpecSwarm is a comprehensive plugin that provides everything you need for the co
 
 Before using SpecSwarm commands, establish your project foundation:
 
+**Directory Structure:**
+
+SpecSwarm stores all artifacts in `.specswarm/`:
+```
+my-project/
+├── .specswarm/
+│   ├── features/          # Feature artifacts (auto-migrated from old location)
+│   │   ├── 001-user-authentication/
+│   │   │   ├── spec.md
+│   │   │   ├── plan.md
+│   │   │   └── tasks.md
+│   │   └── 002-password-reset/
+│   ├── tech-stack.md      # Technology standards
+│   ├── quality-standards.md
+│   └── constitution.md
+├── src/
+└── package.json
+```
+
+**Auto-Migration:** If you have an existing `features/` directory in your project root, SpecSwarm will automatically migrate it to `.specswarm/features/` on first use. This:
+- Eliminates conflicts with Cucumber/Gherkin `features/`
+- Groups all SpecSwarm artifacts together
+- Follows modern tooling patterns (`.github/`, `.vscode/`)
+- Keeps valuable feature documentation committed in git
+
 1. **Create Tech Stack Definition** (`.specswarm/tech-stack.md`):
    ```markdown
    ## Core Technologies
@@ -295,6 +320,66 @@ SpecSwarm can suggest experimental SpecLabs features when appropriate:
 ```
 
 See [SpecLabs](../speclabs/README.md) for experimental features.
+
+---
+
+## Optional: Chrome DevTools MCP (Web Projects Only)
+
+For **web projects** (React, Vue, Next.js, etc.), SpecSwarm can leverage Chrome DevTools MCP for enhanced browser debugging during bugfixes and validation.
+
+### Benefits for Web Projects
+
+- ✅ **Real-time Console Monitoring** - Capture JavaScript errors during test execution
+- ✅ **Network Request Inspection** - Monitor API calls and failures
+- ✅ **Runtime State Debugging** - Inspect variables, DOM, application state
+- ✅ **Saves ~200MB Download** - No Chromium installation needed
+- ✅ **Persistent Browser Profile** - Stored at `~/.cache/chrome-devtools-mcp/`
+
+### Installation (Optional)
+
+```bash
+claude mcp add ChromeDevTools/chrome-devtools-mcp
+```
+
+### Automatic Integration
+
+Once installed, SpecSwarm **automatically detects** Chrome DevTools MCP and uses it for web projects:
+
+```bash
+# Bugfix workflow with enhanced debugging
+/specswarm:bugfix "Login fails with special characters"
+
+# Output:
+# 🌐 Web project detected: React
+# 🎯 Chrome DevTools MCP: Available for enhanced browser debugging
+```
+
+### Commands That Use Chrome DevTools MCP
+
+**For Web Projects Only:**
+- `/specswarm:bugfix` - Enhanced error diagnostics during bug reproduction
+- `/specswarm:fix` - Retry diagnostics with console/network monitoring
+- `/specswarm:validate` - Browser automation for flow validation
+
+**Not Applicable to Non-Web Projects:**
+- Python, PHP, Go, Ruby, Rust projects use language-specific debugging
+- Chrome DevTools MCP is silently skipped for non-web projects
+
+### Fallback Behavior
+
+**Without Chrome DevTools MCP:**
+- SpecSwarm automatically falls back to Playwright
+- Downloads Chromium (~200MB) if needed
+- Identical functionality, just without real-time MCP tools
+- No errors or warnings - seamless fallback
+
+### Detection Logic
+
+SpecSwarm detects web projects by analyzing:
+- `package.json` with React, Vue, Angular, Next.js, Astro, Svelte dependencies
+- API frameworks (Express, Fastify) with `client/`, `public/`, `frontend/` directories
+
+Non-web projects (Python CLI, Go APIs, Rust binaries) automatically skip browser automation.
 
 ---
 

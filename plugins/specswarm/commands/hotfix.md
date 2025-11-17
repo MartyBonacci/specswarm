@@ -93,7 +93,15 @@ if [ -z "$HOTFIX_NUM" ]; then
   HOTFIX_NUM=$(printf "%03d" $HOTFIX_NUM)
 fi
 
-FEATURE_DIR="${REPO_ROOT}/features/${HOTFIX_NUM}-hotfix"
+# Source features location helper
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PLUGIN_DIR="$(dirname "$SCRIPT_DIR")"
+source "$PLUGIN_DIR/lib/features-location.sh"
+
+# Initialize features directory
+ensure_features_dir "$REPO_ROOT"
+
+FEATURE_DIR="${FEATURES_DIR}/${HOTFIX_NUM}-hotfix"
 mkdir -p "$FEATURE_DIR"
 
 HOTFIX_SPEC="${FEATURE_DIR}/hotfix.md"

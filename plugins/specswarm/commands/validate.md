@@ -63,8 +63,33 @@ fi
 echo "📁 Project: $PROJECT_PATH"
 echo ""
 
-# Source validation orchestrator
+# Detect web project and Chrome DevTools MCP availability
 PLUGIN_DIR="/home/marty/code-projects/specswarm/plugins/speclabs"
+SPECSWARM_PLUGIN_DIR="/home/marty/code-projects/specswarm/plugins/specswarm"
+
+if [ -f "$SPECSWARM_PLUGIN_DIR/lib/web-project-detector.sh" ]; then
+  source "$SPECSWARM_PLUGIN_DIR/lib/web-project-detector.sh"
+
+  # Check if Chrome DevTools MCP should be used
+  if should_use_chrome_devtools "$PROJECT_PATH"; then
+    export CHROME_DEVTOOLS_MODE="enabled"
+    export WEB_FRAMEWORK="$WEB_FRAMEWORK"
+    echo "🌐 Web project detected: $WEB_FRAMEWORK"
+    echo "🎯 Chrome DevTools MCP: Available for browser automation"
+    echo "   (saves ~200MB Chromium download)"
+    echo ""
+  elif is_web_project "$PROJECT_PATH"; then
+    export CHROME_DEVTOOLS_MODE="fallback"
+    export WEB_FRAMEWORK="$WEB_FRAMEWORK"
+    echo "🌐 Web project detected: $WEB_FRAMEWORK"
+    echo "📦 Using Playwright fallback for browser automation"
+    echo ""
+  else
+    export CHROME_DEVTOOLS_MODE="disabled"
+  fi
+fi
+
+# Source validation orchestrator
 source "${PLUGIN_DIR}/lib/validate-feature-orchestrator.sh"
 ```
 
@@ -138,6 +163,27 @@ echo ""
 ## Validation Status Exit Code
 
 ```bash
+# Display Chrome DevTools MCP tip for web projects (if applicable)
+if [ "$CHROME_DEVTOOLS_MODE" = "fallback" ]; then
+  echo ""
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo "💡 TIP: Enhanced Web Validation Available"
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo ""
+  echo "Chrome DevTools MCP provides enhanced browser automation:"
+  echo "  • Real-time console error monitoring"
+  echo "  • Network request inspection during flows"
+  echo "  • Runtime state debugging"
+  echo "  • Saves ~200MB Chromium download"
+  echo ""
+  echo "Install Chrome DevTools MCP:"
+  echo "  claude mcp add ChromeDevTools/chrome-devtools-mcp"
+  echo ""
+  echo "Your validation will automatically use it next time!"
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo ""
+fi
+
 # Exit with appropriate code based on validation status
 if [ "$STATUS" = "passed" ]; then
   echo "✅ VALIDATION PASSED"
@@ -170,7 +216,11 @@ Detection uses file-based analysis with confidence scoring. Manual override avai
 - **Smart Merging**: Combines user + AI flows with deduplication
 
 ### Interactive Error Detection (Webapp)
-- **Playwright Browser Automation**: Headless Chromium with console monitoring
+- **Browser Automation**: Chrome DevTools MCP (if installed) or Playwright fallback
+- **Chrome DevTools MCP Benefits**:
+  - Saves ~200MB Chromium download
+  - Persistent browser profile (~/.cache/chrome-devtools-mcp/)
+  - Enhanced debugging with real-time console/network monitoring
 - **Real-Time Error Capture**: Console errors, uncaught exceptions, network failures
 - **Terminal Monitoring**: Tracks dev server output for compilation errors
 - **Auto-Fix Retry Loop**: Attempts fixes up to 3 times before manual intervention
@@ -250,7 +300,7 @@ Detection uses file-based analysis with confidence scoring. Manual override avai
 ## Supported Validators
 
 ### v2.7.0
-- ✅ **webapp**: Full support with AI flows + Playwright + auto-fix
+- ✅ **webapp**: Full support with AI flows + Chrome DevTools MCP/Playwright + auto-fix
 
 ### Future Versions
 - ⏳ **android**: Planned for v2.7.1 (Appium-based)

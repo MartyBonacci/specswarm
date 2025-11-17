@@ -91,6 +91,33 @@ cd "$REPO_ROOT"
 
 ---
 
+## Environment Detection
+
+Detect available capabilities before starting workflow:
+
+```bash
+# Get plugin directory
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PLUGIN_DIR="$(dirname "$SCRIPT_DIR")"
+
+# Detect web project and Chrome DevTools MCP availability
+CHROME_DEVTOOLS_MODE="disabled"
+WEB_FRAMEWORK=""
+
+if [ -f "$PLUGIN_DIR/lib/web-project-detector.sh" ]; then
+  source "$PLUGIN_DIR/lib/web-project-detector.sh"
+
+  # Check if Chrome DevTools MCP should be used
+  if should_use_chrome_devtools "$REPO_ROOT"; then
+    CHROME_DEVTOOLS_MODE="enabled"
+  elif is_web_project "$REPO_ROOT"; then
+    CHROME_DEVTOOLS_MODE="fallback"
+  fi
+fi
+```
+
+---
+
 ## Execution Steps
 
 ### Step 1: Display Welcome Banner
@@ -133,6 +160,17 @@ else
   echo "  3. Verify fix works"
   echo "  4. Run test suite to catch regressions"
   echo "  5. Retry up to $MAX_RETRIES times if fix fails"
+  echo ""
+fi
+
+# Show Chrome DevTools MCP status for web projects
+if [ "$CHROME_DEVTOOLS_MODE" = "enabled" ]; then
+  echo "🌐 Web project detected ($WEB_FRAMEWORK)"
+  echo "🎯 Chrome DevTools MCP: Enhanced browser debugging available"
+  echo ""
+elif [ "$CHROME_DEVTOOLS_MODE" = "fallback" ]; then
+  echo "🌐 Web project detected ($WEB_FRAMEWORK)"
+  echo "📦 Using Playwright for browser automation"
   echo ""
 fi
 
@@ -294,6 +332,13 @@ while [ "$FIX_SUCCESSFUL" = false ] && [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
   echo "Previous fix didn't resolve all test failures."
   echo "Analyzing test failures and implementing improved fix..."
   echo ""
+
+  # Show Chrome DevTools diagnostics availability for web projects
+  if [ "$CHROME_DEVTOOLS_MODE" = "enabled" ]; then
+    echo "🌐 Chrome DevTools MCP available for enhanced failure diagnostics"
+    echo "   (console errors, network failures, runtime state inspection)"
+    echo ""
+  fi
 ```
 
 **YOU MUST re-run bugfix with additional context:**
