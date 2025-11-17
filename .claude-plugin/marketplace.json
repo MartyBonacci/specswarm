@@ -4,7 +4,7 @@
     "name": "MartyBonacci",
     "url": "https://github.com/MartyBonacci"
   },
-  "description": "Complete software development lifecycle with spec-driven workflows, quality validation, and experimental autonomous features",
+  "description": "Complete software development lifecycle with spec-driven workflows, autonomous orchestration, quality validation, and performance monitoring. v3.2.0: Multi-language support (Python/PHP/Go/Ruby/Rust), README.md context reading. v3.1.0: Project initialization, rollback safety, security auditing, release automation.",
   "author": {
     "name": "Marty Bonacci",
     "url": "https://github.com/MartyBonacci"
@@ -14,14 +14,14 @@
     {
       "name": "specswarm",
       "source": "./plugins/specswarm",
-      "version": "2.0.0",
-      "description": "Complete software development toolkit: spec-driven workflows, lifecycle management (bugfix/modify/refactor), quality validation, and performance monitoring"
+      "version": "3.2.0",
+      "description": "Complete software development toolkit: spec-driven workflows, autonomous orchestration, lifecycle management (bugfix/modify/refactor), quality validation, and performance monitoring. v3.2.0: NEW - Multi-language support (Python/PHP/Go/Ruby/Rust), README.md context reading, enhanced auto-detection. v3.1.0: Project init, rollback safety, security audits, release automation. Core features: 4 high-level commands (build/fix/upgrade/ship), 70% workflow simplification, full backward compatibility."
     },
     {
       "name": "speclabs",
       "source": "./plugins/speclabs",
-      "version": "2.0.0",
-      "description": "Experimental laboratory for autonomous development with Phase 2 Feature Workflow Engine. Complete feature orchestration from description to implementation. Use at your own risk."
+      "version": "3.0.0-aliases",
+      "description": "⚠️ DEPRECATED - All functionality moved to SpecSwarm v3.0.0+. This plugin now provides backward compatibility aliases only (/speclabs:* → /specswarm:*). Aliases will be removed in v3.2.0. Please migrate to SpecSwarm commands."
     },
     {
       "name": "speckit",
