@@ -2,56 +2,131 @@
   "name": "specswarm-marketplace",
   "owner": {
     "name": "MartyBonacci",
-    "url": "https://github.com/MartyBonacci"
+    "email": "martybonacci@gmail.com"
   },
-  "description": "Complete software development lifecycle with spec-driven workflows, autonomous orchestration, quality validation, and performance monitoring. v3.2.0: Multi-language support (Python/PHP/Go/Ruby/Rust), README.md context reading. v3.1.0: Project initialization, rollback safety, security auditing, release automation.",
-  "author": {
-    "name": "Marty Bonacci",
-    "url": "https://github.com/MartyBonacci"
+  "metadata": {
+    "description": "Complete software development lifecycle with spec-driven workflows, autonomous orchestration, quality validation, and performance monitoring. v3.2.0: Multi-language support (Python/PHP/Go/Ruby/Rust), README.md context reading. v3.1.0: Project initialization, rollback safety, security auditing, release automation.",
+    "version": "3.2.0"
   },
-  "homepage": "https://github.com/MartyBonacci/specswarm",
   "plugins": [
     {
       "name": "specswarm",
       "source": "./plugins/specswarm",
       "version": "3.2.0",
-      "description": "Complete software development toolkit: spec-driven workflows, autonomous orchestration, lifecycle management (bugfix/modify/refactor), quality validation, and performance monitoring. v3.2.0: NEW - Multi-language support (Python/PHP/Go/Ruby/Rust), README.md context reading, enhanced auto-detection. v3.1.0: Project init, rollback safety, security audits, release automation. Core features: 4 high-level commands (build/fix/upgrade/ship), 70% workflow simplification, full backward compatibility."
+      "description": "Complete software development toolkit: spec-driven workflows, autonomous orchestration, lifecycle management (bugfix/modify/refactor), quality validation, and performance monitoring. v3.2.0: NEW - Multi-language support (Python/PHP/Go/Ruby/Rust), README.md context reading, enhanced auto-detection. v3.1.0: Project init, rollback safety, security audits, release automation. Core features: 4 high-level commands (build/fix/upgrade/ship), 70% workflow simplification, full backward compatibility.",
+      "author": {
+        "name": "Marty Bonacci",
+        "url": "https://github.com/MartyBonacci"
+      },
+      "homepage": "https://github.com/MartyBonacci/specswarm",
+      "repository": "https://github.com/MartyBonacci/specswarm",
+      "license": "MIT",
+      "category": "productivity",
+      "tags": ["development", "workflow", "testing", "tools", "productivity"],
+      "keywords": ["spec-driven-development", "specification", "requirements", "planning", "implementation", "workflow", "autonomous-orchestration", "feature-orchestration", "tech-stack", "drift-prevention", "architecture", "quality-validation", "testing", "bugfix", "refactor", "hotfix", "lifecycle-workflows", "chain-bug-detection", "bundle-monitoring", "performance-budgets", "ssr-validation", "multi-framework", "metrics", "analytics", "validation", "python", "php", "go", "ruby", "rust", "javascript", "typescript"],
+      "strict": true
     },
     {
       "name": "speclabs",
       "source": "./plugins/speclabs",
       "version": "3.0.0-aliases",
-      "description": "⚠️ DEPRECATED - All functionality moved to SpecSwarm v3.0.0+. This plugin now provides backward compatibility aliases only (/speclabs:* → /specswarm:*). Aliases will be removed in v3.2.0. Please migrate to SpecSwarm commands."
+      "description": "⚠️ DEPRECATED - All functionality moved to SpecSwarm v3.0.0+. This plugin now provides backward compatibility aliases only (/speclabs:* → /specswarm:*). Aliases will be removed in v3.3.0. Please migrate to SpecSwarm commands.",
+      "author": {
+        "name": "Marty Bonacci",
+        "url": "https://github.com/MartyBonacci"
+      },
+      "homepage": "https://github.com/MartyBonacci/specswarm",
+      "repository": "https://github.com/MartyBonacci/specswarm",
+      "license": "MIT",
+      "category": "productivity",
+      "tags": ["development", "deprecated"],
+      "keywords": ["deprecated", "backward-compatibility", "aliases"],
+      "strict": true
     },
     {
       "name": "speckit",
       "source": "./plugins/speckit",
       "version": "1.0.1",
-      "description": "⚠️ DEPRECATED - Merged into SpecSwarm v2.0+. Use SpecSwarm instead for spec-driven development workflows."
+      "description": "⚠️ DEPRECATED - Merged into SpecSwarm v2.0+. Use SpecSwarm instead for spec-driven development workflows.",
+      "author": {
+        "name": "Marty Bonacci",
+        "url": "https://github.com/MartyBonacci"
+      },
+      "homepage": "https://github.com/MartyBonacci/specswarm",
+      "repository": "https://github.com/MartyBonacci/specswarm",
+      "license": "MIT",
+      "category": "productivity",
+      "tags": ["deprecated"],
+      "keywords": ["deprecated", "spec-driven"],
+      "strict": true
     },
     {
       "name": "spectest",
       "source": "./plugins/spectest",
       "version": "1.0.1",
-      "description": "⚠️ DEPRECATED - Merged into SpecSwarm v2.0+. Performance enhancements now included in SpecSwarm."
+      "description": "⚠️ DEPRECATED - Merged into SpecSwarm v2.0+. Performance enhancements now included in SpecSwarm.",
+      "author": {
+        "name": "Marty Bonacci",
+        "url": "https://github.com/MartyBonacci"
+      },
+      "homepage": "https://github.com/MartyBonacci/specswarm",
+      "repository": "https://github.com/MartyBonacci/specswarm",
+      "license": "MIT",
+      "category": "testing",
+      "tags": ["deprecated"],
+      "keywords": ["deprecated", "performance"],
+      "strict": true
     },
     {
       "name": "speclab",
       "source": "./plugins/speclab",
       "version": "1.1.0",
-      "description": "⚠️ DEPRECATED - Merged into SpecSwarm v2.0+. Lifecycle workflows now included in SpecSwarm."
+      "description": "⚠️ DEPRECATED - Merged into SpecSwarm v2.0+. Lifecycle workflows now included in SpecSwarm.",
+      "author": {
+        "name": "Marty Bonacci",
+        "url": "https://github.com/MartyBonacci"
+      },
+      "homepage": "https://github.com/MartyBonacci/specswarm",
+      "repository": "https://github.com/MartyBonacci/specswarm",
+      "license": "MIT",
+      "category": "workflow",
+      "tags": ["deprecated"],
+      "keywords": ["deprecated", "lifecycle"],
+      "strict": true
     },
     {
       "name": "project-orchestrator",
       "source": "./plugins/project-orchestrator",
       "version": "0.1.1",
-      "description": "⚠️ DEPRECATED - Merged into SpecLabs v1.0+. Autonomous development now unified with advanced debugging in experimental SpecLabs plugin"
+      "description": "⚠️ DEPRECATED - Merged into SpecLabs v1.0+. Autonomous development now unified with advanced debugging in experimental SpecLabs plugin",
+      "author": {
+        "name": "Marty Bonacci",
+        "url": "https://github.com/MartyBonacci"
+      },
+      "homepage": "https://github.com/MartyBonacci/specswarm",
+      "repository": "https://github.com/MartyBonacci/specswarm",
+      "license": "MIT",
+      "category": "productivity",
+      "tags": ["deprecated"],
+      "keywords": ["deprecated", "orchestration"],
+      "strict": true
     },
     {
       "name": "debug-coordinate",
       "source": "./plugins/debug-coordinate",
       "version": "1.0.0",
-      "description": "⚠️ DEPRECATED - Merged into SpecLabs v1.0+. Advanced debugging now unified with autonomous development in experimental SpecLabs plugin"
+      "description": "⚠️ DEPRECATED - Merged into SpecLabs v1.0+. Advanced debugging now unified with autonomous development in experimental SpecLabs plugin",
+      "author": {
+        "name": "Marty Bonacci",
+        "url": "https://github.com/MartyBonacci"
+      },
+      "homepage": "https://github.com/MartyBonacci/specswarm",
+      "repository": "https://github.com/MartyBonacci/specswarm",
+      "license": "MIT",
+      "category": "development",
+      "tags": ["deprecated"],
+      "keywords": ["deprecated", "debugging"],
+      "strict": true
     }
   ]
 }
