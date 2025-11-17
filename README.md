@@ -12,112 +12,14 @@ SpecSwarm is a complete development toolkit for Claude Code, offering both simpl
 
 ## Prerequisites
 
-⚠️ **IMPORTANT**: SpecSwarm works with **both new and established projects** across multiple languages.
+SpecSwarm works with **both new and established projects** across multiple languages.
 
 ### Required (Minimum)
 - ✅ **Git repository initialized** (`git init`)
 - ✅ **At least one commit** on a parent branch (main/develop/sprint-X)
 - ✅ **Working directory** on the correct parent branch
 
-### Supported Languages & Frameworks
-SpecSwarm auto-detects your tech stack from configuration files:
-
-| Language | Config File | Frameworks Detected |
-|----------|-------------|---------------------|
-| **JavaScript/TypeScript** | `package.json` | React, Vue, Angular, Next.js, Astro, Express |
-| **Python** | `requirements.txt`, `pyproject.toml` | Django, Flask, FastAPI |
-| **PHP** | `composer.json` | Laravel, Symfony |
-| **Go** | `go.mod` | Gin, Echo, Fiber |
-| **Ruby** | `Gemfile` | Rails, Sinatra |
-| **Rust** | `Cargo.toml` | Actix Web, Rocket, Axum |
-
-### Two Initialization Modes
-
-**Auto-Detect Mode** (Recommended - faster setup):
-- Have a configuration file (package.json, requirements.txt, etc.)
-- `/specswarm:init` auto-detects your entire stack
-- Fewer interactive questions
-
-**Manual Mode** (Perfect for new projects):
-- No configuration file needed
-- `/specswarm:init` prompts for framework, testing tools, quality standards
-- Answer 6 questions to set up SpecSwarm
-- Build features immediately - code structure created as you go
-
-**README.md Context**: Constitution command reads your README.md to extract project name, description, and goals for better configuration.
-
-### Starting a Brand New Project?
-
-You have **two options** for new projects:
-
-#### Option A: Vision-First (No Scaffolding Required)
-
-Start with just your project vision and build iteratively:
-
-1. **Create README.md** with project description:
-   ```bash
-   mkdir my-project && cd my-project
-   echo "# My Project - Task management app with React" > README.md
-   ```
-
-2. **Initialize git**:
-   ```bash
-   git init
-   git add README.md
-   git commit -m "Initial vision"
-   ```
-
-3. **Initialize SpecSwarm** (manual mode - answer 6 questions):
-   ```bash
-   /specswarm:init
-   ```
-
-4. **Build your first feature** - code structure created as you go:
-   ```bash
-   /specswarm:build "Add task list UI with create/read/update/delete"
-   ```
-
-#### Option B: Scaffold-First (Faster Auto-Detection)
-
-If you prefer starting with a full scaffold:
-
-1. **Scaffold with your framework's CLI**:
-   ```bash
-   # JavaScript/TypeScript
-   npm create vite@latest my-app -- --template react-ts  # React + Vite
-   npx create-next-app@latest                            # Next.js
-
-   # Python
-   django-admin startproject myproject .                 # Django
-
-   # PHP
-   composer create-project laravel/laravel .             # Laravel
-
-   # Go
-   go mod init github.com/username/project               # Go
-
-   # Ruby
-   rails new . --skip-bundle                             # Rails
-   ```
-
-2. **Initialize git**:
-   ```bash
-   git init
-   git add .
-   git commit -m "Initial scaffold"
-   ```
-
-3. **Initialize SpecSwarm** (auto-detects everything):
-   ```bash
-   /specswarm:init
-   ```
-
-4. **Build features** with automatic tech stack enforcement:
-   ```bash
-   /specswarm:build "Add user authentication"
-   ```
-
-**Both workflows work great!** Choose based on your preference.
+**README.md Context**: SpecSwarm reads your README.md to extract project name, description, and goals for better configuration.
 
 ---
 
@@ -135,7 +37,21 @@ If you prefer starting with a full scaffold:
 
 **That's it!** SpecSwarm v3.0 consolidates everything into a single plugin.
 
-### 2. Build Your First Feature (The New Way)
+### 2. Initialize Your Project
+
+   ```bash
+   /specswarm:init
+
+   # This creates 3 foundation files:
+   # - .specswarm/constitution.md (coding principles)
+   # - .specswarm/tech-stack.md (approved technologies)
+   # - .specswarm/quality-standards.md (quality gates)
+   #
+   # Auto-detects tech stack from package.json
+   # Interactive configuration with smart defaults
+   ```
+
+### 3. Build Your First Feature (The New Way)
 
 ```bash
 # Build complete feature with one command
@@ -150,7 +66,7 @@ If you prefer starting with a full scaffold:
 
 **70% fewer commands**, same powerful results.
 
-### 3. Or Use Manual Control (Advanced)
+### 4. Or Use Manual Control (babysitter mode)
 
 ```bash
 # Fine-grained control for complex features
