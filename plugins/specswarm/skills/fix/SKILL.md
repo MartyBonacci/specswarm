@@ -5,65 +5,43 @@ description: Fix bugs and issues systematically using regression tests and retry
 
 # SpecSwarm Fix Workflow
 
-This skill runs the complete FIX workflow using SpecSwarm's natural language dispatcher.
+This skill provides natural language access to the `/specswarm:fix` command.
 
-## What This Does
+## When to Use
 
-When invoked, this skill:
-1. Detects FIX intent from natural language input
-2. Uses confidence scoring to determine execution approach
-3. Runs the complete `/specswarm:fix` workflow which includes:
-   - Create regression tests to reproduce the bug
-   - Run `/specswarm:bugfix` to implement the fix
-   - Verify the fix with regression tests
-   - Retry up to 2 times if the fix doesn't work
-   - Ensure all tests pass before completing
-
-## How It Works
-
-The skill invokes SpecSwarm's natural language dispatcher which:
-- Analyzes the user's input for FIX patterns
-- Calculates confidence score based on trigger words and phrases
-- **High confidence (95%+)**: Shows what will run, gives 3-second cancel window
-- **Medium confidence (70-94%)**: Asks for confirmation
-- **Low confidence (<70%)**: Shows detected intent and asks to confirm
-- Executes `/specswarm:fix` command with full workflow and retry logic
-
-## Example Triggers
-
-Natural language inputs that activate this skill:
-- "Fix the login bug"
-- "The search isn't working"
-- "There's an error in the checkout flow"
-- "Debug the authentication issue"
-- "The form is broken"
-- "Getting a 500 error on API calls"
-- "User registration doesn't work"
-- "Need to fix the pagination"
+Activate this skill when the user reports a bug or issue, such as:
+- "Fix the login button on mobile"
+- "There's a bug in the checkout process"
+- "Authentication doesn't work"
+- "Getting an error when submitting the form"
+- "The search is broken"
+- "Debug the payment processing"
 
 ## Instructions
 
 When this skill is invoked:
 
 1. **Extract the bug description** from the user's natural language input
-2. **Run the natural language dispatcher**:
-   ```bash
-   bash plugins/specswarm/lib/natural-language-dispatcher.sh "<user input>"
+2. **Run the fix command** using the SlashCommand tool:
    ```
-3. **Let the dispatcher handle**:
-   - Intent confirmation
-   - Confidence-based execution
-   - Running `/specswarm:fix` workflow with retry logic
-4. **Monitor the fix workflow** as it:
-   - Creates regression tests
-   - Implements the fix
-   - Verifies with tests
-   - Retries if needed
+   /specswarm:fix "bug description"
+   ```
+3. **Let the command handle everything** - do not add extra steps or workflows
+4. **Stop when the command completes** - do not continue with ship/merge/deploy
 
-## Notes
+## What the Fix Command Does
 
-- This skill provides natural language convenience for `/specswarm:fix`
-- Users can still run `/specswarm:fix` directly if preferred
-- The FIX workflow includes automatic retry logic (up to 2 attempts)
-- Regression tests ensure the bug is actually fixed
-- All fixes must pass tests before the workflow completes
+The `/specswarm:fix` command runs a complete bugfix workflow:
+- Creates regression tests to reproduce the bug
+- Implements the fix
+- Verifies the fix works
+- Re-runs tests to catch new failures
+- Auto-retries up to 2 times if needed
+
+**Important:** The fix command stops after the bug is fixed and verified. It does NOT merge, ship, or deploy. That's a separate step the user will initiate with "ship it" or `/specswarm:ship`.
+
+## Examples
+
+**User input:** "Fix the login bug on mobile"
+
+**Your response:** Run `/specswarm:fix "login bug on mobile"` and let it execute the complete workflow.

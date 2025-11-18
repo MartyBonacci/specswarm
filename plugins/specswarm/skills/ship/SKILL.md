@@ -1,77 +1,47 @@
 ---
 name: specswarm-ship
-description: Ship completed features with quality validation, tests, and merge to parent branch. Use when the user wants to deploy, merge, release, ship, or complete a feature. Trigger words include "ship", "deploy", "merge", "release", "complete", "finish", "done", "push to production". ALWAYS requires explicit user confirmation before executing.
+description: Ship completed features with quality validation and merge to parent branch. Use when the user wants to deploy, merge, release, ship, or complete a feature. Trigger words include "ship", "deploy", "merge", "release", "complete", "finish", "done", "push to production".
 ---
 
 # SpecSwarm Ship Workflow
 
-This skill runs the complete SHIP workflow using SpecSwarm's natural language dispatcher.
+This skill provides natural language access to the `/specswarm:ship` command.
 
-## 🛡️ CRITICAL SAFETY FEATURE
+## When to Use
 
-**SHIP commands detected via natural language will ALWAYS require explicit "yes" confirmation before executing, regardless of confidence level.** This prevents accidental merges, deployments, or releases that could have significant consequences.
-
-The dispatcher will ALWAYS:
-- Pause and ask: "Are you sure you want to ship this feature? (yes/no):"
-- Require typing "yes" or "y" to proceed
-- Cancel if any other input is provided
-- Never auto-execute SHIP, even at 100% confidence
-
-## What This Does
-
-When invoked, this skill:
-1. Detects SHIP intent from natural language input
-2. **ALWAYS asks for explicit confirmation** (safety requirement)
-3. Runs the complete `/specswarm:ship` workflow which includes:
-   - Run quality checks and validation
-   - Ensure all tests pass
-   - Verify build succeeds
-   - Merge feature branch to parent branch
-   - Clean up temporary branches
-
-## How It Works
-
-The skill invokes SpecSwarm's natural language dispatcher which:
-- Analyzes the user's input for SHIP patterns
-- **Pauses for mandatory confirmation** before any execution
-- Only proceeds if user types "yes" or "y"
-- Executes `/specswarm:ship` command with full workflow
-
-## Example Triggers
-
-Natural language inputs that activate this skill:
-- "Ship the shopping cart feature"
+Activate this skill when the user wants to ship/deploy a completed feature, such as:
+- "Ship this feature"
 - "Deploy to production"
-- "Merge this feature"
+- "Merge to main"
 - "Release version 2.0"
-- "I'm done with this feature, ship it"
-- "Complete and merge to main"
-- "Push this to production"
+- "I'm done with this feature"
+- "Complete and merge"
 
 ## Instructions
 
 When this skill is invoked:
 
-1. **Extract the feature description** from the user's natural language input
-2. **Run the natural language dispatcher**:
-   ```bash
-   bash plugins/specswarm/lib/natural-language-dispatcher.sh "<user input>"
+1. **Confirm the user wants to ship** - this is a critical operation
+2. **Run the ship command** using the SlashCommand tool:
    ```
-3. **The dispatcher will**:
-   - Detect SHIP intent
-   - **ALWAYS ask for confirmation** (no auto-execute)
-   - Wait for "yes" or "y" input
-   - Cancel if any other response
-4. **If confirmed, monitor the workflow** as it:
-   - Runs quality validation
-   - Executes tests
-   - Merges to parent branch
+   /specswarm:ship
+   ```
+3. **Let the command handle everything** - it includes built-in safety confirmations
+4. **Do not add extra steps** - the command handles quality validation and merge
 
-## Notes
+## What the Ship Command Does
 
-- This skill provides natural language convenience for `/specswarm:ship`
-- Users can still run `/specswarm:ship` directly if preferred
-- **SHIP is the only command that ALWAYS requires confirmation**
-- This safety feature cannot be bypassed or disabled
-- Designed to prevent accidental production deployments
-- The confirmation prompt appears BEFORE any shipping actions occur
+The `/specswarm:ship` command runs a complete shipping workflow:
+- Runs quality analysis and validation
+- Checks quality threshold (default 80%)
+- Shows merge plan with confirmation prompt
+- Merges to parent branch
+- Cleans up feature branch
+
+**Important:** The `/specswarm:ship` command has built-in safety confirmations. It will show exactly what it's going to do and ask the user to confirm before merging. You don't need to add additional confirmation prompts.
+
+## Examples
+
+**User input:** "Ship this feature"
+
+**Your response:** Run `/specswarm:ship` and let it show the merge plan and confirmation prompt.

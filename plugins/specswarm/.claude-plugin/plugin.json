@@ -1,7 +1,7 @@
 {
   "name": "specswarm",
-  "version": "3.3.1",
-  "description": "Complete software development toolkit: spec-driven workflows, autonomous orchestration, lifecycle management (bugfix/modify/refactor), quality validation, and performance monitoring. v3.3.1: FIXED - Natural language now works via Skills architecture. v3.3.0: Natural language commands (build/fix/ship/upgrade), confidence-based execution, SHIP command safety. v3.2.0: Multi-language support (Python/PHP/Go/Ruby/Rust), README.md context reading. Core features: 4 high-level commands, 70% workflow simplification, full backward compatibility.",
+  "version": "3.3.2",
+  "description": "Complete software development toolkit: spec-driven workflows, autonomous orchestration, lifecycle management (bugfix/modify/refactor), quality validation, and performance monitoring. v3.3.2: FIXED - Simplified Skills to only invoke slash commands (prevents over-execution). v3.3.1: Natural language via Skills architecture. v3.3.0: Natural language commands, confidence-based execution. v3.2.0: Multi-language support. Core features: 4 high-level commands, 70% workflow simplification, full backward compatibility.",
   "author": {
     "name": "Marty Bonacci",
     "url": "https://github.com/MartyBonacci"

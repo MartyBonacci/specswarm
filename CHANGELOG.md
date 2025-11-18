@@ -1,9 +1,58 @@
 # Changelog
 
-All notable changes to SpecSwarm and SpecLabs plugins will be documented in this file.
+All notable changes to SpecSwarm and SpecSwarm plugins will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [3.3.2] - 2025-11-18
+
+### 🔧 Bug Fix - Skills Simplified to Prevent Over-Execution
+
+**v3.3.1 Skills were too verbose and confused Claude into continuing past the intended workflow (e.g., BUILD continued into SHIP/merge prompts).**
+
+### Fixed
+
+#### 🎯 Simplified Skill Instructions
+**Root Cause**: v3.3.1 SKILL.md files mentioned the natural-language-dispatcher.sh and included verbose explanations that confused Claude into thinking it should do more than just invoke the slash command.
+
+**Solution**: Drastically simplified all SKILL.md files to:
+1. Extract the feature/bug description from user input
+2. Run the slash command using SlashCommand tool
+3. **Stop when the command completes** - explicit instruction not to continue
+4. Clear documentation that BUILD/FIX/UPGRADE stop before merge/ship/deploy
+
+**Modified Files**:
+- `plugins/specswarm/skills/build/SKILL.md` - Simplified to just invoke `/specswarm:build` and stop
+- `plugins/specswarm/skills/fix/SKILL.md` - Simplified to just invoke `/specswarm:fix` and stop
+- `plugins/specswarm/skills/ship/SKILL.md` - Simplified to just invoke `/specswarm:ship` (command handles safety)
+- `plugins/specswarm/skills/upgrade/SKILL.md` - Simplified to just invoke `/specswarm:upgrade` and stop
+
+### Changed
+
+#### 📝 Clearer Skill Instructions
+Each skill now has:
+- **When to Use** section with trigger examples
+- **Simple 4-step instructions** focusing on extracting input and running slash command
+- **Explicit "Stop when the command completes"** instruction
+- **Clear separation** between BUILD/FIX/UPGRADE (stop before merge) and SHIP (handles merge)
+
+### Impact
+
+**Before v3.3.2**:
+- User: "build a feature"
+- Claude runs `/specswarm:build`
+- **BUG**: Claude continues and shows git merge prompts (wrong - that's SHIP territory)
+
+**After v3.3.2**:
+- User: "build a feature"
+- Claude runs `/specswarm:build`
+- **CORRECT**: Claude stops after build completes, waits for user to test
+- User can then say "ship it" to trigger merge workflow separately
+
+Skills now properly act as simple natural language → slash command bridges without adding extra behavior.
+
+---
 
 ## [3.3.1] - 2025-11-18
 
