@@ -5,6 +5,112 @@ All notable changes to SpecSwarm and SpecSwarm plugins will be documented in thi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.3.4] - 2025-11-18
+
+### 🎯 Fixed False Negatives - Loose Triggers + Always Confirm
+
+**Problem with v3.3.3:** Too restrictive - legitimate requests like "Please fix that the images don't load" were NOT triggering the fix skill (false negative).
+
+**New Approach:** Go loose with triggers, always confirm before executing.
+
+### Changed
+
+#### Philosophy Shift: Generous Triggers + Mandatory Confirmation
+
+**v3.3.3 approach (FAILED):**
+- Tried to perfectly classify intent using negative conditions
+- Made skills too cautious
+- Result: Missed legitimate requests (false negatives)
+
+**v3.3.4 approach (CORRECT):**
+- Trigger loosely on keyword mentions in software context
+- ALWAYS ask user to confirm with clear options
+- Let user decide instead of trying to be perfect
+- Result: No false negatives, no accidental execution
+
+#### Simplified All SKILL.md Files
+
+**Removed:**
+- All paranoid negative conditions
+- Complex "when NOT to trigger" logic
+- Short-phrase detection thresholds
+- Intent classification attempts
+
+**Added:**
+- **ALWAYS confirm** using AskUserQuestion tool
+- Two clear options every time:
+  - Option 1: Run /specswarm:[command] (default, pre-selected)
+  - Option 2: Process normally without SpecSwarm
+- Simple, generous trigger descriptions
+
+**Example - Fix Skill:**
+```
+User: "Please fix that the images don't load"
+
+Claude: [Shows AskUserQuestion with arrow key navigation]
+❯ 1. Run /specswarm:fix "images don't load"
+     Use SpecSwarm's systematic bugfix workflow
+  2. Process normally without SpecSwarm
+     Handle as regular Claude Code request
+
+[Enter to select · ↑/↓ to navigate]
+```
+
+#### Keystrokes Required
+
+- **Accept SpecSwarm**: Just **Enter** (1 keystroke) - option 1 pre-selected
+- **Decline SpecSwarm**: **Down arrow + Enter** (2 keystrokes)
+- Works for all commands: build, fix, ship, upgrade
+
+### Impact
+
+**Before v3.3.4 (Too Restrictive):**
+```
+User: "Please fix that the images don't load"
+→ BUG: Skill doesn't trigger (false negative)
+→ User has to use /specswarm:fix manually
+
+User: "Ship it" (casual approval)
+→ CORRECT: Asks for confirmation
+```
+
+**After v3.3.4 (Perfect Balance):**
+```
+User: "Please fix that the images don't load"
+→ CORRECT: Triggers fix skill
+→ Shows confirmation options
+→ User hits Enter to confirm
+→ Runs /specswarm:fix
+
+User: "Ship it" (casual approval)
+→ CORRECT: Triggers ship skill
+→ Shows confirmation options
+→ User selects "Process normally" (it was casual approval)
+→ No accidental merge
+
+User: "This will fix the problem" (casual conversation)
+→ MIGHT trigger fix skill
+→ Shows confirmation options
+→ User selects "Process normally"
+→ No accidental execution, minimal friction (2 keystrokes)
+```
+
+### Benefits of New Approach
+
+✅ **No false negatives** - All legitimate requests trigger skills
+✅ **No accidental execution** - Always confirms before running commands
+✅ **Fast UX** - 1 keystroke to accept (Enter), 2 to decline
+✅ **Clear options** - User always knows what will happen
+✅ **User in control** - Decision is explicit, not inferred
+✅ **Simple implementation** - No complex classification logic
+
+**Trade-off:** Might ask for confirmation more often than v3.3.3, but this is acceptable because:
+- False positives are OK (user just declines)
+- False negatives are NOT OK (user misses SpecSwarm benefits)
+- Confirmation is fast (1-2 keystrokes)
+
+---
+
 ## [3.3.3] - 2025-11-18
 
 ### 🛡️ Safety Enhancements - Intent Disambiguation & Accidental Trigger Prevention

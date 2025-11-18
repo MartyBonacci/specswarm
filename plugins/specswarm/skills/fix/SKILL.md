@@ -1,80 +1,53 @@
 ---
 name: specswarm-fix
-description: Fix SOFTWARE BUGS and issues systematically using regression tests and retry logic. Use ONLY when the user is clearly reporting a broken feature, error, or malfunction in software. DO NOT trigger on questions about commands, meta-discussion, or casual conversational use of the word "fix" (like "this will fix the problem" in general discussion).
+description: Fix software bugs and issues using SpecSwarm's systematic workflow (regression tests, implementation, verification, retry logic). Use when the user mentions fixing bugs, errors, broken functionality, or issues.
 ---
 
 # SpecSwarm Fix Workflow
 
-This skill provides natural language access to the `/specswarm:fix` command.
+Provides natural language access to `/specswarm:fix` command.
 
-## When to Use
+## When to Invoke
 
-**✅ TRIGGER when user clearly reports a SOFTWARE BUG:**
-- "Fix the login button on mobile"
-- "There's a bug in the checkout process"
-- "Authentication doesn't work"
-- "Getting an error when submitting the form"
-- "The search is broken"
-- "Debug the payment processing failure"
+Trigger this skill when the user mentions:
+- Fixing bugs or errors
+- Something is broken or not working
+- Issues, failures, or malfunctions
+- Debugging problems
+- Any report of broken software functionality
 
-**❌ DO NOT TRIGGER when:**
-- Asking questions: "How does the fix command work?"
-- Meta-discussion: "Tell me about the fix workflow"
-- Casual conversation: "This approach will fix the problem"
-- General solutions: "We can fix this by refactoring"
-- Planning: "We should fix that eventually"
-
-## Critical Safety Check
-
-**Before invoking this skill**, verify:
-1. Is the user reporting a **SOFTWARE BUG or MALFUNCTION**?
-2. Is this a **CLEAR INTENT to debug/fix** (not discuss or question)?
-3. If the input is **very short** (< 5 words) or **ambiguous**, ask for confirmation first
-
-**Confirmation for ambiguous cases:**
-```
-User: "Fix it"
-
-Response: "I detected a possible FIX request. What bug or issue would you
-like me to fix? Please describe the broken behavior or error you're seeing."
-```
+**Examples:**
+- "Fix the login bug"
+- "Images don't load"
+- "Please fix that the checkout is broken"
+- "There's an error when submitting forms"
+- "Debug the authentication failure"
 
 ## Instructions
 
-When this skill is invoked:
+**ALWAYS follow this flow:**
 
-1. **Verify clear software bug report** - not questions, discussion, or casual speech
-2. **If input is short/ambiguous** (< 5 words), ask for clarification about what's broken
-3. **Extract the bug description** from the user's natural language input
-4. **Run the fix command** using the SlashCommand tool:
-   ```
-   /specswarm:fix "bug description"
-   ```
-5. **Stop when the command completes** - do not continue with ship/merge/deploy
+1. **Detect** that user mentioned a bug/error/broken functionality
+2. **Extract** the bug description from their message
+3. **ALWAYS ask for confirmation** using AskUserQuestion tool with two options:
+   - **Option 1** (label: "Run /specswarm:fix"): Use SpecSwarm's systematic bugfix workflow
+   - **Option 2** (label: "Process normally"): Handle as regular Claude Code request
+4. **If user selects Option 1**, run: `/specswarm:fix "bug description"`
+5. **If user selects Option 2**, process normally without SpecSwarm
+6. **After command completes**, STOP - do not continue with ship/merge
 
 ## What the Fix Command Does
 
-The `/specswarm:fix` command runs a complete bugfix workflow:
-- Creates regression tests to reproduce the bug
+`/specswarm:fix` runs complete workflow:
+- Creates regression tests to reproduce bug
 - Implements the fix
-- Verifies the fix works
+- Verifies fix works
 - Re-runs tests to catch new failures
 - Auto-retries up to 2 times if needed
 
-**Important:** The fix command stops after the bug is fixed and verified. It does NOT merge, ship, or deploy.
+Stops after bug is fixed - does NOT merge/ship/deploy.
 
-## Examples
+## Example
 
-**Clear trigger:**
-- User: "Fix the login bug - users can't log in with special characters in passwords"
-- Response: Run `/specswarm:fix "login bug - users can't log in with special characters in passwords"`
-
-**Ambiguous - ask first:**
-- User: "Fix that"
-- Response: "What bug or issue would you like me to fix? Please describe what's broken."
-
-**Do NOT trigger:**
-- User: "How do I fix this manually?"
-- Response: Answer the question without invoking this skill
-- User: "This refactoring will fix the performance issue"
-- Response: Continue conversation without invoking this skill
+```
+User: "Please fix that the images don't load"

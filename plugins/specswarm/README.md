@@ -1,4 +1,4 @@
-# SpecSwarm v3.3.3
+# SpecSwarm v3.3.4
 
 **Complete Software Development Toolkit**
 
@@ -649,6 +649,6 @@ MIT License - See LICENSE file for details
 
 ---
 
-**SpecSwarm v3.3.3** - Your complete software development toolkit. 🚀
+**SpecSwarm v3.3.4** - Your complete software development toolkit. 🚀
 
 Build it. Fix it. Maintain it. Analyze it. All in one place.

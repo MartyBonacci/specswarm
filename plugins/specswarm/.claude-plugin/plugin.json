@@ -1,7 +1,7 @@
 {
   "name": "specswarm",
-  "version": "3.3.3",
-  "description": "Complete software development toolkit: spec-driven workflows, autonomous orchestration, lifecycle management (bugfix/modify/refactor), quality validation, and performance monitoring. v3.3.3: SAFETY - Enhanced intent disambiguation, mandatory 'ship it' confirmation, explicit negative conditions. v3.3.2: Simplified Skills. v3.3.1: Natural language via Skills. v3.3.0: Natural language commands. v3.2.0: Multi-language support. Core: 4 high-level commands, 70% simplification, full backward compatibility.",
+  "version": "3.3.4",
+  "description": "Complete software development toolkit: spec-driven workflows, autonomous orchestration, lifecycle management (bugfix/modify/refactor), quality validation, and performance monitoring. v3.3.4: FIXED - Loose triggers + always confirm (no false negatives). v3.3.3: Intent disambiguation attempt. v3.3.2: Simplified Skills. v3.3.1: Natural language via Skills. v3.3.0: Natural language commands. v3.2.0: Multi-language support. Core: 4 high-level commands, 70% simplification.",
   "author": {
     "name": "Marty Bonacci",
     "url": "https://github.com/MartyBonacci"
