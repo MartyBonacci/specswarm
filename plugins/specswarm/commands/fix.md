@@ -1,12 +1,5 @@
 ---
 description: Fix bugs with test-driven approach and automatic retry - simplified bugfix workflow
-natural_language_enabled: true
-nl_triggers: fix, bug, broken, error, issue, problem, fails, doesn't work
-nl_examples:
-  - "Fix the login button on mobile"
-  - "There's a bug in the checkout process"
-  - "Authentication doesn't work"
-  - "Getting an error when submitting the form"
 args:
   - name: bug_description
     description: Natural language description of the bug to fix
@@ -20,34 +13,6 @@ args:
   - name: --max-retries
     description: Maximum fix retry attempts (default 2)
     required: false
----
-
-## Natural Language Support (v3.3.0+)
-
-This command can be triggered via **natural language** - just describe the bug or issue!
-
-**Natural Language Examples:**
-- "Fix the login button on mobile"
-- "There's a bug in the checkout process"
-- "Authentication doesn't work"
-- "Getting an error when submitting the form"
-- "Payment processing fails on Safari"
-
-**What This Command Does:**
-Runs the entire FIX workflow automatically:
-1. Creates regression test (optional with `--regression-test`)
-2. Implements fix (`/specswarm:bugfix` or `/specswarm:hotfix`)
-3. Verifies fix works
-4. Re-runs tests to catch new failures
-5. Auto-retries up to 2 times if needed
-
-**Slash Command (Precise):**
-```bash
-/specswarm:fix "bug description" [--regression-test] [--hotfix] [--max-retries N]
-```
-
-Both methods work identically. Natural language provides convenience, while the slash command offers precision and flags.
-
 ---
 
 ## User Input

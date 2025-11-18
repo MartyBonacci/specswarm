@@ -1,13 +1,5 @@
 ---
 description: Quality-gated merge to parent branch - validates code quality before allowing merge
-natural_language_enabled: true
-nl_triggers: ship, deploy, merge, complete, finish, done, ready
-nl_safety_confirmation: required
-nl_examples:
-  - "Ship this feature"
-  - "Deploy to production"
-  - "Merge to main"
-  - "I'm done with this"
 args:
   - name: --force-quality
     description: Override quality threshold (e.g., --force-quality 70)
@@ -15,39 +7,6 @@ args:
   - name: --skip-tests
     description: Skip test validation (not recommended)
     required: false
----
-
-## Natural Language Support (v3.3.0+)
-
-This command can be triggered via **natural language** - but it **ALWAYS requires confirmation** for safety!
-
-**Natural Language Examples:**
-- "Ship this feature" ⚠️ (requires confirmation)
-- "Deploy to production" ⚠️ (requires confirmation)
-- "Merge to main" ⚠️ (requires confirmation)
-- "I'm done with this" ⚠️ (requires confirmation)
-
-**🛡️ CRITICAL SAFETY FEATURE:**
-SHIP commands detected via natural language will ALWAYS ask for explicit "yes" confirmation before executing. This prevents accidental merges or deployments that could have significant consequences:
-- Premature feature deployment
-- Incomplete code in production
-- Merge conflicts
-- Breaking main branch
-
-**What This Command Does:**
-Runs the entire SHIP workflow with quality gates:
-1. Runs quality analysis (`/specswarm:analyze-quality`)
-2. Checks quality threshold (default 80%)
-3. Merges to parent branch (`/specswarm:complete`)
-4. Cleans up feature branch
-
-**Slash Command (Precise):**
-```bash
-/specswarm:ship [--force-quality N] [--skip-tests]
-```
-
-Both methods work identically, with mandatory safety confirmation for natural language triggers.
-
 ---
 
 ## User Input

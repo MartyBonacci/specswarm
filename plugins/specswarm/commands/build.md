@@ -1,12 +1,5 @@
 ---
 description: Build complete feature from specification to implementation - simplified workflow
-natural_language_enabled: true
-nl_triggers: build, create, add, develop, implement, make, new feature
-nl_examples:
-  - "Build user authentication with JWT"
-  - "Create a payment processing system"
-  - "Add dashboard analytics"
-  - "Implement shopping cart functionality"
 args:
   - name: feature_description
     description: Natural language description of the feature to build
@@ -17,34 +10,6 @@ args:
   - name: --quality-gate
     description: Set minimum quality score (default 80)
     required: false
----
-
-## Natural Language Support (v3.3.0+)
-
-This command can be triggered via **natural language** - just describe what you want to build!
-
-**Natural Language Examples:**
-- "Build user authentication with JWT"
-- "Create a payment processing system"
-- "Add dashboard analytics"
-- "Implement shopping cart functionality"
-
-**What This Command Does:**
-Runs the entire BUILD workflow automatically:
-1. Creates specification (`/specswarm:specify`)
-2. Asks clarification questions (`/specswarm:clarify`)
-3. Generates implementation plan (`/specswarm:plan`)
-4. Breaks down into tasks (`/specswarm:tasks`)
-5. Implements all tasks (`/specswarm:implement`)
-6. Validates quality (`/specswarm:analyze-quality`)
-
-**Slash Command (Precise):**
-```bash
-/specswarm:build "feature description" [--validate] [--quality-gate N]
-```
-
-Both methods work identically. Natural language provides convenience, while the slash command offers precision and flags.
-
 ---
 
 ## User Input

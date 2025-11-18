@@ -5,6 +5,59 @@ All notable changes to SpecSwarm and SpecLabs plugins will be documented in this
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.3.1] - 2025-11-18
+
+### 🔧 Bug Fix - Natural Language Commands Now Work
+
+**v3.3.0 built natural language infrastructure but placed it in the wrong architectural layer. Natural language commands did not actually work because Commands require slash notation and cannot be auto-invoked by Claude.**
+
+### Fixed
+
+#### 🎯 Skills Architecture Implementation
+**Root Cause**: v3.3.0 added natural language metadata to Command files, but Commands in Claude Code require explicit `/command` syntax. Only Skills can be auto-invoked based on natural language matching.
+
+**Solution**: Created Skills directory with proper SKILL.md files that leverage the existing natural-language-dispatcher.sh infrastructure.
+
+**New Files**:
+- `plugins/specswarm/skills/build/SKILL.md` - Auto-invoked skill for BUILD workflow
+- `plugins/specswarm/skills/fix/SKILL.md` - Auto-invoked skill for FIX workflow
+- `plugins/specswarm/skills/ship/SKILL.md` - Auto-invoked skill for SHIP workflow (with safety warnings)
+- `plugins/specswarm/skills/upgrade/SKILL.md` - Auto-invoked skill for UPGRADE workflow
+
+**How It Works**:
+- **Skills** = Natural language entry point (auto-invoked by Claude based on description matching)
+- **Dispatcher** = Intent detection, confidence scoring, safety checks (existing lib/natural-language-dispatcher.sh)
+- **Commands** = Actual workflow execution (existing /specswarm:build, /specswarm:fix, etc.)
+
+### Changed
+
+#### 🗑️ Removed Incorrect Natural Language Claims
+- Removed `natural_language_enabled`, `nl_triggers`, `nl_examples` frontmatter from command files
+- Removed "Natural Language Support" sections from build.md, fix.md, ship.md, upgrade.md
+- These custom frontmatter fields were not part of Claude Code's schema and were being ignored
+- Commands still work via slash notation - nothing broken, just removed misleading documentation
+
+### Improved
+
+#### 📖 Documentation Clarity
+- Added "Skills vs Commands Architecture" section to README explaining the two-layer system
+- Updated all version references from v3.3.0 to v3.3.1
+- Added comprehensive v3.3.1 release notes to version history
+- Updated CHEATSHEET.md with correct version
+
+### Impact
+
+**Before v3.3.1**: Natural language like "build auth" did nothing - no way to invoke the dispatcher
+
+**After v3.3.1**: Natural language actually works:
+- "Build user authentication" → Auto-invokes build skill → Dispatcher detects intent → Runs `/specswarm:build`
+- "Fix the login bug" → Auto-invokes fix skill → Dispatcher detects intent → Runs `/specswarm:fix`
+- "Ship this feature" → Auto-invokes ship skill → Dispatcher prompts confirmation → Runs `/specswarm:ship`
+
+All the pattern matching, confidence scoring, and SHIP safety logic from v3.3.0 is preserved and now actually functional.
+
+---
+
 ## [3.3.0] - 2025-11-17
 
 ### 🎤 Natural Language Commands & Confidence-Based Execution

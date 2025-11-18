@@ -1,4 +1,4 @@
-# SpecSwarm v3.3.0
+# SpecSwarm v3.3.1
 
 **Complete Software Development Toolkit**
 
@@ -60,9 +60,27 @@ SpecSwarm is a comprehensive plugin that provides everything you need for the co
 
 ---
 
-## Natural Language Commands (v3.3.0+)
+## Natural Language Commands (v3.3+)
 
 SpecSwarm now understands **natural language** - just describe what you want in plain English!
+
+### Skills vs Commands Architecture
+
+SpecSwarm provides two ways to execute workflows:
+
+**🎤 Skills (Natural Language)** - Auto-invoked by Claude based on your intent
+- Located in `skills/` directory
+- Claude automatically activates when your message matches the skill description
+- No slash notation needed - just describe what you want
+- Examples: "build auth", "fix the login bug", "ship this feature"
+
+**⚡ Commands (Slash Notation)** - Explicit manual invocation
+- Located in `commands/` directory
+- Require `/specswarm:command` syntax
+- Provide precise control for power users
+- Examples: `/specswarm:build`, `/specswarm:fix`, `/specswarm:ship`
+
+**Both approaches run the same workflows** - Skills provide natural language convenience, Commands provide explicit control.
 
 ### How It Works
 
@@ -537,6 +555,14 @@ export function getApiUrl(path: string): string {
 
 ## Version History
 
+### v3.3.1 (2025-11-18) - Natural Language Bug Fix 🔧
+- **Fixed**: Natural language commands now work via Skills architecture
+- **Added**: Skills directory with build/fix/ship/upgrade SKILL.md files
+- **Changed**: Removed incorrect natural language claims from command files
+- **Improved**: README documentation explaining Skills vs Commands architecture
+- **Why**: v3.3.0 built NL infrastructure but placed it in Commands (slash-only) instead of Skills (auto-invoked)
+- **Impact**: Natural language now actually works - "build auth" triggers `/specswarm:build`
+
 ### v3.3.0 (2025-11-17) - Natural Language Commands ⭐
 - **New**: Natural language command detection for BUILD, FIX, SHIP, UPGRADE workflows
 - **Safety**: SHIP commands ALWAYS require explicit confirmation (no bypass)
@@ -623,6 +649,6 @@ MIT License - See LICENSE file for details
 
 ---
 
-**SpecSwarm v3.3.0** - Your complete software development toolkit. 🚀
+**SpecSwarm v3.3.1** - Your complete software development toolkit. 🚀
 
 Build it. Fix it. Maintain it. Analyze it. All in one place.
