@@ -1,4 +1,4 @@
-# SpecSwarm v3.2.0
+# SpecSwarm v3.3.0
 
 **Complete Software Development Toolkit**
 
@@ -57,6 +57,119 @@ SpecSwarm is a comprehensive plugin that provides everything you need for the co
 # Metrics-driven refactoring
 /specswarm:refactor "Improve authentication module performance"
 ```
+
+---
+
+## Natural Language Commands (v3.3.0+)
+
+SpecSwarm now understands **natural language** - just describe what you want in plain English!
+
+### How It Works
+
+Instead of memorizing slash commands, simply tell SpecSwarm what you want to do:
+
+**Build a Feature:**
+```
+"Build user authentication with JWT"
+"Create a payment processing system"
+"Add dashboard analytics"
+```
+
+**Fix a Bug:**
+```
+"Fix the login button on mobile"
+"There's a bug in the checkout process"
+"Authentication doesn't work"
+```
+
+**Ship a Feature:**
+```
+"Ship this feature"  ⚠️ (requires confirmation)
+"Deploy to production"  ⚠️ (requires confirmation)
+"Merge to main"  ⚠️ (requires confirmation)
+```
+
+**Upgrade Technology:**
+```
+"Upgrade to React 19"
+"Migrate from Redux to Zustand"
+"Update to the latest PostgreSQL"
+```
+
+### Confidence-Based Execution
+
+SpecSwarm analyzes your request and provides confidence feedback:
+
+- **High Confidence (95%+):** Auto-executes with 3-second cancel window
+- **Medium Confidence (70-94%):** Asks for confirmation first
+- **Low Confidence (<70%):** Shows numbered options to choose from
+
+### Safety Features
+
+🛡️ **SHIP Protection:** SHIP commands (deploy, merge, complete) **ALWAYS** require explicit "yes" confirmation, regardless of confidence level. This prevents accidental merges or deployments that could have significant consequences.
+
+💡 **Confidence Indicators:** SpecSwarm shows its confidence level and detected workflow, so you always know what it's about to do.
+
+⚡ **3-Second Cancel Window:** For high-confidence BUILD, FIX, and UPGRADE commands, you have 3 seconds to press Ctrl+C if the detection was wrong.
+
+🎯 **Slash Commands Still Work:** All slash commands work exactly as before. Natural language is an optional convenience feature for faster workflows.
+
+### Examples
+
+**High Confidence (Auto-Execute):**
+```
+User: "Build a shopping cart feature"
+
+SpecSwarm:
+  🎯 Detected: BUILD workflow (98% confidence)
+
+  Running: /specswarm:build "shopping cart feature"
+
+  Press Ctrl+C within 3 seconds to cancel...
+  3... 2... 1...
+
+  [Continues with complete BUILD workflow]
+```
+
+**Medium Confidence (Confirmation):**
+```
+User: "Add authentication"
+
+SpecSwarm:
+  🤔 I think you want to BUILD (75% confidence)
+
+  Is this correct? (y/n): _
+```
+
+**SHIP Safety (Always Confirm):**
+```
+User: "Ship it"
+
+SpecSwarm:
+  🎯 Detected: SHIP workflow (99% confidence)
+
+  ⚠️  SHIP COMMAND CONFIRMATION REQUIRED
+
+  This will:
+    • Run quality validation
+    • Create git commit
+    • Merge to parent branch: main
+    • Mark feature as complete
+
+  Current branch: 003-payment-processing
+  Merge target: main
+
+  Are you sure you want to ship this feature? (yes/no): _
+```
+
+### Why Natural Language?
+
+✅ **Lower Learning Curve:** No need to memorize slash command names
+✅ **Natural Conversation:** Talk to SpecSwarm like a teammate
+✅ **Faster Workflows:** Skip typing `/specswarm:`
+✅ **Still Precise:** Slash commands remain for power users
+✅ **Safety First:** SHIP command has mandatory confirmation
+✅ **No Accidents:** Can't accidentally merge/deploy via typo
 
 ---
 
@@ -424,6 +537,15 @@ export function getApiUrl(path: string): string {
 
 ## Version History
 
+### v3.3.0 (2025-11-17) - Natural Language Commands ⭐
+- **New**: Natural language command detection for BUILD, FIX, SHIP, UPGRADE workflows
+- **Safety**: SHIP commands ALWAYS require explicit confirmation (no bypass)
+- **Smart**: Confidence-based execution (high/medium/low)
+- **User-Friendly**: Talk to SpecSwarm naturally - "build auth", "fix login bug"
+- **Backward Compatible**: All slash commands work exactly as before
+- **Pattern Matching**: Sophisticated intent detection with 95%+ accuracy target
+- **Graceful Degradation**: Shows numbered options when uncertain
+
 ### v2.1.2 (2025-11-04) - Git Workflow Safety ⭐
 - **Fixed**: Parent branch detection bugs - robust MAIN_BRANCH fallback
 - **New**: Branch confirmation prompts during feature creation
@@ -501,6 +623,6 @@ MIT License - See LICENSE file for details
 
 ---
 
-**SpecSwarm v2.1.2** - Your complete software development toolkit. 🚀
+**SpecSwarm v3.3.0** - Your complete software development toolkit. 🚀
 
 Build it. Fix it. Maintain it. Analyze it. All in one place.

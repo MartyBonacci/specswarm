@@ -1,5 +1,12 @@
 ---
 description: Upgrade dependencies or frameworks with breaking change analysis and automated refactoring
+natural_language_enabled: true
+nl_triggers: upgrade, update, migrate, modernize, refactor to, switch to
+nl_examples:
+  - "Upgrade to React 19"
+  - "Migrate from Redux to Zustand"
+  - "Update to the latest PostgreSQL"
+  - "Modernize the authentication system"
 args:
   - name: upgrade_target
     description: What to upgrade (e.g., "React 18 to React 19", "all dependencies", "react", "@latest")
@@ -13,6 +20,26 @@ args:
   - name: --dry-run
     description: Analyze breaking changes without making changes
     required: false
+---
+
+## Natural Language Support (v3.3.0+)
+
+This command can be triggered via **natural language** - just describe the technology upgrade!
+
+**Natural Language Examples:**
+- "Upgrade to React 19"
+- "Migrate from Redux to Zustand"
+- "Update to the latest PostgreSQL"
+- "Modernize the authentication system"
+- "Switch to TypeScript 5.x"
+
+**Slash Command (Precise):**
+```bash
+/specswarm:upgrade "upgrade description"
+```
+
+Both methods work identically. Natural language provides convenience, while the slash command offers precision.
+
 ---
 
 ## User Input
