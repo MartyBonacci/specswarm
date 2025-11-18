@@ -1,6 +1,6 @@
 ---
 name: specswarm-fix
-description: Fix software bugs and issues using SpecSwarm's systematic workflow (regression tests, implementation, verification, retry logic). Use when the user mentions fixing bugs, errors, broken functionality, or issues.
+description: Use when the user reports ANY problem with software functionality, describes things not working correctly, or asks to fix/debug/resolve issues. Trigger on problems described as broken, not working, failing, errors, bugs, issues, doesn't load, not loading, etc.
 ---
 
 # SpecSwarm Fix Workflow
@@ -9,30 +9,33 @@ Provides natural language access to `/specswarm:fix` command.
 
 ## When to Invoke
 
-Trigger this skill when the user mentions:
-- Fixing bugs or errors
-- Something is broken or not working
-- Issues, failures, or malfunctions
-- Debugging problems
-- Any report of broken software functionality
+Trigger this skill when the user describes ANY software problem:
+- Things not working or broken
+- Errors, bugs, or failures
+- Features not loading or functioning
+- Requests to fix, debug, or resolve issues
+- ANY report of unexpected behavior
 
 **Examples:**
-- "Fix the login bug"
+- "Please fix that the images don't load"
 - "Images don't load"
-- "Please fix that the checkout is broken"
+- "Fix the login bug"
+- "The checkout is broken"
 - "There's an error when submitting forms"
-- "Debug the authentication failure"
+- "Authentication doesn't work"
+- "Payment processing fails"
+- "The search isn't working"
 
 ## Instructions
 
 **ALWAYS follow this flow:**
 
-1. **Detect** that user mentioned a bug/error/broken functionality
-2. **Extract** the bug description from their message
+1. **Detect** that user described a software problem
+2. **Extract** the problem description from their message
 3. **ALWAYS ask for confirmation** using AskUserQuestion tool with two options:
    - **Option 1** (label: "Run /specswarm:fix"): Use SpecSwarm's systematic bugfix workflow
    - **Option 2** (label: "Process normally"): Handle as regular Claude Code request
-4. **If user selects Option 1**, run: `/specswarm:fix "bug description"`
+4. **If user selects Option 1**, run: `/specswarm:fix "problem description"`
 5. **If user selects Option 2**, process normally without SpecSwarm
 6. **After command completes**, STOP - do not continue with ship/merge
 
@@ -46,8 +49,3 @@ Trigger this skill when the user mentions:
 - Auto-retries up to 2 times if needed
 
 Stops after bug is fixed - does NOT merge/ship/deploy.
-
-## Example
-
-```
-User: "Please fix that the images don't load"

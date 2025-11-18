@@ -5,6 +5,53 @@ All notable changes to SpecSwarm and SpecSwarm plugins will be documented in thi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.3.5] - 2025-11-18
+
+### 🔥 EXTREMELY Broad Triggers - Fixed v3.3.4 False Negatives
+
+**Problem with v3.3.4:** Even "loose triggers" weren't broad enough. Test phrase "Please fix that the images don't load" STILL didn't trigger the fix skill.
+
+**Root Cause:** Skill descriptions were still too narrow. "Use when the user mentions fixing bugs" didn't match phrases like "fix that images don't load."
+
+### Changed
+
+#### Made Skill Descriptions EXTREMELY Generous
+
+**Fix Skill - Before (v3.3.4):**
+```yaml
+description: Use when the user mentions fixing bugs, errors, broken functionality, or issues.
+```
+
+**Fix Skill - After (v3.3.5):**
+```yaml
+description: Use when the user reports ANY problem with software functionality, describes things not working correctly, or asks to fix/debug/resolve issues. Trigger on problems described as broken, not working, failing, errors, bugs, issues, doesn't load, not loading, etc.
+```
+
+**Build Skill - After (v3.3.5):**
+```yaml
+description: Use when the user wants to create, build, add, implement, develop, or make new software features, components, or functionality. Trigger on ANY request for new development work.
+```
+
+#### Added Explicit Examples in Skills
+
+Added the exact failing test phrase as an example in fix skill:
+```markdown
+**Examples:**
+- "Please fix that the images don't load"  ← The phrase that kept failing
+- "Images don't load"
+- "Fix the login bug"
+```
+
+### Philosophy
+
+Stop trying to be smart about classification. Use **semantic trigger words** like:
+- Fix skill: "ANY problem", "not working", "doesn't load", "failing", "broken", "errors", "bugs"
+- Build skill: "ANY request for new development work"
+
+Always confirm before executing - false positives are fine, false negatives are not.
+
+---
+
 ## [3.3.4] - 2025-11-18
 
 ### 🎯 Fixed False Negatives - Loose Triggers + Always Confirm

@@ -1,6 +1,6 @@
 ---
 name: specswarm-build
-description: Build software features using SpecSwarm's complete workflow (specification, planning, implementation, quality validation). Use when the user mentions building, creating, adding, implementing, or developing features or functionality.
+description: Use when the user wants to create, build, add, implement, develop, or make new software features, components, or functionality. Trigger on ANY request for new development work.
 ---
 
 # SpecSwarm Build Workflow
