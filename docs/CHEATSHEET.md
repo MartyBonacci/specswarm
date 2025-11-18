@@ -2,7 +2,7 @@
 
 **Fast reference for common SpecSwarm commands and workflows.**
 
-**Version**: v3.3.2 | **Commands**: 32 total | **Languages**: 6 supported
+**Version**: v3.3.3 | **Commands**: 32 total | **Languages**: 6 supported
 
 ---
 
@@ -15,7 +15,7 @@
 
 # Verify
 /plugin list
-# Should show: specswarm v3.3.2
+# Should show: specswarm v3.3.3
 
 # Note: SpecLabs is deprecated - all functionality now in SpecSwarm
 ```
@@ -280,7 +280,7 @@ main
 # When complete:
 /specswarm:complete
 # → Merges 015-feature-branch → sprint-3
-# → v3.3.2 shows merge plan BEFORE executing
+# → v3.3.3 shows merge plan BEFORE executing
 ```
 
 **Important**: Always check out parent branch BEFORE starting feature!
@@ -359,7 +359,7 @@ cat features/015-*/spec.md | grep parent_branch
 ### ❌ "Orchestration pauses mid-execution"
 
 ```bash
-# Fix: Update to v3.3.2+
+# Fix: Update to v3.3.3+
 /plugin update specswarm
 
 # v3.0+ eliminated all mid-phase pausing (autonomous execution)
@@ -412,7 +412,7 @@ project-root/
 ## Version Information
 
 This cheat sheet is for:
-- **SpecSwarm**: v3.3.2
+- **SpecSwarm**: v3.3.3
   - Natural language commands (build, fix, ship, upgrade)
   - Multi-language support (Python, PHP, Go, Ruby, Rust)
   - README.md context reading

@@ -5,6 +5,120 @@ All notable changes to SpecSwarm and SpecSwarm plugins will be documented in thi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.3.3] - 2025-11-18
+
+### 🛡️ Safety Enhancements - Intent Disambiguation & Accidental Trigger Prevention
+
+**Addresses user concern: "I won't be able to have a conversation containing the words 'build, fix, or ship' without risking triggering workflows unintentionally."**
+
+This release adds multiple layers of safety to prevent false-positive skill invocations while maintaining natural language convenience.
+
+### Added
+
+#### 🎯 Intent Disambiguation System
+
+**Enhanced All SKILL.md Descriptions:**
+- Added **SOFTWARE context requirements** to all skill descriptions
+- Emphasized triggering ONLY for clear software development requests
+- Explicit negative conditions added to descriptions (DO NOT trigger on questions, meta-discussion, casual speech)
+
+**Example improvements:**
+- Before: "Build complete features from specifications"
+- After: "Build complete SOFTWARE FEATURES... Use ONLY when user is clearly requesting development of a new software feature... DO NOT trigger on questions about commands, meta-discussion, or casual conversational use"
+
+#### ⚠️ Mandatory Confirmation for Ambiguous Input
+
+**Short-Phrase Detection (< 5 words for build/fix/upgrade, ≤ 10 words for ship):**
+- "Build that" → Asks for feature description
+- "Fix it" → Asks what's broken
+- **"Ship it"** → Special handling (see below)
+- "Upgrade it" → Asks what to upgrade
+
+**Critical Ship Safety:**
+- **"Ship it" gets MANDATORY disambiguation** regardless of context
+- Presents two meanings: (1) Casual approval vs. (2) Execute merge
+- Requires explicit confirmation before proceeding
+- Protects against highest-risk accidental trigger
+
+#### ❌ Explicit Negative Examples in Each Skill
+
+**Build Skill - Do NOT trigger:**
+- Questions: "How does the build command work?"
+- Meta-discussion: "Let's talk about the build workflow"
+- Casual conversation: "Let me build on that idea"
+- General tasks: "Build a summary of the code"
+
+**Fix Skill - Do NOT trigger:**
+- Casual conversation: "This approach will fix the problem"
+- Planning: "We should fix that eventually"
+- Questions: "How do I fix this manually?"
+
+**Ship Skill - Do NOT trigger:**
+- **Casual approval**: "Ship it!" (meaning "sounds good")
+- Discussing code: "This code is ready to ship"
+- Planning: "Let's ship this next week"
+
+**Upgrade Skill - Do NOT trigger:**
+- Casual conversation: "We need to upgrade our approach"
+- General improvements: "Let's upgrade the user experience"
+
+### Changed
+
+#### 📝 Enhanced Skill Documentation
+
+Each SKILL.md now includes:
+- **When to Use** section with positive trigger examples
+- **Do NOT Trigger** section with negative examples
+- **Critical Safety Check** section with verification steps
+- **Confirmation templates** for ambiguous cases
+- Clear separation of software development vs. general conversation
+
+#### 🔒 Ship Skill Extra Protections
+
+- Warning about "ship it" being common casual expression
+- MANDATORY confirmation for inputs ≤ 10 words
+- Two-meaning disambiguation prompt
+- Emphasizes destructive nature (merges branches, deletes feature branches)
+
+### Impact
+
+**Before v3.3.3 (Risky):**
+```
+User: "Ship it!" (casual approval)
+→ BUG: Might trigger /specswarm:ship and merge to main
+
+User: "Let me build on that idea"
+→ BUG: Might trigger /specswarm:build
+
+User: "This will fix the problem"
+→ BUG: Might trigger /specswarm:fix
+```
+
+**After v3.3.3 (Safe):**
+```
+User: "Ship it!" (casual approval)
+→ SAFE: Asks "Did you mean casual approval or execute shipping?"
+
+User: "Let me build on that idea"
+→ SAFE: Recognized as casual conversation, no trigger
+
+User: "This will fix the problem"
+→ SAFE: Recognized as casual conversation, no trigger
+
+User: "Build user authentication with JWT"
+→ CORRECT: Triggers /specswarm:build (clear software feature request)
+```
+
+**Protection Layers:**
+1. **Description-level filtering**: SOFTWARE context required, negative conditions explicit
+2. **Short-phrase detection**: Asks for clarification on ambiguous input
+3. **Ship-specific safety**: Mandatory disambiguation for "ship it" and similar
+4. **Slash command safety**: `/specswarm:ship` still has its own confirmation layer
+
+Users can now discuss build, fix, ship, and upgrade freely in conversation without accidental workflow triggers.
+
+---
+
 ## [3.3.2] - 2025-11-18
 
 ### 🔧 Bug Fix - Skills Simplified to Prevent Over-Execution
