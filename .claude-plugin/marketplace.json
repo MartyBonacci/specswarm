@@ -6,15 +6,15 @@
   },
   "metadata": {
     "description": "Complete SDD software development lifecycle with spec-driven workflows, autonomous feature orchestration, quality validation, and performance monitoring.",
-    "version": "3.3.4",
+    "version": "3.3.5",
     "updated": "2025-11-18"
   },
   "plugins": [
     {
       "name": "specswarm",
       "source": "./plugins/specswarm",
-      "version": "3.3.4",
-      "description": "Complete software development toolkit: spec-driven workflows, autonomous orchestration, lifecycle management (bugfix/modify/refactor), quality validation, and performance monitoring. v3.3.4: FIXED - Loose triggers + always confirm (no false negatives). v3.3.3: Intent disambiguation attempt. v3.3.2: Simplified Skills. v3.3.1: Natural language via Skills. v3.3.0: Natural language commands. v3.2.0: Multi-language support. Core: 4 high-level commands, 70% simplification.",
+      "version": "3.3.5",
+      "description": "Complete software development toolkit: spec-driven workflows, autonomous orchestration, lifecycle management (bugfix/modify/refactor), quality validation, and performance monitoring. v3.3.5: EXTREMELY broad triggers - fixed v3.3.4 false negatives. v3.3.4: Loose triggers + always confirm. v3.3.3: Intent disambiguation attempt. v3.3.2: Simplified Skills. v3.3.1: Natural language via Skills. v3.3.0: Natural language commands. v3.2.0: Multi-language support. Core: 4 high-level commands, 70% simplification.",
       "author": {
         "name": "Marty Bonacci",
         "url": "https://github.com/MartyBonacci"
