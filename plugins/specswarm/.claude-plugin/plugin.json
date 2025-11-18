@@ -1,7 +1,7 @@
 {
   "name": "specswarm",
-  "version": "3.2.0",
-  "description": "Complete software development toolkit: spec-driven workflows, autonomous orchestration, lifecycle management (bugfix/modify/refactor), quality validation, and performance monitoring. v3.2.0: NEW - Multi-language support (Python/PHP/Go/Ruby/Rust), README.md context reading, enhanced auto-detection. v3.1.0: Project init, rollback safety, security audits, release automation. Core features: 4 high-level commands (build/fix/upgrade/ship), 70% workflow simplification, full backward compatibility.",
+  "version": "3.3.0",
+  "description": "Complete software development toolkit: spec-driven workflows, autonomous orchestration, lifecycle management (bugfix/modify/refactor), quality validation, and performance monitoring. v3.3.0: NEW - Natural language commands (build/fix/ship/upgrade), confidence-based execution, SHIP command safety. v3.2.0: Multi-language support (Python/PHP/Go/Ruby/Rust), README.md context reading. v3.1.0: Project init, rollback safety, security audits. Core features: 4 high-level commands, 70% workflow simplification, full backward compatibility.",
   "author": {
     "name": "Marty Bonacci",
     "url": "https://github.com/MartyBonacci"

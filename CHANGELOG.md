@@ -5,6 +5,71 @@ All notable changes to SpecSwarm and SpecLabs plugins will be documented in this
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.3.0] - 2025-11-17
+
+### 🎤 Natural Language Commands & Confidence-Based Execution
+
+**SpecSwarm v3.3 adds natural language command detection - talk to SpecSwarm in plain English instead of memorizing slash commands.**
+
+**Key Changes**:
+- ✅ Natural language detection for BUILD, FIX, SHIP, UPGRADE workflows
+- ✅ Confidence-based execution (high/medium/low)
+- ✅ Pattern matching with 95%+ accuracy (26/26 tests passing)
+- ✅ SHIP command mandatory safety confirmation
+- ✅ Graceful degradation with numbered options
+
+### Added
+
+#### 🎤 Natural Language Command System
+**New Files**:
+- `plugins/specswarm/lib/natural-language-dispatcher.sh` - Core detection algorithm with confidence scoring
+- `plugins/specswarm/lib/patterns/build-patterns.sh` - BUILD workflow pattern matching
+- `plugins/specswarm/lib/patterns/fix-patterns.sh` - FIX workflow pattern matching
+- `plugins/specswarm/lib/patterns/ship-patterns.sh` - SHIP workflow pattern matching (with safety notes)
+- `plugins/specswarm/lib/patterns/upgrade-patterns.sh` - UPGRADE workflow pattern matching
+- `plugins/specswarm/lib/test-nl-detection.sh` - Comprehensive test suite (26 tests, all passing)
+- `docs/natural-language-commands-plan.md` - Complete implementation documentation
+
+**Natural Language Examples**:
+- "Build user authentication with JWT" → `/specswarm:build` (complete workflow)
+- "Fix the login bug on mobile" → `/specswarm:fix` (complete workflow)
+- "Ship this feature" → `/specswarm:ship` (complete workflow, with confirmation)
+- "Upgrade to React 19" → `/specswarm:upgrade` (complete workflow)
+
+**Confidence Levels**:
+- **High (95%+)**: Auto-executes with 3-second cancel window
+- **Medium (70-94%)**: Asks for confirmation first
+- **Low (<70%)**: Shows numbered options to choose from
+
+### Changed
+
+#### 🎯 Command Mapping Corrections
+- Natural language now triggers high-level orchestrator commands
+- BUILD → `/specswarm:build` (runs complete workflow: specify → clarify → plan → tasks → implement)
+- FIX → `/specswarm:fix` (runs complete workflow: regression test → bugfix → verify → retry)
+- SHIP → `/specswarm:ship` (runs complete workflow: quality check → merge)
+- Added natural language metadata to orchestrator command files (build.md, fix.md, ship.md)
+- Removed natural language sections from granular commands (specify.md, bugfix.md, complete.md)
+
+### Safety
+
+#### 🛡️ SHIP Command Protection
+- **SHIP commands ALWAYS require explicit "yes" confirmation** regardless of confidence level
+- No timeout bypass for SHIP commands
+- Clear warnings about consequences (merge conflicts, premature deployment, breaking main branch)
+- 3-second cancel window for BUILD/FIX/UPGRADE (high confidence only)
+- Visual indicators: 🎯 high confidence, 🤔 medium confidence, ⚠️ SHIP warning
+
+### Documentation
+
+#### 📖 Enhanced Documentation
+- Added "Natural Language Commands" section to main plugin README
+- Updated command files with natural language usage examples
+- Comprehensive plan documentation with safety requirements
+- Testing checklist with edge cases
+
+---
+
 ## [3.2.0] - 2025-01-16
 
 ### 🌐 Multi-Language Support & Enhanced Context Reading

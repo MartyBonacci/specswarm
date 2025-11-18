@@ -1,8 +1,10 @@
-# SpecSwarm v3.2 🚀
+# SpecSwarm v3.3 🚀
 
 **Build features, fix bugs, and upgrade dependencies with autonomous AI workflows for Claude Code.**
 
 SpecSwarm is a complete development toolkit for Claude Code, offering both simplified high-level commands for rapid development and granular control for complex workflows. Build complete features in 2 commands instead of 7+, with quality gates, automatic retry logic, and framework migration support.
+
+**New in v3.3**: 🎤 Natural language commands - talk to SpecSwarm in plain English! Just say "Build user authentication" or "Fix the login bug" instead of memorizing slash commands. Confidence-based execution with mandatory SHIP command safety.
 
 **New in v3.2**: Multi-language support (Python, PHP, Go, Ruby, Rust), README.md context reading for better initialization, and enhanced auto-detection for all supported languages.
 
