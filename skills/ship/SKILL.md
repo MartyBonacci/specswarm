@@ -1,6 +1,6 @@
 ---
 name: specswarm-ship
-description: Ship completed features with quality validation and merge to parent branch. Use when the user mentions shipping, deploying, merging, releasing, or completing features. Note - "ship it" is commonly used as casual approval, so always confirm first.
+description: Use when the user wants to ship, deploy, merge, release, or complete features to production. Trigger on ANY request to ship completed work, merge to main branch, deploy to production, or finalize features.
 ---
 
 # SpecSwarm Ship Workflow

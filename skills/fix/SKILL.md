@@ -1,6 +1,6 @@
 ---
 name: specswarm-fix
-description: Use when the user reports ANY problem with software functionality, describes things not working correctly, or asks to fix/debug/resolve issues. Trigger on problems described as broken, not working, failing, errors, bugs, issues, doesn't load, not loading, etc.
+description: Use when the user wants to fix, debug, resolve, or repair software problems, bugs, errors, or broken functionality. Trigger on ANY request to fix things that are broken, not working, failing, not loading, or causing errors.
 ---
 
 # SpecSwarm Fix Workflow

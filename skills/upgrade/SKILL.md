@@ -1,6 +1,6 @@
 ---
 name: specswarm-upgrade
-description: Upgrade software dependencies, frameworks, and technologies with compatibility analysis and migration guidance. Use when the user mentions upgrading, updating, migrating, or modernizing packages or technology stacks.
+description: Use when the user wants to upgrade, update, migrate, or modernize software dependencies, frameworks, packages, or technology stacks. Trigger on ANY request to upgrade versions, update dependencies, or migrate to newer technologies.
 ---
 
 # SpecSwarm Upgrade Workflow
