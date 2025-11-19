@@ -1,7 +1,7 @@
 {
   "name": "specswarm",
-  "version": "3.4.0",
-  "description": "Complete software development toolkit: spec-driven workflows, autonomous orchestration, lifecycle management (bugfix/modify/refactor), quality validation, and performance monitoring. v3.4.0: Confidence-based auto-execution (build/fix/upgrade) + expanded trigger keywords ('not showing up') + enhanced ship safety confirmation + semantic understanding. v3.3.9: MANDATORY/ALWAYS directive descriptions. v3.3.8: Directory name matching.",
+  "version": "3.5.0",
+  "description": "Complete software development toolkit: spec-driven workflows, autonomous orchestration, lifecycle management (bugfix/modify/refactor), quality validation, and performance monitoring. v3.5.0: 5th core workflow (modify) + README simplification (670→400 lines) + comprehensive docs (COMMANDS.md, SETUP.md, FEATURES.md). v3.4.0: Confidence-based auto-execution. v3.3.9: MANDATORY/ALWAYS directive descriptions.",
   "author": {
     "name": "Marty Bonacci",
     "url": "https://github.com/MartyBonacci"

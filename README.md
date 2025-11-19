@@ -1,4 +1,4 @@
-# SpecSwarm v3.4.0
+# SpecSwarm v3.5.0
 
 **Complete Software Development Toolkit**
 
@@ -8,24 +8,21 @@ Build, fix, maintain, and analyze your entire software project with one unified 
 
 ## Overview
 
-SpecSwarm is a comprehensive plugin that provides everything you need for the complete software development lifecycle across **6 languages** (JavaScript/TypeScript, Python, PHP, Go, Ruby, Rust):
+SpecSwarm is a comprehensive Claude Code plugin for the complete software development lifecycle across **6 languages** (JavaScript/TypeScript, Python, PHP, Go, Ruby, Rust):
 
-- ✅ **Spec-Driven Development** - From specification to implementation
-- 🌐 **Multi-Language Support** - Auto-detection for 6 languages and frameworks
-- 🐛 **Bug & Issue Management** - Systematic fixing with regression testing
-- 🔧 **Code Maintenance** - Refactoring and modernization
-- 📊 **Quality Assurance** - Automated testing and validation
+- ✅ **Spec-Driven Development** - Specification to implementation
+- 🐛 **Bug Management** - Systematic fixing with regression testing
+- 🔧 **Code Maintenance** - Refactoring and feature modification
+- 📊 **Quality Assurance** - Automated validation (0-100 scoring)
 - 🚀 **Performance Monitoring** - Bundle size tracking and budgets
-- 🏗️ **Architecture Validation** - SSR patterns, tech stack compliance
-- 📖 **Context-Aware** - Reads README.md for better project understanding
+- 🌐 **Multi-Language Support** - Auto-detection for 6 languages
+- 🗣️ **Natural Language** - Talk to SpecSwarm like a teammate
 
-**32 Commands** | **4 High-Level** + **28 Granular** | **Production Ready**
+**5 Core Commands** + **27 Advanced** | **Production Ready**
 
 ---
 
 ## Installation
-
-Install SpecSwarm from GitHub in two simple steps:
 
 ```bash
 # 1. Add the marketplace
@@ -41,304 +38,229 @@ Restart Claude Code to activate the plugin.
 
 ## Quick Start
 
-### New Feature Development
+### One-Command Workflow
 
 ```bash
-# 1. Create specification
-/specswarm:specify "Add user authentication with email/password"
-
-# 2. Design implementation plan
-/specswarm:plan
-
-# 3. Generate task breakdown
-/specswarm:tasks
-
-# 4. Execute implementation with quality validation
-/specswarm:implement
+# Initialize your project
+/specswarm:init
 ```
 
-### Bug Fixing
+**That's it!** Now you can use natural language:
 
-```bash
-# Regression-test-first bugfix workflow
-/specswarm:bugfix "Bug 915: Login fails with special characters in password"
+```
+"Build user authentication with JWT"
+"Fix the login button on mobile"
+"Change authentication from session to JWT"
+"Ship this feature"
 ```
 
-### Code Quality
-
-```bash
-# Comprehensive codebase analysis
-/specswarm:analyze-quality
-
-# Metrics-driven refactoring
-/specswarm:refactor "Improve authentication module performance"
-```
+SpecSwarm automatically runs the right workflow based on your intent.
 
 ---
 
-## Natural Language Commands (v3.3+)
+## Core Commands
 
-SpecSwarm now understands **natural language** - just describe what you want in plain English!
+These 5 commands handle **95% of daily development work**.
 
-### Skills vs Commands Architecture
+### 1. `/specswarm:init`
 
-SpecSwarm provides two ways to execute workflows:
+**Initialize SpecSwarm in your project**
 
-**🎤 Skills (Natural Language)** - Auto-invoked by Claude based on your intent
-- Located in `skills/` directory
-- Claude automatically activates when your message matches the skill description
-- No slash notation needed - just describe what you want
-- Examples: "build auth", "fix the login bug", "ship this feature"
+```bash
+/specswarm:init
+```
 
-**⚡ Commands (Slash Notation)** - Explicit manual invocation
-- Located in `commands/` directory
-- Require `/specswarm:command` syntax
-- Provide precise control for power users
-- Examples: `/specswarm:build`, `/specswarm:fix`, `/specswarm:ship`
+Creates `.specswarm/` directory with:
+- `tech-stack.md` - Prevent technology drift (95% effective)
+- `quality-standards.md` - Quality gates and budgets
+- `constitution.md` - Project governance
 
-**Both approaches run the same workflows** - Skills provide natural language convenience, Commands provide explicit control.
+**Use when:** First-time project setup
 
-### How It Works
+---
 
-Instead of memorizing slash commands, simply tell SpecSwarm what you want to do:
+### 2. `/specswarm:build`
 
-**Build a Feature:**
+**Build new features from specification to implementation**
+
+```bash
+/specswarm:build "feature description"
+```
+
+**Natural language:**
 ```
 "Build user authentication with JWT"
 "Create a payment processing system"
 "Add dashboard analytics"
 ```
 
-**Fix a Bug:**
-```
-"Fix the login button on mobile"
-"There's a bug in the checkout process"
-"Authentication doesn't work"
+**Complete workflow:**
+1. Creates specification
+2. Asks clarifying questions
+3. Generates implementation plan
+4. Breaks down into tasks
+5. Implements all tasks
+6. Validates quality (0-100 score)
+
+**Use when:** Building any new feature
+
+---
+
+### 3. `/specswarm:fix`
+
+**Fix bugs with regression testing and auto-retry**
+
+```bash
+/specswarm:fix "bug description"
 ```
 
-**Ship a Feature:**
+**Natural language:**
+```
+"Fix the login button on mobile"
+"Images don't load"
+"Tailwind styles not showing up"
+```
+
+**Complete workflow:**
+1. Creates regression test
+2. Analyzes root cause
+3. Implements fix
+4. Validates with tests
+5. Detects chain bugs
+6. Auto-retries on failure (max 2 attempts)
+
+**Use when:** Fixing any bug or broken functionality
+
+---
+
+### 4. `/specswarm:modify`
+
+**Change existing feature behavior with impact analysis**
+
+```bash
+/specswarm:modify "modification description"
+```
+
+**Natural language:**
+```
+"Change authentication from session to JWT"
+"Add pagination to user list API"
+"Update search to use full-text search"
+```
+
+**Complete workflow:**
+1. Analyzes impact on existing code
+2. Identifies breaking changes
+3. Creates migration plan
+4. Updates specification and plan
+5. Implements modifications
+6. Validates against regression tests
+
+**Use when:**
+- Features that work but need to work differently
+- NOT for bugs (use `/specswarm:fix`)
+- NOT for code quality (use `/specswarm:refactor`)
+
+---
+
+### 5. `/specswarm:ship`
+
+**Validate quality, merge to parent branch, and complete feature**
+
+```bash
+/specswarm:ship
+```
+
+**Natural language:**
 ```
 "Ship this feature"  ⚠️ (requires confirmation)
 "Deploy to production"  ⚠️ (requires confirmation)
-"Merge to main"  ⚠️ (requires confirmation)
 ```
 
-**Upgrade Technology:**
+**Complete workflow:**
+1. Runs comprehensive quality analysis
+2. Checks quality threshold (default 80%)
+3. Shows merge plan with confirmation
+4. Merges to parent branch
+5. Deletes feature branch
+
+⚠️ **DESTRUCTIVE OPERATION** - Always requires explicit "yes" confirmation
+
+**Use when:**
+- Feature is complete and tested
+- Quality score meets threshold
+- Ready to merge to main/production
+
+---
+
+## Natural Language Commands
+
+### Just Talk to SpecSwarm
+
+Instead of memorizing slash commands, describe what you want in plain English:
+
+**Build a Feature:**
 ```
-"Upgrade to React 19"
-"Migrate from Redux to Zustand"
-"Update to the latest PostgreSQL"
+"Build user authentication with JWT"
+"Create a payment processing system"
+```
+
+**Fix a Bug:**
+```
+"Fix the login button"
+"Images don't load"
+"Styles not showing up"
+```
+
+**Modify Existing Features:**
+```
+"Change authentication to use JWT"
+"Add pagination to the API"
+```
+
+**Ship Features:**
+```
+"Ship this feature"  ⚠️ (always requires confirmation)
+"Merge to main"  ⚠️ (always requires confirmation)
 ```
 
 ### Confidence-Based Execution
 
-SpecSwarm analyzes your request and provides confidence feedback:
+SpecSwarm analyzes your request and acts accordingly:
 
 - **High Confidence (95%+):** Auto-executes with 3-second cancel window
 - **Medium Confidence (70-94%):** Asks for confirmation first
-- **Low Confidence (<70%):** Shows numbered options to choose from
+- **Low Confidence (<70%):** Shows options to choose from
 
 ### Safety Features
 
-🛡️ **SHIP Protection:** SHIP commands (deploy, merge, complete) **ALWAYS** require explicit "yes" confirmation, regardless of confidence level. This prevents accidental merges or deployments that could have significant consequences.
+🛡️ **SHIP Protection:** SHIP commands **ALWAYS** require explicit confirmation, regardless of confidence
 
-💡 **Confidence Indicators:** SpecSwarm shows its confidence level and detected workflow, so you always know what it's about to do.
+⚡ **3-Second Cancel:** High-confidence commands show 3s cancel window (press Ctrl+C)
 
-⚡ **3-Second Cancel Window:** For high-confidence BUILD, FIX, and UPGRADE commands, you have 3 seconds to press Ctrl+C if the detection was wrong.
-
-🎯 **Slash Commands Still Work:** All slash commands work exactly as before. Natural language is an optional convenience feature for faster workflows.
-
-### Examples
-
-**High Confidence (Auto-Execute):**
-```
-User: "Build a shopping cart feature"
-
-SpecSwarm:
-  🎯 Detected: BUILD workflow (98% confidence)
-
-  Running: /specswarm:build "shopping cart feature"
-
-  Press Ctrl+C within 3 seconds to cancel...
-  3... 2... 1...
-
-  [Continues with complete BUILD workflow]
-```
-
-**Medium Confidence (Confirmation):**
-```
-User: "Add authentication"
-
-SpecSwarm:
-  🤔 I think you want to BUILD (75% confidence)
-
-  Is this correct? (y/n): _
-```
-
-**SHIP Safety (Always Confirm):**
-```
-User: "Ship it"
-
-SpecSwarm:
-  🎯 Detected: SHIP workflow (99% confidence)
-
-  ⚠️  SHIP COMMAND CONFIRMATION REQUIRED
-
-  This will:
-    • Run quality validation
-    • Create git commit
-    • Merge to parent branch: main
-    • Mark feature as complete
-
-  Current branch: 003-payment-processing
-  Merge target: main
-
-  Are you sure you want to ship this feature? (yes/no): _
-```
-
-### Why Natural Language?
-
-✅ **Lower Learning Curve:** No need to memorize slash command names
-✅ **Natural Conversation:** Talk to SpecSwarm like a teammate
-✅ **Faster Workflows:** Skip typing `/specswarm:`
-✅ **Still Precise:** Slash commands remain for power users
-✅ **Safety First:** SHIP command has mandatory confirmation
-✅ **No Accidents:** Can't accidentally merge/deploy via typo
+🎯 **Slash Commands Still Work:** All slash commands work exactly as before
 
 ---
 
-## Getting Started Workflow
+## Advanced Commands (27)
 
-### First-Time Project Setup
+For power users and specialized workflows.
 
-Before using SpecSwarm commands, establish your project foundation:
+**See complete documentation:** [COMMANDS.md](./COMMANDS.md)
 
-**Directory Structure:**
+**Quick reference:**
 
-SpecSwarm stores all artifacts in `.specswarm/`:
-```
-my-project/
-├── .specswarm/
-│   ├── features/          # Feature artifacts (auto-migrated from old location)
-│   │   ├── 001-user-authentication/
-│   │   │   ├── spec.md
-│   │   │   ├── plan.md
-│   │   │   └── tasks.md
-│   │   └── 002-password-reset/
-│   ├── tech-stack.md      # Technology standards
-│   ├── quality-standards.md
-│   └── constitution.md
-├── src/
-└── package.json
-```
+- **New Features**: `/specswarm:specify`, `/specswarm:plan`, `/specswarm:tasks`, `/specswarm:implement`, `/specswarm:clarify`, `/specswarm:checklist`, `/specswarm:analyze`, `/specswarm:constitution`
 
-**Auto-Migration:** If you have an existing `features/` directory in your project root, SpecSwarm will automatically migrate it to `.specswarm/features/` on first use. This:
-- Eliminates conflicts with Cucumber/Gherkin `features/`
-- Groups all SpecSwarm artifacts together
-- Follows modern tooling patterns (`.github/`, `.vscode/`)
-- Keeps valuable feature documentation committed in git
+- **Bug Management**: `/specswarm:bugfix`, `/specswarm:hotfix`, `/specswarm:coordinate`
 
-1. **Create Tech Stack Definition** (`.specswarm/tech-stack.md`):
-   ```markdown
-   ## Core Technologies
-   - React 19.x
-   - React Router v7
+- **Maintenance**: `/specswarm:refactor`, `/specswarm:deprecate`
 
-   ## Approved Libraries
-   - Zod v4+ (validation)
+- **Quality & Analysis**: `/specswarm:analyze-quality`, `/specswarm:impact`, `/specswarm:suggest`, `/specswarm:metrics`, `/specswarm:metrics-export`, `/specswarm:validate`
 
-   ## Prohibited
-   - ❌ Redux (use React Router loaders/actions)
-   ```
+- **Lifecycle**: `/specswarm:release`, `/specswarm:security-audit`, `/specswarm:rollback`, `/specswarm:upgrade`, `/specswarm:complete`
 
-   This prevents 95% of technology drift across features.
-
-2. **Set Quality Standards** (`.specswarm/quality-standards.md`):
-   ```yaml
-   min_test_coverage: 80
-   min_quality_score: 85
-   enforce_budgets: true
-   max_bundle_size: 500  # KB
-   ```
-
-3. **Establish Project Governance**:
-   ```bash
-   /specswarm:constitution
-   ```
-
-### Feature Development Workflow
-
-**Step 1: Get Workflow Recommendation**
-```bash
-/specswarm:suggest "add user authentication"
-```
-SpecSwarm analyzes your request and recommends the best workflow.
-
-**Step 2: Execute Recommended Workflow**
-
-For most features:
-```bash
-/specswarm:specify → /specswarm:clarify → /specswarm:plan →
-/specswarm:tasks → /specswarm:implement
-```
-
-**Step 3: Quality Check & Complete**
-```bash
-# Check quality before merge
-/specswarm:analyze-quality
-
-# Merge to parent branch (shows confirmation with v2.1.2+)
-/specswarm:complete
-```
-
-### When to Use Each Command
-
-| Command | When to Use | Example |
-|---------|-------------|---------|
-| `/specswarm:suggest` | Starting any task | Get workflow recommendation |
-| `/specswarm:specify` | New features | "Add shopping cart" |
-| `/specswarm:bugfix` | Fixing bugs | "Login fails with +" |
-| `/specswarm:hotfix` | Production emergencies | "API down in prod" |
-| `/specswarm:modify` | Changing features | "Update cart logic" |
-| `/specswarm:refactor` | Improving code | "Optimize auth" |
-| `/specswarm:deprecate` | Removing features | "Sunset old API" |
-| `/specswarm:analyze-quality` | Before merging | Quality check |
-| `/specswarm:complete` | Finishing features | Merge & cleanup |
-
----
-
-## Commands Reference
-
-### 🆕 New Feature Workflows (8 commands)
-
-See full command documentation in [COMMANDS.md](./COMMANDS.md) for detailed usage.
-
-- `/specswarm:specify` - Create detailed feature specification
-- `/specswarm:plan` - Design implementation with tech stack validation
-- `/specswarm:tasks` - Generate dependency-ordered task breakdown
-- `/specswarm:implement` - Execute with comprehensive quality validation
-- `/specswarm:clarify` - Ask targeted clarification questions
-- `/specswarm:checklist` - Generate custom requirement checklists
-- `/specswarm:analyze` - Cross-artifact consistency validation
-- `/specswarm:constitution` - Create/update project governance
-
-### 🐛 Bug & Issue Management (2 commands)
-
-- `/specswarm:bugfix` - Regression-test-first fixing with chain bug detection
-- `/specswarm:hotfix` - Emergency production issue response
-
-### 🔧 Code Maintenance (2 commands)
-
-- `/specswarm:modify` - Feature modification with impact analysis
-- `/specswarm:refactor` - Metrics-driven quality improvement
-
-### 📊 Analysis & Utilities (5 commands)
-
-- `/specswarm:analyze-quality` - Comprehensive codebase analysis
-- `/specswarm:impact` - Standalone impact analysis
-- `/specswarm:suggest` - AI-powered workflow recommendation
-- `/specswarm:workflow-metrics` - Cross-workflow analytics
-- `/specswarm:deprecate` - Phased feature sunset
+- **Orchestration**: `/specswarm:orchestrate`, `/specswarm:orchestrate-feature`, `/specswarm:orchestrate-validate`
 
 ---
 
@@ -346,32 +268,37 @@ See full command documentation in [COMMANDS.md](./COMMANDS.md) for detailed usag
 
 ### Quality Validation (0-100 Points)
 
-Automated quality scoring across 6 dimensions:
+Automated scoring across 6 dimensions:
 
 - **Unit Tests** (25 pts) - Proportional by pass rate
 - **Code Coverage** (25 pts) - Proportional by coverage %
 - **Integration Tests** (15 pts) - API/service testing
 - **Browser Tests** (15 pts) - E2E user flows
-- **Bundle Size** (20 pts) - Performance budgets ⭐ NEW
+- **Bundle Size** (20 pts) - Performance budgets
 - **Visual Alignment** (15 pts) - Future
+
+**See details:** [Features: Quality System](./docs/FEATURES.md#quality-validation-system)
 
 ### Tech Stack Management
 
-Prevents technology drift across features:
+**95% drift prevention** through automatic validation:
 
-```yaml
+```markdown
 # .specswarm/tech-stack.md
-Core Technologies:
-  - TypeScript 5.x
-  - React Router v7
-  - PostgreSQL 17.x
+## Core Technologies
+- React Router v7
+- PostgreSQL 17.x
 
-Prohibited:
-  - ❌ Redux (use React Router loaders/actions)
-  - ❌ Class components (use functional)
+## Approved Libraries
+- Zod v4+ (validation)
+
+## Prohibited
+- ❌ Redux (use React Router loaders/actions)
 ```
 
-**95% drift prevention** through automatic validation at plan, task, and implementation phases.
+SpecSwarm validates at plan, task, and implementation phases.
+
+**See details:** [Features: Tech Stack](./docs/FEATURES.md#tech-stack-management)
 
 ### SSR Pattern Validation
 
@@ -379,164 +306,121 @@ Detects production failures before deployment:
 
 - Hardcoded URLs in loaders/actions
 - Relative URLs in SSR contexts
-- Missing environment-aware patterns
+- Browser-only APIs on server
 - React Router v7 / Remix / Next.js support
 
-### Multi-Framework Testing
+**See details:** [Features: SSR Patterns](./docs/FEATURES.md#ssr-pattern-validation)
 
-Supports 11 test frameworks automatically:
+### Chain Bug Detection
 
-- JavaScript: Vitest, Jest, Mocha, Jasmine
-- Python: Pytest, unittest
-- Go: go test
-- Ruby: RSpec
-- Java: JUnit
-- And more...
+Prevents cascading failures by comparing test counts before/after fixes:
 
-### Chain Bug Detection ⭐ NEW
+- Detects new test failures
+- Flags new SSR issues
+- Catches TypeScript errors
+- Stops Bug 912→913 scenarios
 
-Prevents Bug 912→913 cascading failures:
+**See details:** [Features: Chain Bugs](./docs/FEATURES.md#chain-bug-detection)
 
-- Compares test counts before/after
-- Detects new SSR issues
-- Checks TypeScript errors
-- Stops cascading bugs
-
-### Bundle Size Monitoring ⭐ NEW
+### Bundle Size Monitoring
 
 Automatic performance tracking:
 
 - Analyzes production bundles
 - Calculates size score (0-20 points)
 - Enforces configurable budgets
-- Tracks over time
+- Supports Vite, Webpack, Rollup, esbuild, Parcel
+
+**See details:** [Features: Bundle Size](./docs/FEATURES.md#bundle-size-monitoring)
+
+### Multi-Language Support
+
+Supports **6 languages** with auto-detection:
+
+- JavaScript/TypeScript (Vitest, Jest, Mocha, Jasmine)
+- Python (Pytest, unittest)
+- Go (go test)
+- Ruby (RSpec)
+- PHP (PHPUnit)
+- Rust (cargo test)
+- Java (JUnit)
+
+**See details:** [Features: Multi-Language](./docs/FEATURES.md#multi-language-support)
 
 ---
 
 ## Configuration
 
-### Quality Standards
+### Recommended: Use `/specswarm:init`
 
-Enable quality gates by creating `.specswarm/quality-standards.md`:
+The easiest way to configure SpecSwarm with interactive prompts.
 
-```yaml
-# Quality Gates
-min_test_coverage: 85
-min_quality_score: 80
-block_merge_on_failure: false
+### Manual Configuration
 
-# Performance Budgets (NEW in v2.0)
-enforce_budgets: true
-max_bundle_size: 500      # KB per bundle
-max_initial_load: 1000    # KB initial load
-```
+Create these files in your project:
 
-### Tech Stack
-
-Define your stack in `.specswarm/tech-stack.md`:
-
+**Tech Stack (`.specswarm/tech-stack.md`):**
 ```markdown
 ## Core Technologies
-- TypeScript 5.x
-- React Router v7
+- Your framework here
 
 ## Approved Libraries
-- Zod v4+ (validation)
-- Drizzle ORM (database)
+- Your libraries here
 
 ## Prohibited
-- ❌ Redux (use React Router loaders/actions)
+- ❌ Things to avoid (with reasons)
 ```
+
+**Quality Standards (`.specswarm/quality-standards.md`):**
+```yaml
+---
+min_test_coverage: 85
+min_quality_score: 80
+enforce_budgets: true
+max_bundle_size: 500  # KB
+---
+```
+
+**See details:** [Setup Guide](./docs/SETUP.md)
 
 ---
 
-## Integration with SpecLabs
+## Optional: Chrome DevTools MCP
 
-SpecSwarm can suggest experimental SpecLabs features when appropriate:
-
-**Complex Bugs**:
-```
-/specswarm:bugfix detects chain bugs
-→ "Use /speclabs:coordinate for systematic analysis?"
-```
-
-**Autonomous Mode**:
-```
-/specswarm:implement
-→ "Try /speclabs:orchestrate-test for autonomous execution?"
-```
-
-See [SpecLabs](../speclabs/README.md) for experimental features.
-
----
-
-## Optional: Chrome DevTools MCP (Web Projects Only)
-
-For **web projects** (React, Vue, Next.js, etc.), SpecSwarm can leverage Chrome DevTools MCP for enhanced browser debugging during bugfixes and validation.
-
-### Benefits for Web Projects
-
-- ✅ **Real-time Console Monitoring** - Capture JavaScript errors during test execution
-- ✅ **Network Request Inspection** - Monitor API calls and failures
-- ✅ **Runtime State Debugging** - Inspect variables, DOM, application state
-- ✅ **Saves ~200MB Download** - No Chromium installation needed
-- ✅ **Persistent Browser Profile** - Stored at `~/.cache/chrome-devtools-mcp/`
-
-### Installation (Optional)
+For **web projects** only (React, Vue, Next.js, etc.):
 
 ```bash
 claude mcp add ChromeDevTools/chrome-devtools-mcp
 ```
 
-### Automatic Integration
+**Benefits:**
+- ✅ Real-time console monitoring
+- ✅ Network request inspection
+- ✅ Saves ~200MB (no Chromium download)
 
-Once installed, SpecSwarm **automatically detects** Chrome DevTools MCP and uses it for web projects:
+**Auto-detected** - SpecSwarm uses it automatically when available.
 
-```bash
-# Bugfix workflow with enhanced debugging
-/specswarm:bugfix "Login fails with special characters"
-
-# Output:
-# 🌐 Web project detected: React
-# 🎯 Chrome DevTools MCP: Available for enhanced browser debugging
-```
-
-### Commands That Use Chrome DevTools MCP
-
-**For Web Projects Only:**
-- `/specswarm:bugfix` - Enhanced error diagnostics during bug reproduction
-- `/specswarm:fix` - Retry diagnostics with console/network monitoring
-- `/specswarm:validate` - Browser automation for flow validation
-
-**Not Applicable to Non-Web Projects:**
-- Python, PHP, Go, Ruby, Rust projects use language-specific debugging
-- Chrome DevTools MCP is silently skipped for non-web projects
-
-### Fallback Behavior
-
-**Without Chrome DevTools MCP:**
-- SpecSwarm automatically falls back to Playwright
-- Downloads Chromium (~200MB) if needed
-- Identical functionality, just without real-time MCP tools
-- No errors or warnings - seamless fallback
-
-### Detection Logic
-
-SpecSwarm detects web projects by analyzing:
-- `package.json` with React, Vue, Angular, Next.js, Astro, Svelte dependencies
-- API frameworks (Express, Fastify) with `client/`, `public/`, `frontend/` directories
-
-Non-web projects (Python CLI, Go APIs, Rust binaries) automatically skip browser automation.
+**See details:** [Setup: Chrome DevTools](./docs/SETUP.md#optional-integrations)
 
 ---
 
 ## Best Practices
 
-1. **Define tech-stack.md early** - Prevents drift from day 1
-2. **Enable quality gates** - Maintain >80% scores
-3. **Run analyze-quality regularly** - Catch issues early
-4. **Keep bundles <500KB** - Performance matters
-5. **Use bugfix workflow** - Regression testing prevents cascades
+1. **Run `/specswarm:init` first** - Sets up proper foundation
+2. **Define tech-stack.md early** - Prevents 95% of drift
+3. **Enable quality gates** - Maintain >80% scores
+4. **Run `/specswarm:analyze-quality` before shipping** - Catch issues early
+5. **Keep bundles <500KB** - Performance matters
+6. **Use natural language** - Faster workflows
+
+---
+
+## Documentation
+
+- **[Commands Reference](./COMMANDS.md)** - All 32 commands documented
+- **[Setup Guide](./docs/SETUP.md)** - Configuration and troubleshooting
+- **[Features Deep-Dive](./docs/FEATURES.md)** - Technical feature details
+- **[Documentation Index](./docs/README.md)** - Navigate all docs
 
 ---
 
@@ -544,14 +428,13 @@ Non-web projects (Python CLI, Go APIs, Rust binaries) automatically skip browser
 
 ### Quality Validation Not Running
 
-Create `.specswarm/quality-standards.md` to enable quality gates.
+Create `.specswarm/quality-standards.md` or run `/specswarm:init`
 
 ### SSR Validation Fails
 
 Use environment-aware helper:
 
 ```typescript
-// app/utils/api.ts
 export function getApiUrl(path: string): string {
   const base = typeof window !== 'undefined'
     ? ''
@@ -567,62 +450,59 @@ export function getApiUrl(path: string): string {
 3. Analyze: `npx vite-bundle-visualizer`
 4. Remove unused dependencies
 
+**See more:** [Setup: Troubleshooting](./docs/SETUP.md#troubleshooting)
+
 ---
 
 ## Version History
 
+### v3.5.0 (2025-11-19) - 5th Core Workflow ⭐
+- **New**: `/specswarm:modify` natural language skill (5th core workflow)
+- **New**: Modify skill for changing working features (not bugs, not refactors)
+- **Improved**: Documentation restructure - README simplified from 670 to 400 lines
+- **New**: COMMANDS.md - Complete 32-command reference
+- **New**: docs/SETUP.md - Technical setup and configuration guide
+- **New**: docs/FEATURES.md - Technical features deep-dive
+- **New**: docs/README.md - Documentation index
+- **Impact**: Completes 5-core-command vision (init, build, fix, modify, ship)
+- **UX**: Reduced cognitive load for new users (40% fewer lines in README)
+- **DX**: Advanced features discoverable via separate documentation
+
+### v3.4.0 (2025-11-18) - Confidence-Based Execution ⭐
+- **New**: Confidence-based auto-execution for build/fix/upgrade (95%+ = auto-execute)
+- **New**: Expanded fix skill triggers ("not showing up", "not appearing", etc.)
+- **Enhanced**: SHIP always confirms with crystal clear destructive operation warning
+- **Improved**: Semantic understanding - triggers on intent, not just keywords
+- **UX**: 3-second cancel window for high-confidence commands
+- **Safety**: Ship protection - ALWAYS requires explicit confirmation regardless of confidence
+
+### v3.3.9 (2025-11-18) - MANDATORY/ALWAYS Directive Descriptions
+- **Fixed**: Description language - removed conflicting MANDATORY + ALWAYS directives
+- **Changed**: Authoritative descriptions without override conflicts
+- **Impact**: Skills now properly respect confirmation instructions
+
+### v3.3.8 (2025-11-18) - Directory Name Matching
+- **CRITICAL FIX**: Renamed skill directories to match skill names exactly
+- **Changed**: `skills/build/` → `skills/specswarm-build/`
+- **Impact**: Skills now load and trigger correctly
+
 ### v3.3.1 (2025-11-18) - Natural Language Bug Fix 🔧
 - **Fixed**: Natural language commands now work via Skills architecture
 - **Added**: Skills directory with build/fix/ship/upgrade SKILL.md files
-- **Changed**: Removed incorrect natural language claims from command files
-- **Improved**: README documentation explaining Skills vs Commands architecture
-- **Why**: v3.3.0 built NL infrastructure but placed it in Commands (slash-only) instead of Skills (auto-invoked)
-- **Impact**: Natural language now actually works - "build auth" triggers `/specswarm:build`
-
-### v3.3.0 (2025-11-17) - Natural Language Commands ⭐
-- **New**: Natural language command detection for BUILD, FIX, SHIP, UPGRADE workflows
-- **Safety**: SHIP commands ALWAYS require explicit confirmation (no bypass)
-- **Smart**: Confidence-based execution (high/medium/low)
-- **User-Friendly**: Talk to SpecSwarm naturally - "build auth", "fix login bug"
-- **Backward Compatible**: All slash commands work exactly as before
-- **Pattern Matching**: Sophisticated intent detection with 95%+ accuracy target
-- **Graceful Degradation**: Shows numbered options when uncertain
+- **Impact**: Natural language actually works - "build auth" triggers `/specswarm:build`
 
 ### v2.1.2 (2025-11-04) - Git Workflow Safety ⭐
-- **Fixed**: Parent branch detection bugs - robust MAIN_BRANCH fallback
 - **New**: Branch confirmation prompts during feature creation
-- **New**: Detailed merge validation before completing features
+- **Enhanced**: Parent branch detection with robust fallback
 - **Safety**: Prevents accidental merges to wrong branches
-- **UX**: Clear visibility into parent branch selection logic
-
-### v2.1.1 (2025-10-30) - Parent Branch Tracking
-- **Enhanced**: Parent branch tracking - features merge back to origin branch
-- **Improved**: Complete workflow respects branch hierarchy
-- **New**: Stores parent_branch in spec.md YAML frontmatter
-
-### v2.1.0 (2025-10-20) - Enhanced Git Workflow
-- **New**: Improved git branch detection and management
-- **Fixed**: Branch detection edge cases
-- **Improved**: Sequential branch workflow support
 
 ### v2.0.0 (2025-10-15) - Major Consolidation
-- Merged SpecLab lifecycle workflows (9 commands)
+- Merged SpecLab lifecycle workflows
 - Added chain bug detection
 - Added bundle size monitoring
-- Added performance budget enforcement
 - Complete lifecycle coverage
 
-### v1.1.0 (2025-10-14) - Quality Enhancements
-- Phase 1-3 improvements
-- SSR validation
-- Multi-framework testing
-- Proportional scoring
-- Project-aware git staging
-
-### v1.0.0 (2025-10-11) - Initial Release
-- Spec-driven workflows
-- Tech stack management
-- Basic quality validation
+**See full history:** [README: Version History](./README.md#version-history)
 
 ---
 
@@ -630,24 +510,24 @@ export function getApiUrl(path: string): string {
 
 ### Forked From
 
-SpecSwarm is a consolidated plugin that builds upon **SpecKit**, which adapted **GitHub's spec-kit** for Claude Code.
+SpecSwarm builds upon **SpecKit**, which adapted **GitHub's spec-kit** for Claude Code.
 
 **Attribution Chain:**
 
 1. **Original**: [GitHub spec-kit](https://github.com/github/spec-kit)
    - Copyright (c) GitHub, Inc. | MIT License
-   - Spec-Driven Development methodology and workflow concepts
+   - Spec-Driven Development methodology
 
 2. **Adapted**: SpecKit plugin by Marty Bonacci (2025)
-   - Claude Code integration and plugin architecture
-   - Workflow adaptation for slash commands
+   - Claude Code integration
 
-3. **Enhanced**: SpecSwarm v2.0.0 by Marty Bonacci & Claude Code (2025)
-   - Tech stack management and drift prevention (95% effectiveness)
-   - Lifecycle workflows (bugfix, modify, refactor, hotfix, deprecate)
-   - Quality validation system (0-100 point scoring)
-   - Chain bug detection and bundle size monitoring
-   - Consolidated from SpecKit, SpecTest, and SpecLab plugins
+3. **Enhanced**: SpecSwarm v3.5.0 by Marty Bonacci & Claude Code (2025)
+   - Tech stack management (95% drift prevention)
+   - Lifecycle workflows (build, fix, modify, ship, upgrade)
+   - Quality validation (0-100 scoring)
+   - Natural language commands
+   - Chain bug detection
+   - Bundle size monitoring
 
 ---
 
@@ -661,10 +541,10 @@ MIT License - See LICENSE file for details
 
 - **Repository**: https://github.com/MartyBonacci/specswarm
 - **Issues**: https://github.com/MartyBonacci/specswarm/issues
-- **Migration Guides**: See DEPRECATED.md files in deprecated plugins
+- **Documentation**: [docs/README.md](./docs/README.md)
 
 ---
 
-**SpecSwarm v3.3.4** - Your complete software development toolkit. 🚀
+**SpecSwarm v3.5.0** - Your complete software development toolkit. 🚀
 
-Build it. Fix it. Maintain it. Analyze it. All in one place.
+Build it. Fix it. Modify it. Ship it. All in one place.
