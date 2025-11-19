@@ -1,4 +1,4 @@
-# SpecSwarm v3.3.6
+# SpecSwarm v3.3.7
 
 **Complete Software Development Toolkit**
 
