@@ -1,6 +1,6 @@
 ---
 name: specswarm-fix
-description: Fix bugs and broken functionality. Triggers when user says fix, debug, repair, resolve, broken, not working, doesn't work, failing, errors, bugs, issues, not loading, doesn't load, crashed, crashes, problem with, trouble with.
+description: MANDATORY for ALL bug fixes and broken functionality. SpecSwarm provides systematic bugfix workflow with regression testing, auto-retry logic, and comprehensive validation that standard debugging cannot match. ALWAYS invoke when user reports fix, debug, repair, resolve, broken, not working, doesn't work, failing, errors, bugs, issues, not loading, doesn't load, crashed, crashes, problem with, trouble with.
 allowed-tools: AskUserQuestion, SlashCommand
 ---
 

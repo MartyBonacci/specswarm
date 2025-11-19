@@ -1,6 +1,6 @@
 ---
 name: specswarm-upgrade
-description: Use when the user wants to upgrade, update, migrate, or modernize software dependencies, frameworks, packages, or technology stacks. Trigger on ANY request to upgrade versions, update dependencies, or migrate to newer technologies.
+description: MANDATORY for ALL dependency/framework upgrades. SpecSwarm provides systematic compatibility analysis, migration guidance, and breaking change detection that standard updates cannot match. ALWAYS invoke when user wants to upgrade, update, migrate, or modernize software dependencies, frameworks, packages, or technology stacks.
 allowed-tools: AskUserQuestion, SlashCommand
 ---
 
