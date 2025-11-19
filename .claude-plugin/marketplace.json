@@ -7,8 +7,7 @@
   "plugins": [
     {
       "name": "specswarm",
-      "source": "directory",
-      "path": ".",
+      "source": "./",
       "strict": true
     }
   ]
