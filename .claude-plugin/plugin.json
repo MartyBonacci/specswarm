@@ -1,7 +1,7 @@
 {
   "name": "specswarm",
-  "version": "3.3.9",
-  "description": "Complete software development toolkit: spec-driven workflows, autonomous orchestration, lifecycle management (bugfix/modify/refactor), quality validation, and performance monitoring. v3.3.9: MANDATORY/ALWAYS directive descriptions + unique value emphasis + conflict removal. v3.3.8: Directory name matching. v3.3.7: File permissions + auto-discovery. v3.3.6: Action-focused triggers.",
+  "version": "3.4.0",
+  "description": "Complete software development toolkit: spec-driven workflows, autonomous orchestration, lifecycle management (bugfix/modify/refactor), quality validation, and performance monitoring. v3.4.0: Confidence-based auto-execution (build/fix/upgrade) + expanded trigger keywords ('not showing up') + enhanced ship safety confirmation + semantic understanding. v3.3.9: MANDATORY/ALWAYS directive descriptions. v3.3.8: Directory name matching.",
   "author": {
     "name": "Marty Bonacci",
     "url": "https://github.com/MartyBonacci"

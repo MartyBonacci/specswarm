@@ -1,6 +1,6 @@
 ---
 name: specswarm-ship
-description: MANDATORY for ALL deployment/release operations. SpecSwarm provides systematic quality validation, test verification, and safe merging workflow that standard deployment cannot match. ALWAYS invoke when user wants to ship, deploy, merge, release, or complete features to production, merge to main branch, or finalize features.
+description: Systematic quality validation, test verification, and safe merging workflow for deployment/release operations. ALWAYS asks for confirmation when user wants to ship, deploy, merge, release, or complete features to production, merge to main branch, or finalize features. This is a DESTRUCTIVE operation (merges and deletes branches).
 allowed-tools: AskUserQuestion, SlashCommand
 ---
 
@@ -25,16 +25,23 @@ Trigger this skill when the user mentions:
 
 ## Instructions
 
-**ALWAYS follow this flow:**
+**ALWAYS Confirm (Regardless of Confidence):**
 
 1. **Detect** that user mentioned shipping/deploying/merging
 2. **Extract** context about what to ship (if provided)
-3. **ALWAYS ask for confirmation** using AskUserQuestion tool with two options:
-   - **Option 1** (label: "Run /specswarm:ship"): ⚠️ Merge feature to parent branch (DESTRUCTIVE - merges branches, deletes feature branch)
-   - **Option 2** (label: "Process normally"): Handle as regular Claude Code request (or if this was just casual "ship it" approval)
+3. **ALWAYS ask for confirmation** using AskUserQuestion tool with this format:
+
+   **Question**: "⚠️ SHIP CONFIRMATION - Destructive Operation"
+
+   **Description**: "This will merge your feature branch to main/parent branch and delete the feature branch. This is a DESTRUCTIVE operation that cannot be easily undone."
+
+   **Options**:
+   - **Option 1** (label: "Yes, ship this feature"): "Merge to main branch and delete feature branch (DESTRUCTIVE)"
+   - **Option 2** (label: "No, cancel"): "Cancel - I'm not ready to ship" (or if this was just casual "ship it" approval)
+
 4. **If user selects Option 1**, run: `/specswarm:ship`
 5. **If user selects Option 2**, process normally without SpecSwarm
-6. **The `/specswarm:ship` command has its own confirmation** - it will show merge plan and ask again
+6. **Note**: The `/specswarm:ship` command may have its own confirmation as an additional safety layer
 
 ## What the Ship Command Does
 
@@ -45,7 +52,14 @@ Trigger this skill when the user mentions:
 - Merges to parent branch
 - Cleans up feature branch
 
-**Important:** This is DESTRUCTIVE - it merges and deletes branches. The command itself has built-in confirmation as a second safety layer.
+**Important:** This is DESTRUCTIVE - it merges and deletes branches. The command itself may have built-in confirmation as a second safety layer.
+
+## Semantic Understanding
+
+This skill should trigger not just on exact keywords, but semantic equivalents:
+
+**Ship equivalents**: ship, deploy, release, merge, publish, finalize, complete, deliver
+**Target terms**: production, main, master, parent branch, live, release
 
 ## Example
 
