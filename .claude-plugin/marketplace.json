@@ -1,0 +1,15 @@
+{
+  "name": "specswarm",
+  "owner": {
+    "name": "MartyBonacci",
+    "email": "martybonacci@gmail.com"
+  },
+  "plugins": [
+    {
+      "name": "specswarm",
+      "source": "directory",
+      "path": ".",
+      "strict": true
+    }
+  ]
+}

@@ -25,13 +25,17 @@ SpecSwarm is a comprehensive plugin that provides everything you need for the co
 
 ## Installation
 
-Install SpecSwarm directly from GitHub:
+Install SpecSwarm from GitHub in two simple steps:
 
 ```bash
-/plugin install https://github.com/MartyBonacci/specswarm
+# 1. Add the marketplace
+/plugin marketplace add MartyBonacci/specswarm
+
+# 2. Install the plugin
+/plugin install specswarm@MartyBonacci
 ```
 
-That's it! The plugin will be available immediately in Claude Code.
+Restart Claude Code to activate the plugin.
 
 ---
 
