@@ -1,6 +1,7 @@
 ---
 name: specswarm-fix
 description: Fix bugs and broken functionality. Triggers when user says fix, debug, repair, resolve, broken, not working, doesn't work, failing, errors, bugs, issues, not loading, doesn't load, crashed, crashes, problem with, trouble with.
+allowed-tools: AskUserQuestion, SlashCommand
 ---
 
 # SpecSwarm Fix Workflow

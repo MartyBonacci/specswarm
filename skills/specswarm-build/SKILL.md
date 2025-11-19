@@ -1,6 +1,7 @@
 ---
 name: specswarm-build
 description: Use when the user wants to create, build, add, implement, develop, or make new software features, components, or functionality. Trigger on ANY request for new development work.
+allowed-tools: AskUserQuestion, SlashCommand
 ---
 
 # SpecSwarm Build Workflow
