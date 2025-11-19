@@ -9,7 +9,6 @@
   "license": "MIT",
   "homepage": "https://github.com/MartyBonacci/specswarm",
   "repository": "https://github.com/MartyBonacci/specswarm",
-  "skills": "./skills/",
   "keywords": [
     "spec-driven-development",
     "specification",
