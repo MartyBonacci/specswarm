@@ -1,7 +1,7 @@
 {
   "name": "specswarm",
-  "version": "3.3.7",
-  "description": "Complete software development toolkit: spec-driven workflows, autonomous orchestration, lifecycle management (bugfix/modify/refactor), quality validation, and performance monitoring. v3.3.7: Fixed file permissions + auto-discovery + keyword-dense triggers. v3.3.6: Action-focused skill triggers. v3.3.5: EXTREMELY broad triggers. v3.3.4: Loose triggers + confirm. v3.3.3: Intent disambiguation. v3.3.2: Simplified Skills. v3.3.1: Natural language via Skills.",
+  "version": "3.3.8",
+  "description": "Complete software development toolkit: spec-driven workflows, autonomous orchestration, lifecycle management (bugfix/modify/refactor), quality validation, and performance monitoring. v3.3.8: CRITICAL FIX - skill directory names now match skill names (required for loading). v3.3.7: File permissions + auto-discovery. v3.3.6: Action-focused triggers. v3.3.5: EXTREMELY broad triggers. v3.3.4: Loose triggers + confirm.",
   "author": {
     "name": "Marty Bonacci",
     "url": "https://github.com/MartyBonacci"
