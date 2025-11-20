@@ -1,5 +1,6 @@
 ---
 description: Comprehensive security scanning including dependency vulnerabilities, secret detection, OWASP Top 10 analysis, and configuration checks
+visibility: internal
 args:
   - name: --quick
     description: Quick scan (dependency check and basic secret detection only)

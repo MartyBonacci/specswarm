@@ -1,5 +1,6 @@
 ---
 description: Complete feature or bugfix workflow and merge to parent branch
+visibility: internal
 ---
 
 ## User Input

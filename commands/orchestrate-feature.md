@@ -1,5 +1,6 @@
 ---
 description: Orchestrate complete feature lifecycle from specification to implementation using autonomous agent
+visibility: experimental
 args:
   - name: feature_description
     description: Natural language description of the feature to build

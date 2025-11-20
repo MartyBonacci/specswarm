@@ -1,5 +1,6 @@
 ---
 description: Phased feature sunset workflow with migration guidance
+visibility: experimental
 ---
 
 <!--

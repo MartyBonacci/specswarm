@@ -1,5 +1,6 @@
 ---
 description: Metrics-driven code quality improvement with behavior preservation
+visibility: experimental
 ---
 
 <!--

@@ -1,5 +1,6 @@
 ---
 description: Coordinate complex debugging workflows with logging, monitoring, and agent orchestration
+visibility: internal
 ---
 
 <!--

@@ -1,24 +1,37 @@
 # SpecSwarm Commands Reference
 
-Complete documentation for all 32 SpecSwarm commands.
+Complete documentation for all 33 SpecSwarm commands organized by visibility mode.
+
+## Command Modes
+
+SpecSwarm has three visibility modes to reduce autocomplete clutter:
+
+- **🎯 PUBLIC** - Visible in leader mode (9 commands) - **Recommended for most users**
+- **🔧 INTERNAL** - Visible in micro-manager mode (19 commands) - Manual workflow control
+- **⚗️ EXPERIMENTAL** - Visible in extra mode (5 commands) - Experimental features
+
+**Switch modes:** `/specswarm:mode [leader|micro-manager|extra]`
+**Learn more:** [docs/MODES.md](docs/MODES.md)
+
+---
 
 ## Command Categories
 
-- **[Core Workflows](#core-workflows)** (5) - Essential commands for daily development
-- **[New Feature Workflows](#new-feature-workflows)** (8) - Building new functionality
-- **[Bug & Issue Management](#bug--issue-management)** (3) - Fixing and debugging
-- **[Code Maintenance](#code-maintenance)** (2) - Refactoring and modifications
-- **[Quality & Analysis](#quality--analysis)** (6) - Testing and validation
-- **[Lifecycle Management](#lifecycle-management)** (5) - Release and deployment
-- **[Orchestration](#orchestration)** (3) - Autonomous workflows
+- **[Core Workflows](#core-workflows)** (9 PUBLIC) - Essential commands for daily development
+- **[New Feature Workflows](#new-feature-workflows)** (5 INTERNAL) - Building new functionality
+- **[Bug & Issue Management](#bug--issue-management)** (3 INTERNAL) - Fixing and debugging
+- **[Code Maintenance](#code-maintenance)** (2 EXPERIMENTAL) - Refactoring and modifications
+- **[Quality & Analysis](#quality--analysis)** (6 INTERNAL) - Testing and validation
+- **[Lifecycle Management](#lifecycle-management)** (5 INTERNAL) - Release and deployment
+- **[Orchestration](#orchestration)** (3 EXPERIMENTAL) - Autonomous workflows
 
 ---
 
 ## Core Workflows
 
-These 5 commands handle 95% of daily development work. **Start here** if you're new to SpecSwarm.
+These 9 PUBLIC commands handle 95% of daily development work (visible in **leader mode**). **Start here** if you're new to SpecSwarm.
 
-### `/specswarm:init`
+### `/specswarm:init` 🎯 PUBLIC
 
 Initialize SpecSwarm in your project with interactive setup wizard.
 
@@ -40,7 +53,7 @@ Initialize SpecSwarm in your project with interactive setup wizard.
 
 ---
 
-### `/specswarm:build`
+### `/specswarm:build` 🎯 PUBLIC
 
 Complete workflow for building new features from natural language description.
 
@@ -76,7 +89,7 @@ Complete workflow for building new features from natural language description.
 
 ---
 
-### `/specswarm:fix`
+### `/specswarm:fix` 🎯 PUBLIC
 
 Complete workflow for fixing bugs with regression testing.
 
@@ -112,7 +125,7 @@ Complete workflow for fixing bugs with regression testing.
 
 ---
 
-### `/specswarm:modify`
+### `/specswarm:modify` 🎯 PUBLIC
 
 Change existing feature behavior with impact analysis and backward compatibility assessment.
 
@@ -154,7 +167,7 @@ Change existing feature behavior with impact analysis and backward compatibility
 
 ---
 
-### `/specswarm:ship`
+### `/specswarm:ship` 🎯 PUBLIC
 
 Validate quality, merge to parent branch, and complete feature.
 
@@ -193,11 +206,47 @@ Validate quality, merge to parent branch, and complete feature.
 
 ---
 
+### `/specswarm:mode` 🎯 PUBLIC
+
+Switch between command visibility modes to control autocomplete clutter.
+
+**Usage:**
+```bash
+# Check current mode
+/specswarm:mode
+
+# Switch modes
+/specswarm:mode leader
+/specswarm:mode micro-manager
+/specswarm:mode extra
+```
+
+**Modes:**
+- **leader** - 9 core commands (recommended)
+- **micro-manager** - 28 commands (granular control)
+- **extra** - 33 commands (includes experimental)
+
+**What it does:**
+- Shows current mode and visible command count
+- Interactive mode selection menu
+- Persists choice to config file (~/.claude/plugins/specswarm/config.json)
+- Takes effect immediately
+
+**When to use:**
+- Too many commands in autocomplete
+- Want granular control over workflows
+- Exploring experimental features
+- Learning SpecSwarm internals
+
+**Learn more:** [docs/MODES.md](docs/MODES.md)
+
+---
+
 ## New Feature Workflows
 
 Granular commands for spec-driven feature development. The `/specswarm:build` command runs these automatically.
 
-### `/specswarm:specify`
+### `/specswarm:specify` 🔧 INTERNAL
 
 Create detailed feature specification from natural language description.
 
@@ -225,7 +274,7 @@ Create detailed feature specification from natural language description.
 
 ---
 
-### `/specswarm:clarify`
+### `/specswarm:clarify` 🔧 INTERNAL
 
 Ask up to 5 targeted clarification questions and encode answers into specification.
 
@@ -247,7 +296,7 @@ Ask up to 5 targeted clarification questions and encode answers into specificati
 
 ---
 
-### `/specswarm:plan`
+### `/specswarm:plan` 🔧 INTERNAL
 
 Design implementation plan with tech stack validation.
 
@@ -276,7 +325,7 @@ Design implementation plan with tech stack validation.
 
 ---
 
-### `/specswarm:tasks`
+### `/specswarm:tasks` 🔧 INTERNAL
 
 Generate actionable, dependency-ordered task breakdown.
 
@@ -303,7 +352,7 @@ Generate actionable, dependency-ordered task breakdown.
 
 ---
 
-### `/specswarm:implement`
+### `/specswarm:implement` 🔧 INTERNAL
 
 Execute implementation plan with comprehensive quality validation.
 
@@ -335,7 +384,7 @@ Execute implementation plan with comprehensive quality validation.
 
 ---
 
-### `/specswarm:checklist`
+### `/specswarm:checklist` 🔧 INTERNAL
 
 Generate custom requirement checklist for current feature.
 
@@ -351,7 +400,7 @@ Generate custom requirement checklist for current feature.
 
 ---
 
-### `/specswarm:analyze`
+### `/specswarm:analyze` 🔧 INTERNAL
 
 Non-destructive cross-artifact consistency analysis across spec.md, plan.md, and tasks.md.
 
@@ -374,7 +423,7 @@ Non-destructive cross-artifact consistency analysis across spec.md, plan.md, and
 
 ---
 
-### `/specswarm:constitution`
+### `/specswarm:constitution` 🔧 INTERNAL
 
 Create or update project constitution from interactive inputs.
 
@@ -405,7 +454,7 @@ Create or update project constitution from interactive inputs.
 
 Commands for fixing bugs and handling production issues.
 
-### `/specswarm:bugfix`
+### `/specswarm:bugfix` 🔧 INTERNAL
 
 Regression-test-first bugfix workflow with chain bug detection.
 
@@ -442,7 +491,7 @@ Regression-test-first bugfix workflow with chain bug detection.
 
 ---
 
-### `/specswarm:hotfix`
+### `/specswarm:hotfix` 🔧 INTERNAL
 
 Expedited emergency response workflow for critical production issues.
 
@@ -472,7 +521,7 @@ Expedited emergency response workflow for critical production issues.
 
 ---
 
-### `/specswarm:coordinate`
+### `/specswarm:coordinate` 🔧 INTERNAL
 
 Complex debugging workflow with logging, monitoring, and agent orchestration.
 
@@ -499,7 +548,7 @@ Complex debugging workflow with logging, monitoring, and agent orchestration.
 
 Commands for improving existing code without changing behavior.
 
-### `/specswarm:refactor`
+### `/specswarm:refactor` ⚗️ EXPERIMENTAL
 
 Metrics-driven code quality improvement with behavior preservation.
 
@@ -531,7 +580,7 @@ Metrics-driven code quality improvement with behavior preservation.
 
 ---
 
-### `/specswarm:deprecate`
+### `/specswarm:deprecate` ⚗️ EXPERIMENTAL
 
 Phased feature sunset workflow with migration guidance.
 
@@ -565,7 +614,7 @@ Phased feature sunset workflow with migration guidance.
 
 Commands for testing, validation, and codebase analysis.
 
-### `/specswarm:analyze-quality`
+### `/specswarm:analyze-quality` 🔧 INTERNAL
 
 Comprehensive codebase quality analysis with prioritized recommendations.
 
@@ -596,7 +645,7 @@ Comprehensive codebase quality analysis with prioritized recommendations.
 
 ---
 
-### `/specswarm:impact`
+### `/specswarm:impact` 🔧 INTERNAL
 
 Standalone impact analysis for proposed changes.
 
@@ -620,7 +669,7 @@ Standalone impact analysis for proposed changes.
 
 ---
 
-### `/specswarm:suggest`
+### `/specswarm:suggest` 🎯 PUBLIC
 
 AI-powered workflow recommendation based on context analysis.
 
@@ -642,7 +691,7 @@ AI-powered workflow recommendation based on context analysis.
 
 ---
 
-### `/specswarm:metrics`
+### `/specswarm:metrics` 🎯 PUBLIC
 
 Feature-level orchestration metrics and analytics from completed features.
 
@@ -666,7 +715,7 @@ Feature-level orchestration metrics and analytics from completed features.
 
 ---
 
-### `/specswarm:metrics-export`
+### `/specswarm:metrics-export` 🔧 INTERNAL
 
 Export metrics to CSV file for external analysis.
 
@@ -683,7 +732,7 @@ Export metrics to CSV file for external analysis.
 
 ---
 
-### `/specswarm:validate`
+### `/specswarm:validate` 🔧 INTERNAL
 
 Browser automation validation with flow testing.
 
@@ -711,7 +760,7 @@ Browser automation validation with flow testing.
 
 Commands for release management, security, and rollback.
 
-### `/specswarm:release`
+### `/specswarm:release` 🔧 INTERNAL
 
 Complete release workflow with versioning, changelog, and deployment.
 
@@ -735,7 +784,7 @@ Complete release workflow with versioning, changelog, and deployment.
 
 ---
 
-### `/specswarm:security-audit`
+### `/specswarm:security-audit` 🔧 INTERNAL
 
 Thorough security scan with pattern matching and deep analysis.
 
@@ -759,7 +808,7 @@ Thorough security scan with pattern matching and deep analysis.
 
 ---
 
-### `/specswarm:rollback`
+### `/specswarm:rollback` 🔧 INTERNAL
 
 Safe rollback to previous version with validation.
 
@@ -785,7 +834,7 @@ Safe rollback to previous version with validation.
 
 ---
 
-### `/specswarm:upgrade`
+### `/specswarm:upgrade` 🎯 PUBLIC
 
 Systematic dependency/framework upgrade with compatibility analysis.
 
@@ -817,7 +866,7 @@ Systematic dependency/framework upgrade with compatibility analysis.
 
 ---
 
-### `/specswarm:complete`
+### `/specswarm:complete` 🔧 INTERNAL
 
 Alias for `/specswarm:ship` - validates quality and merges feature.
 
@@ -834,7 +883,7 @@ See [/specswarm:ship](#specswarmship) for full documentation.
 
 Advanced autonomous workflow execution (experimental).
 
-### `/specswarm:orchestrate`
+### `/specswarm:orchestrate` ⚗️ EXPERIMENTAL
 
 Run automated workflow orchestration with agent execution and validation.
 
@@ -856,7 +905,7 @@ Run automated workflow orchestration with agent execution and validation.
 
 ---
 
-### `/specswarm:orchestrate-feature`
+### `/specswarm:orchestrate-feature` ⚗️ EXPERIMENTAL
 
 AI-powered interaction flow validation with Playwright.
 
@@ -881,7 +930,7 @@ AI-powered interaction flow validation with Playwright.
 
 ---
 
-### `/specswarm:orchestrate-validate`
+### `/specswarm:orchestrate-validate` ⚗️ EXPERIMENTAL
 
 Run validation suite on target project (browser, terminal, visual).
 

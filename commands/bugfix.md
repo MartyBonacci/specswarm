@@ -1,5 +1,6 @@
 ---
 description: Regression-test-first bug fixing workflow with smart SpecSwarm/SpecTest integration
+visibility: internal
 ---
 
 <!--

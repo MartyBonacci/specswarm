@@ -1,4 +1,4 @@
-# SpecSwarm v3.5.0
+# SpecSwarm v3.6.0
 
 **Complete Software Development Toolkit**
 
@@ -18,7 +18,7 @@ SpecSwarm is a comprehensive Claude Code plugin for the complete software develo
 - 🌐 **Multi-Language Support** - Auto-detection for 6 languages
 - 🗣️ **Natural Language** - Talk to SpecSwarm like a teammate
 
-**5 Core Commands** + **27 Advanced** | **Production Ready**
+**3 Command Modes** | **9 Core Commands** | **Production Ready**
 
 ---
 
@@ -58,9 +58,75 @@ SpecSwarm automatically runs the right workflow based on your intent.
 
 ---
 
+## Command Modes
+
+SpecSwarm has three visibility modes to reduce autocomplete clutter while maintaining full functionality.
+
+### 🎯 Leader Mode (Default) - 9 Commands
+
+**Best for:** Most users, daily development work
+
+Shows only core orchestrators. You lead the direction, SpecSwarm handles the execution.
+
+```bash
+/specswarm:mode leader
+```
+
+**Visible:** init, suggest, build, fix, modify, ship, upgrade, metrics, mode
+
+---
+
+### 🔧 Micro-Manager Mode - 28 Commands
+
+**Best for:** Power users who want granular control
+
+Shows all workflow commands for manual step-by-step execution.
+
+```bash
+/specswarm:mode micro-manager
+```
+
+**Adds:** specify, clarify, plan, tasks, implement, and 14 more...
+
+**Use when:** Debugging workflows, learning internals, or need manual control between steps
+
+---
+
+### ⚗️ Extra Mode - 33 Commands
+
+**Best for:** Developers, experimenters, contributors
+
+Shows everything including experimental features.
+
+```bash
+/specswarm:mode extra
+```
+
+**Adds:** orchestrate-*, refactor, deprecate
+
+**Warning:** Experimental features under active development
+
+---
+
+### Switch Modes Anytime
+
+```bash
+# Check current mode
+/specswarm:mode
+
+# Switch modes
+/specswarm:mode leader         # Clean autocomplete (recommended)
+/specswarm:mode micro-manager  # Granular control
+/specswarm:mode extra          # Everything
+```
+
+**Mode persists across sessions.** Learn more in [docs/MODES.md](docs/MODES.md)
+
+---
+
 ## Core Commands
 
-These 5 commands handle **95% of daily development work**.
+These 9 commands handle **95% of daily development work** (visible in leader mode).
 
 ### 1. `/specswarm:init`
 

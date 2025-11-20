@@ -1,5 +1,6 @@
 ---
 description: Interactive project initialization - creates constitution, tech stack, and quality standards
+visibility: public
 args:
   - name: --skip-detection
     description: Skip automatic technology detection

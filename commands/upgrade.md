@@ -1,5 +1,6 @@
 ---
 description: Upgrade dependencies or frameworks with breaking change analysis and automated refactoring
+visibility: public
 args:
   - name: upgrade_target
     description: What to upgrade (e.g., "React 18 to React 19", "all dependencies", "react", "@latest")

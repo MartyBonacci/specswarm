@@ -1,5 +1,6 @@
 ---
 description: Fix bugs with test-driven approach and automatic retry - simplified bugfix workflow
+visibility: public
 args:
   - name: bug_description
     description: Natural language description of the bug to fix

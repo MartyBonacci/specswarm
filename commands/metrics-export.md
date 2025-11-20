@@ -1,5 +1,6 @@
 ---
 description: Display orchestration metrics and performance analytics across all feature sessions
+visibility: internal
 args:
   - name: --session-id
     description: Show detailed metrics for a specific session

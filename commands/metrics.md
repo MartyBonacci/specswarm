@@ -1,6 +1,7 @@
 ---
 name: feature-metrics
 description: 'Feature-level orchestration metrics and analytics. Analyzes completed features from actual project artifacts (spec.md, tasks.md) rather than orchestration sessions. Shows completion rates, test metrics, and git history. v2.8.0: Initial release with feature detection and comprehensive analytics.'
+visibility: public
 command_type: project
 ---
 

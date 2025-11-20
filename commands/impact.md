@@ -1,5 +1,6 @@
 ---
 description: Standalone impact analysis for any feature or change
+visibility: internal
 ---
 
 ## User Input

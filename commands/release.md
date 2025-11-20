@@ -1,5 +1,6 @@
 ---
 description: Comprehensive release preparation workflow including quality gates, security audit, changelog generation, version bumping, tagging, and publishing
+visibility: internal
 args:
   - name: --patch
     description: Create patch release (bug fixes, 1.0.0 → 1.0.1)

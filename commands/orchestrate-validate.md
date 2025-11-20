@@ -1,5 +1,6 @@
 ---
 description: Run validation suite on target project (browser, terminal, visual analysis)
+visibility: experimental
 ---
 
 <!--

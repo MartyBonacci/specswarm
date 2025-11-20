@@ -1,5 +1,6 @@
 ---
 description: Comprehensive codebase quality analysis with prioritized recommendations
+visibility: internal
 ---
 
 <!--

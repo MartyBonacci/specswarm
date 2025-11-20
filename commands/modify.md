@@ -1,5 +1,6 @@
 ---
 description: Feature modification workflow with impact analysis and backward compatibility assessment
+visibility: public
 ---
 
 <!--

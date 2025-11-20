@@ -1,5 +1,6 @@
 ---
 description: Run automated workflow orchestration with agent execution and validation
+visibility: experimental
 ---
 
 <!--

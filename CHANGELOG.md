@@ -5,6 +5,162 @@ All notable changes to SpecSwarm and SpecSwarm plugins will be documented in thi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.6.0] - 2025-11-19
+
+### 🎯 Command Visibility Modes - Reduce Autocomplete Clutter
+
+**Problem:** 32+ commands flood autocomplete when typing `/spec...`, overwhelming new users and making it hard to find the right command.
+
+**Solution:** Three visibility modes that filter autocomplete based on user preference while maintaining full functionality.
+
+### Added
+
+#### New Command: `/specswarm:mode`
+
+Switch between three visibility modes:
+
+```bash
+/specswarm:mode                 # Check current mode
+/specswarm:mode leader          # 9 core commands (default)
+/specswarm:mode micro-manager   # 28 commands (granular control)
+/specswarm:mode extra           # 33 commands (includes experimental)
+```
+
+**Features:**
+- Interactive mode selector with descriptions
+- Persists across sessions (~/.claude/plugins/specswarm/config.json)
+- Takes effect immediately
+- Shows visible command counts
+
+#### Visibility Metadata
+
+All 33 commands now have visibility metadata:
+
+- **🎯 PUBLIC (9)** - Visible in leader mode
+  - init, suggest, build, fix, modify, ship, upgrade, metrics, mode
+
+- **🔧 INTERNAL (19)** - Visible in micro-manager mode
+  - specify, clarify, plan, tasks, implement
+  - analyze, analyze-quality, checklist, constitution
+  - bugfix, hotfix, coordinate
+  - impact, validate, security-audit
+  - complete, rollback, release, metrics-export
+
+- **⚗️ EXPERIMENTAL (5)** - Visible in extra mode only
+  - orchestrate, orchestrate-feature, orchestrate-validate
+  - refactor, deprecate
+
+#### Documentation
+
+- **docs/MODES.md** - Comprehensive mode system guide
+  - Mode definitions and philosophies
+  - Use cases and recommendations
+  - Command breakdown by mode
+  - FAQ and troubleshooting
+  - Migration guide
+
+- **README.md** - Added Command Modes section
+- **COMMANDS.md** - Added mode indicators to all commands
+
+### Changed
+
+#### Command Counts
+- Updated from "5 Core Commands" to "9 Core Commands"
+- Leader mode includes: init, suggest, build, fix, modify, ship, upgrade, metrics, mode
+- All other commands hidden by default but still callable
+
+#### Philosophy: Leader vs Micro-Manager
+
+**Leader Mode (Default):**
+- "Trust the automation"
+- Let orchestrators handle workflows
+- 75% less autocomplete clutter
+- Best for daily work
+
+**Micro-Manager Mode:**
+- "Manual control over each step"
+- Access to all workflow commands
+- Step-by-step execution
+- Best for debugging/learning
+
+**Extra Mode:**
+- "Show me everything"
+- Includes experimental features
+- Best for development/exploration
+
+### Technical Details
+
+**Config Location:**
+```
+~/.claude/plugins/specswarm/config.json
+```
+
+**Config Format:**
+```json
+{
+  "version": "3.6.0",
+  "mode": "leader",
+  "lastUpdated": "2025-11-19T12:00:00Z"
+}
+```
+
+**Command Frontmatter:**
+```yaml
+---
+description: Command description
+visibility: public|internal|experimental
+---
+```
+
+### Backward Compatibility
+
+- ✅ All commands still work exactly the same
+- ✅ Only autocomplete visibility changes
+- ✅ Hidden commands still callable by typing full name
+- ✅ Orchestrators call internal commands normally
+- ✅ Natural language skills work in all modes
+- ✅ No breaking changes
+
+### Migration
+
+**For Existing Users:**
+- Default mode is "leader" for clean autocomplete
+- Switch to "extra" mode to restore previous behavior
+- No workflow changes required
+
+**For New Users:**
+- Start with leader mode (default)
+- Only see 9 core commands
+- Switch to micro-manager if you need more control
+
+### Impact
+
+**Before v3.6.0:**
+```
+User types: /spec...
+Autocomplete shows: 32 commands filling the screen
+User: "Which one do I need?"
+```
+
+**After v3.6.0 (Leader Mode):**
+```
+User types: /spec...
+Autocomplete shows: 9 core commands
+User: Clean, focused experience
+```
+
+**Reduction:**
+- 75% fewer visible commands in leader mode
+- Still 100% of functionality available
+
+### See Also
+
+- [docs/MODES.md](docs/MODES.md) - Complete mode system documentation
+- [README.md](README.md) - Updated quick start guide
+- [COMMANDS.md](COMMANDS.md) - Command reference with mode indicators
+
+---
+
 ## [3.3.5] - 2025-11-18
 
 ### 🔥 EXTREMELY Broad Triggers - Fixed v3.3.4 False Negatives

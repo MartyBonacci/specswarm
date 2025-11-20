@@ -1,5 +1,6 @@
 ---
 description: AI-powered workflow recommendation based on context analysis
+visibility: public
 ---
 
 ## User Input
