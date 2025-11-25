@@ -1,0 +1,202 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  
+  // SpecSwarm Commands - Uses @file references to include command content
+  // See: https://opencode.ai/docs/commands/#file-references
+  "command": {
+    // ===========================================
+    // CORE WORKFLOWS (5) - 95% of daily work
+    // ===========================================
+    
+    "specswarm:init": {
+      "template": "@commands/init.md\n\n$ARGUMENTS",
+      "description": "Initialize SpecSwarm in your project - creates constitution, tech stack, and quality standards"
+    },
+    
+    "specswarm:build": {
+      "template": "@commands/build.md\n\n$ARGUMENTS",
+      "description": "Build complete feature from specification to implementation"
+    },
+    
+    "specswarm:fix": {
+      "template": "@commands/fix.md\n\n$ARGUMENTS",
+      "description": "Fix bugs with regression testing and auto-retry"
+    },
+    
+    "specswarm:modify": {
+      "template": "@commands/modify.md\n\n$ARGUMENTS",
+      "description": "Modify existing feature behavior with impact analysis"
+    },
+    
+    "specswarm:ship": {
+      "template": "@commands/ship.md\n\n$ARGUMENTS",
+      "description": "Validate quality, merge to parent branch, and complete feature"
+    },
+
+    // ===========================================
+    // FEATURE DEVELOPMENT (8)
+    // ===========================================
+    
+    "specswarm:specify": {
+      "template": "@commands/specify.md\n\n$ARGUMENTS",
+      "description": "Create detailed feature specification"
+    },
+    
+    "specswarm:clarify": {
+      "template": "@commands/clarify.md\n\n$ARGUMENTS",
+      "description": "Ask clarification questions about specification"
+    },
+    
+    "specswarm:plan": {
+      "template": "@commands/plan.md\n\n$ARGUMENTS",
+      "description": "Generate implementation plan from specification"
+    },
+    
+    "specswarm:tasks": {
+      "template": "@commands/tasks.md\n\n$ARGUMENTS",
+      "description": "Break down plan into actionable tasks"
+    },
+    
+    "specswarm:implement": {
+      "template": "@commands/implement.md\n\n$ARGUMENTS",
+      "description": "Execute implementation of all tasks"
+    },
+    
+    "specswarm:checklist": {
+      "template": "@commands/checklist.md\n\n$ARGUMENTS",
+      "description": "Create quality checklist for feature"
+    },
+    
+    "specswarm:analyze": {
+      "template": "@commands/analyze.md\n\n$ARGUMENTS",
+      "description": "Analyze code changes"
+    },
+    
+    "specswarm:constitution": {
+      "template": "@commands/constitution.md\n\n$ARGUMENTS",
+      "description": "Create or update project constitution"
+    },
+
+    // ===========================================
+    // BUG & ISSUE MANAGEMENT (3)
+    // ===========================================
+    
+    "specswarm:bugfix": {
+      "template": "@commands/bugfix.md\n\n$ARGUMENTS",
+      "description": "Systematic bug fixing workflow"
+    },
+    
+    "specswarm:hotfix": {
+      "template": "@commands/hotfix.md\n\n$ARGUMENTS",
+      "description": "Production hotfix workflow"
+    },
+    
+    "specswarm:coordinate": {
+      "template": "@commands/coordinate.md\n\n$ARGUMENTS",
+      "description": "Multi-bug coordination workflow"
+    },
+
+    // ===========================================
+    // CODE MAINTENANCE (2)
+    // ===========================================
+    
+    "specswarm:refactor": {
+      "template": "@commands/refactor.md\n\n$ARGUMENTS",
+      "description": "Code refactoring workflow"
+    },
+    
+    "specswarm:deprecate": {
+      "template": "@commands/deprecate.md\n\n$ARGUMENTS",
+      "description": "Deprecation management workflow"
+    },
+
+    // ===========================================
+    // QUALITY & ANALYSIS (6)
+    // ===========================================
+    
+    "specswarm:analyze-quality": {
+      "template": "@commands/analyze-quality.md\n\n$ARGUMENTS",
+      "description": "Comprehensive quality analysis (0-100 scoring)"
+    },
+    
+    "specswarm:impact": {
+      "template": "@commands/impact.md\n\n$ARGUMENTS",
+      "description": "Impact analysis for changes"
+    },
+    
+    "specswarm:suggest": {
+      "template": "@commands/suggest.md\n\n$ARGUMENTS",
+      "description": "Get workflow suggestions"
+    },
+    
+    "specswarm:metrics": {
+      "template": "@commands/metrics.md\n\n$ARGUMENTS",
+      "description": "View feature metrics"
+    },
+    
+    "specswarm:metrics-export": {
+      "template": "@commands/metrics-export.md\n\n$ARGUMENTS",
+      "description": "Export metrics to file"
+    },
+    
+    "specswarm:validate": {
+      "template": "@commands/validate.md\n\n$ARGUMENTS",
+      "description": "Run validation checks"
+    },
+
+    // ===========================================
+    // LIFECYCLE MANAGEMENT (5)
+    // ===========================================
+    
+    "specswarm:release": {
+      "template": "@commands/release.md\n\n$ARGUMENTS",
+      "description": "Release management workflow"
+    },
+    
+    "specswarm:security-audit": {
+      "template": "@commands/security-audit.md\n\n$ARGUMENTS",
+      "description": "Security audit workflow"
+    },
+    
+    "specswarm:rollback": {
+      "template": "@commands/rollback.md\n\n$ARGUMENTS",
+      "description": "Rollback changes workflow"
+    },
+    
+    "specswarm:upgrade": {
+      "template": "@commands/upgrade.md\n\n$ARGUMENTS",
+      "description": "Dependency upgrade workflow"
+    },
+    
+    "specswarm:complete": {
+      "template": "@commands/complete.md\n\n$ARGUMENTS",
+      "description": "Complete feature workflow"
+    },
+
+    // ===========================================
+    // ORCHESTRATION (3)
+    // ===========================================
+    
+    "specswarm:orchestrate": {
+      "template": "@commands/orchestrate.md\n\n$ARGUMENTS",
+      "description": "Basic orchestration workflow"
+    },
+    
+    "specswarm:orchestrate-feature": {
+      "template": "@commands/orchestrate-feature.md\n\n$ARGUMENTS",
+      "description": "Feature orchestration workflow"
+    },
+    
+    "specswarm:orchestrate-validate": {
+      "template": "@commands/orchestrate-validate.md\n\n$ARGUMENTS",
+      "description": "Validation orchestration workflow"
+    }
+  },
+
+  // Project instructions for SpecSwarm context
+  "instructions": [
+    ".specswarm/constitution.md",
+    ".specswarm/tech-stack.md",
+    ".specswarm/quality-standards.md"
+  ]
+}

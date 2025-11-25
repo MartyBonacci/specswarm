@@ -1,3 +1,6 @@
 .idea
 .DS_Store
 .specswarm/
+node_modules/
+package.json
+package-lock.json

@@ -4,11 +4,13 @@
 
 Build, fix, maintain, and analyze your entire software project with one unified plugin.
 
+**Supports both Claude Code and OpenCode** - Use your preferred AI coding assistant.
+
 ---
 
 ## Overview
 
-SpecSwarm is a comprehensive Claude Code plugin for the complete software development lifecycle across **6 languages** (JavaScript/TypeScript, Python, PHP, Go, Ruby, Rust):
+SpecSwarm is a comprehensive plugin for the complete software development lifecycle across **6 languages** (JavaScript/TypeScript, Python, PHP, Go, Ruby, Rust):
 
 - ✅ **Spec-Driven Development** - Specification to implementation
 - 🐛 **Bug Management** - Systematic fixing with regression testing
@@ -24,6 +26,8 @@ SpecSwarm is a comprehensive Claude Code plugin for the complete software develo
 
 ## Installation
 
+### Claude Code
+
 ```bash
 # 1. Add the marketplace
 /plugin marketplace add MartyBonacci/specswarm
@@ -33,6 +37,38 @@ SpecSwarm is a comprehensive Claude Code plugin for the complete software develo
 ```
 
 Restart Claude Code to activate the plugin.
+
+### OpenCode
+
+**Option A: Global Installation (Recommended)**
+
+```bash
+# 1. Clone SpecSwarm globally
+git clone https://github.com/MartyBonacci/specswarm.git ~/.specswarm
+
+# 2. Add to your shell profile (~/.zshrc or ~/.bashrc)
+export OPENCODE_CONFIG_DIR="$HOME/.specswarm/.opencode"
+
+# 3. Reload shell and start OpenCode in any project
+source ~/.zshrc
+cd your-project
+opencode
+/specswarm:init
+```
+
+**Option B: Per-Project Installation**
+
+```bash
+# Copy to your project
+cp -r /path/to/specswarm/.opencode your-project/
+cp -r /path/to/specswarm/commands your-project/
+
+cd your-project
+opencode
+/specswarm:init
+```
+
+See [.opencode/README.md](.opencode/README.md) for detailed OpenCode setup.
 
 ---
 
@@ -421,6 +457,25 @@ claude mcp add ChromeDevTools/chrome-devtools-mcp
 - **[Setup Guide](./docs/SETUP.md)** - Configuration and troubleshooting
 - **[Features Deep-Dive](./docs/FEATURES.md)** - Technical feature details
 - **[Documentation Index](./docs/README.md)** - Navigate all docs
+- **[OpenCode Setup](.opencode-plugin/README.md)** - OpenCode-specific documentation
+
+---
+
+## Platform Support
+
+SpecSwarm supports two AI coding assistant platforms:
+
+| Feature | Claude Code | OpenCode |
+|---------|-------------|----------|
+| Config Directory | `.claude-plugin/` | `.opencode/` |
+| Commands Location | `commands/` | `.opencode/command/` |
+| Commands | ✅ 32 commands | ✅ 32 commands |
+| Natural Language | ✅ Supported | ✅ Supported |
+| Installation | Marketplace | npm + copy files |
+
+Both platforms use the same:
+- Command logic and workflows
+- Project configuration (`.specswarm/`)
 
 ---
 
@@ -455,6 +510,14 @@ export function getApiUrl(path: string): string {
 ---
 
 ## Version History
+
+### v3.6.0 (2025-11-24) - OpenCode Support ⭐
+- **New**: OpenCode runtime support alongside Claude Code
+- **New**: `.opencode-plugin/` directory with TypeScript plugin implementation
+- **New**: OpenCode plugin exposes all 32 commands and 5 skills
+- **New**: Event-based session handling for OpenCode SDK
+- **Improved**: Documentation updated for dual-platform support
+- **Impact**: Use SpecSwarm with either Claude Code or OpenCode
 
 ### v3.5.0 (2025-11-19) - 5th Core Workflow ⭐
 - **New**: `/specswarm:modify` natural language skill (5th core workflow)
