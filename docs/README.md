@@ -1,6 +1,6 @@
 # SpecSwarm Documentation
 
-Complete documentation for the SpecSwarm Claude Code plugin.
+Complete documentation for the SpecSwarm plugin (supports Claude Code and OpenCode).
 
 ## 📚 Documentation Index
 
@@ -11,6 +11,7 @@ Complete documentation for the SpecSwarm Claude Code plugin.
 ### Detailed Guides
 - **[Setup Guide](./SETUP.md)** - Technical setup, configuration, and troubleshooting
 - **[Features Deep-Dive](./FEATURES.md)** - Technical documentation for advanced features
+- **[OpenCode Setup](../.opencode/README.md)** - OpenCode-specific installation and usage
 
 ---
 
@@ -233,6 +234,6 @@ See [README: Version History](../README.md#version-history) for release notes an
 
 ---
 
-**SpecSwarm v3.5.0** - Documentation index
+**SpecSwarm v3.6.0** - Documentation index
 
 *Navigate confidently through SpecSwarm's comprehensive documentation.*
