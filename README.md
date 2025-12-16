@@ -34,6 +34,18 @@ SpecSwarm is a comprehensive Claude Code plugin for the complete software develo
 
 Restart Claude Code to activate the plugin.
 
+### Portable Installation (Claude Code Web)
+
+For Claude Code Web or per-project installation without the marketplace:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/MartyBonacci/specswarm/main/portable/install.sh | bash
+```
+
+Commands use `/sw:` prefix (shorter): `/sw:build`, `/sw:fix`, `/sw:ship`, etc.
+
+**See details:** [portable/README.md](./portable/README.md)
+
 ---
 
 ## Quick Start
