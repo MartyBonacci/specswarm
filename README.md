@@ -36,13 +36,17 @@ Restart Claude Code to activate the plugin.
 
 ### Portable Installation (Claude Code Web)
 
-For Claude Code Web or per-project installation without the marketplace:
+For Claude Code Web or per-project installation **without the marketplace plugin**:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/MartyBonacci/specswarm/main/portable/install.sh | bash
 ```
 
-Commands use `/sw:` prefix (shorter): `/sw:build`, `/sw:fix`, `/sw:ship`, etc.
+**Important:** Portable version uses a **different command prefix** than the marketplace plugin:
+- **Marketplace plugin:** `/specswarm:build`, `/specswarm:fix`, `/specswarm:ship`
+- **Portable version:** `/sw:build`, `/sw:fix`, `/sw:ship` (shorter prefix)
+
+You use **one OR the other**, not both simultaneously.
 
 **See details:** [portable/README.md](./portable/README.md)
 

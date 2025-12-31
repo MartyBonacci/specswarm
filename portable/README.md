@@ -27,6 +27,22 @@ rm -rf /tmp/specswarm
 echo "Installed! Run /sw:help for usage."
 ```
 
+## Command Prefix: `/sw:`
+
+**Important:** The portable version uses `/sw:*` commands, which is **different from the marketplace plugin**.
+
+| Installation Type | Command Prefix | Example |
+|-------------------|----------------|---------|
+| **Marketplace Plugin** | `/specswarm:*` | `/specswarm:build "feature"` |
+| **Portable (this version)** | `/sw:*` | `/sw:build "feature"` |
+
+**Why different?**
+- Shorter prefix (`/sw:` vs `/specswarm:`) = less typing
+- Avoids conflicts if both are installed
+- Per-project installation vs global plugin
+
+**You cannot use `/specswarm:*` commands with the portable version** - only `/sw:*` commands will work.
+
 ## Quick Start
 
 ```bash

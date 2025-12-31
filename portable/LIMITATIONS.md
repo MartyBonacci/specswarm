@@ -14,6 +14,15 @@ The Claude Code plugin system provides:
 
 These features require the marketplace plugin system and cannot be replicated in standalone `.claude/commands/` installations.
 
+## Command Prefix Difference
+
+**CRITICAL:** The command prefix is different:
+
+- **Plugin:** `/specswarm:*`
+- **Portable:** `/sw:*`
+
+This is not just a shorthand - they are completely different namespaces. If you install the portable version, you **must** use `/sw:*` commands.
+
 ## Feature Comparison
 
 | Feature | Plugin | Portable | Notes |
