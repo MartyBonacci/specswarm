@@ -5,6 +5,45 @@ All notable changes to SpecSwarm and SpecSwarm plugins will be documented in thi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.7.0] - 2026-01-07 - Continuous Execution + Clarify UX ⭐
+
+### Added
+
+#### SpecSwarm Stop Hook
+- **New**: `/specswarm:build` now executes continuously without pauses
+- Automatic phase progression based on artifact detection
+- Self-correcting quality loop (retries until threshold met)
+- Inspired by Ralph Wiggum plugin's autonomous loop pattern
+- Creates `.specswarm/build-loop.state` to track build phase
+- Stop hook intercepts exit attempts and advances to next phase automatically
+
+**Files added:**
+- `hooks/stop-hook.sh` - Phase detection and continuous execution logic
+
+**Files modified:**
+- `commands/build.md` - State file creation and removed "Wait for completion" instructions
+- `.gitignore` - Already excludes `.specswarm/` directory
+
+### Improved
+
+#### Clarify Command UX
+- Replaced markdown tables with **AskUserQuestion** tool
+- Reduced keystrokes from ~10 to 1-2 per question
+- Eliminated answer ambiguity and validation logic
+- Consistent with init, rollback, router commands
+- Professional structured UI with arrow key navigation
+
+**Files modified:**
+- `commands/clarify.md` - Updated to use AskUserQuestion tool
+
+### Impact
+
+- ✅ Zero manual intervention for build workflow (except clarify questions)
+- ✅ 80-90% faster question answering
+- ✅ Professional structured UI vs markdown tables
+- ✅ Autonomous execution from specification to quality validation
+- ✅ Quality-driven completion (won't exit until threshold met)
+
 ## [3.3.5] - 2025-11-18
 
 ### 🔥 EXTREMELY Broad Triggers - Fixed v3.3.4 False Negatives

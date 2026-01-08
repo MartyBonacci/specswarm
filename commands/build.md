@@ -107,6 +107,23 @@ fi
 
 REPO_ROOT=$(git rev-parse --show-toplevel)
 cd "$REPO_ROOT"
+
+# Create build state for stop hook
+FEATURE_NUM=$(printf "%03d" $(( $(find features/ .specswarm/features/ -maxdepth 1 -type d -name "[0-9][0-9][0-9]-*" 2>/dev/null | wc -l) + 1 )))
+
+mkdir -p .specswarm
+cat > .specswarm/build-loop.state << EOF
+{
+  "active": true,
+  "feature_description": "$FEATURE_DESC",
+  "feature_num": "$FEATURE_NUM",
+  "started_at": "$(date -Iseconds 2>/dev/null || date -u +"%Y-%m-%dT%H:%M:%S%z")",
+  "current_phase": "specify",
+  "phases_complete": [],
+  "quality_threshold": $QUALITY_GATE,
+  "run_validate": $RUN_VALIDATE
+}
+EOF
 ```
 
 ---
@@ -158,7 +175,7 @@ echo ""
 Use the SlashCommand tool to execute: /specswarm:specify "$FEATURE_DESC"
 ```
 
-Wait for completion. Verify spec.md was created.
+The stop hook will automatically continue to the next phase once spec.md is created.
 
 ```bash
 echo ""
@@ -210,7 +227,7 @@ echo ""
 Use the SlashCommand tool to execute: /specswarm:plan
 ```
 
-Wait for plan.md to be generated.
+The stop hook will automatically continue to the next phase once plan.md is created.
 
 ```bash
 echo ""
@@ -235,7 +252,7 @@ echo ""
 Use the SlashCommand tool to execute: /specswarm:tasks
 ```
 
-Wait for tasks.md to be generated.
+The stop hook will automatically continue to the next phase once tasks.md is created.
 
 ```bash
 # Count tasks
@@ -266,7 +283,7 @@ echo ""
 Use the SlashCommand tool to execute: /specswarm:implement
 ```
 
-Wait for implementation to complete.
+The stop hook will automatically continue to the next phase once implementation is complete.
 
 ```bash
 echo ""
@@ -322,7 +339,7 @@ echo ""
 Use the SlashCommand tool to execute: /specswarm:analyze-quality
 ```
 
-Wait for quality analysis to complete. Extract the quality score.
+The stop hook will check the quality score and complete the build if it meets the threshold.
 
 Store quality score as QUALITY_SCORE.
 
@@ -398,6 +415,13 @@ If any phase fails:
 7. **Quality analysis fails**: Display error, continue (quality optional for build)
 
 **All errors should report clearly and suggest remediation.**
+
+**Cleanup on error:**
+
+```bash
+# If any critical error occurs, clean up the state file
+rm -f .specswarm/build-loop.state
+```
 
 ---
 

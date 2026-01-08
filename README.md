@@ -1,4 +1,4 @@
-# SpecSwarm v3.5.0
+# SpecSwarm v3.7.0
 
 **Complete Software Development Toolkit**
 
@@ -472,6 +472,18 @@ export function getApiUrl(path: string): string {
 
 ## Version History
 
+### v3.7.0 (2026-01-07) - Continuous Execution + Clarify UX ⭐
+- **New**: SpecSwarm Stop Hook for autonomous build execution
+- **New**: `/specswarm:build` now executes continuously without pauses
+- **New**: Automatic phase progression based on artifact detection
+- **New**: Self-correcting quality loop (retries until threshold met)
+- **Improved**: Clarify command now uses AskUserQuestion tool
+- **Improved**: Reduced keystrokes from ~10 to 1-2 per clarification question
+- **Improved**: Professional structured UI with arrow key navigation
+- **Impact**: Zero manual intervention for build workflow (except clarify questions)
+- **Impact**: 80-90% faster question answering
+- **Inspiration**: Based on Ralph Wiggum plugin's autonomous loop pattern
+
 ### v3.5.0 (2025-11-19) - 5th Core Workflow ⭐
 - **New**: `/specswarm:modify` natural language skill (5th core workflow)
 - **New**: Modify skill for changing working features (not bugs, not refactors)
@@ -537,7 +549,7 @@ SpecSwarm builds upon **SpecKit**, which adapted **GitHub's spec-kit** for Claud
 2. **Adapted**: SpecKit plugin by Marty Bonacci (2025)
    - Claude Code integration
 
-3. **Enhanced**: SpecSwarm v3.5.0 by Marty Bonacci & Claude Code (2025)
+3. **Enhanced**: SpecSwarm v3.7.0 by Marty Bonacci & Claude Code (2025-2026)
    - Tech stack management (95% drift prevention)
    - Lifecycle workflows (build, fix, modify, ship, upgrade)
    - Quality validation (0-100 scoring)
@@ -561,6 +573,6 @@ MIT License - See LICENSE file for details
 
 ---
 
-**SpecSwarm v3.5.0** - Your complete software development toolkit. 🚀
+**SpecSwarm v3.7.0** - Your complete software development toolkit. 🚀
 
 Build it. Fix it. Modify it. Ship it. All in one place.

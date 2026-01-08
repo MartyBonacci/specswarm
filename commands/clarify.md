@@ -120,23 +120,34 @@ Execution steps:
 
 4. Sequential questioning loop (interactive):
     - Present EXACTLY ONE question at a time.
-    - For multiple‑choice questions render options as a Markdown table:
+    - Use the **AskUserQuestion** tool for each question:
+       * For multiple-choice questions, provide options with descriptions
+       * Include an "Other" option for free-form alternatives (when appropriate)
+       * Set header to show progress: "Clarification N/M" (e.g., "Clarification 2/5")
+       * Options should be concise labels (1-5 words) with detailed descriptions
 
-       | Option | Description |
-       |--------|-------------|
-       | A | <Option A description> |
-       | B | <Option B description> |
-       | C | <Option C description> | (add D/E as needed up to 5)
-       | Short | Provide a different short answer (<=5 words) | (Include only if free-form alternative is appropriate)
+    **Example AskUserQuestion usage:**
+    ```
+    Question: "What authentication method should we use?"
+    Header: "Clarification 2/5"
+    Options:
+      1. "JWT tokens"
+         Description: "JWT tokens with refresh rotation"
+      2. "Session-based"
+         Description: "Session-based with Redis storage"
+      3. "OAuth 2.0"
+         Description: "OAuth 2.0 with external provider"
+      4. "Other"
+         Description: "Provide alternative (<=5 words)"
+    ```
 
-    - For short‑answer style (no meaningful discrete options), output a single line after the question: `Format: Short answer (<=5 words)`.
-    - After the user answers:
-       * Validate the answer maps to one option or fits the <=5 word constraint.
-       * If ambiguous, ask for a quick disambiguation (count still belongs to same question; do not advance).
-       * Once satisfactory, record it in working memory (do not yet write to disk) and move to the next queued question.
+    - When "Other" option is selected, prompt for free-form text input (<=5 words).
+    - After receiving answer:
+       * Record it in working memory (do not yet write to disk)
+       * Move to the next queued question immediately
     - Stop asking further questions when:
        * All critical ambiguities resolved early (remaining queued items become unnecessary), OR
-       * User signals completion ("done", "good", "no more"), OR
+       * User signals completion (via "Other" response like "done", "good", "no more"), OR
        * You reach 5 asked questions.
     - Never reveal future queued questions in advance.
     - If no valid questions exist at start, immediately report no critical ambiguities.
