@@ -5,6 +5,31 @@ All notable changes to SpecSwarm and SpecSwarm plugins will be documented in thi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.7.1] - 2026-01-08 - Build Pause Fix 🔧
+
+### Fixed
+
+**Issue**: `/specswarm:build` pausing between phases despite stop hook from v3.7.0
+- Build would complete specify → clarify → plan → tasks phases
+- Then pause and report "Next Phase: Implementation" instead of continuing
+- Required manual "continue" prompting to proceed
+
+**Root Cause**: Numbered steps (Step 1, 2, 3...) created mental checkpoints where Claude paused to report progress instead of continuing execution. Stop hook only intercepts exit attempts - if Claude doesn't try to exit, hook never fires.
+
+**Solution**: Added explicit "DO NOT PAUSE" directives after each SlashCommand execution
+- Added "CRITICAL EXECUTION RULE" section enforcing continuous execution
+- Replaced descriptive "stop hook will continue" text with imperative "DO NOT PAUSE. Immediately proceed to next step"
+- Clarified that only clarify phase requires user interaction
+
+**Files modified:**
+- `commands/build.md` - Added 6 continuation directives at critical pause points
+
+**Impact:**
+- ✅ Build now runs continuously from start to finish (except clarify questions)
+- ✅ No more unexpected pauses requiring manual "continue" prompting
+- ✅ Fully autonomous execution as originally designed in v3.7.0
+- ✅ Stop hook now works as intended with uninterrupted phase progression
+
 ## [3.7.0] - 2026-01-07 - Continuous Execution + Clarify UX ⭐
 
 ### Added

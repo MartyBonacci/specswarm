@@ -130,6 +130,16 @@ EOF
 
 ## Execution Steps
 
+## CRITICAL EXECUTION RULE
+
+**YOU MUST execute all steps continuously without pausing to report progress.**
+
+After each SlashCommand completes, immediately proceed to the next step. Do NOT stop to provide status updates or ask if the user wants to continue. The only exception is Step 3 (Clarification) which requires user input.
+
+Execute Steps 2-8 as a single continuous workflow.
+
+---
+
 ### Step 1: Display Welcome Banner
 
 ```bash
@@ -175,7 +185,7 @@ echo ""
 Use the SlashCommand tool to execute: /specswarm:specify "$FEATURE_DESC"
 ```
 
-The stop hook will automatically continue to the next phase once spec.md is created.
+**DO NOT PAUSE. DO NOT REPORT STATUS. Immediately proceed to Step 3.**
 
 ```bash
 echo ""
@@ -202,7 +212,7 @@ echo ""
 Use the SlashCommand tool to execute: /specswarm:clarify
 ```
 
-**IMPORTANT**: This step is interactive. Wait for user to answer questions.
+**IMPORTANT**: This step is interactive. Answer the clarification questions, then **immediately proceed to Step 4 without pausing**.
 
 ```bash
 echo ""
@@ -227,7 +237,7 @@ echo ""
 Use the SlashCommand tool to execute: /specswarm:plan
 ```
 
-The stop hook will automatically continue to the next phase once plan.md is created.
+**DO NOT PAUSE. DO NOT REPORT STATUS. Immediately proceed to Step 5.**
 
 ```bash
 echo ""
@@ -252,7 +262,7 @@ echo ""
 Use the SlashCommand tool to execute: /specswarm:tasks
 ```
 
-The stop hook will automatically continue to the next phase once tasks.md is created.
+**DO NOT PAUSE. DO NOT REPORT STATUS. Immediately proceed to Step 6.**
 
 ```bash
 # Count tasks
@@ -283,7 +293,7 @@ echo ""
 Use the SlashCommand tool to execute: /specswarm:implement
 ```
 
-The stop hook will automatically continue to the next phase once implementation is complete.
+**DO NOT PAUSE. DO NOT REPORT STATUS. Immediately proceed to Step 7.**
 
 ```bash
 echo ""

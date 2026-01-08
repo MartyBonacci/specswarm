@@ -1,6 +1,6 @@
 {
   "name": "specswarm",
-  "version": "3.7.0",
+  "version": "3.7.1",
   "description": "Complete software development toolkit: spec-driven workflows, autonomous orchestration, lifecycle management Build->Modify->Fix->Ship",
   "author": {
     "name": "Marty Bonacci",

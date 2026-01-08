@@ -1,4 +1,4 @@
-# SpecSwarm v3.7.0
+# SpecSwarm v3.7.1
 
 **Complete Software Development Toolkit**
 
@@ -472,6 +472,15 @@ export function getApiUrl(path: string): string {
 
 ## Version History
 
+### v3.7.1 (2026-01-08) - Build Pause Fix 🔧
+- **Fixed**: `/specswarm:build` pausing between phases despite stop hook
+- **Fixed**: Build would complete specify → clarify → plan → tasks, then pause instead of continuing
+- **Added**: "CRITICAL EXECUTION RULE" section enforcing continuous execution
+- **Added**: Explicit "DO NOT PAUSE" directives after each SlashCommand execution
+- **Impact**: Build now runs continuously from start to finish (except clarify questions)
+- **Impact**: No more unexpected pauses requiring manual "continue" prompting
+- **Impact**: Fully autonomous execution as originally designed in v3.7.0
+
 ### v3.7.0 (2026-01-07) - Continuous Execution + Clarify UX ⭐
 - **New**: SpecSwarm Stop Hook for autonomous build execution
 - **New**: `/specswarm:build` now executes continuously without pauses
@@ -549,7 +558,7 @@ SpecSwarm builds upon **SpecKit**, which adapted **GitHub's spec-kit** for Claud
 2. **Adapted**: SpecKit plugin by Marty Bonacci (2025)
    - Claude Code integration
 
-3. **Enhanced**: SpecSwarm v3.7.0 by Marty Bonacci & Claude Code (2025-2026)
+3. **Enhanced**: SpecSwarm v3.7.1 by Marty Bonacci & Claude Code (2025-2026)
    - Tech stack management (95% drift prevention)
    - Lifecycle workflows (build, fix, modify, ship, upgrade)
    - Quality validation (0-100 scoring)
@@ -573,6 +582,6 @@ MIT License - See LICENSE file for details
 
 ---
 
-**SpecSwarm v3.7.0** - Your complete software development toolkit. 🚀
+**SpecSwarm v3.7.1** - Your complete software development toolkit. 🚀
 
 Build it. Fix it. Modify it. Ship it. All in one place.
