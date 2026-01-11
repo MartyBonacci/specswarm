@@ -1,0 +1,18 @@
+{
+  "name": "specswarm-marketplace",
+  "owner": {
+    "name": "MartyBonacci",
+    "url": "https://github.com/MartyBonacci"
+  },
+  "description": "Complete software development toolkit: spec-driven workflows, autonomous orchestration, lifecycle management Build->Modify->Fix->Ship",
+  "category": "development",
+  "homepage": "https://github.com/MartyBonacci/specswarm",
+  "plugins": [
+    {
+      "name": "specswarm",
+      "source": "./plugins/specswarm",
+      "version": "3.7.3",
+      "description": "Build, Modify, Fix, and Ship with natural language. Specification-driven development skills that handle complete software lifecycle workflows autonomously."
+    }
+  ]
+}

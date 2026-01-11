@@ -1,4 +1,4 @@
-# SpecSwarm v3.7.2
+# SpecSwarm v3.7.3
 
 **Complete Software Development Toolkit**
 
@@ -25,7 +25,11 @@ SpecSwarm is a comprehensive Claude Code plugin for the complete software develo
 ## Installation
 
 ```bash
-/plugin install MartyBonacci/specswarm
+# 1. Add the marketplace
+/plugin marketplace add MartyBonacci/specswarm
+
+# 2. Install the plugin
+/plugin install specswarm@specswarm-marketplace
 ```
 
 Restart Claude Code to activate the plugin.
@@ -468,11 +472,14 @@ export function getApiUrl(path: string): string {
 
 ## Version History
 
-### v3.7.2 (2026-01-11) - Plugin Installation Fix 🔧
-- **Fixed**: Plugin installation error `Plugin 'specswarm' not found in marketplace 'specswarm-marketplace'`
-- **Fixed**: Removed circular `marketplace.json` configuration (SpecSwarm is a standalone plugin)
+### v3.7.3 (2026-01-11) - Repository Restructure 🔧
+- **Fixed**: Plugin installation error - restructured repo to match Claude Code marketplace format
+- **Changed**: Plugin files moved to `plugins/specswarm/` subdirectory
+- **Added**: Proper `marketplace.json` with `"source": "./plugins/specswarm"`
+- **Impact**: Plugin now installs correctly via marketplace pattern
+
+### v3.7.2 (2026-01-11) - Hook Registration Fix 🔧
 - **Added**: `hooks/hooks.json` manifest for proper stop hook registration
-- **Impact**: Plugin now installs correctly via `/plugin install MartyBonacci/specswarm`
 
 ### v3.7.1 (2026-01-08) - Build Pause Fix 🔧
 - **Fixed**: `/specswarm:build` pausing between phases despite stop hook
@@ -560,7 +567,7 @@ SpecSwarm builds upon **SpecKit**, which adapted **GitHub's spec-kit** for Claud
 2. **Adapted**: SpecKit plugin by Marty Bonacci (2025)
    - Claude Code integration
 
-3. **Enhanced**: SpecSwarm v3.7.2 by Marty Bonacci & Claude Code (2025-2026)
+3. **Enhanced**: SpecSwarm v3.7.3 by Marty Bonacci & Claude Code (2025-2026)
    - Tech stack management (95% drift prevention)
    - Lifecycle workflows (build, fix, modify, ship, upgrade)
    - Quality validation (0-100 scoring)
@@ -584,6 +591,6 @@ MIT License - See LICENSE file for details
 
 ---
 
-**SpecSwarm v3.7.2** - Your complete software development toolkit. 🚀
+**SpecSwarm v3.7.3** - Your complete software development toolkit. 🚀
 
 Build it. Fix it. Modify it. Ship it. All in one place.
