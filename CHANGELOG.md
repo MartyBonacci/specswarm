@@ -5,6 +5,32 @@ All notable changes to SpecSwarm and SpecSwarm plugins will be documented in thi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.7.2] - 2026-01-11 - Plugin Installation Fix 🔧
+
+### Fixed
+
+**Critical Issue**: Plugin installation failing with `Plugin 'specswarm' not found in marketplace 'specswarm-marketplace'`
+
+**Root Cause #1 - Circular Marketplace Configuration**: The `.claude-plugin/marketplace.json` file configured SpecSwarm as a marketplace containing itself with `"source": "./"`. This circular self-reference caused Claude Code to look for a plugin subdirectory that didn't exist.
+
+**Solution**: Removed `marketplace.json` entirely. SpecSwarm is a single plugin, not a marketplace of plugins. Without marketplace.json, Claude Code correctly treats it as a standalone plugin and finds `.claude-plugin/plugin.json` directly.
+
+**Root Cause #2 - Missing Hook Registration**: The `hooks/stop-hook.sh` file existed but was never registered with Claude Code because the required `hooks/hooks.json` manifest file was missing.
+
+**Solution**: Created `hooks/hooks.json` manifest file with proper Claude Code hook registration format.
+
+**Files removed:**
+- `.claude-plugin/marketplace.json` - Removed circular marketplace configuration
+
+**Files added:**
+- `hooks/hooks.json` - Hook registration manifest for Claude Code
+
+**Impact:**
+- ✅ Plugin now installs correctly via `/plugin install MartyBonacci/specswarm`
+- ✅ Stop hook is properly registered with Claude Code
+- ✅ Build continuous execution feature now works as designed
+- ✅ No more "Plugin not found in marketplace" errors
+
 ## [3.7.1] - 2026-01-08 - Build Pause Fix 🔧
 
 ### Fixed
