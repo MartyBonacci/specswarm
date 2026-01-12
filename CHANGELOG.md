@@ -5,6 +5,32 @@ All notable changes to SpecSwarm and SpecSwarm plugins will be documented in thi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.7.4] - 2026-01-12 - Stop Hook JSON Validation Fix 🔧
+
+### Fixed
+
+**Critical Issue**: Stop hook failing with JSON validation error on every exit attempt
+
+**Root Cause**: The stop hook was outputting `{"decision": "allow"}` but Claude Code's hook schema only accepts `"approve"` or `"block"` as valid decision values.
+
+**Solution**: Changed all 7 instances of `"allow"` to `"approve"` in stop-hook.sh
+
+**Files modified:**
+- `plugins/specswarm/hooks/stop-hook.sh` - Lines 15, 22, 30, 51, 124, 143, 150
+
+**Impact:**
+- ✅ Stop hook now validates correctly
+- ✅ No more JSON validation errors on every exit
+- ✅ Build continuous execution continues to work as designed
+- ✅ Hook behavior unchanged - only fixed schema compliance
+
+**How the Stop Hook Works:**
+- Runs on EVERY exit attempt (by design)
+- Immediately approves when no build is active (zero overhead via early exit check)
+- Blocks and continues when a SpecSwarm build is in progress
+
+---
+
 ## [3.7.3] - 2026-01-11 - Repository Restructure for Marketplace Install 🔧
 
 ### Fixed

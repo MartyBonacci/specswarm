@@ -12,14 +12,14 @@ STATE_FILE="${REPO_ROOT}/.specswarm/build-loop.state"
 # Exit early if no build is active (zero overhead when not building)
 if [ ! -f "$STATE_FILE" ]; then
   # No build active - allow normal exit
-  echo '{"decision": "allow"}'
+  echo '{"decision": "approve"}'
   exit 0
 fi
 
 # Read state file
 if ! command -v jq &> /dev/null; then
   # jq not available - allow exit (degraded mode)
-  echo '{"decision": "allow", "reason": "jq not available - stop hook disabled"}'
+  echo '{"decision": "approve", "reason": "jq not available - stop hook disabled"}'
   exit 0
 fi
 
@@ -27,7 +27,7 @@ fi
 ACTIVE=$(jq -r '.active' "$STATE_FILE" 2>/dev/null || echo "false")
 if [ "$ACTIVE" != "true" ]; then
   # Build not active - allow exit
-  echo '{"decision": "allow"}'
+  echo '{"decision": "approve"}'
   exit 0
 fi
 
@@ -48,7 +48,7 @@ FEATURE_DIR=$(find "$FEATURES_DIR" -maxdepth 1 -type d -name "${FEATURE_NUM}-*" 
 
 # If feature directory doesn't exist yet, we're still in early phases - allow execution
 if [ -z "$FEATURE_DIR" ] || [ ! -d "$FEATURE_DIR" ]; then
-  echo '{"decision": "allow"}'
+  echo '{"decision": "approve"}'
   exit 0
 fi
 
@@ -121,7 +121,7 @@ case "$CURRENT_PHASE" in
           --arg desc "$FEATURE_DESC" \
           --argjson score "$QUALITY_SCORE" \
           '{
-            "decision": "allow",
+            "decision": "approve",
             "reason": ("✅ Build Complete: " + $desc + "\n\nQuality Score: " + ($score | tostring) + "% - Ready to ship!"),
             "systemMessage": "🎉 Build phase complete!"
           }'
@@ -140,14 +140,14 @@ case "$CURRENT_PHASE" in
 
   *)
     # Unknown phase - allow exit
-    echo '{"decision": "allow", "reason": "Unknown phase: '"$CURRENT_PHASE"'"}'
+    echo '{"decision": "approve", "reason": "Unknown phase: '"$CURRENT_PHASE"'"}'
     exit 0
     ;;
 esac
 
 # If no next phase determined, stay in current phase (allow execution)
 if [ -z "$NEXT_PHASE" ]; then
-  echo '{"decision": "allow"}'
+  echo '{"decision": "approve"}'
   exit 0
 fi
 

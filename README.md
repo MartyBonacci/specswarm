@@ -1,4 +1,4 @@
-# SpecSwarm v3.7.3
+# SpecSwarm v3.7.4
 
 **Complete Software Development Toolkit**
 
@@ -567,7 +567,7 @@ SpecSwarm builds upon **SpecKit**, which adapted **GitHub's spec-kit** for Claud
 2. **Adapted**: SpecKit plugin by Marty Bonacci (2025)
    - Claude Code integration
 
-3. **Enhanced**: SpecSwarm v3.7.3 by Marty Bonacci & Claude Code (2025-2026)
+3. **Enhanced**: SpecSwarm v3.7.4 by Marty Bonacci & Claude Code (2025-2026)
    - Tech stack management (95% drift prevention)
    - Lifecycle workflows (build, fix, modify, ship, upgrade)
    - Quality validation (0-100 scoring)
@@ -591,6 +591,6 @@ MIT License - See LICENSE file for details
 
 ---
 
-**SpecSwarm v3.7.3** - Your complete software development toolkit. 🚀
+**SpecSwarm v3.7.4** - Your complete software development toolkit. 🚀
 
 Build it. Fix it. Modify it. Ship it. All in one place.
