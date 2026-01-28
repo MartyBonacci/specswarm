@@ -2,12 +2,14 @@
 # SpecSwarm Stop Hook
 # Prevents unwanted pauses during /specswarm:build workflow
 # Inspired by Ralph Wiggum plugin's autonomous loop pattern
+# Enhanced with checkpoint support for Claude Code 2.1.0
 
 set -e
 
 # Find repository root
 REPO_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
 STATE_FILE="${REPO_ROOT}/.specswarm/build-loop.state"
+CHECKPOINTS_DIR="${REPO_ROOT}/.specswarm/checkpoints"
 
 # Exit early if no build is active (zero overhead when not building)
 if [ ! -f "$STATE_FILE" ]; then
@@ -15,6 +17,39 @@ if [ ! -f "$STATE_FILE" ]; then
   echo '{"decision": "approve"}'
   exit 0
 fi
+
+# Function to create checkpoint after phase completion
+create_checkpoint() {
+  local feature_num=$1
+  local phase=$2
+  local feature_dir=$3
+
+  if [ -z "$feature_dir" ] || [ ! -d "$feature_dir" ]; then
+    return 0
+  fi
+
+  local checkpoint_dir="$CHECKPOINTS_DIR/$feature_num"
+  local timestamp=$(date +%s)
+  local checkpoint_path="$checkpoint_dir/${phase}-${timestamp}"
+
+  mkdir -p "$checkpoint_path"
+
+  # Copy current feature state
+  cp -r "$feature_dir"/* "$checkpoint_path/" 2>/dev/null || true
+
+  # Update manifest
+  local manifest_file="$checkpoint_dir/manifest.json"
+  if [ ! -f "$manifest_file" ]; then
+    echo "[]" > "$manifest_file"
+  fi
+
+  if command -v jq &> /dev/null; then
+    jq --arg phase "$phase" --arg ts "$(date -Iseconds)" \
+       '. += [{"phase": $phase, "timestamp": $ts}]' \
+       "$manifest_file" > "${manifest_file}.tmp" 2>/dev/null
+    mv "${manifest_file}.tmp" "$manifest_file" 2>/dev/null || true
+  fi
+}
 
 # Read state file
 if ! command -v jq &> /dev/null; then
@@ -59,6 +94,8 @@ case "$CURRENT_PHASE" in
   "specify")
     # Check if spec.md exists
     if [ -f "${FEATURE_DIR}/spec.md" ]; then
+      # Create checkpoint after specify phase
+      create_checkpoint "$FEATURE_NUM" "specify" "$FEATURE_DIR"
       NEXT_PHASE="clarify"
     fi
     ;;
@@ -68,6 +105,8 @@ case "$CURRENT_PHASE" in
     # Look for "## Clarifications" section or completion marker
     if grep -q "## Clarifications" "${FEATURE_DIR}/spec.md" 2>/dev/null || \
        grep -q "No clarifications needed" "${FEATURE_DIR}/spec.md" 2>/dev/null; then
+      # Create checkpoint after clarify phase
+      create_checkpoint "$FEATURE_NUM" "clarify" "$FEATURE_DIR"
       NEXT_PHASE="plan"
     fi
     ;;
@@ -75,6 +114,8 @@ case "$CURRENT_PHASE" in
   "plan")
     # Check if plan.md exists
     if [ -f "${FEATURE_DIR}/plan.md" ]; then
+      # Create checkpoint after plan phase
+      create_checkpoint "$FEATURE_NUM" "plan" "$FEATURE_DIR"
       NEXT_PHASE="tasks"
     fi
     ;;
@@ -82,6 +123,8 @@ case "$CURRENT_PHASE" in
   "tasks")
     # Check if tasks.md exists
     if [ -f "${FEATURE_DIR}/tasks.md" ]; then
+      # Create checkpoint after tasks phase
+      create_checkpoint "$FEATURE_NUM" "tasks" "$FEATURE_DIR"
       NEXT_PHASE="implement"
     fi
     ;;
@@ -90,6 +133,8 @@ case "$CURRENT_PHASE" in
     # Check if tasks are completed (look for completion marker)
     if grep -q "## Summary" "${FEATURE_DIR}/tasks.md" 2>/dev/null || \
        grep -q "All tasks completed" "${FEATURE_DIR}/tasks.md" 2>/dev/null; then
+      # Create checkpoint after implement phase
+      create_checkpoint "$FEATURE_NUM" "implement" "$FEATURE_DIR"
       # Check if validation is requested
       if [ "$RUN_VALIDATE" = "true" ]; then
         NEXT_PHASE="validate"

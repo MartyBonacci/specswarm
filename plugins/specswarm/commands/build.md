@@ -10,6 +10,12 @@ args:
   - name: --quality-gate
     description: Set minimum quality score (default 80)
     required: false
+  - name: --background
+    description: Run build in background, return session ID for tracking
+    required: false
+  - name: --notify
+    description: Play sound when complete (requires notifier plugin)
+    required: false
 ---
 
 ## User Input
@@ -44,6 +50,8 @@ Build a complete feature from natural language description through implementatio
 FEATURE_DESC=""
 RUN_VALIDATE=false
 QUALITY_GATE=80
+BACKGROUND_MODE=false
+NOTIFY_ON_COMPLETE=false
 
 # Extract feature description (first non-flag argument)
 for arg in $ARGUMENTS; do
@@ -54,6 +62,10 @@ for arg in $ARGUMENTS; do
   elif [ "$arg" = "--quality-gate" ]; then
     shift
     QUALITY_GATE="$1"
+  elif [ "$arg" = "--background" ]; then
+    BACKGROUND_MODE=true
+  elif [ "$arg" = "--notify" ]; then
+    NOTIFY_ON_COMPLETE=true
   fi
 done
 
@@ -112,18 +124,50 @@ cd "$REPO_ROOT"
 FEATURE_NUM=$(printf "%03d" $(( $(find features/ .specswarm/features/ -maxdepth 1 -type d -name "[0-9][0-9][0-9]-*" 2>/dev/null | wc -l) + 1 )))
 
 mkdir -p .specswarm
+mkdir -p .specswarm/sessions
+
+# Generate session ID for tracking
+SESSION_ID="build-$(date +%Y%m%d-%H%M%S)-${FEATURE_NUM}"
+
 cat > .specswarm/build-loop.state << EOF
 {
   "active": true,
   "feature_description": "$FEATURE_DESC",
   "feature_num": "$FEATURE_NUM",
+  "session_id": "$SESSION_ID",
   "started_at": "$(date -Iseconds 2>/dev/null || date -u +"%Y-%m-%dT%H:%M:%S%z")",
   "current_phase": "specify",
   "phases_complete": [],
   "quality_threshold": $QUALITY_GATE,
-  "run_validate": $RUN_VALIDATE
+  "run_validate": $RUN_VALIDATE,
+  "background_mode": $BACKGROUND_MODE,
+  "notify_on_complete": $NOTIFY_ON_COMPLETE
 }
 EOF
+
+# Also save session for status tracking
+cp .specswarm/build-loop.state ".specswarm/sessions/${SESSION_ID}.json"
+
+# If background mode, return session info and exit
+if [ "$BACKGROUND_MODE" = true ]; then
+  echo ""
+  echo "🔄 Build started in background mode"
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo ""
+  echo "Session ID: $SESSION_ID"
+  echo "Feature: $FEATURE_DESC"
+  echo ""
+  echo "Track progress with:"
+  echo "  /specswarm:status $SESSION_ID"
+  echo ""
+  echo "The build will continue in the background."
+  if [ "$NOTIFY_ON_COMPLETE" = true ]; then
+    echo "You will be notified when complete."
+  fi
+  echo ""
+  # Note: Claude Code handles background execution automatically
+  # The command continues normally but in background context
+fi
 ```
 
 ---

@@ -2,6 +2,15 @@
 name: specswarm-ship
 description: Systematic quality validation, test verification, and safe merging workflow for deployment/release operations. ALWAYS asks for confirmation when user wants to ship, deploy, merge, release, or complete features to production, merge to main branch, or finalize features. This is a DESTRUCTIVE operation (merges and deletes branches).
 allowed-tools: AskUserQuestion, SlashCommand
+hooks:
+  - event: PreToolUse
+    tool: SlashCommand
+    handler: enforce-quality-gates
+    description: Ensures quality gates are met before allowing merge operations
+  - event: PostToolUse
+    tool: SlashCommand
+    handler: log-merge-operation
+    description: Logs merge operations for audit trail
 ---
 
 # SpecSwarm Ship Workflow

@@ -13,6 +13,12 @@ args:
   - name: --max-retries
     description: Maximum fix retry attempts (default 2)
     required: false
+  - name: --background
+    description: Run fix in background, return session ID for tracking
+    required: false
+  - name: --notify
+    description: Play sound when complete (requires notifier plugin)
+    required: false
 ---
 
 ## User Input
@@ -50,6 +56,8 @@ BUG_DESC=""
 REGRESSION_TEST=false
 HOTFIX=false
 MAX_RETRIES=2
+BACKGROUND_MODE=false
+NOTIFY_ON_COMPLETE=false
 
 # Extract bug description (first non-flag argument)
 for arg in $ARGUMENTS; do
@@ -62,6 +70,10 @@ for arg in $ARGUMENTS; do
   elif [ "$arg" = "--max-retries" ]; then
     shift
     MAX_RETRIES="$1"
+  elif [ "$arg" = "--background" ]; then
+    BACKGROUND_MODE=true
+  elif [ "$arg" = "--notify" ]; then
+    NOTIFY_ON_COMPLETE=true
   fi
 done
 
@@ -87,6 +99,44 @@ fi
 
 REPO_ROOT=$(git rev-parse --show-toplevel)
 cd "$REPO_ROOT"
+
+# Create session tracking for background mode
+mkdir -p .specswarm/sessions
+SESSION_ID="fix-$(date +%Y%m%d-%H%M%S)"
+
+cat > ".specswarm/sessions/${SESSION_ID}.json" << EOF
+{
+  "type": "fix",
+  "session_id": "$SESSION_ID",
+  "bug_description": "$BUG_DESC",
+  "started_at": "$(date -Iseconds 2>/dev/null || date -u +"%Y-%m-%dT%H:%M:%S%z")",
+  "status": "running",
+  "regression_test": $REGRESSION_TEST,
+  "hotfix": $HOTFIX,
+  "max_retries": $MAX_RETRIES,
+  "current_retry": 0,
+  "background_mode": $BACKGROUND_MODE,
+  "notify_on_complete": $NOTIFY_ON_COMPLETE
+}
+EOF
+
+# If background mode, show session info
+if [ "$BACKGROUND_MODE" = true ]; then
+  echo ""
+  echo "🔄 Fix started in background mode"
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo ""
+  echo "Session ID: $SESSION_ID"
+  echo "Bug: $BUG_DESC"
+  echo ""
+  echo "Track progress with:"
+  echo "  /specswarm:status $SESSION_ID"
+  echo ""
+  if [ "$NOTIFY_ON_COMPLETE" = true ]; then
+    echo "You will be notified when complete."
+  fi
+  echo ""
+fi
 ```
 
 ---

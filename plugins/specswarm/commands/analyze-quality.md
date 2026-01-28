@@ -1,11 +1,22 @@
 ---
 description: Comprehensive codebase quality analysis with prioritized recommendations
+args:
+  - name: --lsp
+    description: Use LSP for enhanced language-aware analysis (TypeScript/JavaScript)
+    required: false
+  - name: --quick
+    description: Run quick analysis (skip deep scanning)
+    required: false
+  - name: --json
+    description: Output results in JSON format
+    required: false
 ---
 
 <!--
 ATTRIBUTION CHAIN:
 1. Original: SpecLab plugin by Marty Bonacci & Claude Code (2025)
 2. Phase 2 Enhancement: Comprehensive quality analysis feature
+3. Phase 3 Enhancement: LSP integration for language-aware analysis (Claude Code 2.1.0+)
 -->
 
 ## User Input
@@ -27,8 +38,16 @@ Perform comprehensive codebase quality analysis to identify improvement opportun
 4. **Performance Issues**: Find optimization opportunities
 5. **Security Issues**: Detect vulnerabilities
 6. **Quality Scoring**: Calculate module-level quality scores
+7. **LSP Analysis** (v3.8.0+): Language-aware analysis using LSP tools
 
 **Coverage**: Provides holistic codebase health assessment
+
+**LSP Integration** (Claude Code 2.1.0+):
+When `--lsp` flag is provided or TypeScript project is detected:
+- Semantic analysis of unused imports/exports
+- Dead code detection via reference analysis
+- Type error detection
+- Symbol resolution for accurate metrics
 
 ---
 
@@ -57,6 +76,63 @@ Perform comprehensive codebase quality analysis to identify improvement opportun
    - Framework: Vite, Next.js, Remix, CRA, or Generic
    - Language: JavaScript, TypeScript, Python, Go, etc.
    - Test framework: Vitest, Jest, Pytest, etc.
+
+---
+
+### 1.5. LSP-Based Analysis (Enhanced)
+
+**IF --lsp flag is provided OR TypeScript project detected, use LSP for semantic analysis:**
+
+```bash
+# Check for TypeScript project
+USE_LSP=false
+if [ -f "$REPO_ROOT/tsconfig.json" ]; then
+  USE_LSP=true
+  echo "📊 TypeScript project detected - LSP analysis enabled"
+fi
+
+# Source tool detector for MCP availability check
+PLUGIN_DIR="$(dirname "$(dirname "${BASH_SOURCE[0]}")")"
+if [ -f "$PLUGIN_DIR/lib/tool-detector.sh" ]; then
+  source "$PLUGIN_DIR/lib/tool-detector.sh"
+  detect_available_tools "$REPO_ROOT"
+fi
+```
+
+**IF USE_LSP = true, perform semantic analysis:**
+
+1. **Unused Imports Detection:**
+   Use Claude Code's LSP tool to find unused imports across TypeScript files.
+   Store count as UNUSED_IMPORTS_COUNT.
+
+2. **Unused Exports Detection:**
+   Use LSP to find exported symbols that are never imported elsewhere.
+   Store count as UNUSED_EXPORTS_COUNT.
+
+3. **Dead Code Detection:**
+   Use LSP "find references" to identify functions/classes with zero references.
+   Store count as DEAD_CODE_COUNT.
+
+4. **Type Error Detection:**
+   Check for TypeScript compiler errors using LSP diagnostics.
+   Store count as TYPE_ERROR_COUNT.
+
+**LSP Analysis Output:**
+```
+🔍 LSP Semantic Analysis
+========================
+
+Unused Imports: {UNUSED_IMPORTS_COUNT}
+Unused Exports: {UNUSED_EXPORTS_COUNT}
+Dead Code (0 refs): {DEAD_CODE_COUNT}
+Type Errors: {TYPE_ERROR_COUNT}
+
+Top Issues:
+- {FILE}: {ISSUE_DESCRIPTION}
+- {FILE}: {ISSUE_DESCRIPTION}
+```
+
+**Note:** If LSP is not available, fall back to grep-based analysis (less accurate but still useful).
 
 ---
 

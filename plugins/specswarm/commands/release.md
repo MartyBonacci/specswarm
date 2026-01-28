@@ -13,6 +13,12 @@ args:
   - name: --skip-audit
     description: Skip security audit (not recommended for production)
     required: false
+  - name: --background
+    description: Run release in background, return session ID for tracking
+    required: false
+  - name: --notify
+    description: Play sound when complete (requires notifier plugin)
+    required: false
 ---
 
 ## Goal

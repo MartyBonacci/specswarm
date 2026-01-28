@@ -2,6 +2,18 @@
 name: specswarm-build
 description: Systematic spec-driven workflow (specification→clarification→planning→tasks→implementation→validation) for feature development. Auto-executes when user clearly wants to build, create, add, implement, develop, make, construct, or set up software features, components, or functionality.
 allowed-tools: AskUserQuestion, SlashCommand
+hooks:
+  - event: PreToolUse
+    tool: SlashCommand
+    handler: validate-build-state
+    description: Ensures build state is valid before executing phase commands
+  - event: PostToolUse
+    tool: SlashCommand
+    handler: update-build-progress
+    description: Updates build progress after each phase completes
+  - event: Stop
+    handler: continue-build-phase
+    description: Checks if build workflow should continue to next phase
 ---
 
 # SpecSwarm Build Workflow

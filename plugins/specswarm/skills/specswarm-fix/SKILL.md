@@ -2,6 +2,18 @@
 name: specswarm-fix
 description: Systematic bugfix workflow with regression testing, auto-retry logic, and comprehensive validation. Auto-executes when user clearly wants to fix, debug, repair, resolve, broken, not working, doesn't work, not showing up, not appearing, not displaying, not rendering, doesn't show, won't show, isn't showing, doesn't appear, doesn't display, failing, errors, bugs, issues, not loading, doesn't load, crashed, crashes, problem with, trouble with.
 allowed-tools: AskUserQuestion, SlashCommand
+hooks:
+  - event: PreToolUse
+    tool: SlashCommand
+    handler: validate-fix-state
+    description: Validates fix state and retry count before executing commands
+  - event: PostToolUse
+    tool: SlashCommand
+    handler: track-fix-progress
+    description: Tracks fix progress and updates retry count after commands
+  - event: Stop
+    handler: continue-fix-retry
+    description: Handles auto-retry logic when fix verification fails
 ---
 
 # SpecSwarm Fix Workflow

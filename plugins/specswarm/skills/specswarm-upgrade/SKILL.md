@@ -2,6 +2,15 @@
 name: specswarm-upgrade
 description: Systematic compatibility analysis, migration guidance, and breaking change detection for dependency/framework upgrades. Auto-executes when user clearly wants to upgrade, update, migrate, or modernize software dependencies, frameworks, packages, or technology stacks.
 allowed-tools: AskUserQuestion, SlashCommand
+hooks:
+  - event: PreToolUse
+    tool: SlashCommand
+    handler: check-compatibility
+    description: Checks dependency compatibility before upgrade commands
+  - event: PostToolUse
+    tool: SlashCommand
+    handler: track-upgrade-progress
+    description: Tracks upgrade progress and migration status
 ---
 
 # SpecSwarm Upgrade Workflow

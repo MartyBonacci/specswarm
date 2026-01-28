@@ -2,6 +2,15 @@
 name: specswarm-modify
 description: Impact-analysis-first modification workflow with backward compatibility assessment and breaking change detection. Auto-executes when user clearly wants to modify, change, update, adjust, enhance, extend, or alter existing feature behavior (not fixing bugs, not refactoring quality). For features that work but need to work differently.
 allowed-tools: AskUserQuestion, SlashCommand
+hooks:
+  - event: PreToolUse
+    tool: SlashCommand
+    handler: ensure-impact-analysis
+    description: Ensures impact analysis is completed before modification commands
+  - event: PostToolUse
+    tool: SlashCommand
+    handler: track-modification-progress
+    description: Tracks modification progress and breaking change detection
 ---
 
 # SpecSwarm Modify Workflow
