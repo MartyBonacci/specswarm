@@ -16,6 +16,12 @@ args:
   - name: --notify
     description: Play sound when complete (requires notifier plugin)
     required: false
+  - name: --orchestrate
+    description: Force multi-agent orchestration with parallel task execution and specialist routing
+    required: false
+  - name: --no-orchestrate
+    description: Force sequential execution (disable auto-orchestration)
+    required: false
 ---
 
 ## User Input
@@ -52,6 +58,7 @@ RUN_VALIDATE=false
 QUALITY_GATE=80
 BACKGROUND_MODE=false
 NOTIFY_ON_COMPLETE=false
+ORCHESTRATE_FLAG=""  # "", "force", or "disable"
 
 # Extract feature description (first non-flag argument)
 for arg in $ARGUMENTS; do
@@ -66,6 +73,10 @@ for arg in $ARGUMENTS; do
     BACKGROUND_MODE=true
   elif [ "$arg" = "--notify" ]; then
     NOTIFY_ON_COMPLETE=true
+  elif [ "$arg" = "--orchestrate" ]; then
+    ORCHESTRATE_FLAG="force"
+  elif [ "$arg" = "--no-orchestrate" ]; then
+    ORCHESTRATE_FLAG="disable"
   fi
 done
 
@@ -73,12 +84,20 @@ done
 if [ -z "$FEATURE_DESC" ]; then
   echo "❌ Error: Feature description required"
   echo ""
-  echo "Usage: /specswarm:build \"feature description\" [--validate] [--quality-gate N]"
+  echo "Usage: /specswarm:build \"feature description\" [options]"
+  echo ""
+  echo "Options:"
+  echo "  --validate        Run browser validation after implementation"
+  echo "  --quality-gate N  Set minimum quality score (default 80)"
+  echo "  --orchestrate     Force multi-agent parallel execution"
+  echo "  --no-orchestrate  Force sequential execution"
+  echo "  --background      Run in background mode"
   echo ""
   echo "Examples:"
   echo "  /specswarm:build \"Add user authentication with email/password\""
   echo "  /specswarm:build \"Implement dark mode toggle\" --validate"
-  echo "  /specswarm:build \"Add shopping cart\" --validate --quality-gate 85"
+  echo "  /specswarm:build \"Add shopping cart\" --orchestrate"
+  echo "  /specswarm:build \"Add dashboard\" --validate --quality-gate 85"
   exit 1
 fi
 
@@ -141,7 +160,9 @@ cat > .specswarm/build-loop.state << EOF
   "quality_threshold": $QUALITY_GATE,
   "run_validate": $RUN_VALIDATE,
   "background_mode": $BACKGROUND_MODE,
-  "notify_on_complete": $NOTIFY_ON_COMPLETE
+  "notify_on_complete": $NOTIFY_ON_COMPLETE,
+  "orchestrate_flag": "$ORCHESTRATE_FLAG",
+  "use_orchestration": false
 }
 EOF
 
@@ -198,6 +219,13 @@ echo "  2. Ask clarification questions (interactive)"
 echo "  3. Generate implementation plan"
 echo "  4. Generate task breakdown"
 echo "  5. Implement all tasks"
+if [ "$ORCHESTRATE_FLAG" = "force" ]; then
+echo "     └─ Using multi-agent orchestration (--orchestrate)"
+elif [ "$ORCHESTRATE_FLAG" = "disable" ]; then
+echo "     └─ Using sequential execution (--no-orchestrate)"
+else
+echo "     └─ Auto-detect: orchestration if 4+ parallelizable tasks"
+fi
 if [ "$RUN_VALIDATE" = true ]; then
 echo "  6. Run browser validation (Playwright)"
 echo "  7. Analyze code quality"
@@ -319,29 +347,196 @@ echo ""
 
 ---
 
+### Step 5.5: Orchestration Analysis (Smart Detection)
+
+**Determine if multi-agent orchestration should be used:**
+
+```bash
+# Source orchestrator utilities
+SPECSWARM_DIR="/home/marty/code-projects/specswarm/plugins/specswarm"
+if [ -f "${SPECSWARM_DIR}/lib/orchestrator-utils.sh" ]; then
+  source "${SPECSWARM_DIR}/lib/orchestrator-utils.sh"
+fi
+
+# Find the tasks.md file
+FEATURE_DIR=$(find features/ .specswarm/features/ -maxdepth 2 -type d -name "[0-9][0-9][0-9]-*" 2>/dev/null | head -1)
+TASKS_FILE="${FEATURE_DIR}/tasks.md"
+
+# Determine orchestration mode
+USE_ORCHESTRATION=false
+ORCHESTRATION_REASON=""
+
+if [ "$ORCHESTRATE_FLAG" = "force" ]; then
+  USE_ORCHESTRATION=true
+  ORCHESTRATION_REASON="--orchestrate flag specified"
+elif [ "$ORCHESTRATE_FLAG" = "disable" ]; then
+  USE_ORCHESTRATION=false
+  ORCHESTRATION_REASON="--no-orchestrate flag specified"
+elif [ "$TASK_COUNT" -ge 4 ]; then
+  # Smart detection: use orchestration for 4+ tasks
+  # Check if tasks have parallelization potential
+  if type analyze_task_dependencies &> /dev/null && [ -f "$TASKS_FILE" ]; then
+    TASK_ANALYSIS=$(analyze_task_dependencies "$TASKS_FILE" 2>/dev/null)
+    MAX_PARALLEL=$(echo "$TASK_ANALYSIS" | jq -r '.statistics.max_parallel // 1' 2>/dev/null || echo "1")
+    if [ "$MAX_PARALLEL" -ge 2 ]; then
+      USE_ORCHESTRATION=true
+      ORCHESTRATION_REASON="Auto-detected: $TASK_COUNT tasks with parallelization potential (max $MAX_PARALLEL parallel)"
+    fi
+  fi
+fi
+
+# Update state file with orchestration decision
+if command -v jq &> /dev/null; then
+  jq --argjson use_orch "$USE_ORCHESTRATION" '.use_orchestration = $use_orch' .specswarm/build-loop.state > .specswarm/build-loop.state.tmp
+  mv .specswarm/build-loop.state.tmp .specswarm/build-loop.state
+fi
+
+if [ "$USE_ORCHESTRATION" = true ]; then
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo "🎭 Multi-Agent Orchestration: ENABLED"
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo ""
+  echo "Reason: $ORCHESTRATION_REASON"
+  echo ""
+  echo "Benefits:"
+  echo "  • Parallel execution of independent tasks"
+  echo "  • Specialist agents for different task types"
+  echo "  • MANIFEST.md for execution traceability"
+  echo ""
+fi
+```
+
+**IF USE_ORCHESTRATION = true, prepare orchestration context:**
+
+```bash
+if [ "$USE_ORCHESTRATION" = true ] && [ -f "$TASKS_FILE" ]; then
+  echo "Analyzing task dependencies..."
+
+  # Generate full task analysis with routing
+  TASK_ANALYSIS=$(analyze_task_dependencies "$TASKS_FILE")
+  TASK_ROUTING=$(route_all_tasks "$TASK_ANALYSIS" 2>/dev/null || echo "[]")
+
+  # Save orchestration context
+  ORCH_CONTEXT="${FEATURE_DIR}/.orchestration-context.json"
+  echo "$TASK_ANALYSIS" | jq --argjson routing "$TASK_ROUTING" \
+    '. + {routing: $routing, orchestration_mode: true}' > "$ORCH_CONTEXT" 2>/dev/null
+
+  # Display execution plan
+  STREAM_COUNT=$(echo "$TASK_ANALYSIS" | jq -r '.statistics.total_streams // 1' 2>/dev/null || echo "1")
+  echo ""
+  echo "Execution Plan:"
+  echo "  • $TASK_COUNT tasks in $STREAM_COUNT execution streams"
+  echo "  • Max parallel: $MAX_PARALLEL tasks"
+  echo ""
+fi
+```
+
+---
+
 ### Step 6: Phase 5 - Implementation
 
-**YOU MUST NOW run the implement command using the SlashCommand tool:**
+**Implementation mode depends on orchestration decision from Step 5.5:**
 
 ```bash
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "⚙️  Phase 5: Implementing Feature"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
-echo "This will execute all $TASK_COUNT tasks automatically."
-echo "Estimated time: 2-5 minutes per task"
+if [ "$USE_ORCHESTRATION" = true ]; then
+  echo "Mode: Multi-Agent Orchestration (parallel execution)"
+else
+  echo "Mode: Sequential Execution"
+fi
+echo "Tasks: $TASK_COUNT"
 echo ""
 ```
 
-```
-Use the SlashCommand tool to execute: /specswarm:implement
-```
+**IF USE_ORCHESTRATION = false (Sequential Mode):**
+
+Use the SlashCommand tool to execute: `/specswarm:implement`
+
+**IF USE_ORCHESTRATION = true (Orchestration Mode):**
+
+Execute tasks using multi-agent orchestration with parallel streams:
+
+1. **Read orchestration context:**
+   ```bash
+   ORCH_CONTEXT="${FEATURE_DIR}/.orchestration-context.json"
+   cat "$ORCH_CONTEXT"
+   ```
+
+2. **Execute tasks by stream using the Task tool:**
+
+   For each execution stream in the orchestration context:
+   - Launch ALL tasks in the stream in PARALLEL using multiple Task tool calls in a single message
+   - Use the routed agent type for each task (from routing in context):
+     - Frontend tasks → `react-typescript-specialist`
+     - Architecture tasks → `system-architect`
+     - Design tasks → `ui-designer`
+     - Functional tasks → `functional-patterns`
+     - Default → `general-purpose`
+   - Wait for all tasks in the stream to complete before proceeding to next stream
+
+   **Example for Stream with T001 (frontend) and T002 (utility):**
+   - Launch Task tool with subagent_type="react-typescript-specialist" for T001
+   - Launch Task tool with subagent_type="general-purpose" for T002
+   - Both in the SAME message for parallel execution
+
+   **Task prompt template:**
+   ```
+   Execute task {TASK_ID} for feature "{FEATURE_DESC}" in {PROJECT_PATH}
+
+   Task details from tasks.md:
+   {TASK_CONTENT}
+
+   Feature context:
+   - Spec: {FEATURE_DIR}/spec.md
+   - Plan: {FEATURE_DIR}/plan.md
+
+   Instructions:
+   1. Read the spec.md and plan.md for full context
+   2. Implement the task as specified
+   3. Write clean, well-documented code
+   4. Follow existing code patterns in the project
+   5. Report files created/modified when complete
+   ```
+
+3. **Track execution results:**
+   - Note success/failure for each task
+   - Record agent type used
+   - Track output files created
+
+4. **Generate MANIFEST.md:**
+   After all streams complete, create `{FEATURE_DIR}/MANIFEST.md`:
+
+   ```markdown
+   # Implementation Manifest
+
+   ## Orchestration Summary
+   - **Feature**: {FEATURE_DESC}
+   - **Total Tasks**: {TASK_COUNT}
+   - **Execution Streams**: {STREAM_COUNT}
+   - **Agents Used**: [list unique agents]
+
+   ## Task Execution Log
+
+   | Task | Agent Type | Stream | Status | Output Files |
+   |------|------------|--------|--------|--------------|
+   | T001 | react-typescript-specialist | 1 | completed | src/... |
+   ...
+
+   ## Files Modified
+   - [Complete list of all files created/modified]
+   ```
 
 **DO NOT PAUSE. DO NOT REPORT STATUS. Immediately proceed to Step 7.**
 
 ```bash
 echo ""
 echo "✅ Implementation complete"
+if [ "$USE_ORCHESTRATION" = true ] && [ -f "${FEATURE_DIR}/MANIFEST.md" ]; then
+  echo "   MANIFEST.md created with execution details"
+fi
 echo ""
 ```
 
@@ -515,5 +710,15 @@ rm -f .specswarm/build-loop.state
 /specswarm:ship
 ```
 **2 commands**, 1 interactive pause, fully automated execution
+
+**With Orchestration** (4+ parallelizable tasks):
+```bash
+/specswarm:build "feature description" --orchestrate
+# [Answer clarification questions]
+# [Parallel task execution with specialist agents]
+# [MANIFEST.md generated]
+/specswarm:ship
+```
+**Benefits**: Faster execution, specialist routing, execution traceability
 
 **Time Savings**: 85-90% reduction in manual orchestration overhead
