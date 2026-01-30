@@ -25,6 +25,9 @@ args:
   - name: --validate
     description: Run AI-powered interaction flow validation with Playwright (analyzes feature artifacts, generates intelligent test flows, executes user-defined + AI flows, monitors browser console + terminal, auto-fixes errors, kills dev server when done)
     required: false
+  - name: --orchestrate
+    description: Enable multi-agent orchestration with parallel task execution and specialist routing. Analyzes task dependencies, routes to specialist agents (react-typescript-specialist, ui-designer, system-architect, functional-patterns), and generates MANIFEST.md
+    required: false
 pre_orchestration_hook: |
   #!/bin/bash
 
@@ -56,6 +59,7 @@ pre_orchestration_hook: |
   MAX_RETRIES=3
   RUN_AUDIT=false
   RUN_VALIDATE=false
+  RUN_ORCHESTRATE=false
 
   while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -65,6 +69,7 @@ pre_orchestration_hook: |
       --max-retries) MAX_RETRIES="$2"; shift 2 ;;
       --audit) RUN_AUDIT=true; shift ;;
       --validate) RUN_VALIDATE=true; shift ;;
+      --orchestrate) RUN_ORCHESTRATE=true; shift ;;
       *) shift ;;
     esac
   done
@@ -101,7 +106,17 @@ pre_orchestration_hook: |
   export MAX_RETRIES="$MAX_RETRIES"
   export RUN_AUDIT="$RUN_AUDIT"
   export RUN_VALIDATE="$RUN_VALIDATE"
+  export RUN_ORCHESTRATE="$RUN_ORCHESTRATE"
   export PLUGIN_DIR="$PLUGIN_DIR"
+
+  # If orchestration mode, show indicator
+  if [ "$RUN_ORCHESTRATE" = true ]; then
+    echo "🎭 Multi-Agent Orchestration: ENABLED"
+    echo "   - Parallel task execution"
+    echo "   - Specialist agent routing"
+    echo "   - MANIFEST.md generation"
+    echo ""
+  fi
 
   echo "🚀 Launching orchestration agent for: $FEATURE_DESC"
   echo ""
@@ -130,6 +145,7 @@ DO:
 - **Session ID**: ${FEATURE_SESSION_ID}
 - **Audit**: ${RUN_AUDIT}
 - **Validate**: ${RUN_VALIDATE}
+- **Orchestrate**: ${RUN_ORCHESTRATE}
 - **Skip Phases**: Specify=${SKIP_SPECIFY}, Clarify=${SKIP_CLARIFY}, Plan=${SKIP_PLAN}
 
 ${RUN_VALIDATE} = true enables AI-powered flow validation (Phase 2.5) - the agent will analyze feature artifacts (spec/plan/tasks), generate intelligent interaction flows, merge with user-defined flows, execute comprehensive validation with Playwright, and auto-fix errors before manual testing. Dev server will be stopped before returning control to user.
@@ -159,6 +175,7 @@ You are an autonomous feature orchestration agent. Your mission is to implement 
 - Max Retries: ${MAX_RETRIES}
 - Run Audit: ${RUN_AUDIT}
 - Run Validate: ${RUN_VALIDATE}
+- Run Orchestrate: ${RUN_ORCHESTRATE}
 
 ═══════════════════════════════════════════════════════════════
 📋 WORKFLOW - EXECUTE IN ORDER
@@ -204,11 +221,144 @@ ELSE:
 - Extract task list
 - Store total as ${total_tasks}
 - DO NOT report task count
-- Silently proceed to Phase 2
+- Silently proceed to Phase 1.6 (if orchestrate) or Phase 2
 
 ═══════════════════════════════════════════════════════════════
-🔨 PHASE 2: IMPLEMENTATION (SpecSwarm Implement)
+🎭 PHASE 1.6: ORCHESTRATION ANALYSIS (Conditional - If --orchestrate)
 ═══════════════════════════════════════════════════════════════
+
+IF ${RUN_ORCHESTRATE} = true:
+
+  ### Step 1.6.1: Analyze Task Dependencies
+
+  Use Bash tool to analyze tasks.md for parallel execution opportunities:
+
+  ```bash
+  # Source orchestrator utilities
+  SPECSWARM_DIR="/home/marty/code-projects/specswarm/plugins/specswarm"
+  source "${SPECSWARM_DIR}/lib/orchestrator-utils.sh"
+
+  # Find the tasks.md file
+  TASKS_FILE=$(find ${PROJECT_PATH}/features -name "tasks.md" -type f | head -1)
+
+  # Analyze dependencies and generate execution streams
+  TASK_ANALYSIS=$(analyze_task_dependencies "$TASKS_FILE")
+  echo "$TASK_ANALYSIS"
+  ```
+
+  - Parse the JSON output to understand:
+    - Total tasks
+    - Number of execution streams
+    - Maximum parallel potential
+    - Task dependencies
+
+  ### Step 1.6.2: Route Tasks to Specialist Agents
+
+  For each task in the analysis, determine the appropriate agent:
+
+  ```bash
+  # Route all tasks based on content
+  source "${SPECSWARM_DIR}/lib/orchestrator-utils.sh"
+  route_all_tasks "$TASK_ANALYSIS"
+  ```
+
+  Agent routing rules:
+  - Frontend tasks (component, React, form, button) → react-typescript-specialist
+  - Architecture tasks (schema, database, API design) → system-architect
+  - Design tasks (layout, styling, theme) → ui-designer (research only)
+  - Functional tasks (compose, transform, pure) → functional-patterns
+  - Default → general-purpose
+
+  ### Step 1.6.3: Prepare Orchestration Context
+
+  Create orchestration context file for Phase 2:
+
+  ```bash
+  FEATURE_DIR=$(dirname "$TASKS_FILE")
+  ORCH_CONTEXT="${FEATURE_DIR}/.orchestration-context.json"
+
+  # Save full analysis with routing
+  echo "$TASK_ANALYSIS" | jq --argjson routing "$(route_all_tasks "$TASK_ANALYSIS")" \
+    '. + {routing: $routing, orchestration_mode: true}' > "$ORCH_CONTEXT"
+
+  echo "Orchestration context saved to: $ORCH_CONTEXT"
+  ```
+
+  - DO NOT report detailed analysis to user
+  - Silently proceed to Phase 2
+
+ELSE:
+  - Skip orchestration analysis
+  - Proceed with standard sequential implementation
+
+═══════════════════════════════════════════════════════════════
+🔨 PHASE 2: IMPLEMENTATION
+═══════════════════════════════════════════════════════════════
+
+IF ${RUN_ORCHESTRATE} = true:
+
+  ### Step 2.0: Launch Orchestrator Agent
+
+  ⚠️ CRITICAL: Use multi-agent orchestration for parallel execution
+
+  Instead of sequential `/specswarm:implement`, launch the orchestrator:
+
+  1. **Read orchestration context**:
+     ```bash
+     FEATURE_DIR=$(find ${PROJECT_PATH}/features -maxdepth 1 -type d -name "[0-9]*-*" | head -1)
+     ORCH_CONTEXT="${FEATURE_DIR}/.orchestration-context.json"
+     cat "$ORCH_CONTEXT"
+     ```
+
+  2. **Execute tasks by stream**:
+
+     For each execution stream (from orchestration context):
+     - Launch ALL tasks in the stream in PARALLEL using multiple Task tool calls
+     - Use the routed agent type for each task (from routing analysis)
+     - Wait for all tasks in stream to complete
+     - Proceed to next stream only after current completes
+
+     Example for Stream 1 with tasks T001 (frontend) and T002 (utility):
+     - Launch Task with subagent_type="react-typescript-specialist" for T001
+     - Launch Task with subagent_type="general-purpose" for T002
+     - Both run in parallel (single message, multiple tool calls)
+
+  3. **Track execution**:
+     - Note success/failure for each task
+     - Record agent type used
+     - Track output files created
+
+  4. **Generate MANIFEST.md**:
+     After all streams complete, create ${FEATURE_DIR}/MANIFEST.md:
+
+     ```markdown
+     # Implementation Manifest
+
+     ## Orchestration Summary
+     - **Feature**: ${FEATURE_DESC}
+     - **Total Tasks**: [N]
+     - **Execution Streams**: [N]
+     - **Agents Used**: [list unique agents]
+     - **Duration**: [time]
+
+     ## Task Execution Log
+
+     | Task | Agent Type | Stream | Status | Output Files |
+     |------|------------|--------|--------|--------------|
+     | T001 | react-typescript-specialist | 1 | completed | src/... |
+     ...
+
+     ## Files Modified
+     - [Complete list]
+     ```
+
+  5. **Update session**: feature_complete_implementation "${FEATURE_SESSION_ID}" "${completed}" "${failed}"
+
+  - Proceed to Phase 2.2 for result parsing
+
+ELSE:
+
+  ### Step 2.1: Execute All Tasks with SpecSwarm (Standard Mode)
 
 ### Step 2.1: Execute All Tasks with SpecSwarm
 

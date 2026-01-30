@@ -1,7 +1,7 @@
 {
   "name": "specswarm",
-  "version": "3.7.4",
-  "description": "Complete software development toolkit: spec-driven workflows, autonomous orchestration, lifecycle management Build->Modify->Fix->Ship",
+  "version": "3.9.0",
+  "description": "Complete software development toolkit: spec-driven workflows, multi-agent orchestration, lifecycle management Build->Modify->Fix->Ship",
   "author": {
     "name": "Marty Bonacci",
     "url": "https://github.com/MartyBonacci"
@@ -41,6 +41,11 @@
   "hotfix",
   "lifecycle-workflows",
   "analytics",
-  "validation"
+  "validation",
+  "multi-agent",
+  "parallel-execution",
+  "specialist-routing",
+  "task-orchestration",
+  "manifest-generation"
 ]
 }
