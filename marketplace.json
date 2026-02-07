@@ -11,7 +11,7 @@
     {
       "name": "specswarm",
       "source": "./plugins/specswarm",
-      "version": "3.7.3",
+      "version": "3.9.1",
       "description": "Build, Modify, Fix, and Ship with natural language. Specification-driven development skills that handle complete software lifecycle workflows autonomously."
     }
   ]
