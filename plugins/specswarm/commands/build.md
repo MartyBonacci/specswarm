@@ -142,6 +142,19 @@ cd "$REPO_ROOT"
 # Create build state for stop hook
 FEATURE_NUM=$(printf "%03d" $(( $(find features/ .specswarm/features/ -maxdepth 1 -type d -name "[0-9][0-9][0-9]-*" 2>/dev/null | wc -l) + 1 )))
 
+# Create slug from feature description
+SLUG=$(echo "$FEATURE_DESC" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | sed 's/--*/-/g' | sed 's/^-//' | sed 's/-$//')
+BRANCH_NAME="${FEATURE_NUM}-${SLUG}"
+
+# Capture parent branch BEFORE creating feature branch
+PARENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+
+# Create and switch to feature branch
+echo ""
+echo "Creating feature branch: $BRANCH_NAME (from $PARENT_BRANCH)"
+git checkout -b "$BRANCH_NAME"
+echo ""
+
 mkdir -p .specswarm
 mkdir -p .specswarm/sessions
 
@@ -153,6 +166,8 @@ cat > .specswarm/build-loop.state << EOF
   "active": true,
   "feature_description": "$FEATURE_DESC",
   "feature_num": "$FEATURE_NUM",
+  "parent_branch": "$PARENT_BRANCH",
+  "branch_name": "$BRANCH_NAME",
   "session_id": "$SESSION_ID",
   "started_at": "$(date -Iseconds 2>/dev/null || date -u +"%Y-%m-%dT%H:%M:%S%z")",
   "current_phase": "specify",

@@ -59,33 +59,52 @@ Given that feature description, do this:
    BRANCH_NAME="${FEATURE_NUM}-${SLUG}"
 
    if git rev-parse --git-dir >/dev/null 2>&1; then
-     # Capture current branch as parent BEFORE switching
-     PARENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+     # Check if already on a feature branch (e.g., created by /specswarm:build)
+     CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
+     ALREADY_ON_FEATURE=$(echo "$CURRENT_BRANCH" | grep -E '^[0-9]{3}-')
 
-     echo ""
-     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-     echo "Branch Setup"
-     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-     echo "  Parent branch: $PARENT_BRANCH (current branch)"
-     echo "  Feature branch: $BRANCH_NAME (will be created)"
-     echo ""
-     echo "ℹ️  The feature branch will be created from $PARENT_BRANCH."
-     echo "   When complete, it will merge back to $PARENT_BRANCH."
-     echo ""
-     read -p "Is this correct? (y/n): " branch_confirm
+     if [ -n "$ALREADY_ON_FEATURE" ]; then
+       # Already on a feature branch - reuse it
+       BRANCH_NAME="$CURRENT_BRANCH"
+       FEATURE_NUM=$(echo "$CURRENT_BRANCH" | grep -oE '^[0-9]{3}')
+       # Read parent from build state if available
+       PARENT_BRANCH=""
+       if [ -f "${REPO_ROOT}/.specswarm/build-loop.state" ] && command -v jq &>/dev/null; then
+         PARENT_BRANCH=$(jq -r '.parent_branch // empty' "${REPO_ROOT}/.specswarm/build-loop.state" 2>/dev/null)
+       fi
+       if [ -z "$PARENT_BRANCH" ]; then
+         PARENT_BRANCH="main"
+       fi
+       echo "Using existing feature branch: $BRANCH_NAME (parent: $PARENT_BRANCH)"
+     else
+       # Standalone mode: create new feature branch with confirmation
+       PARENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 
-     if [ "$branch_confirm" != "y" ]; then
        echo ""
-       echo "❌ Branch setup cancelled"
+       echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+       echo "Branch Setup"
+       echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+       echo "  Parent branch: $PARENT_BRANCH (current branch)"
+       echo "  Feature branch: $BRANCH_NAME (will be created)"
        echo ""
-       echo "Please checkout the correct parent branch first, then run:"
-       echo "  /specswarm:specify \"$FEATURE_DESCRIPTION\""
-       exit 0
+       echo "ℹ️  The feature branch will be created from $PARENT_BRANCH."
+       echo "   When complete, it will merge back to $PARENT_BRANCH."
+       echo ""
+       read -p "Is this correct? (y/n): " branch_confirm
+
+       if [ "$branch_confirm" != "y" ]; then
+         echo ""
+         echo "❌ Branch setup cancelled"
+         echo ""
+         echo "Please checkout the correct parent branch first, then run:"
+         echo "  /specswarm:specify \"$FEATURE_DESCRIPTION\""
+         exit 0
+       fi
+       echo ""
+
+       # Create and switch to new feature branch
+       git checkout -b "$BRANCH_NAME"
      fi
-     echo ""
-
-     # Create and switch to new feature branch
-     git checkout -b "$BRANCH_NAME"
    else
      # Non-git: use environment variable
      export SPECIFY_FEATURE="$BRANCH_NAME"
