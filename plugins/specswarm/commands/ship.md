@@ -7,6 +7,9 @@ args:
   - name: --skip-tests
     description: Skip test validation (not recommended)
     required: false
+  - name: --security-audit
+    description: Run comprehensive security scan before merge
+    required: false
 ---
 
 ## User Input
@@ -50,6 +53,7 @@ cd "$REPO_ROOT"
 # Parse arguments
 FORCE_QUALITY=""
 SKIP_TESTS=false
+RUN_SECURITY_AUDIT=false
 
 for arg in $ARGUMENTS; do
   case "$arg" in
@@ -59,6 +63,9 @@ for arg in $ARGUMENTS; do
       ;;
     --skip-tests)
       SKIP_TESTS=true
+      ;;
+    --security-audit)
+      RUN_SECURITY_AUDIT=true
       ;;
   esac
 done
@@ -75,16 +82,79 @@ echo "🚢 SpecSwarm Ship - Quality-Gated Merge"
 echo "══════════════════════════════════════════"
 echo ""
 echo "This command enforces quality standards before merge:"
+if [ "$RUN_SECURITY_AUDIT" = true ]; then
+echo "  1. Runs comprehensive security audit"
+echo "  2. Runs comprehensive quality analysis"
+echo "  3. Checks quality score meets threshold"
+echo "  4. If passing: merges to parent branch"
+echo "  5. If failing: reports issues and blocks merge"
+else
 echo "  1. Runs comprehensive quality analysis"
 echo "  2. Checks quality score meets threshold"
 echo "  3. If passing: merges to parent branch"
 echo "  4. If failing: reports issues and blocks merge"
+fi
 echo ""
 
 CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 echo "📍 Current branch: $CURRENT_BRANCH"
 echo ""
 ```
+
+---
+
+### Step 1.5: Security Audit (Optional)
+
+**IF --security-audit flag was provided, run comprehensive security scan:**
+
+```bash
+if [ "$RUN_SECURITY_AUDIT" = true ]; then
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo "🔒 Security Audit"
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo ""
+  echo "Running comprehensive security scan before merge..."
+  echo ""
+  echo "Checks:"
+  echo "  • Dependency vulnerabilities (npm/yarn/pnpm audit)"
+  echo "  • Hardcoded secrets and credentials"
+  echo "  • OWASP Top 10 code patterns (XSS, SQLi, etc.)"
+  echo "  • Security configuration (CORS, headers, .env)"
+  echo ""
+fi
+```
+
+**IF RUN_SECURITY_AUDIT = true:**
+
+Perform a security scan of the codebase:
+
+1. **Dependency scan**: Run `npm audit` (or yarn/pnpm equivalent) and capture vulnerability counts
+2. **Secret detection**: Scan git-tracked source files for hardcoded API keys, tokens, passwords, and private keys using regex patterns
+3. **Code vulnerability scan**: Check source files for OWASP Top 10 patterns (SQL injection, XSS via innerHTML/dangerouslySetInnerHTML, command injection via exec/spawn, eval usage, path traversal)
+4. **Configuration check**: Verify .env is gitignored, check for security middleware (helmet), check CORS configuration
+
+**Calculate risk score**: (CRITICAL × 10) + (HIGH × 5) + (MEDIUM × 2) + (LOW × 1)
+
+**IF any CRITICAL findings exist, BLOCK the merge:**
+
+```bash
+if [ "$RUN_SECURITY_AUDIT" = true ]; then
+  if [ "$CRITICAL_SECURITY_COUNT" -gt 0 ]; then
+    echo "❌ Security audit FAILED - $CRITICAL_SECURITY_COUNT critical findings"
+    echo ""
+    echo "Critical security issues must be resolved before merging."
+    echo "Review the findings above and fix all CRITICAL issues."
+    echo ""
+    echo "Then re-run: /specswarm:ship --security-audit"
+    exit 1
+  else
+    echo "✅ Security audit passed (Risk Score: $RISK_SCORE)"
+    echo ""
+  fi
+fi
+```
+
+Generate security audit report: `security-audit-YYYY-MM-DD.md`
 
 ---
 
@@ -195,6 +265,9 @@ echo "════════════════════════�
 echo "🎉 SHIP SUCCESSFUL"
 echo "══════════════════════════════════════════"
 echo ""
+if [ "$RUN_SECURITY_AUDIT" = true ]; then
+echo "✅ Security audit passed"
+fi
 echo "✅ Quality gate passed (${QUALITY_SCORE}%)"
 echo "✅ Merged to parent branch"
 echo "✅ Feature/bugfix complete"

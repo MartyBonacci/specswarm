@@ -10,6 +10,12 @@ args:
   - name: --quality-gate
     description: Set minimum quality score (default 80)
     required: false
+  - name: --analyze
+    description: Run cross-artifact consistency analysis after task generation
+    required: false
+  - name: --checklist
+    description: Generate requirements validation checklist after specification
+    required: false
 ---
 
 ## User Input
@@ -44,6 +50,8 @@ Build a complete feature from natural language description through implementatio
 FEATURE_DESC=""
 RUN_VALIDATE=false
 QUALITY_GATE=80
+RUN_ANALYZE=false
+RUN_CHECKLIST=false
 
 # Extract feature description (first non-flag argument)
 for arg in $ARGUMENTS; do
@@ -54,6 +62,10 @@ for arg in $ARGUMENTS; do
   elif [ "$arg" = "--quality-gate" ]; then
     shift
     QUALITY_GATE="$1"
+  elif [ "$arg" = "--analyze" ]; then
+    RUN_ANALYZE=true
+  elif [ "$arg" = "--checklist" ]; then
+    RUN_CHECKLIST=true
   fi
 done
 
@@ -61,12 +73,19 @@ done
 if [ -z "$FEATURE_DESC" ]; then
   echo "Error: Feature description required"
   echo ""
-  echo "Usage: /sw:build \"feature description\" [--validate] [--quality-gate N]"
+  echo "Usage: /sw:build \"feature description\" [options]"
+  echo ""
+  echo "Options:"
+  echo "  --validate        Run browser validation after implementation"
+  echo "  --quality-gate N  Set minimum quality score (default 80)"
+  echo "  --analyze         Run cross-artifact consistency analysis"
+  echo "  --checklist       Generate requirements validation checklist"
   echo ""
   echo "Examples:"
   echo "  /sw:build \"Add user authentication with email/password\""
   echo "  /sw:build \"Implement dark mode toggle\" --validate"
   echo "  /sw:build \"Add shopping cart\" --validate --quality-gate 85"
+  echo "  /sw:build \"Add API\" --analyze --checklist"
   exit 1
 fi
 
@@ -115,13 +134,19 @@ echo "  1. Create detailed specification"
 echo "  2. Ask clarification questions (interactive)"
 echo "  3. Generate implementation plan"
 echo "  4. Generate task breakdown"
-echo "  5. Implement all tasks"
-if [ "$RUN_VALIDATE" = true ]; then
-echo "  6. Run browser validation (Playwright)"
-echo "  7. Analyze code quality"
+if [ "$RUN_CHECKLIST" = true ]; then
+echo "  5. Generate requirements validation checklist"
+echo "  6. Implement all tasks"
 else
-echo "  6. Analyze code quality"
+echo "  5. Implement all tasks"
 fi
+if [ "$RUN_ANALYZE" = true ]; then
+echo "     - Cross-artifact consistency analysis (--analyze)"
+fi
+if [ "$RUN_VALIDATE" = true ]; then
+echo "  *. Run browser validation (Playwright)"
+fi
+echo "  *. Analyze code quality"
 echo ""
 echo "You'll only be prompted during Step 2 (clarification)."
 echo "All other steps run automatically."
@@ -153,6 +178,35 @@ Wait for completion. Verify spec.md was created.
 echo ""
 echo "Specification created"
 echo ""
+```
+
+---
+
+### Step 2.5: Requirements Checklist (Optional)
+
+**IF --checklist flag was provided, generate requirements validation checklist:**
+
+```bash
+if [ "$RUN_CHECKLIST" = true ]; then
+  echo "----------------------------------------"
+  echo "Generating Requirements Validation Checklist"
+  echo "----------------------------------------"
+  echo ""
+fi
+```
+
+**IF RUN_CHECKLIST = true, use the SlashCommand tool:**
+
+```
+Use the SlashCommand tool to execute: /sw:checklist
+```
+
+```bash
+if [ "$RUN_CHECKLIST" = true ]; then
+  echo ""
+  echo "Requirements checklist generated"
+  echo ""
+fi
 ```
 
 ---
@@ -233,6 +287,40 @@ TASK_COUNT=$(grep -c '^###[[:space:]]*T[0-9]' tasks.md 2>/dev/null || echo "0")
 echo ""
 echo "Task breakdown created ($TASK_COUNT tasks)"
 echo ""
+```
+
+---
+
+### Step 5.5: Cross-Artifact Analysis (Optional)
+
+**IF --analyze flag was provided, run consistency analysis:**
+
+```bash
+if [ "$RUN_ANALYZE" = true ]; then
+  echo "----------------------------------------"
+  echo "Cross-Artifact Consistency Analysis"
+  echo "----------------------------------------"
+  echo ""
+  echo "Analyzing spec.md, plan.md, and tasks.md for inconsistencies..."
+  echo ""
+fi
+```
+
+**IF RUN_ANALYZE = true, use the SlashCommand tool:**
+
+```
+Use the SlashCommand tool to execute: /sw:analyze
+```
+
+```bash
+if [ "$RUN_ANALYZE" = true ]; then
+  echo ""
+  echo "Cross-artifact analysis complete"
+  echo ""
+  echo "Review any CRITICAL findings above before proceeding."
+  echo "Non-critical findings can be addressed after implementation."
+  echo ""
+fi
 ```
 
 ---
@@ -334,6 +422,12 @@ echo "- Clarification completed"
 echo "- Plan generated"
 echo "- Tasks generated ($TASK_COUNT tasks)"
 echo "- Implementation complete"
+if [ "$RUN_CHECKLIST" = true ]; then
+echo "- Requirements checklist generated"
+fi
+if [ "$RUN_ANALYZE" = true ]; then
+echo "- Cross-artifact analysis complete"
+fi
 if [ "$RUN_VALIDATE" = true ]; then
 echo "- Browser validation passed"
 fi

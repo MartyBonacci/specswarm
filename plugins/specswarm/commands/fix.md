@@ -19,6 +19,9 @@ args:
   - name: --notify
     description: Play sound when complete (requires notifier plugin)
     required: false
+  - name: --coordinate
+    description: Multi-bug orchestrated debugging with logging, monitoring, and specialist agents
+    required: false
 ---
 
 ## User Input
@@ -58,6 +61,7 @@ HOTFIX=false
 MAX_RETRIES=2
 BACKGROUND_MODE=false
 NOTIFY_ON_COMPLETE=false
+COORDINATE_MODE=false
 
 # Extract bug description (first non-flag argument)
 for arg in $ARGUMENTS; do
@@ -74,6 +78,8 @@ for arg in $ARGUMENTS; do
     BACKGROUND_MODE=true
   elif [ "$arg" = "--notify" ]; then
     NOTIFY_ON_COMPLETE=true
+  elif [ "$arg" = "--coordinate" ]; then
+    COORDINATE_MODE=true
   fi
 done
 
@@ -81,13 +87,21 @@ done
 if [ -z "$BUG_DESC" ]; then
   echo "❌ Error: Bug description required"
   echo ""
-  echo "Usage: /specswarm:fix \"bug description\" [--regression-test] [--hotfix] [--max-retries N]"
+  echo "Usage: /specswarm:fix \"bug description\" [options]"
+  echo ""
+  echo "Options:"
+  echo "  --regression-test  Create failing test first (TDD approach)"
+  echo "  --hotfix           Expedited workflow for production issues"
+  echo "  --max-retries N    Maximum fix retry attempts (default 2)"
+  echo "  --coordinate       Multi-bug orchestrated debugging"
+  echo "  --background       Run fix in background mode"
   echo ""
   echo "Examples:"
   echo "  /specswarm:fix \"Login fails with special characters in password\""
   echo "  /specswarm:fix \"Cart total incorrect with discounts\" --regression-test"
   echo "  /specswarm:fix \"Production API timeout\" --hotfix"
   echo "  /specswarm:fix \"Memory leak in dashboard\" --regression-test --max-retries 3"
+  echo "  /specswarm:fix \"navbar broken, sign-out fails, like button error\" --coordinate"
   exit 1
 fi
 
@@ -116,7 +130,8 @@ cat > ".specswarm/sessions/${SESSION_ID}.json" << EOF
   "max_retries": $MAX_RETRIES,
   "current_retry": 0,
   "background_mode": $BACKGROUND_MODE,
-  "notify_on_complete": $NOTIFY_ON_COMPLETE
+  "notify_on_complete": $NOTIFY_ON_COMPLETE,
+  "coordinate_mode": $COORDINATE_MODE
 }
 EOF
 
@@ -168,7 +183,98 @@ fi
 
 ---
 
-## Execution Steps
+## Coordinate Mode (--coordinate)
+
+**IF COORDINATE_MODE = true**, switch to orchestrated multi-bug debugging workflow instead of the standard sequential fix flow.
+
+```bash
+if [ "$COORDINATE_MODE" = true ]; then
+  echo "🐛 SpecSwarm Fix - Coordinated Multi-Bug Debugging"
+  echo "══════════════════════════════════════════"
+  echo ""
+  echo "Bug Report: $BUG_DESC"
+  echo ""
+
+  # Parse individual issues from the bug description
+  BUG_COUNT=$(echo "$BUG_DESC" | tr ',' '\n' | tr ';' '\n' | grep -v '^$' | wc -l)
+
+  echo "Identified $BUG_COUNT potential issue(s)"
+  echo ""
+
+  # Create debug session directory
+  DEBUG_SESSION_ID=$(date +%Y%m%d-%H%M%S)
+  DEBUG_DIR="${REPO_ROOT}/.debug-sessions/${DEBUG_SESSION_ID}"
+  mkdir -p "$DEBUG_DIR"
+
+  echo "Debug session: $DEBUG_SESSION_ID"
+  echo "Directory: $DEBUG_DIR"
+  echo ""
+  echo "This workflow will:"
+  echo "  1. Parse and categorize each bug"
+  echo "  2. Analyze root causes and affected domains"
+  echo "  3. Generate logging strategy for diagnostics"
+  echo "  4. Orchestrate parallel fixes with specialist agents"
+  echo "  5. Verify all fixes and check for regressions"
+  echo ""
+fi
+```
+
+**IF COORDINATE_MODE = true:**
+
+1. **Parse individual bugs** from the description (comma/semicolon separated)
+2. **Analyze each bug** to identify affected files, domains, and root causes
+3. **Group by domain** (frontend, backend, database, etc.) for parallel assignment
+4. **For 3+ bugs**: Launch parallel Task agents (specialist-routed) for each independent bug
+5. **For 1-2 bugs**: Fix sequentially using `/specswarm:bugfix`
+6. **After all fixes**: Run full test suite, create verification checklist
+7. **Generate report** with fix summary, files modified, and test results
+
+```bash
+if [ "$COORDINATE_MODE" = true ]; then
+  # Save problem description
+  cat > "$DEBUG_DIR/problem-description.md" <<COORD_EOF
+# Debug Session: $DEBUG_SESSION_ID
+
+**Problem Description**: $BUG_DESC
+**Strategy**: $([ "$BUG_COUNT" -ge 3 ] && echo "orchestrated" || echo "sequential")
+**Issues**: $BUG_COUNT
+COORD_EOF
+
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo "🔍 Analyzing bugs and generating fix plan..."
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo ""
+fi
+```
+
+For each bug identified, use `/specswarm:bugfix` (sequentially) or Task agents (in parallel if 3+ bugs).
+
+After all fixes are applied, run verification:
+
+```bash
+if [ "$COORDINATE_MODE" = true ]; then
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo "✅ Coordinated Fix Complete"
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo ""
+  echo "Debug session: $DEBUG_SESSION_ID"
+  echo "Issues fixed: $BUG_COUNT"
+  echo ""
+  echo "📝 NEXT STEPS"
+  echo "  1. Review fixes above"
+  echo "  2. Run manual verification"
+  echo "  3. Ship when ready: /specswarm:ship"
+  echo ""
+  # Exit coordinate mode - skip standard fix workflow below
+  exit 0
+fi
+```
+
+**If COORDINATE_MODE = true, the standard workflow below is SKIPPED.**
+
+---
+
+## Execution Steps (Standard Mode)
 
 ### Step 1: Display Welcome Banner
 

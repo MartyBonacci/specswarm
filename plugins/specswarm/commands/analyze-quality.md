@@ -1,5 +1,6 @@
 ---
 description: Comprehensive codebase quality analysis with prioritized recommendations
+hidden: true
 args:
   - name: --lsp
     description: Use LSP for enhanced language-aware analysis (TypeScript/JavaScript)

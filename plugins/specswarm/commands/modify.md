@@ -1,5 +1,18 @@
 ---
 description: Feature modification workflow with impact analysis and backward compatibility assessment
+args:
+  - name: modification_description
+    description: Natural language description of the modification
+    required: false
+  - name: --refactor
+    description: Behavior-preserving quality improvement (metrics-driven refactoring)
+    required: false
+  - name: --deprecate
+    description: Phased feature sunset with migration guidance
+    required: false
+  - name: --analyze-only
+    description: Run impact analysis only without implementing changes
+    required: false
 ---
 
 <!--
@@ -18,6 +31,116 @@ $ARGUMENTS
 ```
 
 You **MUST** consider the user input before proceeding (if not empty).
+
+## Flag Parsing
+
+```bash
+# Parse flags from arguments
+MODIFY_DESC=""
+REFACTOR_MODE=false
+DEPRECATE_MODE=false
+ANALYZE_ONLY=false
+
+for arg in $ARGUMENTS; do
+  if [ "${arg:0:2}" != "--" ] && [ -z "$MODIFY_DESC" ]; then
+    MODIFY_DESC="$arg"
+  elif [ "$arg" = "--refactor" ]; then
+    REFACTOR_MODE=true
+  elif [ "$arg" = "--deprecate" ]; then
+    DEPRECATE_MODE=true
+  elif [ "$arg" = "--analyze-only" ]; then
+    ANALYZE_ONLY=true
+  fi
+done
+```
+
+## Mode Routing
+
+**IF --refactor flag is set**, execute metrics-driven behavior-preserving refactoring workflow:
+
+```bash
+if [ "$REFACTOR_MODE" = true ]; then
+  echo "♻️  SpecSwarm Modify --refactor"
+  echo "══════════════════════════════════════════"
+  echo ""
+  echo "Mode: Behavior-Preserving Quality Improvement"
+  echo ""
+  echo "This workflow will:"
+  echo "  1. Establish baseline metrics (complexity, duplication, coverage)"
+  echo "  2. Create refactoring specification"
+  echo "  3. Execute incremental refactoring steps"
+  echo "  4. Verify behavior preservation after each step (test suite)"
+  echo "  5. Measure final metrics and compare improvement"
+  echo ""
+  echo "Key principles:"
+  echo "  • No functional changes - behavior must be identical"
+  echo "  • Metrics-driven - quantify improvements"
+  echo "  • Incremental - small, safe refactoring steps"
+  echo "  • Testable - verify identical behavior before/after"
+  echo ""
+fi
+```
+
+**IF REFACTOR_MODE = true**: Execute the refactoring workflow:
+1. Discover refactor context (find feature directory)
+2. Establish baseline metrics (complexity, duplication, coverage, maintainability)
+3. Create refactor specification documenting target, approach, and expected improvements
+4. Generate incremental refactoring tasks (each followed by test verification)
+5. Execute tasks: refactor step → run tests → verify identical results → repeat
+6. Measure final metrics and generate before/after comparison report
+
+**After refactoring completes, STOP. Do not continue to the standard modify workflow.**
+
+---
+
+**IF --deprecate flag is set**, execute phased feature sunset workflow:
+
+```bash
+if [ "$DEPRECATE_MODE" = true ]; then
+  echo "📉 SpecSwarm Modify --deprecate"
+  echo "══════════════════════════════════════════"
+  echo ""
+  echo "Mode: Phased Feature Sunset"
+  echo ""
+  echo "This workflow will:"
+  echo "  1. Identify feature to deprecate and replacement"
+  echo "  2. Analyze current usage and dependencies"
+  echo "  3. Create deprecation specification with timeline"
+  echo "  4. Generate migration guide for users"
+  echo "  5. Plan phased removal (Announce → Migrate → Remove)"
+  echo ""
+fi
+```
+
+**IF DEPRECATE_MODE = true**: Execute the deprecation workflow:
+1. Identify feature to deprecate and its replacement/alternative
+2. Analyze current usage patterns and dependent systems
+3. Create deprecation specification with phased timeline (Announce → Migrate → Remove)
+4. Generate migration guide with before/after code examples
+5. Create tasks for each phase: add deprecation warnings, publish guide, monitor adoption, remove code
+6. Execute Phase 1 (announcement) tasks immediately; Phase 2-3 are tracked for future execution
+
+**After deprecation plan is created, STOP. Do not continue to the standard modify workflow.**
+
+---
+
+**IF --analyze-only flag is set**, run impact analysis without implementing changes:
+
+```bash
+if [ "$ANALYZE_ONLY" = true ]; then
+  echo "🔍 SpecSwarm Modify --analyze-only"
+  echo "══════════════════════════════════════════"
+  echo ""
+  echo "Mode: Impact Analysis Only (no implementation)"
+  echo ""
+fi
+```
+
+**IF ANALYZE_ONLY = true**: Execute only the impact analysis steps (Steps 1-5 of the standard workflow below), generate the impact analysis report, and STOP before task generation or implementation. Output the report and recommendations.
+
+---
+
+**IF no mode flags are set**, continue with the standard modify workflow below.
 
 ## Goal
 

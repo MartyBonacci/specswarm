@@ -22,6 +22,12 @@ args:
   - name: --no-orchestrate
     description: Force sequential execution (disable auto-orchestration)
     required: false
+  - name: --analyze
+    description: Run cross-artifact consistency analysis after task generation
+    required: false
+  - name: --checklist
+    description: Generate requirements validation checklist after specification
+    required: false
 ---
 
 ## User Input
@@ -59,6 +65,8 @@ QUALITY_GATE=80
 BACKGROUND_MODE=false
 NOTIFY_ON_COMPLETE=false
 ORCHESTRATE_FLAG=""  # "", "force", or "disable"
+RUN_ANALYZE=false
+RUN_CHECKLIST=false
 
 # Extract feature description (first non-flag argument)
 for arg in $ARGUMENTS; do
@@ -77,6 +85,10 @@ for arg in $ARGUMENTS; do
     ORCHESTRATE_FLAG="force"
   elif [ "$arg" = "--no-orchestrate" ]; then
     ORCHESTRATE_FLAG="disable"
+  elif [ "$arg" = "--analyze" ]; then
+    RUN_ANALYZE=true
+  elif [ "$arg" = "--checklist" ]; then
+    RUN_CHECKLIST=true
   fi
 done
 
@@ -91,6 +103,8 @@ if [ -z "$FEATURE_DESC" ]; then
   echo "  --quality-gate N  Set minimum quality score (default 80)"
   echo "  --orchestrate     Force multi-agent parallel execution"
   echo "  --no-orchestrate  Force sequential execution"
+  echo "  --analyze         Run cross-artifact consistency analysis"
+  echo "  --checklist       Generate requirements validation checklist"
   echo "  --background      Run in background mode"
   echo ""
   echo "Examples:"
@@ -98,6 +112,7 @@ if [ -z "$FEATURE_DESC" ]; then
   echo "  /specswarm:build \"Implement dark mode toggle\" --validate"
   echo "  /specswarm:build \"Add shopping cart\" --orchestrate"
   echo "  /specswarm:build \"Add dashboard\" --validate --quality-gate 85"
+  echo "  /specswarm:build \"Add API\" --analyze --checklist"
   exit 1
 fi
 
@@ -177,6 +192,8 @@ cat > .specswarm/build-loop.state << EOF
   "background_mode": $BACKGROUND_MODE,
   "notify_on_complete": $NOTIFY_ON_COMPLETE,
   "orchestrate_flag": "$ORCHESTRATE_FLAG",
+  "run_analyze": $RUN_ANALYZE,
+  "run_checklist": $RUN_CHECKLIST,
   "use_orchestration": false
 }
 EOF
@@ -233,7 +250,12 @@ echo "  1. Create detailed specification"
 echo "  2. Ask clarification questions (interactive)"
 echo "  3. Generate implementation plan"
 echo "  4. Generate task breakdown"
+if [ "$RUN_CHECKLIST" = true ]; then
+echo "  5. Generate requirements validation checklist"
+echo "  6. Implement all tasks"
+else
 echo "  5. Implement all tasks"
+fi
 if [ "$ORCHESTRATE_FLAG" = "force" ]; then
 echo "     └─ Using multi-agent orchestration (--orchestrate)"
 elif [ "$ORCHESTRATE_FLAG" = "disable" ]; then
@@ -241,12 +263,13 @@ echo "     └─ Using sequential execution (--no-orchestrate)"
 else
 echo "     └─ Auto-detect: orchestration if 4+ parallelizable tasks"
 fi
-if [ "$RUN_VALIDATE" = true ]; then
-echo "  6. Run browser validation (Playwright)"
-echo "  7. Analyze code quality"
-else
-echo "  6. Analyze code quality"
+if [ "$RUN_ANALYZE" = true ]; then
+echo "     └─ Cross-artifact consistency analysis (--analyze)"
 fi
+if [ "$RUN_VALIDATE" = true ]; then
+echo "  ✦. Run browser validation (Playwright)"
+fi
+echo "  ✦. Analyze code quality"
 echo ""
 echo "You'll only be prompted during Step 2 (clarification)."
 echo "All other steps run automatically."
@@ -272,13 +295,44 @@ echo ""
 Use the SlashCommand tool to execute: /specswarm:specify "$FEATURE_DESC"
 ```
 
-**DO NOT PAUSE. DO NOT REPORT STATUS. Immediately proceed to Step 3.**
+**DO NOT PAUSE. DO NOT REPORT STATUS. Immediately proceed.**
 
 ```bash
 echo ""
 echo "✅ Specification created"
 echo ""
 ```
+
+---
+
+### Step 2.5: Requirements Checklist (Optional)
+
+**IF --checklist flag was provided, generate requirements validation checklist:**
+
+```bash
+if [ "$RUN_CHECKLIST" = true ]; then
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo "📋 Generating Requirements Validation Checklist"
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo ""
+fi
+```
+
+**IF RUN_CHECKLIST = true, use the SlashCommand tool:**
+
+```
+Use the SlashCommand tool to execute: /specswarm:checklist
+```
+
+```bash
+if [ "$RUN_CHECKLIST" = true ]; then
+  echo ""
+  echo "✅ Requirements checklist generated"
+  echo ""
+fi
+```
+
+**DO NOT PAUSE. Immediately proceed to Step 3.**
 
 ---
 
@@ -362,7 +416,43 @@ echo ""
 
 ---
 
-### Step 5.5: Orchestration Analysis (Smart Detection)
+### Step 5.5: Cross-Artifact Analysis (Optional)
+
+**IF --analyze flag was provided, run consistency analysis:**
+
+```bash
+if [ "$RUN_ANALYZE" = true ]; then
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo "🔍 Cross-Artifact Consistency Analysis"
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo ""
+  echo "Analyzing spec.md, plan.md, and tasks.md for inconsistencies..."
+  echo ""
+fi
+```
+
+**IF RUN_ANALYZE = true, use the SlashCommand tool:**
+
+```
+Use the SlashCommand tool to execute: /specswarm:analyze
+```
+
+```bash
+if [ "$RUN_ANALYZE" = true ]; then
+  echo ""
+  echo "✅ Cross-artifact analysis complete"
+  echo ""
+  echo "Review any CRITICAL findings above before proceeding."
+  echo "Non-critical findings can be addressed after implementation."
+  echo ""
+fi
+```
+
+**DO NOT PAUSE. Immediately proceed to orchestration analysis.**
+
+---
+
+### Step 5.6: Orchestration Analysis (Smart Detection)
 
 **Determine if multi-agent orchestration should be used:**
 
@@ -626,6 +716,12 @@ echo "✅ Clarification completed"
 echo "✅ Plan generated"
 echo "✅ Tasks generated ($TASK_COUNT tasks)"
 echo "✅ Implementation complete"
+if [ "$RUN_CHECKLIST" = true ]; then
+echo "✅ Requirements checklist generated"
+fi
+if [ "$RUN_ANALYZE" = true ]; then
+echo "✅ Cross-artifact analysis complete"
+fi
 if [ "$RUN_VALIDATE" = true ]; then
 echo "✅ Browser validation passed"
 fi

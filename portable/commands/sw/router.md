@@ -70,19 +70,26 @@ Parse the user's request and match against these patterns:
 - "update all dependencies" -> `/sw:upgrade "update all dependencies"`
 - "migrate to TypeScript" -> `/sw:upgrade "migrate to TypeScript"`
 
-### REFACTOR Patterns (-> /sw:refactor)
-**Keywords**: refactor, clean up, reorganize, restructure, improve code
+### REFACTOR Patterns (-> /sw:modify --refactor)
+**Keywords**: refactor, clean up, reorganize, restructure, improve code, reduce complexity
 
 **Examples**:
-- "refactor the auth module" -> `/sw:refactor "auth module"`
-- "clean up the codebase" -> `/sw:refactor "codebase cleanup"`
+- "refactor the auth module" -> `/sw:modify "auth module" --refactor`
+- "clean up the codebase" -> `/sw:modify "codebase" --refactor`
 
-### ANALYZE Patterns (-> /sw:analyze-quality)
-**Keywords**: analyze, check quality, review code, audit
+### DEPRECATE Patterns (-> /sw:modify --deprecate)
+**Keywords**: deprecate, sunset, retire, phase out, remove feature, end-of-life
 
 **Examples**:
-- "check the code quality" -> `/sw:analyze-quality`
-- "analyze this feature" -> `/sw:analyze`
+- "deprecate the v1 API" -> `/sw:modify "v1 API" --deprecate`
+- "sunset the legacy auth" -> `/sw:modify "legacy auth" --deprecate`
+
+### IMPACT ANALYSIS Patterns (-> /sw:modify --analyze-only)
+**Keywords**: impact, blast radius, analyze dependencies, what would happen if
+
+**Examples**:
+- "what's the impact of changing the user model?" -> `/sw:modify "user model" --analyze-only`
+- "analyze dependencies for auth module" -> `/sw:modify "auth module" --analyze-only`
 
 ---
 
@@ -114,7 +121,7 @@ echo ""
 Analyze the request against the patterns above.
 
 Determine:
-1. **Intent Category**: BUILD, FIX, MODIFY, SHIP, UPGRADE, REFACTOR, ANALYZE
+1. **Intent Category**: BUILD, FIX, MODIFY, SHIP, UPGRADE, REFACTOR, DEPRECATE, IMPACT_ANALYSIS
 2. **Confidence Level**: High (95%+), Medium (70-94%), Low (<70%)
 3. **Extracted Description**: The specific task description
 

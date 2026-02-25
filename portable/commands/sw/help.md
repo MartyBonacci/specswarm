@@ -34,62 +34,38 @@ Use `/sw:router` to auto-detect the right command:
 
 ---
 
-## All Commands by Category
+## All Commands
 
-### Feature Development
+### Core Workflow (10 visible commands)
+
 | Command | Description |
 |---------|-------------|
-| `/sw:specify` | Create feature specification |
-| `/sw:clarify` | Ask clarification questions |
-| `/sw:plan` | Generate implementation plan |
-| `/sw:tasks` | Generate task breakdown |
-| `/sw:implement` | Execute all tasks |
-| `/sw:checklist` | Generate validation checklist |
-| `/sw:analyze` | Analyze feature artifacts |
+| `/sw:init` | Project setup (constitution, tech-stack, quality standards) |
+| `/sw:build` | Full feature pipeline (specify→plan→tasks→implement→quality) |
+| `/sw:fix` | Bug/hotfix workflow with test-driven approach and auto-retry |
+| `/sw:modify` | Feature modification with impact analysis |
+| `/sw:ship` | Quality-gated merge to parent branch |
+| `/sw:release` | Version bump + changelog + tag + publish |
+| `/sw:upgrade` | Dependency/framework upgrades with compatibility analysis |
+| `/sw:rollback` | Undo a failed feature safely |
+| `/sw:status` | Check background session progress |
+| `/sw:metrics` | Feature analytics dashboard (`--export` for CSV) |
 
-### Bug Management
-| Command | Description |
-|---------|-------------|
-| `/sw:bugfix` | Fix a specific bug |
-| `/sw:hotfix` | Expedited production fix |
-| `/sw:coordinate` | Multi-agent debugging |
+### Internal Commands (callable directly for re-running steps)
 
-### Quality & Analysis
-| Command | Description |
-|---------|-------------|
-| `/sw:analyze-quality` | Comprehensive quality report |
-| `/sw:impact` | Impact analysis for changes |
-| `/sw:suggest` | Workflow recommendations |
-| `/sw:validate` | Browser validation (Playwright) |
-| `/sw:security-audit` | Security vulnerability scan |
-
-### Maintenance
-| Command | Description |
-|---------|-------------|
-| `/sw:refactor` | Metrics-driven refactoring |
-| `/sw:deprecate` | Phased feature sunset |
-| `/sw:upgrade` | Dependency/framework upgrade |
-
-### Lifecycle
-| Command | Description |
-|---------|-------------|
-| `/sw:complete` | Merge to parent branch |
-| `/sw:release` | Create release with validation |
-| `/sw:rollback` | Revert changes safely |
-
-### Configuration
-| Command | Description |
-|---------|-------------|
-| `/sw:constitution` | Create project governance |
-| `/sw:metrics` | View workflow analytics |
-| `/sw:metrics-export` | Export metrics to CSV |
-
-### Orchestration
-| Command | Description |
-|---------|-------------|
-| `/sw:orchestrate` | Automated workflow |
-| `/sw:orchestrate-feature` | Feature-level orchestration |
-| `/sw:orchestrate-validate` | Validation orchestration |
+| Command | Called By |
+|---------|-----------|
+| `/sw:specify` | `build` (Step 2) |
+| `/sw:clarify` | `build` (Step 3) |
+| `/sw:plan` | `build` (Step 4) |
+| `/sw:tasks` | `build` (Step 5) |
+| `/sw:implement` | `build` (Step 6) |
+| `/sw:validate` | `build --validate` |
+| `/sw:analyze-quality` | `build` (Step 8), `ship` (Step 2) |
+| `/sw:bugfix` | `fix` (internal) |
+| `/sw:hotfix` | `fix --hotfix` (internal) |
+| `/sw:complete` | `ship` (internal) |
+| `/sw:constitution` | `init` (internal) |
 
 ---
 
@@ -140,19 +116,37 @@ SpecSwarm creates and uses these files:
 ### Build Flags
 - `--validate` - Run browser validation after implementation
 - `--quality-gate N` - Set minimum quality score (default: 80)
+- `--orchestrate` - Force multi-agent parallel execution
+- `--no-orchestrate` - Force sequential execution
+- `--analyze` - Run cross-artifact consistency analysis
+- `--checklist` - Generate requirements validation checklist
+- `--background` - Run in background mode
 
 ### Fix Flags
 - `--regression-test` - Create failing test first (TDD)
 - `--hotfix` - Expedited workflow for production
 - `--max-retries N` - Retry attempts (default: 2)
+- `--coordinate` - Multi-bug orchestrated debugging
+- `--background` - Run in background mode
+
+### Modify Flags
+- `--refactor` - Behavior-preserving quality improvement
+- `--deprecate` - Phased feature sunset with migration guidance
+- `--analyze-only` - Impact analysis without implementation
 
 ### Ship Flags
 - `--force-quality N` - Override quality threshold
 - `--skip-tests` - Skip test validation (not recommended)
+- `--security-audit` - Comprehensive security scan before merge
 
 ### Init Flags
 - `--minimal` - Use defaults without prompts
 - `--skip-detection` - Manual tech stack entry
+
+### Metrics Flags
+- `--export` - Export metrics to CSV
+- `--feature N` - Show details for feature N
+- `--sprint NAME` - Sprint aggregate view
 
 ---
 
@@ -173,7 +167,7 @@ This is SpecSwarm Portable - installed in your project's `.claude/` directory.
 **Differences from plugin version:**
 - Commands use `/sw:` prefix (shorter)
 - No automatic natural language routing (use `/sw:router`)
-- All 32 commands available
+- 10 visible commands + 11 internal commands available
 
 **Update:** Run `/sw:update` to check for new versions.
 

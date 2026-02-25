@@ -16,6 +16,7 @@ args:
   - name: --url
     description: Override base URL for webapp (default http://localhost:5173)
     required: false
+hidden: true
 ---
 
 # AI-Powered Feature Validation
