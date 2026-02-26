@@ -61,14 +61,13 @@ echo "Installed! Run /sw:help for usage."
 
 ## Commands
 
-All 35 commands are available with the `/sw:` prefix:
+All 21 commands are available (10 visible + 11 internal):
 
 | Category | Commands |
 |----------|----------|
 | **Core Workflows** | `/sw:init`, `/sw:build`, `/sw:fix`, `/sw:modify`, `/sw:ship` |
-| **Feature Dev** | `/sw:specify`, `/sw:clarify`, `/sw:plan`, `/sw:tasks`, `/sw:implement` |
-| **Quality** | `/sw:analyze-quality`, `/sw:validate`, `/sw:security-audit` |
-| **Lifecycle** | `/sw:complete`, `/sw:release`, `/sw:rollback` |
+| **Distinct Workflows** | `/sw:release`, `/sw:upgrade`, `/sw:rollback`, `/sw:status`, `/sw:metrics` |
+| **Internal** | `/sw:specify`, `/sw:clarify`, `/sw:plan`, `/sw:tasks`, `/sw:implement`, `/sw:validate`, `/sw:analyze-quality`, `/sw:bugfix`, `/sw:hotfix`, `/sw:complete`, `/sw:constitution` |
 | **Portable Only** | `/sw:help`, `/sw:router`, `/sw:update` |
 
 Run `/sw:help` for the complete command reference.
@@ -93,7 +92,7 @@ Since the portable version doesn't have automatic skill detection, use `/sw:rout
 | Natural language auto-routing | Automatic | Use `/sw:router` |
 | Confidence-based execution | Yes | Manual |
 | Tool restrictions | Yes | No |
-| All commands | Yes (32) | Yes (35) |
+| All commands | Yes (21) | Yes (21 + 3 portable-only) |
 | SlashCommand chaining | Yes | Yes |
 | Namespace | `/specswarm:` | `/sw:` |
 

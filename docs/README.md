@@ -6,7 +6,7 @@ Complete documentation for the SpecSwarm Claude Code plugin.
 
 ### Quick Start
 - **[Main README](../README.md)** - Overview, installation, and quick start guide
-- **[Commands Reference](../COMMANDS.md)** - Complete documentation for all 32 commands
+- **[Commands Reference](../COMMANDS.md)** - Complete documentation for all 21 commands (10 visible + 11 internal)
 
 ### Detailed Guides
 - **[Setup Guide](./SETUP.md)** - Technical setup, configuration, and troubleshooting
@@ -32,7 +32,7 @@ Complete documentation for the SpecSwarm Claude Code plugin.
 
 **Learning Commands:**
 - Core 5 commands → [Commands: Core Workflows](../COMMANDS.md#core-workflows)
-- All 32 commands → [Commands Reference](../COMMANDS.md)
+- All 21 commands → [Commands Reference](../COMMANDS.md)
 - Natural language usage → [README: Natural Language](../README.md#natural-language-commands-v33)
 
 **Advanced Features:**
@@ -74,7 +74,7 @@ Complete documentation for the SpecSwarm Claude Code plugin.
 **Purpose:** Complete command documentation
 
 **Contents:**
-- All 32 commands organized by category
+- All commands organized by category (10 visible + 11 internal)
 - Usage examples for each command
 - When to use each command
 - Command comparison tables
@@ -195,7 +195,7 @@ Complete documentation for the SpecSwarm Claude Code plugin.
 ## 📊 Documentation Stats
 
 - **Main README**: 400 lines (simplified from 670)
-- **Commands Reference**: 600+ lines covering 32 commands
+- **Commands Reference**: 600+ lines covering 21 commands (10 visible + 11 internal)
 - **Setup Guide**: 500+ lines of technical setup
 - **Features Deep-Dive**: 600+ lines of feature documentation
 - **Total Documentation**: 2,100+ lines
@@ -233,6 +233,6 @@ See [README: Version History](../README.md#version-history) for release notes an
 
 ---
 
-**SpecSwarm v3.5.0** - Documentation index
+**SpecSwarm v4.0.0** - Documentation index
 
 *Navigate confidently through SpecSwarm's comprehensive documentation.*

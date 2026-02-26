@@ -524,7 +524,7 @@ npm uninstall unused-package
 **Solution:**
 ```bash
 # Run any SpecSwarm command to trigger auto-migration
-/specswarm:suggest "test"
+/specswarm:init
 
 # Or manually:
 mv features .specswarm/features

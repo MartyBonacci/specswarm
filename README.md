@@ -1,4 +1,4 @@
-# SpecSwarm v3.7.4
+# SpecSwarm v4.0.0
 
 **Complete Software Development Toolkit**
 
@@ -18,7 +18,7 @@ SpecSwarm is a comprehensive Claude Code plugin for the complete software develo
 - 🌐 **Multi-Language Support** - Auto-detection for 6 languages
 - 🗣️ **Natural Language** - Talk to SpecSwarm like a teammate
 
-**5 Core Commands** + **27 Advanced** | **Production Ready**
+**10 Commands** | **Production Ready**
 
 ---
 
@@ -175,7 +175,7 @@ Creates `.specswarm/` directory with:
 **Use when:**
 - Features that work but need to work differently
 - NOT for bugs (use `/specswarm:fix`)
-- NOT for code quality (use `/specswarm:refactor`)
+- NOT for code quality (use `/specswarm:modify "..." --refactor`)
 
 ---
 
@@ -258,25 +258,39 @@ SpecSwarm analyzes your request and acts accordingly:
 
 ---
 
-## Advanced Commands (27)
+## Additional Commands
 
-For power users and specialized workflows.
+Beyond the 5 core commands, SpecSwarm provides 5 more visible commands for distinct workflows:
+
+| Command | Purpose |
+|---------|---------|
+| `/specswarm:release` | Version bump + changelog + tag + publish |
+| `/specswarm:upgrade` | Dependency/framework upgrades with compatibility analysis |
+| `/specswarm:rollback` | Undo a failed feature safely |
+| `/specswarm:status` | Check background session progress |
+| `/specswarm:metrics` | Feature analytics dashboard (`--export` for CSV) |
+
+### Flags on Core Commands
+
+Many workflows that were previously separate commands are now flags:
+
+| Flag | On Command | Replaces |
+|------|-----------|----------|
+| `--analyze` | `build` | Cross-artifact consistency analysis |
+| `--checklist` | `build` | Requirements validation checklist |
+| `--coordinate` | `fix` | Multi-bug orchestrated debugging |
+| `--refactor` | `modify` | Behavior-preserving quality improvement |
+| `--deprecate` | `modify` | Phased feature sunset |
+| `--analyze-only` | `modify` | Impact analysis without implementation |
+| `--security-audit` | `ship` | Comprehensive security scan before merge |
+
+### Internal Commands
+
+11 commands are available for re-running individual steps but hidden from the main listing:
+
+`specify`, `clarify`, `plan`, `tasks`, `implement`, `validate`, `analyze-quality`, `bugfix`, `hotfix`, `complete`, `constitution`
 
 **See complete documentation:** [COMMANDS.md](./COMMANDS.md)
-
-**Quick reference:**
-
-- **New Features**: `/specswarm:specify`, `/specswarm:plan`, `/specswarm:tasks`, `/specswarm:implement`, `/specswarm:clarify`, `/specswarm:checklist`, `/specswarm:analyze`, `/specswarm:constitution`
-
-- **Bug Management**: `/specswarm:bugfix`, `/specswarm:hotfix`, `/specswarm:coordinate`
-
-- **Maintenance**: `/specswarm:refactor`, `/specswarm:deprecate`
-
-- **Quality & Analysis**: `/specswarm:analyze-quality`, `/specswarm:impact`, `/specswarm:suggest`, `/specswarm:metrics`, `/specswarm:metrics-export`, `/specswarm:validate`
-
-- **Lifecycle**: `/specswarm:release`, `/specswarm:security-audit`, `/specswarm:rollback`, `/specswarm:upgrade`, `/specswarm:complete`
-
-- **Orchestration**: `/specswarm:orchestrate`, `/specswarm:orchestrate-feature`, `/specswarm:orchestrate-validate`
 
 ---
 
@@ -425,7 +439,7 @@ claude mcp add ChromeDevTools/chrome-devtools-mcp
 1. **Run `/specswarm:init` first** - Sets up proper foundation
 2. **Define tech-stack.md early** - Prevents 95% of drift
 3. **Enable quality gates** - Maintain >80% scores
-4. **Run `/specswarm:analyze-quality` before shipping** - Catch issues early
+4. **Run quality analysis before shipping** - Catch issues early
 5. **Keep bundles <500KB** - Performance matters
 6. **Use natural language** - Faster workflows
 
@@ -433,7 +447,7 @@ claude mcp add ChromeDevTools/chrome-devtools-mcp
 
 ## Documentation
 
-- **[Commands Reference](./COMMANDS.md)** - All 32 commands documented
+- **[Commands Reference](./COMMANDS.md)** - All 21 commands documented
 - **[Setup Guide](./docs/SETUP.md)** - Configuration and troubleshooting
 - **[Features Deep-Dive](./docs/FEATURES.md)** - Technical feature details
 - **[Documentation Index](./docs/README.md)** - Navigate all docs
@@ -471,6 +485,13 @@ export function getApiUrl(path: string): string {
 ---
 
 ## Version History
+
+### v4.0.0 (2026-02-25) - Command Compaction ⭐
+- **BREAKING**: Reduced from 35 visible commands to 10 visible + 11 internal (hidden)
+- **New flags**: `build --analyze`, `build --checklist`, `fix --coordinate`, `modify --refactor`, `modify --deprecate`, `modify --analyze-only`, `ship --security-audit`
+- **Removed**: 14 redundant commands absorbed as flags (`orchestrate-feature`, `orchestrate`, `suggest`, `session`, `checkpoint`, `analyze`, `checklist`, `coordinate`, `impact`, `security-audit`, `refactor`, `deprecate`, `metrics-export`, `orchestrate-validate`)
+- **Internal**: 11 commands hidden from listings but still callable directly
+- **Impact**: 71% reduction in visible commands, zero loss of functionality
 
 ### v3.7.3 (2026-01-11) - Repository Restructure 🔧
 - **Fixed**: Plugin installation error - restructured repo to match Claude Code marketplace format
@@ -567,7 +588,7 @@ SpecSwarm builds upon **SpecKit**, which adapted **GitHub's spec-kit** for Claud
 2. **Adapted**: SpecKit plugin by Marty Bonacci (2025)
    - Claude Code integration
 
-3. **Enhanced**: SpecSwarm v3.7.4 by Marty Bonacci & Claude Code (2025-2026)
+3. **Enhanced**: SpecSwarm v4.0.0 by Marty Bonacci & Claude Code (2025-2026)
    - Tech stack management (95% drift prevention)
    - Lifecycle workflows (build, fix, modify, ship, upgrade)
    - Quality validation (0-100 scoring)
@@ -591,6 +612,6 @@ MIT License - See LICENSE file for details
 
 ---
 
-**SpecSwarm v3.7.4** - Your complete software development toolkit. 🚀
+**SpecSwarm v4.0.0** - Your complete software development toolkit. 🚀
 
 Build it. Fix it. Modify it. Ship it. All in one place.

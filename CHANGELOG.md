@@ -5,6 +5,56 @@ All notable changes to SpecSwarm and SpecSwarm plugins will be documented in thi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.0.0] - 2026-02-25 - Command Compaction ⭐
+
+### Breaking Changes
+
+**Reduced from 35 visible commands to 10 visible + 11 internal (hidden)**
+
+14 standalone commands removed and absorbed as flags on the 5 core commands:
+
+| Removed Command | Now Use |
+|----------------|---------|
+| `orchestrate-feature` | `build --orchestrate` |
+| `orchestrate` | `build --orchestrate` |
+| `orchestrate-validate` | `validate` |
+| `suggest` | Only 10 commands, no longer needed |
+| `session` | `status` |
+| `checkpoint` | `rollback` |
+| `analyze` | `build --analyze` |
+| `checklist` | `build --checklist` |
+| `coordinate` | `fix --coordinate` |
+| `impact` | `modify --analyze-only` |
+| `security-audit` | `ship --security-audit` |
+| `refactor` | `modify --refactor` |
+| `deprecate` | `modify --deprecate` |
+| `metrics-export` | `metrics --export` |
+
+### Added
+
+- **`build --analyze`** flag for cross-artifact consistency analysis
+- **`build --checklist`** flag for requirements validation checklist
+- **`fix --coordinate`** flag for multi-bug orchestrated debugging with specialist agents
+- **`modify --refactor`** flag for behavior-preserving quality improvement
+- **`modify --deprecate`** flag for phased feature sunset with migration guidance
+- **`modify --analyze-only`** flag for impact analysis without implementation
+- **`ship --security-audit`** flag for comprehensive security scan before merge
+
+### Changed
+
+- 11 internal commands (`specify`, `clarify`, `plan`, `tasks`, `implement`, `validate`, `analyze-quality`, `bugfix`, `hotfix`, `complete`, `constitution`) marked as `hidden: true` — still callable directly but hidden from command listings
+- `specswarm-modify` skill updated with refactor/deprecate trigger words
+- All documentation updated (README, COMMANDS.md, CHEATSHEET, portable README, docs index)
+
+### Impact
+
+- **71% reduction** in visible commands (35 → 10)
+- **Zero loss** of functionality — all workflows preserved as flags
+- Core workflow unchanged: `init → build → fix → modify → ship`
+- Internal commands remain callable for re-running individual steps
+
+---
+
 ## [3.7.4] - 2026-01-12 - Stop Hook JSON Validation Fix 🔧
 
 ### Fixed

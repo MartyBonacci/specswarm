@@ -155,7 +155,7 @@ Total:             100/100 ✅ EXCELLENT
 | `/specswarm:analyze-quality` | ✅ Full | ✅ Yes | ❌ No (report only) |
 | `/specswarm:fix` | ✅ Tests only | ❌ No | ❌ No |
 | `/specswarm:modify` | ✅ Full | ✅ Yes | ✅ Yes |
-| `/specswarm:refactor` | ✅ Full | ✅ Yes | ✅ Yes |
+| `/specswarm:modify --refactor` | ✅ Full | ✅ Yes | ✅ Yes |
 
 ---
 
@@ -859,19 +859,13 @@ Autonomous multi-agent workflow execution (experimental).
 
 ### Orchestration Modes
 
-**1. `/specswarm:orchestrate`**
+**`/specswarm:build --orchestrate`**
 - Multi-agent coordination
 - Autonomous decision-making
 - Continuous validation
-
-**2. `/specswarm:orchestrate-feature`**
 - AI-powered test generation
 - User flow validation
 - Auto-fixes errors
-
-**3. `/specswarm:orchestrate-validate`**
-- Full project validation
-- Browser + terminal + visual
 - Performance metrics
 
 ### Agent Coordination

@@ -2,22 +2,22 @@
 
 **Fast reference for common SpecSwarm commands and workflows.**
 
-**Version**: v3.3.4 | **Commands**: 32 total | **Languages**: 6 supported
+**Version**: v4.0.0 | **Commands**: 10 visible + 11 internal | **Languages**: 6 supported
 
 ---
 
 ## Quick Installation
 
 ```bash
-# Install SpecSwarm (unified plugin - includes all functionality)
-/plugin https://github.com/MartyBonacci/specswarm
-/plugin install specswarm
+# Add the marketplace
+/plugin marketplace add MartyBonacci/specswarm
+
+# Install the plugin
+/plugin install specswarm@specswarm-marketplace
 
 # Verify
 /plugin list
-# Should show: specswarm v3.3.4
-
-# Note: SpecLabs is deprecated - all functionality now in SpecSwarm
+# Should show: specswarm v4.0.0
 ```
 
 ---
@@ -28,33 +28,21 @@
 ┌─────────────────────────────────────────────────────────────┐
 │                    PROJECT SETUP (Once)                     │
 ├─────────────────────────────────────────────────────────────┤
-│  /init                                                      │
-│  Create .specswarm/tech-stack.md                              │
-│  Create .specswarm/quality-standards.md                       │
-│  /specswarm:constitution                                    │
+│  /specswarm:init                                            │
+│  Create .specswarm/tech-stack.md                            │
+│  Create .specswarm/quality-standards.md                     │
 └─────────────────────────────────────────────────────────────┘
                             ↓
 ┌─────────────────────────────────────────────────────────────┐
-│              FEATURE DEVELOPMENT (Per Feature)              │
+│              DEVELOPMENT WORKFLOWS                          │
 ├─────────────────────────────────────────────────────────────┤
-│  git checkout develop                                       │
-│  /specswarm:suggest "feature idea"                          │
-│                                                              │
-│  ┌──────────────────┬──────────────────────────┐           │
-│  │  AUTONOMOUS      │  MANUAL CONTROL          │           │
-│  │  (Faster)        │  (More Control)          │           │
-│  ├──────────────────┼──────────────────────────┤           │
-│  │ /speclabs:       │ /specswarm:specify       │           │
-│  │  orchestrate-    │ /specswarm:clarify       │           │
-│  │  feature "..."   │ /specswarm:plan          │           │
-│  │  --validate      │ /specswarm:tasks         │           │
-│  │                  │ /specswarm:implement     │           │
-│  └──────────────────┴──────────────────────────┘           │
-│                            ↓                                 │
-│  Manual Testing (ALWAYS!)                                   │
-│  /specswarm:bugfix "Bug: ..." (if needed)                   │
-│  /specswarm:analyze-quality                                 │
-│  /specswarm:complete                                        │
+│                                                             │
+│  PROJECT SETUP: /specswarm:init                             │
+│  FEATURE DEV:   /specswarm:build "feature"  (or NL)        │
+│  BUG FIX:       /specswarm:fix "bug"                        │
+│  MODIFICATION:  /specswarm:modify "change"                  │
+│  SHIP:          /specswarm:ship                             │
+│                                                             │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -67,103 +55,56 @@
 │  WHICH WORKFLOW SHOULD I USE?                                │
 └───────────────────────────────────────────────────────────────┘
   │
-  ├─ New Feature
-  │   ├─ Simple, well-defined?          → /speclabs:orchestrate-feature
-  │   ├─ Complex, architectural?        → /specswarm:specify
-  │   └─ Unsure?                        → /specswarm:suggest
+  ├─ New Feature       → /specswarm:build "feature"
   │
-  ├─ Bug Fix
-  │   ├─ Production bug?                → /specswarm:hotfix
-  │   └─ Regular bug?                   → /specswarm:bugfix
+  ├─ Bug Fix           → /specswarm:fix "bug"
+  │   └─ Production?   → /specswarm:fix "bug" --hotfix
   │
-  ├─ Code Improvement
-  │   ├─ Changing existing feature?     → /specswarm:modify
-  │   ├─ Quality improvement?           → /specswarm:refactor
-  │   └─ Removing feature?              → /specswarm:deprecate
+  ├─ Code Improvement  → /specswarm:modify "change"
+  │   ├─ Quality?      → /specswarm:modify "change" --refactor
+  │   └─ Sunset?       → /specswarm:modify "change" --deprecate
   │
-  └─ Quality Check
-      ├─ Before merge?                  → /specswarm:analyze-quality
-      ├─ Impact of change?              → /specswarm:impact
-      └─ Performance metrics?           → /specswarm:workflow-metrics
+  ├─ Impact Analysis   → /specswarm:modify "change" --analyze-only
+  │
+  └─ Quality Check     → /specswarm:ship (includes quality gate)
 ```
 
 ---
 
 ## Command Quick Reference
 
-### Core Workflow Commands
+### Visible Commands (10)
 
 | Command | Use When | Example |
 |---------|----------|---------|
-| `/specswarm:suggest` | Starting anything | `/specswarm:suggest "add auth"` |
-| `/specswarm:specify` | New feature (manual) | `/specswarm:specify "Add user login"` |
-| `/speclabs:orchestrate-feature` | New feature (auto) | `/speclabs:orchestrate-feature "..." --validate` |
-| `/specswarm:implement` | Execute tasks | `/specswarm:implement` |
-| `/specswarm:complete` | Finish & merge | `/specswarm:complete` |
-
-### Bug & Maintenance Commands
-
-| Command | Use When | Example |
-|---------|----------|---------|
-| `/specswarm:bugfix` | Fix bugs | `/specswarm:bugfix "Bug: Login fails"` |
-| `/specswarm:hotfix` | Emergency fix | `/specswarm:hotfix "API down"` |
+| `/specswarm:init` | Project setup | `/specswarm:init` |
+| `/specswarm:build` | New feature | `/specswarm:build "Add user login"` |
+| `/specswarm:fix` | Bug fix | `/specswarm:fix "Login fails on mobile"` |
 | `/specswarm:modify` | Change feature | `/specswarm:modify "Update cart logic"` |
-| `/specswarm:refactor` | Improve code | `/specswarm:refactor "Optimize auth"` |
-| `/specswarm:deprecate` | Remove feature | `/specswarm:deprecate "Old API v1"` |
-
-### Quality & Analysis Commands
-
-| Command | Use When | Example |
-|---------|----------|---------|
-| `/specswarm:analyze-quality` | Before merge | `/specswarm:analyze-quality` |
-| `/specswarm:impact` | Assess changes | `/specswarm:impact "Update React"` |
-| `/specswarm:clarify` | Refine spec | `/specswarm:clarify` |
-| `/specswarm:analyze` | Validate artifacts | `/specswarm:analyze` |
-
-### Planning Commands
-
-| Command | Use When | Example |
-|---------|----------|---------|
-| `/specswarm:plan` | Design implementation | `/specswarm:plan` |
-| `/specswarm:tasks` | Generate task list | `/specswarm:tasks` |
-| `/specswarm:checklist` | Custom checklists | `/specswarm:checklist` |
-| `/specswarm:constitution` | Project governance | `/specswarm:constitution` |
+| `/specswarm:ship` | Finish & merge | `/specswarm:ship` |
+| `/specswarm:fix --hotfix` | Emergency fix | `/specswarm:fix "API down" --hotfix` |
+| `/specswarm:modify --refactor` | Improve code | `/specswarm:modify "Optimize auth" --refactor` |
+| `/specswarm:modify --deprecate` | Remove feature | `/specswarm:modify "Old API v1" --deprecate` |
+| `/specswarm:modify --analyze-only` | Assess changes | `/specswarm:modify "Update React" --analyze-only` |
+| `/specswarm:analyze-quality` | Quality check | `/specswarm:analyze-quality` |
 
 ---
 
 ## Common Command Patterns
 
-### Pattern 1: Quick Feature (Autonomous)
+### Pattern 1: Feature Development
 
 ```bash
-git checkout develop
-/specswarm:suggest "add contact form"
-/speclabs:orchestrate-feature "Add contact form with name, email, message fields, validation, and email sending" --validate
-# → Responds to questions
+/specswarm:build "Add contact form with name, email, message fields, validation, and email sending"
+# → Creates branch, specs, plans, implements, tests
 # → Manual testing
-/specswarm:analyze-quality
-/specswarm:complete
+/specswarm:ship
 ```
 
-### Pattern 2: Complex Feature (Manual)
+### Pattern 2: Bug Fix with Regression Test
 
 ```bash
-git checkout develop
-/specswarm:specify "Migrate to React Router v7"
-/specswarm:clarify
-/specswarm:plan
-/specswarm:tasks
-/specswarm:implement
-# → Manual testing
-/specswarm:analyze-quality
-/specswarm:complete
-```
-
-### Pattern 3: Bug Fix with Regression Test
-
-```bash
-git checkout develop
-/specswarm:bugfix "Bug: Cart total wrong when discount applied
+/specswarm:fix "Bug: Cart total wrong when discount applied
 
 Console: None
 Terminal: None
@@ -177,7 +118,15 @@ Steps:
 3. Checkout shows $90 instead of $88"
 
 # → Manual testing
-/specswarm:complete
+/specswarm:ship
+```
+
+### Pattern 3: Code Modification
+
+```bash
+/specswarm:modify "Migrate auth from session to JWT"
+# → Manual testing
+/specswarm:ship
 ```
 
 ### Pattern 4: Quality Check Before PR
@@ -242,10 +191,10 @@ max_file_lines: 300
 
 ## Flag Reference
 
-### SpecLabs orchestrate-feature Flags
+### Build Flags
 
 ```bash
-/speclabs:orchestrate-feature "description" [flags]
+/specswarm:build "description" [flags]
 
 --validate              # Run Playwright browser testing
 --audit                 # Run code audit
@@ -255,16 +204,22 @@ max_file_lines: 300
 --max-retries N         # Max retries per task (default: 3)
 ```
 
-**Common combinations**:
+### Fix Flags
+
 ```bash
-# Full autonomous with validation
-/speclabs:orchestrate-feature "..." --validate
+/specswarm:fix "description" [flags]
 
-# Skip planning (plan.md exists)
-/speclabs:orchestrate-feature "..." --skip-plan --validate
+--hotfix                # Emergency production fix (bypasses normal flow)
+```
 
-# Fast iteration
-/speclabs:orchestrate-feature "..." --skip-clarify --validate
+### Modify Flags
+
+```bash
+/specswarm:modify "description" [flags]
+
+--refactor              # Quality/code improvement
+--deprecate             # Sunset/remove feature
+--analyze-only          # Impact analysis without making changes
 ```
 
 ---
@@ -278,9 +233,9 @@ main
           └─ 015-feature-branch  ← You work here
 
 # When complete:
-/specswarm:complete
+/specswarm:ship
 # → Merges 015-feature-branch → sprint-3
-# → v3.3.4 shows merge plan BEFORE executing
+# → Shows merge plan BEFORE executing
 ```
 
 **Important**: Always check out parent branch BEFORE starting feature!
@@ -288,13 +243,13 @@ main
 ```bash
 # Correct:
 git checkout sprint-3
-/speclabs:orchestrate-feature "..."
+/specswarm:build "..."
 # → Creates branch FROM sprint-3
 # → Merges BACK TO sprint-3
 
 # Wrong:
-git checkout main  # ❌ Don't do this!
-/speclabs:orchestrate-feature "..."
+git checkout main
+/specswarm:build "..."
 # → Merges to main (bypasses sprint-3)
 ```
 
@@ -356,10 +311,10 @@ cat features/015-*/spec.md | grep parent_branch
 # - Fix TypeScript errors
 ```
 
-### ❌ "Orchestration pauses mid-execution"
+### "Orchestration pauses mid-execution"
 
 ```bash
-# Fix: Update to v3.3.4+
+# Fix: Update to v4.0.0+
 /plugin update specswarm
 
 # v3.0+ eliminated all mid-phase pausing (autonomous execution)
@@ -403,7 +358,6 @@ project-root/
 - **[Complete Workflow Guide](./WORKFLOW.md)** - Detailed step-by-step guide
 - **[Main README](../README.md)** - Overview and features
 - **[SpecSwarm Docs](../plugins/specswarm/README.md)** - Command reference
-- **[SpecLabs Docs](../plugins/speclabs/README.md)** - Autonomous features
 - **[Changelog](../CHANGELOG.md)** - Version history
 - **[GitHub Issues](https://github.com/MartyBonacci/specswarm/issues)** - Report bugs
 
@@ -412,15 +366,13 @@ project-root/
 ## Version Information
 
 This cheat sheet is for:
-- **SpecSwarm**: v3.3.4
-  - Natural language commands (build, fix, ship, upgrade)
+- **SpecSwarm**: v4.0.0
+  - Compacted from 32/35 commands to 21 (10 visible + 11 internal)
+  - Natural language commands (build, fix, ship, modify)
   - Multi-language support (Python, PHP, Go, Ruby, Rust)
   - README.md context reading
-  - 32 commands total (4 high-level + 28 granular)
   - Autonomous execution (no mid-phase pausing)
   - Parent branch safety
-
-**Note**: SpecLabs is deprecated - all functionality consolidated into SpecSwarm v3.0+
 
 Check your version:
 ```bash
