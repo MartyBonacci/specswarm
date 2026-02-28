@@ -360,7 +360,6 @@ NOTES_SECTION="- This file was ${AUTO_DETECT:+auto-detected from package.json an
 OUTPUT="${OUTPUT//\[NOTES_SECTION\]/$NOTES_SECTION}"
 
 # Write file
-mkdir -p /memory
 echo "$OUTPUT" > .specswarm/tech-stack.md
 
 echo "✅ Created .specswarm/tech-stack.md"

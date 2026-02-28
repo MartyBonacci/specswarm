@@ -63,7 +63,7 @@ source "$PLUGIN_ROOT/lib/feature-metrics-collector.sh"
 # Set project root for library
 export PROJECT_ROOT="$PROJECT_PATH"
 
-echo "📊 SpecLabs Feature-Level Metrics Dashboard"
+echo "📊 SpecSwarm Feature-Level Metrics Dashboard"
 echo "============================================"
 echo ""
 echo "Project: $PROJECT_PATH"
@@ -289,12 +289,12 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 echo "Available Commands"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
-echo "  /speclabs:feature-metrics                  Dashboard summary"
-echo "  /speclabs:feature-metrics --recent 20      Show last 20 features"
-echo "  /speclabs:feature-metrics --feature 015    Feature 015 details"
-echo "  /speclabs:feature-metrics --sprint sprint-4   Sprint aggregates"
-echo "  /speclabs:feature-metrics --export         Export to CSV"
-echo "  /speclabs:feature-metrics --path /project  Analyze specific project"
+echo "  /sw:metrics                  Dashboard summary"
+echo "  /sw:metrics --recent 20      Show last 20 features"
+echo "  /sw:metrics --feature 015    Feature 015 details"
+echo "  /sw:metrics --sprint sprint-4   Sprint aggregates"
+echo "  /sw:metrics --export         Export to CSV"
+echo "  /sw:metrics --path /project  Analyze specific project"
 echo ""
 
 ```
@@ -333,31 +333,31 @@ This command provides comprehensive feature-level metrics by analyzing actual pr
 
 ### Dashboard Summary
 ```bash
-/speclabs:feature-metrics
+/sw:metrics
 ```
 Shows overall statistics and recent features.
 
 ### Feature Details
 ```bash
-/speclabs:feature-metrics --feature 015
+/sw:metrics --feature 015
 ```
 Complete metrics for Feature 015.
 
 ### Sprint Analysis
 ```bash
-/speclabs:feature-metrics --sprint sprint-4
+/sw:metrics --sprint sprint-4
 ```
 Aggregated metrics for all features in sprint-4.
 
 ### Export to CSV
 ```bash
-/speclabs:feature-metrics --export
-/speclabs:feature-metrics --export metrics-2025-11.csv
+/sw:metrics --export
+/sw:metrics --export metrics-2025-11.csv
 ```
 
 ### Analyze Different Project
 ```bash
-/speclabs:feature-metrics --path /home/user/projects/myapp
+/sw:metrics --path /home/user/projects/myapp
 ```
 
 ## Key Features
@@ -372,14 +372,14 @@ Aggregated metrics for all features in sprint-4.
 
 **Comprehensive**: Combines metadata, tasks, tests, and git data in one view
 
-## Difference from `/speclabs:metrics`
+## Data Sources
 
-| Feature | /speclabs:metrics | /speclabs:feature-metrics |
-|---------|-------------------|---------------------------|
-| Data Source | Orchestration sessions | Project artifacts (spec.md, tasks.md) |
-| Workflow | Pre-v2.6.1 (per-task orchestration) | v2.6.1+ (specswarm implement) |
-| Use Case | Task-level automation tracking | Feature-level completion analytics |
-| Requires Session | Yes | No |
+| Aspect | Details |
+|--------|---------|
+| Data Source | Project artifacts (spec.md, tasks.md) |
+| Workflow | v2.6.1+ (specswarm implement) |
+| Use Case | Feature-level completion analytics |
+| Requires Session | No |
 
 ## Feature 015 Example
 

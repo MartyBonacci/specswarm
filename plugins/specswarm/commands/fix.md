@@ -116,6 +116,15 @@ cd "$REPO_ROOT"
 
 # Create session tracking for background mode
 mkdir -p .specswarm/sessions
+
+# Prune old sessions (keep last 20)
+SESSION_COUNT=$(find .specswarm/sessions -name "*.json" -type f 2>/dev/null | wc -l)
+if [ "$SESSION_COUNT" -gt 20 ]; then
+  find .specswarm/sessions -name "*.json" -type f -printf '%T@ %p\n' | \
+    sort -n | head -n $(( SESSION_COUNT - 20 )) | cut -d' ' -f2- | \
+    xargs rm -f 2>/dev/null
+fi
+
 SESSION_ID="fix-$(date +%Y%m%d-%H%M%S)"
 
 cat > ".specswarm/sessions/${SESSION_ID}.json" << EOF

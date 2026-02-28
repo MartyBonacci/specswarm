@@ -173,6 +173,14 @@ echo ""
 mkdir -p .specswarm
 mkdir -p .specswarm/sessions
 
+# Prune old sessions (keep last 20)
+SESSION_COUNT=$(find .specswarm/sessions -name "*.json" -type f 2>/dev/null | wc -l)
+if [ "$SESSION_COUNT" -gt 20 ]; then
+  find .specswarm/sessions -name "*.json" -type f -printf '%T@ %p\n' | \
+    sort -n | head -n $(( SESSION_COUNT - 20 )) | cut -d' ' -f2- | \
+    xargs rm -f 2>/dev/null
+fi
+
 # Generate session ID for tracking
 SESSION_ID="build-$(date +%Y%m%d-%H%M%S)-${FEATURE_NUM}"
 
@@ -704,6 +712,9 @@ Store quality score as QUALITY_SCORE.
 **Display completion summary:**
 
 ```bash
+# Clean up build state on success
+rm -f .specswarm/build-loop.state
+
 echo ""
 echo "══════════════════════════════════════════"
 echo "🎉 FEATURE BUILD COMPLETE"

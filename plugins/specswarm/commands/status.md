@@ -82,19 +82,16 @@ display_session() {
     local started_at=$(jq -r '.started_at // "unknown"' "$session_file")
     local current_phase=$(jq -r '.current_phase // "unknown"' "$session_file")
     local description=$(jq -r '.feature_description // .bug_description // "N/A"' "$session_file")
-    local active=$(jq -r '.active // false' "$session_file")
     local quality_score=$(jq -r '.quality_score // "N/A"' "$session_file")
 
-    # Determine status emoji
+    # Determine status emoji (use status field, not active flag)
     local status_emoji="⏳"
-    if [ "$status" = "completed" ] || [ "$active" = "false" ]; then
+    if [ "$status" = "completed" ]; then
       status_emoji="✅"
-      status="completed"
     elif [ "$status" = "failed" ]; then
       status_emoji="❌"
-    elif [ "$status" = "running" ] || [ "$active" = "true" ]; then
+    elif [ "$status" = "running" ]; then
       status_emoji="🔄"
-      status="running"
     fi
 
     if [ "$JSON_OUTPUT" = true ]; then
