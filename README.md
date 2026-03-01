@@ -1,4 +1,4 @@
-# SpecSwarm v4.0.0
+# SpecSwarm v4.0.1
 
 **Complete Software Development Toolkit**
 
@@ -8,14 +8,12 @@ Build, fix, maintain, and analyze your entire software project with one unified 
 
 ## Overview
 
-SpecSwarm is a comprehensive Claude Code plugin for the complete software development lifecycle across **6 languages** (JavaScript/TypeScript, Python, PHP, Go, Ruby, Rust):
+SpecSwarm is a comprehensive Claude Code plugin for the complete software development lifecycle across **any language or framework** Claude supports:
 
 - ✅ **Spec-Driven Development** - Specification to implementation
 - 🐛 **Bug Management** - Systematic fixing with regression testing
 - 🔧 **Code Maintenance** - Refactoring and feature modification
 - 📊 **Quality Assurance** - Automated validation (0-100 scoring)
-- 🚀 **Performance Monitoring** - Bundle size tracking and budgets
-- 🌐 **Multi-Language Support** - Auto-detection for 6 languages
 - 🗣️ **Natural Language** - Talk to SpecSwarm like a teammate
 
 **10 Commands** | **Production Ready**
@@ -76,7 +74,7 @@ SpecSwarm automatically runs the right workflow based on your intent.
 
 ## Core Commands
 
-These 5 commands handle **95% of daily development work**.
+These 5 commands handle the vast majority of daily development work.
 
 ### 1. `/specswarm:init`
 
@@ -87,7 +85,7 @@ These 5 commands handle **95% of daily development work**.
 ```
 
 Creates `.specswarm/` directory with:
-- `tech-stack.md` - Prevent technology drift (95% effective)
+- `tech-stack.md` - Prevent technology drift
 - `quality-standards.md` - Quality gates and budgets
 - `constitution.md` - Project governance
 
@@ -142,8 +140,7 @@ Creates `.specswarm/` directory with:
 2. Analyzes root cause
 3. Implements fix
 4. Validates with tests
-5. Detects chain bugs
-6. Auto-retries on failure (max 2 attempts)
+5. Auto-retries on failure (max 2 attempts)
 
 **Use when:** Fixing any bug or broken functionality
 
@@ -240,19 +237,16 @@ Instead of memorizing slash commands, describe what you want in plain English:
 "Merge to main"  ⚠️ (always requires confirmation)
 ```
 
-### Confidence-Based Execution
+### Skill-Based Routing
 
-SpecSwarm analyzes your request and acts accordingly:
+SpecSwarm uses keyword matching to route natural language to the right workflow:
 
-- **High Confidence (95%+):** Auto-executes with 3-second cancel window
-- **Medium Confidence (70-94%):** Asks for confirmation first
-- **Low Confidence (<70%):** Shows options to choose from
+- **Clear intent** (e.g., "build", "fix", "ship"): Routes directly to the matching command
+- **Ambiguous intent**: Asks for clarification before proceeding
 
 ### Safety Features
 
-🛡️ **SHIP Protection:** SHIP commands **ALWAYS** require explicit confirmation, regardless of confidence
-
-⚡ **3-Second Cancel:** High-confidence commands show 3s cancel window (press Ctrl+C)
+🛡️ **SHIP Protection:** SHIP commands **ALWAYS** require explicit confirmation — destructive operations are never auto-executed
 
 🎯 **Slash Commands Still Work:** All slash commands work exactly as before
 
@@ -298,20 +292,20 @@ Many workflows that were previously separate commands are now flags:
 
 ### Quality Validation (0-100 Points)
 
-Automated scoring across 6 dimensions:
+Automated scoring across 6 dimensions (effective max is 100 — Visual Alignment and Bundle Size are not yet implemented):
 
 - **Unit Tests** (25 pts) - Proportional by pass rate
 - **Code Coverage** (25 pts) - Proportional by coverage %
 - **Integration Tests** (15 pts) - API/service testing
 - **Browser Tests** (15 pts) - E2E user flows
-- **Bundle Size** (20 pts) - Performance budgets
-- **Visual Alignment** (15 pts) - Future
+- **Bundle Size** (20 pts) - *Planned* (see Roadmap)
+- **Visual Alignment** (15 pts) - *Planned* (see Roadmap)
 
 **See details:** [Features: Quality System](./docs/FEATURES.md#quality-validation-system)
 
 ### Tech Stack Management
 
-**95% drift prevention** through automatic validation:
+**Drift prevention** through automatic validation:
 
 ```markdown
 # .specswarm/tech-stack.md
@@ -330,52 +324,11 @@ SpecSwarm validates at plan, task, and implementation phases.
 
 **See details:** [Features: Tech Stack](./docs/FEATURES.md#tech-stack-management)
 
-### SSR Pattern Validation
+### Language Agnostic
 
-Detects production failures before deployment:
+SpecSwarm's core workflow (specify, clarify, plan, tasks, implement, ship) works with **any language or framework** Claude can read. There is no language-specific tooling — Claude handles the code understanding and generation.
 
-- Hardcoded URLs in loaders/actions
-- Relative URLs in SSR contexts
-- Browser-only APIs on server
-- React Router v7 / Remix / Next.js support
-
-**See details:** [Features: SSR Patterns](./docs/FEATURES.md#ssr-pattern-validation)
-
-### Chain Bug Detection
-
-Prevents cascading failures by comparing test counts before/after fixes:
-
-- Detects new test failures
-- Flags new SSR issues
-- Catches TypeScript errors
-- Stops Bug 912→913 scenarios
-
-**See details:** [Features: Chain Bugs](./docs/FEATURES.md#chain-bug-detection)
-
-### Bundle Size Monitoring
-
-Automatic performance tracking:
-
-- Analyzes production bundles
-- Calculates size score (0-20 points)
-- Enforces configurable budgets
-- Supports Vite, Webpack, Rollup, esbuild, Parcel
-
-**See details:** [Features: Bundle Size](./docs/FEATURES.md#bundle-size-monitoring)
-
-### Multi-Language Support
-
-Supports **6 languages** with auto-detection:
-
-- JavaScript/TypeScript (Vitest, Jest, Mocha, Jasmine)
-- Python (Pytest, unittest)
-- Go (go test)
-- Ruby (RSpec)
-- PHP (PHPUnit)
-- Rust (cargo test)
-- Java (JUnit)
-
-**See details:** [Features: Multi-Language](./docs/FEATURES.md#multi-language-support)
+The quality analysis step includes test runner detection for common frameworks (Vitest, Jest, Pytest, go test, RSpec, PHPUnit, cargo test, JUnit) as a convenience for automated scoring.
 
 ---
 
@@ -437,7 +390,7 @@ claude mcp add ChromeDevTools/chrome-devtools-mcp
 ## Best Practices
 
 1. **Run `/specswarm:init` first** - Sets up proper foundation
-2. **Define tech-stack.md early** - Prevents 95% of drift
+2. **Define tech-stack.md early** - Prevents technology drift
 3. **Enable quality gates** - Maintain >80% scores
 4. **Run quality analysis before shipping** - Catch issues early
 5. **Keep bundles <500KB** - Performance matters
@@ -460,31 +413,29 @@ claude mcp add ChromeDevTools/chrome-devtools-mcp
 
 Create `.specswarm/quality-standards.md` or run `/specswarm:init`
 
-### SSR Validation Fails
-
-Use environment-aware helper:
-
-```typescript
-export function getApiUrl(path: string): string {
-  const base = typeof window !== 'undefined'
-    ? ''
-    : process.env.API_BASE_URL || 'http://localhost:3000';
-  return `${base}${path}`;
-}
-```
-
-### Bundle Size Exceeds Budget
-
-1. Implement code splitting
-2. Use dynamic imports
-3. Analyze: `npx vite-bundle-visualizer`
-4. Remove unused dependencies
-
 **See more:** [Setup: Troubleshooting](./docs/SETUP.md#troubleshooting)
 
 ---
 
+## Roadmap
+
+These features are planned but **not yet implemented**:
+
+- **Chain Bug Detection** - Compare test counts before/after fixes to prevent cascading failures (Bug 912->913 scenarios)
+- **SSR Pattern Validation** - Detect hardcoded URLs, browser-only APIs in server contexts (React Router v7 / Remix / Next.js)
+- **Bundle Size Monitoring** - Analyze production bundles, enforce size budgets, score performance (Vite, Webpack, Rollup, esbuild, Parcel)
+- **Language Auto-Detection** - Automatic project language detection during init
+
+---
+
 ## Version History
+
+### v4.0.1 (2026-02-27) - Documentation & State Management Fix 🔧
+- **Fixed**: Memory/state management flaws in build loop
+- **Fixed**: README documentation discrepancies — honest feature claims, language-agnostic framing
+- **Removed**: Overclaimed metrics ("95% drift prevention", unsubstantiated confidence percentages)
+- **Moved**: Unimplemented features (Chain Bug Detection, SSR Validation, Bundle Size Monitoring) to Roadmap
+- **Impact**: README now accurately reflects implemented functionality
 
 ### v4.0.0 (2026-02-25) - Command Compaction ⭐
 - **BREAKING**: Reduced from 35 visible commands to 10 visible + 11 internal (hidden)
@@ -569,7 +520,7 @@ export function getApiUrl(path: string): string {
 - Added bundle size monitoring
 - Complete lifecycle coverage
 
-**See full history:** [README: Version History](./README.md#version-history)
+**See full history:** [CHANGELOG.md](./CHANGELOG.md)
 
 ---
 
@@ -588,13 +539,11 @@ SpecSwarm builds upon **SpecKit**, which adapted **GitHub's spec-kit** for Claud
 2. **Adapted**: SpecKit plugin by Marty Bonacci (2025)
    - Claude Code integration
 
-3. **Enhanced**: SpecSwarm v4.0.0 by Marty Bonacci & Claude Code (2025-2026)
-   - Tech stack management (95% drift prevention)
+3. **Enhanced**: SpecSwarm v4.0.1 by Marty Bonacci & Claude Code (2025-2026)
+   - Tech stack drift prevention
    - Lifecycle workflows (build, fix, modify, ship, upgrade)
    - Quality validation (0-100 scoring)
    - Natural language commands
-   - Chain bug detection
-   - Bundle size monitoring
 
 ---
 
@@ -612,6 +561,6 @@ MIT License - See LICENSE file for details
 
 ---
 
-**SpecSwarm v4.0.0** - Your complete software development toolkit. 🚀
+**SpecSwarm v4.0.1** - Your complete software development toolkit. 🚀
 
 Build it. Fix it. Modify it. Ship it. All in one place.
