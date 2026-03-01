@@ -14,7 +14,7 @@ Complete documentation for all SpecSwarm commands: **10 visible** + **11 interna
 
 ## Core Workflows
 
-These 5 commands handle 95% of daily development work. **Start here** if you're new to SpecSwarm.
+These 5 commands handle the vast majority of daily development work. **Start here** if you're new to SpecSwarm.
 
 ### `/specswarm:init`
 
@@ -104,8 +104,7 @@ Complete workflow for fixing bugs with regression testing.
 2. Analyzes root cause
 3. Implements fix
 4. Validates fix with tests
-5. Detects chain bugs
-6. Auto-retries on failure (max 2 attempts)
+5. Auto-retries on failure (max 2 attempts)
 
 **Flags:**
 | Flag | Description |
@@ -429,7 +428,7 @@ Called by: `build` (Step 8), `ship` (Step 2)
 
 ### `/specswarm:bugfix`
 
-Regression-test-first bugfix workflow with chain bug detection and auto-retry (max 2 attempts).
+Regression-test-first bugfix workflow with auto-retry (max 2 attempts).
 
 Called by: `fix` (internal)
 
@@ -538,7 +537,7 @@ The following commands were removed and absorbed as flags:
 ## Tips & Best Practices
 
 1. **Use `/specswarm:init` first** - Sets up proper foundation
-2. **Define tech-stack.md early** - Prevents 95% of drift
+2. **Define tech-stack.md early** - Prevents technology drift
 3. **Run `/specswarm:analyze-quality` before shipping** - Catch issues early
 4. **Enable quality gates** - Maintain >80% scores
 5. **Use `--background` for long builds** - Check progress with `/specswarm:status`
@@ -554,4 +553,4 @@ The following commands were removed and absorbed as flags:
 
 ---
 
-**SpecSwarm v4.0.0** - Complete software development toolkit
+**SpecSwarm v4.0.1** - Complete software development toolkit

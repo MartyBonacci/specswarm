@@ -8,7 +8,7 @@ Display this help guide with command overview and usage examples.
 
 ---
 
-## Core Workflows (95% of daily use)
+## Core Workflows
 
 | Command | Purpose | Example |
 |---------|---------|---------|

@@ -36,28 +36,23 @@ Trigger this skill when the user mentions:
 
 ## Instructions
 
-**Confidence-Based Execution:**
+**Skill-Based Routing:**
 
 1. **Detect** that user mentioned building/creating software
 2. **Extract** the feature description from their message
-3. **Assess confidence and execute accordingly**:
+3. **Route based on intent clarity**:
 
-   **High Confidence (95%+)** - Auto-execute immediately:
+   **Clear intent** - Execute directly:
    - Clear feature requests: "Please build a simple website", "Create user authentication with JWT", "Add dashboard analytics"
    - Action: Immediately run `/specswarm:build "feature description"`
-   - Show brief notification: "🎯 Running /specswarm:build... (press Ctrl+C within 3s to cancel)"
 
-   **Medium Confidence (70-94%)** - Ask for confirmation:
-   - Less specific: "Add authentication", "Build a feature"
+   **Ambiguous intent** - Ask for confirmation:
+   - Less specific: "Add authentication", "Work on the app"
    - Action: Use AskUserQuestion tool with two options:
      - Option 1 (label: "Run /specswarm:build"): Use SpecSwarm's complete workflow
      - Option 2 (label: "Process normally"): Handle as regular Claude Code request
 
-   **Low Confidence (<70%)** - Always ask:
-   - Vague: "Work on the app", "Improve the code"
-   - Action: Use AskUserQuestion as above
-
-4. **If user cancels (Ctrl+C) or selects Option 2**, process normally without SpecSwarm
+4. **If user selects Option 2**, process normally without SpecSwarm
 5. **After command completes**, STOP - do not continue with ship/merge
 
 ## What the Build Command Does

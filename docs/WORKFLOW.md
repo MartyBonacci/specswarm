@@ -106,7 +106,7 @@ You should see specswarm v2.1.2 and speclabs v2.7.3
 
 ### Step 3: Create Tech Stack Definition
 
-**Why**: Prevents 95% of technology drift across features
+**Why**: Prevents technology drift across features
 
 Create `.specswarm/tech-stack.md`:
 

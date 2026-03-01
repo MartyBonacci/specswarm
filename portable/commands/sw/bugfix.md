@@ -984,12 +984,13 @@ fi
 
 ---
 
-## Chain Bug Detection (Phase 3 Enhancement)
+## Chain Bug Detection (Planned — Not Yet Implemented)
 
 **Purpose**: Detect if this bug fix introduced new bugs (prevent Bug 912 → Bug 913 scenarios)
 
-**YOU MUST NOW check for chain bugs using the Bash tool:**
+> **NOTE**: The chain-bug-detector.sh script does not exist yet. **Skip this section entirely.** Chain bug detection is a planned feature — see README Roadmap.
 
+<!--
 1. **Run chain bug detector:**
    ```bash
    bash ~/.claude/plugins/marketplaces/specswarm-marketplace/plugins/speclabs/lib/chain-bug-detector.sh ${REPO_ROOT}
@@ -1036,6 +1037,7 @@ fi
    - Continue to Final Output
 
 **Impact**: Prevents cascading bug fixes (Bug 912 → 913 → 914 chains)
+-->
 
 ---
 

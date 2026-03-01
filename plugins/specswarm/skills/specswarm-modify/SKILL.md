@@ -43,13 +43,13 @@ Trigger this skill when the user mentions:
 
 ## Instructions
 
-**Confidence-Based Execution:**
+**Skill-Based Routing:**
 
 1. **Detect** that user mentioned modifying/changing existing functionality
 2. **Extract** the modification description from their message
-3. **Assess confidence and execute accordingly**:
+3. **Route based on intent clarity**:
 
-   **High Confidence (95%+)** - Auto-execute immediately:
+   **Clear intent** - Execute directly:
    - Clear modification requests: "Change authentication from session to JWT", "Add pagination to user list API", "Update search algorithm to use full-text search"
    - Clear refactor requests: "Refactor this module to reduce complexity", "Clean up the utils to reduce duplication"
    - Clear deprecation requests: "Deprecate the v1 API", "Sunset the legacy auth system"
@@ -58,19 +58,14 @@ Trigger this skill when the user mentions:
      - Refactor: `/specswarm:modify "target" --refactor`
      - Deprecate: `/specswarm:modify "target" --deprecate`
      - Impact analysis only: `/specswarm:modify "target" --analyze-only`
-   - Show brief notification: "🎯 Running /specswarm:modify... (press Ctrl+C within 3s to cancel)"
 
-   **Medium Confidence (70-94%)** - Ask for confirmation:
-   - Less specific: "Update the authentication", "Modify the search", "Improve code quality"
+   **Ambiguous intent** - Ask for confirmation:
+   - Less specific: "Update the authentication", "Make the feature better"
    - Action: Use AskUserQuestion tool with two options:
      - Option 1 (label: "Run /specswarm:modify"): Use SpecSwarm's workflow
      - Option 2 (label: "Process normally"): Handle as regular Claude Code request
 
-   **Low Confidence (<70%)** - Always ask:
-   - Vague: "Make the feature better", "Improve the UI"
-   - Action: Use AskUserQuestion as above
-
-4. **If user cancels (Ctrl+C) or selects Option 2**, process normally without SpecSwarm
+4. **If user selects Option 2**, process normally without SpecSwarm
 5. **After command completes**, STOP - do not continue with ship/merge
 
 ## What the Modify Command Does

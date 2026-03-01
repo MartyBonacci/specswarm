@@ -8,7 +8,7 @@ SpecSwarm Portable runs from your project's `.claude/commands/` directory, which
 
 The Claude Code plugin system provides:
 - Skill-based natural language routing
-- Confidence-based auto-execution
+- Skill-based auto-routing
 - Tool restrictions per skill
 - Plugin detection and integration
 
@@ -32,7 +32,7 @@ This is not just a shorthand - they are completely different namespaces. If you 
 | **YAML Frontmatter Args** | Yes | Yes | Arguments work identically |
 | **`$ARGUMENTS` Placeholder** | Yes | Yes | Same argument passing |
 | **Natural Language Auto-Routing** | Yes | No | Use `/sw:router` instead |
-| **Confidence-Based Execution** | Yes | No | Manual confirmation |
+| **Skill-Based Routing** | Yes | No | Manual confirmation |
 | **Skill Allowed-Tools** | Yes | No | All tools available |
 | **Plugin Detection** | Yes | No | Cannot detect other plugins |
 | **Semantic Keyword Matching** | Yes | No | Explicit commands only |

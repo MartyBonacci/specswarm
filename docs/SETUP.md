@@ -143,7 +143,7 @@ If you prefer manual setup, create these files:
 
 ### Create `.specswarm/tech-stack.md`
 
-**Purpose:** Prevent technology drift across features (95% effectiveness)
+**Purpose:** Prevent technology drift across features
 
 **Template:**
 
@@ -645,4 +645,4 @@ jobs:
 
 ---
 
-**SpecSwarm v3.5.0** - Complete setup guide
+**SpecSwarm v4.0.1** - Complete setup guide

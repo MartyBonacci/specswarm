@@ -195,11 +195,7 @@ Top Issues:
 
 **YOU MUST NOW analyze architectural patterns:**
 
-1. **Run SSR pattern validator** using Bash:
-   ```bash
-   bash ~/.claude/plugins/marketplaces/specswarm-marketplace/plugins/specswarm/lib/ssr-validator.sh
-   ```
-   Capture issues count and details.
+1. **SSR pattern validation** — *Planned feature, skip this step.* (ssr-validator.sh does not exist yet)
 
 2. **Scan for common anti-patterns** using Grep:
 
@@ -289,15 +285,8 @@ Top Issues:
 
 **YOU MUST NOW detect performance issues:**
 
-1. **Run bundle size analyzer** (Phase 3 Enhancement) using Bash:
-   ```bash
-   bash ~/.claude/plugins/marketplaces/specswarm-marketplace/plugins/speclabs/lib/bundle-size-monitor.sh ${REPO_ROOT}
-   ```
-   Capture:
-   - Total bundle size
-   - List of large bundles (>500KB)
-   - List of critical bundles (>1MB)
-   - Bundle size score (0-20 points)
+1. **Bundle size analysis** — *Planned feature, skip this step.* (bundle-size-monitor.sh does not exist yet)
+   Award 0 points for bundle size until this feature is implemented.
 
 2. **Find missing lazy loading:**
    ```bash
@@ -527,7 +516,7 @@ Top Issues:
    4. Track improvements in metrics.json
 
    Commands:
-   - View detailed SSR issues: bash plugins/specswarm/lib/ssr-validator.sh
+   - SSR validation: (planned feature — not yet available)
    - Generate test templates: /specswarm:implement {feature}
    - Re-run analysis: /specswarm:analyze-quality
    ```

@@ -41,28 +41,23 @@ Trigger this skill when the user describes ANY software problem:
 
 ## Instructions
 
-**Confidence-Based Execution:**
+**Skill-Based Routing:**
 
 1. **Detect** that user described a software problem
 2. **Extract** the problem description from their message
-3. **Assess confidence and execute accordingly**:
+3. **Route based on intent clarity**:
 
-   **High Confidence (95%+)** - Auto-execute immediately:
+   **Clear intent** - Execute directly:
    - Clear bug descriptions: "fix the login bug", "images don't load", "checkout is broken"
    - Action: Immediately run `/specswarm:fix "problem description"`
-   - Show brief notification: "🎯 Running /specswarm:fix... (press Ctrl+C within 3s to cancel)"
 
-   **Medium Confidence (70-94%)** - Ask for confirmation:
-   - Less specific: "something's wrong with authentication", "the app has issues"
+   **Ambiguous intent** - Ask for confirmation:
+   - Less specific: "something's wrong with authentication", "the app isn't working right"
    - Action: Use AskUserQuestion tool with two options:
      - Option 1 (label: "Run /specswarm:fix"): Use SpecSwarm's systematic bugfix workflow
      - Option 2 (label: "Process normally"): Handle as regular Claude Code request
 
-   **Low Confidence (<70%)** - Always ask:
-   - Vague: "the app isn't working right", "there's a problem"
-   - Action: Use AskUserQuestion as above
-
-4. **If user cancels (Ctrl+C) or selects Option 2**, process normally without SpecSwarm
+4. **If user selects Option 2**, process normally without SpecSwarm
 5. **After command completes**, STOP - do not continue with ship/merge
 
 ## What the Fix Command Does

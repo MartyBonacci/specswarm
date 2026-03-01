@@ -2,7 +2,7 @@
 
 **Fast reference for common SpecSwarm commands and workflows.**
 
-**Version**: v4.0.0 | **Commands**: 10 visible + 11 internal | **Languages**: 6 supported
+**Version**: v4.0.1 | **Commands**: 10 visible + 11 internal | **Language-Agnostic**
 
 ---
 
@@ -17,7 +17,7 @@
 
 # Verify
 /plugin list
-# Should show: specswarm v4.0.0
+# Should show: specswarm v4.0.1
 ```
 
 ---
@@ -272,7 +272,8 @@ Score Breakdown:
 - Code Coverage: 25 pts
 - Integration Tests: 15 pts
 - Browser Tests: 15 pts
-- Bundle Size: 20 pts
+- Bundle Size: 20 pts (planned)
+- Visual Alignment: 15 pts (planned)
 ```
 
 ---
@@ -314,7 +315,7 @@ cat features/015-*/spec.md | grep parent_branch
 ### "Orchestration pauses mid-execution"
 
 ```bash
-# Fix: Update to v4.0.0+
+# Fix: Update to v4.0.1+
 /plugin update specswarm
 
 # v3.0+ eliminated all mid-phase pausing (autonomous execution)
@@ -366,11 +367,10 @@ project-root/
 ## Version Information
 
 This cheat sheet is for:
-- **SpecSwarm**: v4.0.0
+- **SpecSwarm**: v4.0.1
   - Compacted from 32/35 commands to 21 (10 visible + 11 internal)
   - Natural language commands (build, fix, ship, modify)
-  - Multi-language support (Python, PHP, Go, Ruby, Rust)
-  - README.md context reading
+  - Language-agnostic (works with any language Claude supports)
   - Autonomous execution (no mid-phase pausing)
   - Parent branch safety
 

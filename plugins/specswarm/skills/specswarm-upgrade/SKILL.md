@@ -34,28 +34,23 @@ Trigger this skill when the user mentions:
 
 ## Instructions
 
-**Confidence-Based Execution:**
+**Skill-Based Routing:**
 
 1. **Detect** that user mentioned upgrading/updating software
 2. **Extract** what to upgrade from their message
-3. **Assess confidence and execute accordingly**:
+3. **Route based on intent clarity**:
 
-   **High Confidence (95%+)** - Auto-execute immediately:
+   **Clear intent** - Execute directly:
    - Clear upgrade requests: "Upgrade React to version 19", "Update all dependencies", "Migrate from Webpack to Vite"
    - Action: Immediately run `/specswarm:upgrade "upgrade description"`
-   - Show brief notification: "🎯 Running /specswarm:upgrade... (press Ctrl+C within 3s to cancel)"
 
-   **Medium Confidence (70-94%)** - Ask for confirmation:
-   - Less specific: "Update the packages", "Modernize the stack"
+   **Ambiguous intent** - Ask for confirmation:
+   - Less specific: "Update the packages", "Make it better"
    - Action: Use AskUserQuestion tool with two options:
      - Option 1 (label: "Run /specswarm:upgrade"): Use SpecSwarm's upgrade workflow with compatibility analysis
      - Option 2 (label: "Process normally"): Handle as regular Claude Code request
 
-   **Low Confidence (<70%)** - Always ask:
-   - Vague: "Make it better", "Use newer stuff"
-   - Action: Use AskUserQuestion as above
-
-4. **If user cancels (Ctrl+C) or selects Option 2**, process normally without SpecSwarm
+4. **If user selects Option 2**, process normally without SpecSwarm
 5. **After command completes**, STOP - do not continue with ship/merge
 
 ## What the Upgrade Command Does

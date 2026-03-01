@@ -6,12 +6,10 @@ Technical documentation for SpecSwarm's advanced features and capabilities.
 
 - [Quality Validation System](#quality-validation-system)
 - [Tech Stack Management](#tech-stack-management)
-- [SSR Pattern Validation](#ssr-pattern-validation)
 - [Multi-Framework Testing](#multi-framework-testing)
-- [Chain Bug Detection](#chain-bug-detection)
-- [Bundle Size Monitoring](#bundle-size-monitoring)
 - [Natural Language Commands](#natural-language-commands)
-- [Multi-Language Support](#multi-language-support)
+- [Language Agnostic](#language-agnostic)
+- [Planned Features](#planned-features)
 - [Workflow Orchestration](#workflow-orchestration)
 
 ---
@@ -163,7 +161,7 @@ Total:             100/100 ✅ EXCELLENT
 
 ### Overview
 
-Prevents **95% of technology drift** by validating against `.specswarm/tech-stack.md` at multiple phases.
+Prevents technology drift by validating against `.specswarm/tech-stack.md` at multiple phases.
 
 ### Validation Phases
 
@@ -275,174 +273,10 @@ Result: Consistent patterns = maintainable codebase
 
 ### Metrics
 
-- **Drift Detection Rate**: 95% (based on production usage)
-- **False Positives**: <5% (usually monorepo package conflicts)
+- **False Positives**: Low (usually monorepo package conflicts)
 - **Developer Satisfaction**: High (prevents review churn)
 
 ---
-
-## SSR Pattern Validation
-
-### Overview
-
-Detects production failures before deployment by validating SSR-safe patterns in React Router v7, Remix, and Next.js applications.
-
-### Common SSR Violations
-
-**1. Hardcoded URLs in Loaders**
-
-❌ **Violation:**
-```typescript
-export async function loader() {
-  // Fails in production: localhost not accessible from server
-  const response = await fetch('http://localhost:3000/api/users');
-  return response.json();
-}
-```
-
-✅ **Correct:**
-```typescript
-export async function loader({ request }: LoaderArgs) {
-  const url = new URL(request.url);
-  const apiUrl = `${url.protocol}//${url.host}/api/users`;
-  const response = await fetch(apiUrl);
-  return response.json();
-}
-```
-
-**2. Relative URLs in SSR Context**
-
-❌ **Violation:**
-```typescript
-export async function loader() {
-  // Fails on server: no window object
-  const response = await fetch('/api/users');  // Relative URL
-  return response.json();
-}
-```
-
-✅ **Correct:**
-```typescript
-import { getApiUrl } from '~/utils/api';
-
-export async function loader() {
-  const response = await fetch(getApiUrl('/api/users'));
-  return response.json();
-}
-
-// utils/api.ts
-export function getApiUrl(path: string): string {
-  if (typeof window !== 'undefined') {
-    return path;  // Browser: relative is fine
-  }
-  return `${process.env.API_BASE_URL || 'http://localhost:3000'}${path}`;
-}
-```
-
-**3. Browser-Only APIs**
-
-❌ **Violation:**
-```typescript
-export function loader() {
-  const userId = localStorage.getItem('userId');  // ReferenceError on server
-  return { userId };
-}
-```
-
-✅ **Correct:**
-```typescript
-export function loader({ request }: LoaderArgs) {
-  const cookie = request.headers.get('Cookie');
-  const userId = parseCookie(cookie).userId;
-  return { userId };
-}
-```
-
-### Detection Algorithm
-
-```typescript
-// Pseudocode for SSR validation
-function validateSSRPatterns(code: string): Violation[] {
-  const violations = [];
-
-  // 1. Check for hardcoded localhost
-  if (code.includes('localhost') && isInLoader(code)) {
-    violations.push({
-      type: 'HARDCODED_LOCALHOST',
-      severity: 'error',
-      message: 'Use environment-aware URL construction',
-    });
-  }
-
-  // 2. Check for browser-only APIs
-  const browserAPIs = ['localStorage', 'sessionStorage', 'window', 'document'];
-  for (const api of browserAPIs) {
-    if (code.includes(api) && isInLoader(code)) {
-      violations.push({
-        type: 'BROWSER_API_IN_SSR',
-        severity: 'error',
-        message: `${api} not available on server`,
-      });
-    }
-  }
-
-  // 3. Check for relative fetch without environment detection
-  if (code.match(/fetch\(['"`]\/api/) && !hasEnvironmentCheck(code)) {
-    violations.push({
-      type: 'RELATIVE_FETCH_WITHOUT_CHECK',
-      severity: 'warning',
-      message: 'Use environment-aware helper for API calls',
-    });
-  }
-
-  return violations;
-}
-```
-
-### Supported Frameworks
-
-| Framework | Validation | Loader Detection | Action Detection |
-|-----------|-----------|------------------|------------------|
-| React Router v7 | ✅ Full | ✅ Yes | ✅ Yes |
-| Remix | ✅ Full | ✅ Yes | ✅ Yes |
-| Next.js | ✅ Partial | ✅ getServerSideProps | ✅ API routes |
-| SvelteKit | 🚧 Planned | ❌ Not yet | ❌ Not yet |
-| Astro | 🚧 Planned | ❌ Not yet | ❌ Not yet |
-
-### Environment-Aware Patterns
-
-**Recommended Helper:**
-
-```typescript
-// app/utils/env.ts
-export function isBrowser(): boolean {
-  return typeof window !== 'undefined';
-}
-
-export function isServer(): boolean {
-  return !isBrowser();
-}
-
-export function getApiUrl(path: string, request?: Request): string {
-  if (isBrowser()) {
-    return path;  // Browser: use relative URLs
-  }
-
-  // Server: need absolute URL
-  if (request) {
-    const url = new URL(request.url);
-    return `${url.protocol}//${url.host}${path}`;
-  }
-
-  return `${process.env.API_BASE_URL || 'http://localhost:3000'}${path}`;
-}
-
-// Usage in loader:
-export async function loader({ request }: LoaderArgs) {
-  const users = await fetch(getApiUrl('/api/users', request));
-  return users.json();
-}
-```
 
 ---
 
@@ -546,168 +380,6 @@ Files:
 
 ---
 
-## Chain Bug Detection
-
-### Problem Statement
-
-**Scenario:**
-1. Fix Bug 912 (login fails with special characters)
-2. Introduce Bug 913 (SSR crash in production)
-3. Bug 913 not caught because no tests ran on server
-
-**Result:** Cascading failures, production incidents
-
-### Solution
-
-SpecSwarm compares test counts before/after to detect new failures.
-
-### Detection Algorithm
-
-```typescript
-function detectChainBugs(before: TestResults, after: TestResults): ChainBug[] {
-  const chainBugs = [];
-
-  // 1. Compare total test counts
-  if (after.total < before.total) {
-    chainBugs.push({
-      type: 'TESTS_DISAPPEARED',
-      message: `${before.total - after.total} tests no longer run`,
-    });
-  }
-
-  // 2. Compare passing tests
-  if (after.passing < before.passing) {
-    const newFailures = before.passing - after.passing;
-    chainBugs.push({
-      type: 'NEW_FAILURES',
-      message: `${newFailures} tests now failing (chain bug suspected)`,
-      newlyFailing: identifyNewlyFailingTests(before, after),
-    });
-  }
-
-  // 3. Check for SSR-specific failures
-  if (hasNewSSRErrors(after) && !hasNewSSRErrors(before)) {
-    chainBugs.push({
-      type: 'SSR_REGRESSION',
-      message: 'New SSR errors detected',
-    });
-  }
-
-  // 4. Check for TypeScript errors
-  if (after.typeErrors > before.typeErrors) {
-    chainBugs.push({
-      type: 'TYPE_ERRORS',
-      message: `${after.typeErrors - before.typeErrors} new TypeScript errors`,
-    });
-  }
-
-  return chainBugs;
-}
-```
-
-### Real-World Example
-
-**Before fix:**
-```
-Unit Tests:     50 passed, 0 failed
-Integration:    10 passed, 0 failed
-Browser Tests:  5 passed, 0 failed
-TypeScript:     0 errors
-```
-
-**After fix:**
-```
-Unit Tests:     49 passed, 1 failed  ⚠️ Chain bug detected!
-Integration:    9 passed, 1 failed   ⚠️ Chain bug detected!
-Browser Tests:  5 passed, 0 failed
-TypeScript:     2 errors              ⚠️ New errors!
-
-CHAIN BUG REPORT:
-- 2 new test failures (unit + integration)
-- 2 new TypeScript errors
-- Likely introduced by fix for Bug 912
-
-Newly failing tests:
-- test/integration/auth-ssr.test.ts: "SSR auth check"
-- test/unit/session.test.ts: "session validation"
-
-Action: Review fix, add SSR test coverage
-```
-
-### Prevention
-
-Chain bug detection stops cascading failures by:
-1. Running full test suite after every fix
-2. Comparing results to baseline
-3. Flagging new failures immediately
-4. Blocking merge if chain bugs detected
-
----
-
-## Bundle Size Monitoring
-
-### Overview
-
-Automatic performance budget enforcement with bundle size tracking.
-
-### Supported Bundlers
-
-| Bundler | Detection | Analysis | Budget Check |
-|---------|-----------|----------|--------------|
-| Vite | ✅ Auto | ✅ dist/ analysis | ✅ Yes |
-| Webpack | ✅ Auto | ✅ stats.json | ✅ Yes |
-| Rollup | ✅ Auto | ✅ dist/ analysis | ✅ Yes |
-| esbuild | ✅ Auto | ✅ outdir analysis | ✅ Yes |
-| Parcel | ✅ Auto | ✅ dist/ analysis | ✅ Yes |
-
-### Budget Configuration
-
-```yaml
-# .specswarm/quality-standards.md
-enforce_budgets: true
-max_bundle_size: 500           # KB per bundle
-max_initial_load: 1000         # KB initial load
-max_route_bundle: 300          # KB per route
-```
-
-### Analysis Output
-
-```
-Bundle Size Analysis:
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Bundle              Size      Budget    Status
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-main.js             387 KB    500 KB    ✅ PASS
-vendor.js           456 KB    500 KB    ✅ PASS
-dashboard.js        523 KB    300 KB    ⚠️ OVER
-admin.js            612 KB    300 KB    ⚠️ OVER
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Initial Load:       843 KB    1000 KB   ✅ PASS
-Total:              1978 KB
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-Score: 10/20 points (2 bundles over budget)
-
-Recommendations:
-1. dashboard.js (+223 KB):
-   - Use code splitting for charts
-   - Lazy load heavy components
-
-2. admin.js (+312 KB):
-   - Remove unused dependencies
-   - Implement route-based splitting
-```
-
-### Scoring
-
-```
-All bundles under budget:    20 points ✅
-1-2 bundles over budget:     10 points ⚠️
-3+ bundles over budget:      0 points  ❌
-```
-
----
-
 ## Natural Language Commands
 
 ### Architecture
@@ -718,52 +390,27 @@ All bundles under budget:    20 points ✅
 
 Both run the same underlying workflows.
 
-### Confidence-Based Execution
+### Skill-Based Routing
 
-**High Confidence (95%+):**
+SpecSwarm uses keyword matching to route natural language to the right workflow:
+
+**Clear intent** — routes directly:
 ```
 User: "Build user authentication with JWT"
-
-SpecSwarm:
-  🎯 Detected: BUILD workflow (98% confidence)
-  Running: /specswarm:build "user authentication with JWT"
-  Press Ctrl+C within 3s to cancel...
-  3... 2... 1...
-  [Executes workflow]
+→ Routes to /specswarm:build "user authentication with JWT"
 ```
 
-**Medium Confidence (70-94%):**
-```
-User: "Add authentication"
-
-SpecSwarm:
-  🤔 I think you want to BUILD (75% confidence)
-  Is this correct?
-  1. Yes, run /specswarm:build
-  2. No, handle normally
-
-  Your choice: _
-```
-
-**Low Confidence (<70%):**
+**Ambiguous intent** — asks for clarification:
 ```
 User: "Work on the app"
-
-SpecSwarm:
-  ❓ What would you like to do?
-  1. Build new feature (/specswarm:build)
-  2. Fix a bug (/specswarm:fix)
-  3. Modify existing feature (/specswarm:modify)
-  4. Handle normally
-
-  Your choice: _
+→ Asks: What would you like to do? (build / fix / modify)
 ```
 
-### Safety Overrides
+### Safety
 
-**SHIP always confirms** (regardless of confidence):
+**SHIP always confirms** — destructive operations are never auto-executed:
 ```
-User: "Ship it"  [99% confidence detected]
+User: "Ship it"
 
 SpecSwarm:
   ⚠️ SHIP CONFIRMATION - Destructive Operation
@@ -787,67 +434,22 @@ See individual skills for complete keyword lists:
 
 ---
 
-## Multi-Language Support
+## Language Agnostic
 
-### Supported Languages (6)
+SpecSwarm's core workflow (specify, clarify, plan, tasks, implement, ship) works with **any language or framework** Claude can read. There is no language-specific tooling — Claude handles the code understanding and generation.
 
-1. **JavaScript/TypeScript**
-2. **Python**
-3. **PHP**
-4. **Go**
-5. **Ruby**
-6. **Rust**
+The quality analysis step includes test runner detection for common frameworks as a convenience for automated scoring. See [Multi-Framework Testing](#multi-framework-testing) above for supported test runners.
 
-### Auto-Detection
+---
 
-```typescript
-function detectLanguage(projectPath: string): Language[] {
-  const languages = [];
+## Planned Features
 
-  if (fileExists('package.json')) languages.push('javascript');
-  if (fileExists('requirements.txt') || fileExists('pyproject.toml')) languages.push('python');
-  if (fileExists('composer.json')) languages.push('php');
-  if (fileExists('go.mod')) languages.push('go');
-  if (fileExists('Gemfile')) languages.push('ruby');
-  if (fileExists('Cargo.toml')) languages.push('rust');
+The following features are designed but **not yet implemented** (shell scripts do not exist):
 
-  return languages;
-}
-```
-
-### Framework Detection
-
-**JavaScript/TypeScript:**
-- React Router v7
-- Remix
-- Next.js
-- Express
-- Fastify
-- Vite
-- Astro
-
-**Python:**
-- Django
-- Flask
-- FastAPI
-
-**PHP:**
-- Laravel
-- Symfony
-
-**Go:**
-- Gin
-- Echo
-- Chi
-
-**Ruby:**
-- Rails
-- Sinatra
-
-**Rust:**
-- Actix
-- Rocket
-- Axum
+- **Chain Bug Detection** — Compare test counts before/after fixes to prevent cascading failures
+- **SSR Pattern Validation** — Detect hardcoded URLs, browser-only APIs in server contexts
+- **Bundle Size Monitoring** — Analyze production bundles, enforce size budgets
+- **Language Auto-Detection** — Automatic project language detection during init
 
 ---
 
@@ -912,4 +514,4 @@ const agents = [
 
 ---
 
-**SpecSwarm v3.5.0** - Features deep-dive
+**SpecSwarm v4.0.1** - Features deep-dive

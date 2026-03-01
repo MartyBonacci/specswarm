@@ -38,8 +38,7 @@ Complete documentation for the SpecSwarm Claude Code plugin.
 **Advanced Features:**
 - Quality validation → [Features: Quality System](./FEATURES.md#quality-validation-system)
 - Tech stack management → [Features: Tech Stack](./FEATURES.md#tech-stack-management)
-- Bundle size monitoring → [Features: Bundle Size](./FEATURES.md#bundle-size-monitoring)
-- SSR validation → [Features: SSR Patterns](./FEATURES.md#ssr-pattern-validation)
+- Planned features → [Features: Planned](./FEATURES.md#planned-features)
 
 **Configuration:**
 - Quality standards → [Setup: Quality Standards](./SETUP.md#quality-standards)
@@ -105,13 +104,11 @@ Complete documentation for the SpecSwarm Claude Code plugin.
 
 **Contents:**
 - Quality validation system (0-100 scoring)
-- Tech stack management (95% drift prevention)
-- SSR pattern validation
+- Tech stack drift prevention
 - Multi-framework testing
-- Chain bug detection
-- Bundle size monitoring
 - Natural language architecture
-- Multi-language support
+- Language agnostic
+- Planned features (SSR validation, chain bug detection, bundle size monitoring)
 
 **Audience:** Advanced users, understanding internals
 
@@ -155,12 +152,6 @@ Complete documentation for the SpecSwarm Claude Code plugin.
 3. Create: `.specswarm/tech-stack.md`
 4. Define: Core technologies, approved libraries, prohibited patterns
 
-### "Bundle sizes are too large"
-1. Read: [Features: Bundle Size Monitoring](./FEATURES.md#bundle-size-monitoring)
-2. Read: [Setup: Performance Budgets](./SETUP.md#performance-budgets)
-3. Analyze: Run `/specswarm:analyze-quality`
-4. Fix: Implement code splitting, remove unused dependencies
-
 ---
 
 ## 🔍 Search by Topic
@@ -176,10 +167,8 @@ Complete documentation for the SpecSwarm Claude Code plugin.
 ### Features
 - **Quality validation**: [Features: Quality System](./FEATURES.md#quality-validation-system)
 - **Tech stack**: [Features: Tech Stack Management](./FEATURES.md#tech-stack-management)
-- **SSR validation**: [Features: SSR Patterns](./FEATURES.md#ssr-pattern-validation)
 - **Testing**: [Features: Multi-Framework Testing](./FEATURES.md#multi-framework-testing)
-- **Bug detection**: [Features: Chain Bug Detection](./FEATURES.md#chain-bug-detection)
-- **Performance**: [Features: Bundle Size Monitoring](./FEATURES.md#bundle-size-monitoring)
+- **Planned features**: [Features: Planned](./FEATURES.md#planned-features)
 - **Natural language**: [Features: Natural Language](./FEATURES.md#natural-language-commands)
 
 ### Setup & Configuration
@@ -233,6 +222,6 @@ See [README: Version History](../README.md#version-history) for release notes an
 
 ---
 
-**SpecSwarm v4.0.0** - Documentation index
+**SpecSwarm v4.0.1** - Documentation index
 
 *Navigate confidently through SpecSwarm's comprehensive documentation.*

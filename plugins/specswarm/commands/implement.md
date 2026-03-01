@@ -351,9 +351,9 @@ You **MUST** consider the user input before proceeding (if not empty).
    - Confirm the implementation follows the technical plan
    - Report final status with summary of completed work
 
-<!-- ========== SSR PATTERN VALIDATION ========== -->
-<!-- Added by Marty Bonacci & Claude Code (2025-10-15) -->
-
+<!-- ========== SSR PATTERN VALIDATION (PLANNED - NOT YET IMPLEMENTED) ========== -->
+<!-- ssr-validator.sh does not exist yet. Skip this section entirely. -->
+<!--
 9b. **SSR Architecture Validation** - Prevent Bug 913-type issues:
 
    **Purpose**: Detect hardcoded URLs and relative URLs in server-side rendering contexts
@@ -420,7 +420,7 @@ You **MUST** consider the user input before proceeding (if not empty).
       - Continue to next step
 
    **IMPORTANT**: This validation prevents production failures from Bug 913-type issues (relative URLs in SSR contexts).
-
+-->
 <!-- ========== END SSR PATTERN VALIDATION ========== -->
 
 <!-- ========== QUALITY VALIDATION (SpecSwarm Phase 1) ========== -->
@@ -551,10 +551,11 @@ You **MUST** consider the user input before proceeding (if not empty).
          - Display with "4. Browser Tests" header
          - If no browser framework: Display "No browser test framework detected - Skipping"
 
-      f2. **Analyze bundle sizes** (Phase 3 Enhancement):
+      f2. **Analyze bundle sizes** (Planned — Not Yet Implemented):
 
-         **YOU MUST NOW analyze bundle sizes using the Bash tool:**
+         > **NOTE**: bundle-size-monitor.sh does not exist yet. **Skip this step.** Award 0 points for bundle size. See README Roadmap.
 
+         <!--
          1. **Run bundle size monitor:**
             ```bash
             cd ${REPO_ROOT} && bash ~/.claude/plugins/marketplaces/specswarm-marketplace/plugins/speclabs/lib/bundle-size-monitor.sh
@@ -595,6 +596,7 @@ You **MUST** consider the user input before proceeding (if not empty).
          7. **Track bundle size in metrics:**
             - Add bundle_size_kb to metrics.json
             - Enables bundle size tracking over time
+         -->
 
       f3. **Enforce performance budgets** (Phase 3 Enhancement - Optional):
 
