@@ -2,7 +2,7 @@
 
 ## Overview
 
-SpecSwarm is a Claude Code plugin providing spec-driven development workflows: Build, Modify, Fix, Ship. It includes 21 commands, 10 natural language skills, and 2 agents for multi-agent orchestration.
+SpecSwarm is a Claude Code plugin providing spec-driven development workflows: Build, Modify, Fix, Ship. It includes 21 commands, 15 natural language skills, and 2 agents for multi-agent orchestration.
 
 ## Development
 
@@ -23,7 +23,7 @@ Both files must be bumped in sync:
 ### Testing After Changes
 
 1. Restart Claude Code (skill prompts are cached per session)
-2. Run `/skills` to verify all 10 skills appear
+2. Run `/skills` to verify all 15 skills appear
 3. Test a low-effort command (`/specswarm:status`) vs high-effort (`/specswarm:build`)
 
 ## Project Structure
@@ -31,7 +31,7 @@ Both files must be bumped in sync:
 ```
 plugins/specswarm/
 ├── commands/        # 21 slash commands (.md)
-├── skills/          # 10 natural language skills (SKILL.md)
+├── skills/          # 15 natural language skills (SKILL.md)
 ├── agents/          # 2 agents (orchestrator, task-router)
 ├── hooks/           # Setup and stop hooks (bash)
 ├── lib/             # Shared shell helpers

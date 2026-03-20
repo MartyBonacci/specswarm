@@ -1,4 +1,4 @@
-# SpecSwarm v4.0.1
+# SpecSwarm v5.0.0
 
 **Complete Software Development Toolkit**
 
@@ -430,6 +430,15 @@ These features are planned but **not yet implemented**:
 
 ## Version History
 
+### v5.0.0 (2026-03-20) - Effort Frontmatter & 5 New Skills ⭐
+- **New**: 5 natural language skills (status, rollback, release, init, metrics) — 15 total
+- **New**: Effort frontmatter on all 21 commands for smarter resource allocation
+- **New**: Conditional rules for active builds and feature branches
+- **New**: Dynamic context injection in build/fix/ship/status skills
+- **Changed**: Status and metrics commands use lighter model for faster execution
+- **Changed**: Orchestrator agent has guardrails (maxTurns, disallowedTools)
+- **Impact**: Better performance, lower cost, same workflow
+
 ### v4.0.1 (2026-02-27) - Documentation & State Management Fix 🔧
 - **Fixed**: Memory/state management flaws in build loop
 - **Fixed**: README documentation discrepancies — honest feature claims, language-agnostic framing
@@ -539,7 +548,7 @@ SpecSwarm builds upon **SpecKit**, which adapted **GitHub's spec-kit** for Claud
 2. **Adapted**: SpecKit plugin by Marty Bonacci (2025)
    - Claude Code integration
 
-3. **Enhanced**: SpecSwarm v4.0.1 by Marty Bonacci & Claude Code (2025-2026)
+3. **Enhanced**: SpecSwarm v5.0.0 by Marty Bonacci & Claude Code (2025-2026)
    - Tech stack drift prevention
    - Lifecycle workflows (build, fix, modify, ship, upgrade)
    - Quality validation (0-100 scoring)
@@ -561,6 +570,6 @@ MIT License - See LICENSE file for details
 
 ---
 
-**SpecSwarm v4.0.1** - Your complete software development toolkit. 🚀
+**SpecSwarm v5.0.0** - Your complete software development toolkit. 🚀
 
 Build it. Fix it. Modify it. Ship it. All in one place.

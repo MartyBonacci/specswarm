@@ -553,4 +553,4 @@ The following commands were removed and absorbed as flags:
 
 ---
 
-**SpecSwarm v4.0.1** - Complete software development toolkit
+**SpecSwarm v5.0.0** - Complete software development toolkit

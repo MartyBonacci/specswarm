@@ -5,6 +5,21 @@ All notable changes to SpecSwarm and SpecSwarm plugins will be documented in thi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.0.0] - 2026-03-20 - Effort Frontmatter & 5 New Skills ⭐
+
+### Added
+- 5 natural language skills (status, rollback, release, init, metrics) — 15 total
+- Effort frontmatter on all 21 commands for smarter resource allocation
+- Conditional rules for active builds and feature branches
+- Dynamic context injection in build/fix/ship/status skills
+
+### Changed
+- Status and metrics commands use lighter model for faster execution
+- Orchestrator agent has guardrails (maxTurns, disallowedTools)
+
+### Impact
+- Better performance, lower cost, same workflow
+
 ## [4.0.0] - 2026-02-25 - Command Compaction ⭐
 
 ### Breaking Changes
