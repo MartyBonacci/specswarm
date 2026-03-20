@@ -1,5 +1,6 @@
 ---
 description: Safely rollback a failed or unwanted feature with automatic artifact cleanup
+effort: medium
 args:
   - name: --dry-run
     description: Show what would be rolled back without executing

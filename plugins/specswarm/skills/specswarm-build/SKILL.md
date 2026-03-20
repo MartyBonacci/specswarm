@@ -1,6 +1,7 @@
 ---
 name: specswarm-build
-description: Systematic spec-driven workflow (specification→clarification→planning→tasks→implementation→validation) for feature development. Auto-executes when user clearly wants to build, create, add, implement, develop, make, construct, or set up software features, components, or functionality.
+effort: low
+description: Spec-driven feature development workflow. Triggers on build/create/add/implement/develop intent.
 allowed-tools: AskUserQuestion, SlashCommand
 hooks:
   - event: PreToolUse
@@ -19,6 +20,11 @@ hooks:
 # SpecSwarm Build Workflow
 
 Provides natural language access to `/specswarm:build` command.
+
+## Dynamic Context
+
+Current build state:
+`!cat .specswarm/build-loop.state 2>/dev/null || echo "No active build"`
 
 ## When to Invoke
 

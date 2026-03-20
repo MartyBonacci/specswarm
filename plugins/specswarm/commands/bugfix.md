@@ -1,6 +1,7 @@
 ---
 description: Regression-test-first bug fixing workflow with smart SpecSwarm/SpecTest integration
 hidden: true
+effort: high
 ---
 
 <!--

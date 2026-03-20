@@ -1,6 +1,7 @@
 ---
 name: specswarm-modify
-description: Impact-analysis-first modification workflow with backward compatibility, breaking change detection, refactoring, and deprecation. Auto-executes when user clearly wants to modify, change, update, adjust, enhance, extend, alter, refactor, or deprecate existing feature behavior (not fixing bugs, not building new features). For features that work but need to work differently, or code that needs quality improvement.
+effort: low
+description: Modify features with impact analysis and compatibility checks. Triggers on modify/change/update/refactor intent.
 allowed-tools: AskUserQuestion, SlashCommand
 hooks:
   - event: PreToolUse

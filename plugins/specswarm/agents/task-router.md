@@ -1,3 +1,9 @@
+---
+name: task-router
+description: Routes tasks to specialist agents based on content keyword analysis. Used by the orchestrator for multi-agent builds.
+effort: low
+---
+
 # Task Router Configuration
 
 ## Agent Type Mappings

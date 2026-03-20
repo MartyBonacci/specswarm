@@ -1,5 +1,7 @@
 ---
 description: Check status of background SpecSwarm sessions and workflows
+effort: low
+model: claude-haiku-4-5
 args:
   - name: session_id
     description: Session ID to check (optional - lists all if omitted)

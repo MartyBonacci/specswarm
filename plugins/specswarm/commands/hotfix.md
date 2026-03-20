@@ -1,6 +1,7 @@
 ---
 description: Expedited emergency response workflow for critical production issues
 hidden: true
+effort: high
 ---
 
 <!--

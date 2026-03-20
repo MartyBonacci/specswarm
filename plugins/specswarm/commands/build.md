@@ -1,5 +1,6 @@
 ---
 description: Build complete feature from specification to implementation - simplified workflow
+effort: high
 args:
   - name: feature_description
     description: Natural language description of the feature to build

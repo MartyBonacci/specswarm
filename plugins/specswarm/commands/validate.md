@@ -1,6 +1,7 @@
 ---
 description: Run AI-powered interaction flow validation for any software type (webapp, Android app, REST API, desktop GUI)
 hidden: true
+effort: medium
 args:
   - name: project_path
     description: Path to project to validate (defaults to current directory)

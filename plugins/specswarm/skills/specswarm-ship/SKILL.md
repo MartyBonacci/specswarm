@@ -1,6 +1,7 @@
 ---
 name: specswarm-ship
-description: Systematic quality validation, test verification, and safe merging workflow for deployment/release operations. ALWAYS asks for confirmation when user wants to ship, deploy, merge, release, or complete features to production, merge to main branch, or finalize features. This is a DESTRUCTIVE operation (merges and deletes branches).
+effort: low
+description: Quality-gated merge to parent branch (DESTRUCTIVE). ALWAYS confirms on ship/deploy/merge/release intent.
 allowed-tools: AskUserQuestion, SlashCommand
 hooks:
   - event: PreToolUse
@@ -16,6 +17,11 @@ hooks:
 # SpecSwarm Ship Workflow
 
 Provides natural language access to `/specswarm:ship` command.
+
+## Dynamic Context
+
+Current branch:
+`!git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "Unknown branch"`
 
 ## When to Invoke
 

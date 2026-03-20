@@ -1,5 +1,6 @@
 ---
 description: Feature modification workflow with impact analysis and backward compatibility assessment
+effort: high
 args:
   - name: modification_description
     description: Natural language description of the modification

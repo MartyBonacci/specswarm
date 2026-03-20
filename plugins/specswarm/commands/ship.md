@@ -1,5 +1,6 @@
 ---
 description: Quality-gated merge to parent branch - validates code quality before allowing merge
+effort: high
 args:
   - name: --force-quality
     description: Override quality threshold (e.g., --force-quality 70)

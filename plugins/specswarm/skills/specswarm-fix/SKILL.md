@@ -1,6 +1,7 @@
 ---
 name: specswarm-fix
-description: Systematic bugfix workflow with regression testing, auto-retry logic, and comprehensive validation. Auto-executes when user clearly wants to fix, debug, repair, resolve, broken, not working, doesn't work, not showing up, not appearing, not displaying, not rendering, doesn't show, won't show, isn't showing, doesn't appear, doesn't display, failing, errors, bugs, issues, not loading, doesn't load, crashed, crashes, problem with, trouble with.
+effort: low
+description: Fix bugs with regression testing and auto-retry. Triggers on fix/debug/broken/error/not-working intent.
 allowed-tools: AskUserQuestion, SlashCommand
 hooks:
   - event: PreToolUse
@@ -19,6 +20,11 @@ hooks:
 # SpecSwarm Fix Workflow
 
 Provides natural language access to `/specswarm:fix` command.
+
+## Dynamic Context
+
+Recent changes (potential bug source):
+`!git log --oneline -5 2>/dev/null || echo "Not a git repository"`
 
 ## When to Invoke
 

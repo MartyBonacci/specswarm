@@ -1,6 +1,7 @@
 ---
 name: specswarm-upgrade
-description: Systematic compatibility analysis, migration guidance, and breaking change detection for dependency/framework upgrades. Auto-executes when user clearly wants to upgrade, update, migrate, or modernize software dependencies, frameworks, packages, or technology stacks.
+effort: low
+description: Upgrade deps/frameworks with breaking change analysis. Triggers on upgrade/update/migrate/modernize intent.
 allowed-tools: AskUserQuestion, SlashCommand
 hooks:
   - event: PreToolUse
