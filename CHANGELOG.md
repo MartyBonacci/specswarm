@@ -5,6 +5,25 @@ All notable changes to SpecSwarm and SpecSwarm plugins will be documented in thi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.1.0] - 2026-03-22 - Audit Fixes & /ss: Shortcuts
+
+### Added
+- `/ss:` shortcut aliases for all 10 visible commands (e.g., `/ss:build`, `/ss:fix`)
+- `--quick` flag on `/specswarm:build` for small tasks (skip spec/plan, straight to implementation)
+- `quality-check.sh` PostToolUse hook for build-loop quality enforcement
+- `audit-logger.sh` shared library for structured audit logging
+- Deprecation notice on portable installation (`portable/DEPRECATED.md`)
+
+### Fixed
+- Hardcoded paths in build/validate/implement — now work for all users, not just original author
+- 7 phantom command references left over from v4.0.0 command compaction
+- 10 missing `if-exists` guards on lib file sources (prevented clean installs)
+- Stale "speclabs" references replaced with "specswarm" throughout
+
+### Changed
+- `CLAUDE.md` updated to reflect 31 commands (21 primary + 10 hidden `/ss:` shortcuts)
+- `portable/LIMITATIONS.md` updated with current portable vs plugin differences
+
 ## [5.0.0] - 2026-03-20 - Effort Frontmatter & 5 New Skills ⭐
 
 ### Added
