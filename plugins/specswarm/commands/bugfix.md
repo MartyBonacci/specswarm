@@ -49,8 +49,8 @@ PLUGIN_DIR="$(dirname "$SCRIPT_DIR")"
 # Check for SpecSwarm (tech stack enforcement)
 SPECSWARM_INSTALLED=$(claude plugin list | grep -q "specswarm" && echo "true" || echo "false")
 
-# Check for SpecLabs (experimental features)
-SPECLABS_INSTALLED=$(claude plugin list | grep -q "speclabs" && echo "true" || echo "false")
+# Check for additional SpecSwarm features
+SPECSWARM_EXTRAS_AVAILABLE="false"
 
 # Check for web project and Chrome DevTools MCP (web debugging enhancement)
 if [ -f "$PLUGIN_DIR/lib/web-project-detector.sh" ]; then
@@ -74,12 +74,7 @@ else
 fi
 
 # Configure workflow based on detection
-if [ "$SPECLABS_INSTALLED" = "true" ]; then
-  EXECUTION_MODE="parallel"
-  ENABLE_HOOKS=true
-  ENABLE_METRICS=true
-  echo "🎯 Smart Integration: SpecLabs detected (experimental features enabled)"
-elif [ "$SPECSWARM_INSTALLED" = "true" ]; then
+if [ "$SPECSWARM_INSTALLED" = "true" ]; then
   EXECUTION_MODE="sequential"
   ENABLE_TECH_VALIDATION=true
   echo "🎯 Smart Integration: SpecSwarm detected (tech stack enforcement enabled)"
@@ -994,7 +989,7 @@ fi
 <!--
 1. **Run chain bug detector:**
    ```bash
-   bash ~/.claude/plugins/marketplaces/specswarm-marketplace/plugins/speclabs/lib/chain-bug-detector.sh ${REPO_ROOT}
+   bash "${PLUGIN_DIR}/lib/chain-bug-detector.sh" ${REPO_ROOT}
    ```
 
 2. **Parse detector output:**
@@ -1020,7 +1015,7 @@ fi
       ```
       What would you like to do?
       1. Review fix and improve (analyze with /specswarm:analyze-quality)
-      2. Use orchestrator for complex fix (/speclabs:coordinate)
+      2. Use orchestrator for complex fix (/specswarm:fix --coordinate)
       3. Revert and try different approach (git revert HEAD)
       4. Continue anyway (NOT RECOMMENDED)
 
@@ -1064,7 +1059,7 @@ ${PARALLEL_SPEEDUP_RESULT}
 📈 Next Steps:
 1. Review artifacts in: ${FEATURE_DIR}
 2. Commit changes: git add . && git commit -m "fix: bug ${FEATURE_NUM}"
-3. View metrics: /specswarm:workflow-metrics ${FEATURE_NUM}
+3. View metrics: /specswarm:metrics ${FEATURE_NUM}
 4. ${SUGGEST_NEXT_COMMAND}
 ```
 

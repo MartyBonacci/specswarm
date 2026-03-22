@@ -27,7 +27,7 @@ Run comprehensive validation with intelligent flow generation, interactive error
 ## Initialize Validation
 
 ```bash
-echo "🔍 SpecLabs Feature Validation v2.7.0"
+echo "🔍 SpecSwarm Feature Validation v2.7.0"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 
@@ -66,8 +66,8 @@ echo "📁 Project: $PROJECT_PATH"
 echo ""
 
 # Detect web project and Chrome DevTools MCP availability
-PLUGIN_DIR="/home/marty/code-projects/specswarm/plugins/speclabs"
-SPECSWARM_PLUGIN_DIR="/home/marty/code-projects/specswarm/plugins/specswarm"
+PLUGIN_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+SPECSWARM_PLUGIN_DIR="$PLUGIN_DIR"
 
 if [ -f "$SPECSWARM_PLUGIN_DIR/lib/web-project-detector.sh" ]; then
   source "$SPECSWARM_PLUGIN_DIR/lib/web-project-detector.sh"
@@ -92,7 +92,12 @@ if [ -f "$SPECSWARM_PLUGIN_DIR/lib/web-project-detector.sh" ]; then
 fi
 
 # Source validation orchestrator
-source "${PLUGIN_DIR}/lib/validate-feature-orchestrator.sh"
+if [ -f "${PLUGIN_DIR}/lib/validate-feature-orchestrator.sh" ]; then
+  source "${PLUGIN_DIR}/lib/validate-feature-orchestrator.sh"
+else
+  echo "⚠️  Validation orchestrator not available — skipping"
+  exit 1
+fi
 ```
 
 ## Execute Validation
@@ -140,7 +145,11 @@ if [ -n "$SESSION_ID" ]; then
   echo "💾 Updating session: $SESSION_ID"
 
   # Source feature orchestrator
-  source "${PLUGIN_DIR}/lib/feature-orchestrator.sh"
+  if [ -f "${PLUGIN_DIR}/lib/feature-orchestrator.sh" ]; then
+    source "${PLUGIN_DIR}/lib/feature-orchestrator.sh"
+  else
+    echo "⚠️  Feature orchestrator not available — session not updated"
+  fi
   feature_init
 
   # Store validation results in session
@@ -242,36 +251,36 @@ Detection uses file-based analysis with confidence scoring. Manual override avai
 
 ```bash
 # Validate current directory (auto-detect type)
-/speclabs:validate-feature
+/specswarm:validate
 
 # Validate specific project
-/speclabs:validate-feature /path/to/my-app
+/specswarm:validate /path/to/my-app
 
 # Override detected type
-/speclabs:validate-feature /path/to/project --type webapp
+/specswarm:validate /path/to/project --type webapp
 
 # Use custom flows
-/speclabs:validate-feature --flows ./custom-flows.json
+/specswarm:validate --flows ./custom-flows.json
 
 # Override base URL
-/speclabs:validate-feature --url http://localhost:3000
+/specswarm:validate --url http://localhost:3000
 ```
 
-### Integrated with Orchestration
+### Integrated with Build Workflow
 
 ```bash
-# Called automatically by orchestrate-feature when --validate is used
-/speclabs:orchestrate-feature "Add shopping cart" /path/to/project --validate
+# Called automatically by build when --validate is used
+/specswarm:build "Add shopping cart" --validate
 
 # Manual validation with session tracking
-/speclabs:validate-feature /path/to/project --session-id feature_20251103_143022
+/specswarm:validate /path/to/project --session-id feature_20251103_143022
 ```
 
 ### CI/CD Integration
 
 ```bash
 # Exit code 0 = passed, 1 = failed, useful for CI/CD
-/speclabs:validate-feature && echo "Deploy approved" || echo "Fix errors before deploy"
+/specswarm:validate && echo "Deploy approved" || echo "Fix errors before deploy"
 ```
 
 ---
@@ -292,10 +301,10 @@ Detection uses file-based analysis with confidence scoring. Manual override avai
 ```
 
 ### Artifacts Location
-- **Flow Results**: `<project>/.speclabs/validation/flow-results.json`
-- **Screenshots**: `<project>/.speclabs/validation/screenshots/*.png`
-- **Dev Server Log**: `<project>/.speclabs/validation/dev-server.log`
-- **Test Output**: `<project>/.speclabs/validation/test-output-*.log`
+- **Flow Results**: `<project>/.specswarm/validation/flow-results.json`
+- **Screenshots**: `<project>/.specswarm/validation/screenshots/*.png`
+- **Dev Server Log**: `<project>/.specswarm/validation/dev-server.log`
+- **Test Output**: `<project>/.specswarm/validation/test-output-*.log`
 
 ---
 

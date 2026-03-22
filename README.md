@@ -1,4 +1,4 @@
-# SpecSwarm v5.0.0
+# SpecSwarm v5.1.0
 
 **Complete Software Development Toolkit**
 
@@ -32,9 +32,11 @@ SpecSwarm is a comprehensive Claude Code plugin for the complete software develo
 
 Restart Claude Code to activate the plugin.
 
-### Portable Installation (Claude Code Web)
+### Portable Installation (Claude Code Web) — DEPRECATED
 
-For Claude Code Web or per-project installation **without the marketplace plugin**:
+> **Note:** The portable installation is deprecated and no longer maintained. Use the marketplace plugin above.
+
+For legacy per-project installation:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/MartyBonacci/specswarm/main/portable/install.sh | bash
@@ -44,9 +46,7 @@ curl -fsSL https://raw.githubusercontent.com/MartyBonacci/specswarm/main/portabl
 - **Marketplace plugin:** `/specswarm:build`, `/specswarm:fix`, `/specswarm:ship`
 - **Portable version:** `/sw:build`, `/sw:fix`, `/sw:ship` (shorter prefix)
 
-You use **one OR the other**, not both simultaneously.
-
-**See details:** [portable/README.md](./portable/README.md)
+**See details:** [portable/LIMITATIONS.md](./portable/LIMITATIONS.md)
 
 ---
 
@@ -115,6 +115,12 @@ Creates `.specswarm/` directory with:
 4. Breaks down into tasks
 5. Implements all tasks
 6. Validates quality (0-100 score)
+
+**Quick mode** for small tasks:
+```bash
+/specswarm:build "add loading spinner" --quick
+```
+Skips clarification, auto-generates micro-spec, and executes immediately.
 
 **Use when:** Building any new feature
 
@@ -286,6 +292,25 @@ Many workflows that were previously separate commands are now flags:
 
 **See complete documentation:** [COMMANDS.md](./COMMANDS.md)
 
+### `/ss:` Shortcuts
+
+For faster typing, every visible command has a short alias:
+
+| Shortcut | Equivalent |
+|----------|-----------|
+| `/ss:build` | `/specswarm:build` |
+| `/ss:fix` | `/specswarm:fix` |
+| `/ss:modify` | `/specswarm:modify` |
+| `/ss:ship` | `/specswarm:ship` |
+| `/ss:init` | `/specswarm:init` |
+| `/ss:release` | `/specswarm:release` |
+| `/ss:upgrade` | `/specswarm:upgrade` |
+| `/ss:rollback` | `/specswarm:rollback` |
+| `/ss:status` | `/specswarm:status` |
+| `/ss:metrics` | `/specswarm:metrics` |
+
+All flags work identically: `/ss:build "feature" --quick`
+
 ---
 
 ## Key Features
@@ -430,8 +455,19 @@ These features are planned but **not yet implemented**:
 
 ## Version History
 
+### v5.1.0 (2026-03-22) - Audit Fix & Documentation Update 🔧
+- **Fixed**: Hardcoded paths in build.md, validate.md, implement.md that broke for all non-author users
+- **Fixed**: 7 phantom command references pointing to commands removed in v4.0.0
+- **Fixed**: 10 missing lib file sources now wrapped in `if [ -f ]` guards for graceful degradation
+- **Fixed**: All stale "speclabs" references replaced with "specswarm"
+- **Fixed**: Wrong skill/command counts in docs
+- **Added**: Deprecation notice on portable installation
+- **Added**: `/ss:` shortcut aliases for all 10 visible commands
+- **Added**: `--quick` flag on `/specswarm:build` for small tasks
+- **Impact**: Plugin now works correctly for all users, not just the author
+
 ### v5.0.0 (2026-03-20) - Effort Frontmatter & 5 New Skills ⭐
-- **New**: 5 natural language skills (status, rollback, release, init, metrics) — 15 total
+- **New**: 5 natural language skills (status, rollback, release, init, metrics) — 10 total
 - **New**: Effort frontmatter on all 21 commands for smarter resource allocation
 - **New**: Conditional rules for active builds and feature branches
 - **New**: Dynamic context injection in build/fix/ship/status skills
@@ -570,6 +606,6 @@ MIT License - See LICENSE file for details
 
 ---
 
-**SpecSwarm v5.0.0** - Your complete software development toolkit. 🚀
+**SpecSwarm v5.1.0** - Your complete software development toolkit. 🚀
 
 Build it. Fix it. Modify it. Ship it. All in one place.

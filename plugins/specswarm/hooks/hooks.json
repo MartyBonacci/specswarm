@@ -1,5 +1,5 @@
 {
-  "description": "SpecSwarm hooks for continuous build execution and auto-initialization",
+  "description": "SpecSwarm hooks for continuous build execution, auto-initialization, and quality enforcement",
   "hooks": {
     "Setup": [
       {
@@ -7,6 +7,17 @@
           {
             "type": "command",
             "command": "${CLAUDE_PLUGIN_ROOT}/hooks/setup-hook.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|MultiEdit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/quality-check.sh"
           }
         ]
       }

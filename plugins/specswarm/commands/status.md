@@ -227,4 +227,4 @@ echo "  /specswarm:status --json                 JSON output"
 - Sessions are stored in `.specswarm/sessions/`
 - Active build state is in `.specswarm/build-loop.state`
 - Sessions are retained for troubleshooting and audit purposes
-- Use `/specswarm:checkpoint` to manage checkpoints for sessions
+- Session checkpoints are managed automatically during builds

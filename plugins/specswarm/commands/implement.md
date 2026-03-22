@@ -363,7 +363,7 @@ You **MUST** consider the user input before proceeding (if not empty).
 
    1. **Execute SSR validator:**
       ```bash
-      cd ${REPO_ROOT} && bash ~/.claude/plugins/marketplaces/specswarm-marketplace/plugins/specswarm/lib/ssr-validator.sh
+      if [ -f "${PLUGIN_DIR}/lib/ssr-validator.sh" ]; then cd ${REPO_ROOT} && bash "${PLUGIN_DIR}/lib/ssr-validator.sh"; else echo "⚠️  SSR validator not available — skipping"; fi
       ```
 
    2. **Parse validation results:**
@@ -462,7 +462,7 @@ You **MUST** consider the user input before proceeding (if not empty).
 
       b. **Detect test frameworks** using the Bash tool:
          ```bash
-         cd ${REPO_ROOT} && bash ~/.claude/plugins/marketplaces/specswarm-marketplace/plugins/specswarm/lib/test-framework-detector.sh
+         if [ -f "${PLUGIN_DIR}/lib/test-framework-detector.sh" ]; then cd ${REPO_ROOT} && bash "${PLUGIN_DIR}/lib/test-framework-detector.sh"; else echo "⚠️  Test framework detector not available — skipping"; fi
          ```
          Parse the JSON output to extract:
          - List of all detected frameworks
@@ -476,7 +476,7 @@ You **MUST** consider the user input before proceeding (if not empty).
 
          1. **Source the test detector library:**
             ```bash
-            source ~/.claude/plugins/marketplaces/specswarm-marketplace/plugins/specswarm/lib/test-framework-detector.sh
+            if [ -f "${PLUGIN_DIR}/lib/test-framework-detector.sh" ]; then source "${PLUGIN_DIR}/lib/test-framework-detector.sh"; else echo "⚠️  Test framework detector not available — skipping"; fi
             ```
 
          2. **Run tests for primary framework:**
@@ -505,7 +505,7 @@ You **MUST** consider the user input before proceeding (if not empty).
 
          1. **Check for coverage tool:**
             ```bash
-            source ~/.claude/plugins/marketplaces/specswarm-marketplace/plugins/specswarm/lib/test-framework-detector.sh
+            if [ -f "${PLUGIN_DIR}/lib/test-framework-detector.sh" ]; then source "${PLUGIN_DIR}/lib/test-framework-detector.sh"; else echo "⚠️  Test framework detector not available — skipping"; fi
             detect_coverage_tool "{PRIMARY_FRAMEWORK}" ${REPO_ROOT}
             ```
 
@@ -542,7 +542,7 @@ You **MUST** consider the user input before proceeding (if not empty).
 
       e. **Detect browser test framework**:
          ```bash
-         cd ${REPO_ROOT} && source ~/.claude/plugins/marketplaces/specswarm-marketplace/plugins/specswarm/lib/quality-gates.sh && detect_browser_test_framework
+         if [ -f "${PLUGIN_DIR}/lib/quality-gates.sh" ]; then cd ${REPO_ROOT} && source "${PLUGIN_DIR}/lib/quality-gates.sh" && detect_browser_test_framework; else echo "⚠️  Quality gates not available — skipping browser test detection"; fi
          ```
 
       f. **Run browser tests** (if Playwright/Cypress detected):
@@ -559,7 +559,7 @@ You **MUST** consider the user input before proceeding (if not empty).
          <!--
          1. **Run bundle size monitor:**
             ```bash
-            cd ${REPO_ROOT} && bash ~/.claude/plugins/marketplaces/specswarm-marketplace/plugins/speclabs/lib/bundle-size-monitor.sh
+            if [ -f "${PLUGIN_DIR}/lib/bundle-size-monitor.sh" ]; then cd ${REPO_ROOT} && bash "${PLUGIN_DIR}/lib/bundle-size-monitor.sh"; else echo "⚠️  Bundle size monitor not available"; fi
             ```
 
          2. **Parse bundle analysis results:**
@@ -612,7 +612,7 @@ You **MUST** consider the user input before proceeding (if not empty).
 
          2. **If enforce_budgets is true, run enforcement:**
             ```bash
-            cd ${REPO_ROOT} && bash ~/.claude/plugins/marketplaces/specswarm-marketplace/plugins/speclabs/lib/performance-budget-enforcer.sh
+            if [ -f "${PLUGIN_DIR}/lib/performance-budget-enforcer.sh" ]; then cd ${REPO_ROOT} && bash "${PLUGIN_DIR}/lib/performance-budget-enforcer.sh"; else echo "⚠️  Performance budget enforcer not available"; fi
             ```
 
          3. **Parse enforcement results:**

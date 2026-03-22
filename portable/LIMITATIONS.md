@@ -27,7 +27,7 @@ This is not just a shorthand - they are completely different namespaces. If you 
 
 | Feature | Plugin | Portable | Notes |
 |---------|--------|----------|-------|
-| **All 32+ Commands** | Yes | Yes | Full feature parity |
+| **All 21 Commands** | Yes | Yes | Full feature parity |
 | **SlashCommand Chaining** | Yes | Yes | Commands can invoke other commands |
 | **YAML Frontmatter Args** | Yes | Yes | Arguments work identically |
 | **`$ARGUMENTS` Placeholder** | Yes | Yes | Same argument passing |
@@ -79,7 +79,7 @@ This detection doesn't work. Orchestration features that depend on other plugins
 ## Features That Work Identically
 
 ### Command Execution
-All 32 original commands work exactly the same. The workflow logic, task generation, quality analysis, and all core functionality is preserved.
+All 21 commands work exactly the same. The workflow logic, task generation, quality analysis, and all core functionality is preserved.
 
 ### Feature Artifacts
 The `.specswarm/` directory structure is identical:

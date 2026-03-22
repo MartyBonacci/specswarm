@@ -29,6 +29,9 @@ args:
   - name: --checklist
     description: Generate requirements validation checklist after specification
     required: false
+  - name: --quick
+    description: Quick build - skip constitution review, auto-generate micro-spec, skip clarification, execute immediately
+    required: false
 ---
 
 ## User Input
@@ -68,6 +71,7 @@ NOTIFY_ON_COMPLETE=false
 ORCHESTRATE_FLAG=""  # "", "force", or "disable"
 RUN_ANALYZE=false
 RUN_CHECKLIST=false
+QUICK_MODE=false
 
 # Extract feature description (first non-flag argument)
 for arg in $ARGUMENTS; do
@@ -90,6 +94,8 @@ for arg in $ARGUMENTS; do
     RUN_ANALYZE=true
   elif [ "$arg" = "--checklist" ]; then
     RUN_CHECKLIST=true
+  elif [ "$arg" = "--quick" ]; then
+    QUICK_MODE=true
   fi
 done
 
@@ -104,6 +110,7 @@ if [ -z "$FEATURE_DESC" ]; then
   echo "  --quality-gate N  Set minimum quality score (default 80)"
   echo "  --orchestrate     Force multi-agent parallel execution"
   echo "  --no-orchestrate  Force sequential execution"
+  echo "  --quick           Quick build: skip clarification, auto micro-spec, execute immediately"
   echo "  --analyze         Run cross-artifact consistency analysis"
   echo "  --checklist       Generate requirements validation checklist"
   echo "  --background      Run in background mode"
@@ -203,12 +210,27 @@ cat > .specswarm/build-loop.state << EOF
   "orchestrate_flag": "$ORCHESTRATE_FLAG",
   "run_analyze": $RUN_ANALYZE,
   "run_checklist": $RUN_CHECKLIST,
+  "quick_mode": $QUICK_MODE,
   "use_orchestration": false
 }
 EOF
 
 # Also save session for status tracking
 cp .specswarm/build-loop.state ".specswarm/sessions/${SESSION_ID}.json"
+
+# Initialize audit log
+PLUGIN_DIR="$(dirname "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")")"
+if [ -f "${PLUGIN_DIR}/lib/audit-logger.sh" ]; then
+  source "${PLUGIN_DIR}/lib/audit-logger.sh"
+  BUILD_FLAGS=""
+  [ "$RUN_VALIDATE" = true ] && BUILD_FLAGS="${BUILD_FLAGS}validate,"
+  [ "$QUICK_MODE" = true ] && BUILD_FLAGS="${BUILD_FLAGS}quick,"
+  [ "$ORCHESTRATE_FLAG" = "force" ] && BUILD_FLAGS="${BUILD_FLAGS}orchestrate,"
+  [ "$RUN_ANALYZE" = true ] && BUILD_FLAGS="${BUILD_FLAGS}analyze,"
+  [ "$RUN_CHECKLIST" = true ] && BUILD_FLAGS="${BUILD_FLAGS}checklist,"
+  BUILD_FLAGS="${BUILD_FLAGS%,}"
+  audit_build_start "$FEATURE_NUM" "$FEATURE_DESC" "$BUILD_FLAGS"
+fi
 
 # If background mode, return session info and exit
 if [ "$BACKGROUND_MODE" = true ]; then
@@ -254,11 +276,20 @@ echo "════════════════════════�
 echo ""
 echo "Feature: $FEATURE_DESC"
 echo ""
+if [ "$QUICK_MODE" = true ]; then
+echo "⚡ QUICK MODE - Streamlined execution"
+echo ""
+echo "This workflow will:"
+echo "  1. Generate micro-spec (no constitution review)"
+echo "  2. Generate implementation plan (skip clarification)"
+echo "  3. Generate task breakdown"
+else
 echo "This workflow will:"
 echo "  1. Create detailed specification"
 echo "  2. Ask clarification questions (interactive)"
 echo "  3. Generate implementation plan"
 echo "  4. Generate task breakdown"
+fi
 if [ "$RUN_CHECKLIST" = true ]; then
 echo "  5. Generate requirements validation checklist"
 echo "  6. Implement all tasks"
@@ -280,29 +311,47 @@ echo "  ✦. Run browser validation (Playwright)"
 fi
 echo "  ✦. Analyze code quality"
 echo ""
+if [ "$QUICK_MODE" = true ]; then
+echo "⚡ No interactive prompts - fully autonomous execution."
+else
 echo "You'll only be prompted during Step 2 (clarification)."
 echo "All other steps run automatically."
+fi
 echo ""
-read -p "Press Enter to start, or Ctrl+C to cancel..."
-echo ""
+if [ "$QUICK_MODE" != true ]; then
+  read -p "Press Enter to start, or Ctrl+C to cancel..."
+  echo ""
+fi
 ```
 
 ---
 
 ### Step 2: Phase 1 - Specification
 
-**YOU MUST NOW run the specify command using the SlashCommand tool:**
-
 ```bash
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "📋 Phase 1: Creating Specification"
+if [ "$QUICK_MODE" = true ]; then
+  echo "⚡ Phase 1: Generating Micro-Spec (Quick Mode)"
+else
+  echo "📋 Phase 1: Creating Specification"
+fi
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 ```
 
-```
-Use the SlashCommand tool to execute: /specswarm:specify "$FEATURE_DESC"
-```
+**IF QUICK_MODE = true:**
+
+Generate a lightweight micro-spec directly (no constitution review, no full specify workflow). Create `spec.md` in the feature directory with:
+- **Summary**: One paragraph describing the feature based on `$FEATURE_DESC`
+- **Acceptance Criteria**: 3-5 bullet points derived from the description
+- **Scope**: What's included and explicitly excluded
+- **Technical Notes**: Any obvious technical considerations
+
+Write this to `{FEATURE_DIR}/spec.md`. Skip the full `/specswarm:specify` workflow.
+
+**IF QUICK_MODE = false:**
+
+Use the SlashCommand tool to execute: `/specswarm:specify "$FEATURE_DESC"`
 
 **DO NOT PAUSE. DO NOT REPORT STATUS. Immediately proceed.**
 
@@ -330,7 +379,7 @@ fi
 **IF RUN_CHECKLIST = true, use the SlashCommand tool:**
 
 ```
-Use the SlashCommand tool to execute: /specswarm:checklist
+Use the SlashCommand tool to execute: /specswarm:analyze-quality
 ```
 
 ```bash
@@ -346,6 +395,17 @@ fi
 ---
 
 ### Step 3: Phase 2 - Clarification (INTERACTIVE)
+
+**IF QUICK_MODE = true: SKIP this step entirely. Proceed directly to Step 4.**
+
+```bash
+if [ "$QUICK_MODE" = true ]; then
+  echo "⚡ Skipping clarification (quick mode)"
+  echo ""
+fi
+```
+
+**IF QUICK_MODE = false:**
 
 **YOU MUST NOW run the clarify command using the SlashCommand tool:**
 
@@ -467,7 +527,7 @@ fi
 
 ```bash
 # Source orchestrator utilities
-SPECSWARM_DIR="/home/marty/code-projects/specswarm/plugins/specswarm"
+SPECSWARM_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 if [ -f "${SPECSWARM_DIR}/lib/orchestrator-utils.sh" ]; then
   source "${SPECSWARM_DIR}/lib/orchestrator-utils.sh"
 fi
@@ -713,6 +773,11 @@ Store quality score as QUALITY_SCORE.
 **Display completion summary:**
 
 ```bash
+# Log build completion to audit
+if type audit_build_complete &>/dev/null 2>&1; then
+  audit_build_complete "$FEATURE_NUM" "${QUALITY_SCORE:-0}" "${TASK_COUNT:-0}"
+fi
+
 # Clean up build state on success
 rm -f .specswarm/build-loop.state
 
@@ -833,6 +898,14 @@ rm -f .specswarm/build-loop.state
 /specswarm:ship
 ```
 **2 commands**, 1 interactive pause, fully automated execution
+
+**Quick Mode** (small changes, zero interaction):
+```bash
+/specswarm:build "add loading spinner to dashboard" --quick
+# [Fully autonomous - no prompts, no pauses]
+/specswarm:ship
+```
+**Benefits**: Micro-spec, no clarification, no confirmation prompt — ideal for small, well-understood changes
 
 **With Orchestration** (4+ parallelizable tasks):
 ```bash

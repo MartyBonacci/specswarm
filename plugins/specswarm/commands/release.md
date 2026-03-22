@@ -535,8 +535,8 @@ if [ "$RUN_SECURITY_AUDIT" = "yes" ]; then
   log_section "Security Audit"
 
   echo "Running security audit..."
-  # Note: This would call /specswarm:security-audit in production
-  # For now, we'll run npm audit directly
+  # Security audit runs inline (use --security-audit flag on /specswarm:ship for standalone)
+  # Run npm audit directly
   if command -v npm > /dev/null 2>&1; then
     if npm audit --audit-level=moderate 2>&1 | tee /tmp/audit-output.txt; then
       log_check "Security Audit" "pass" "No moderate+ vulnerabilities"
@@ -939,7 +939,7 @@ jobs:
 
 ## See Also
 
-- `/specswarm:security-audit` - Run security audit separately
+- `/specswarm:ship --security-audit` - Run security audit as part of ship workflow
 - `/specswarm:rollback` - Rollback failed releases
 - `/specswarm:analyze-quality` - Check quality before releasing
 - `/specswarm:ship` - Complete feature workflow with merge

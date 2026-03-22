@@ -60,7 +60,11 @@ PROJECT_PATH="${PROJECT_PATH:-$(pwd)}"
 # Source the feature metrics collector library
 SCRIPT_DIR="$(dirname "${BASH_SOURCE[0]}")"
 PLUGIN_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
-source "$PLUGIN_ROOT/lib/feature-metrics-collector.sh"
+if [ -f "$PLUGIN_ROOT/lib/feature-metrics-collector.sh" ]; then
+  source "$PLUGIN_ROOT/lib/feature-metrics-collector.sh"
+else
+  echo "⚠️  Feature metrics collector not available — using basic metrics"
+fi
 
 # Set project root for library
 export PROJECT_ROOT="$PROJECT_PATH"

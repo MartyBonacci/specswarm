@@ -70,6 +70,12 @@ for arg in $ARGUMENTS; do
       ;;
   esac
 done
+
+# Initialize audit logging
+PLUGIN_DIR="$(dirname "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")")"
+if [ -f "${PLUGIN_DIR}/lib/audit-logger.sh" ]; then
+  source "${PLUGIN_DIR}/lib/audit-logger.sh"
+fi
 ```
 
 ---
@@ -272,6 +278,12 @@ fi
 echo "✅ Quality gate passed (${QUALITY_SCORE}%)"
 echo "✅ Merged to parent branch"
 echo "✅ Feature/bugfix complete"
+
+# Log ship event to audit
+FEATURE_NUM=$(git rev-parse --abbrev-ref HEAD 2>/dev/null | grep -oE '^[0-9]{3}' || echo "000")
+if type audit_ship &>/dev/null 2>&1; then
+  audit_ship "$FEATURE_NUM" "success" "${QUALITY_SCORE:-0}"
+fi
 echo ""
 echo "📝 Next Steps:"
 echo "  - Pull latest changes in other branches"

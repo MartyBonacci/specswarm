@@ -535,7 +535,7 @@ If branch is already merged to parent:
 - Soft rollback creates revert commits on current branch
 - These reverts must then be merged to parent
 - Hard rollback switches to parent (no changes to parent)
-- Consider using `/specswarm:deprecate` for features in production
+- Consider using `/specswarm:modify --deprecate` for features in production
 
 ---
 
