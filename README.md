@@ -398,96 +398,15 @@ Create `.specswarm/quality-standards.md` or run `/specswarm:init`
 - **Removed**: Unimplemented feature placeholders (Chain Bug Detection, SSR Validation, Bundle Size Monitoring)
 - **Impact**: README now accurately reflects implemented functionality
 
-### v4.0.0 (2026-02-25) - Command Compaction ⭐
-- **BREAKING**: Reduced from 35 visible commands to 10 visible + 11 internal (hidden)
-- **New flags**: `build --analyze`, `build --checklist`, `fix --coordinate`, `modify --refactor`, `modify --deprecate`, `modify --analyze-only`, `ship --security-audit`
-- **Removed**: 14 redundant commands absorbed as flags (`orchestrate-feature`, `orchestrate`, `suggest`, `session`, `checkpoint`, `analyze`, `checklist`, `coordinate`, `impact`, `security-audit`, `refactor`, `deprecate`, `metrics-export`, `orchestrate-validate`)
-- **Internal**: 11 commands hidden from listings but still callable directly
-- **Impact**: 71% reduction in visible commands, zero loss of functionality
-
-### v3.7.3 (2026-01-11) - Repository Restructure 🔧
-- **Fixed**: Plugin installation error - restructured repo to match Claude Code marketplace format
-- **Changed**: Plugin files moved to `plugins/specswarm/` subdirectory
-- **Added**: Proper `marketplace.json` with `"source": "./plugins/specswarm"`
-- **Impact**: Plugin now installs correctly via marketplace pattern
-
-### v3.7.2 (2026-01-11) - Hook Registration Fix 🔧
-- **Added**: `hooks/hooks.json` manifest for proper stop hook registration
-
-### v3.7.1 (2026-01-08) - Build Pause Fix 🔧
-- **Fixed**: `/specswarm:build` pausing between phases despite stop hook
-- **Fixed**: Build would complete specify → clarify → plan → tasks, then pause instead of continuing
-- **Added**: "CRITICAL EXECUTION RULE" section enforcing continuous execution
-- **Added**: Explicit "DO NOT PAUSE" directives after each SlashCommand execution
-- **Impact**: Build now runs continuously from start to finish (except clarify questions)
-- **Impact**: No more unexpected pauses requiring manual "continue" prompting
-- **Impact**: Fully autonomous execution as originally designed in v3.7.0
-
-### v3.7.0 (2026-01-07) - Continuous Execution + Clarify UX ⭐
-- **New**: SpecSwarm Stop Hook for autonomous build execution
-- **New**: `/specswarm:build` now executes continuously without pauses
-- **New**: Automatic phase progression based on artifact detection
-- **New**: Self-correcting quality loop (retries until threshold met)
-- **Improved**: Clarify command now uses AskUserQuestion tool
-- **Improved**: Reduced keystrokes from ~10 to 1-2 per clarification question
-- **Improved**: Professional structured UI with arrow key navigation
-- **Impact**: Zero manual intervention for build workflow (except clarify questions)
-- **Impact**: 80-90% faster question answering
-- **Inspiration**: Based on Ralph Wiggum plugin's autonomous loop pattern
-
-### v3.5.0 (2025-11-19) - 5th Core Workflow ⭐
-- **New**: `/specswarm:modify` natural language skill (5th core workflow)
-- **New**: Modify skill for changing working features (not bugs, not refactors)
-- **Improved**: Documentation restructure - README simplified from 670 to 400 lines
-- **New**: COMMANDS.md - Complete 32-command reference
-- **New**: docs/SETUP.md - Technical setup and configuration guide
-- **New**: docs/FEATURES.md - Technical features deep-dive
-- **New**: docs/README.md - Documentation index
-- **Impact**: Completes 5-core-command vision (init, build, fix, modify, ship)
-- **UX**: Reduced cognitive load for new users (40% fewer lines in README)
-- **DX**: Advanced features discoverable via separate documentation
-
-### v3.4.0 (2025-11-18) - Confidence-Based Execution ⭐
-- **New**: Confidence-based auto-execution for build/fix/upgrade (95%+ = auto-execute)
-- **New**: Expanded fix skill triggers ("not showing up", "not appearing", etc.)
-- **Enhanced**: SHIP always confirms with crystal clear destructive operation warning
-- **Improved**: Semantic understanding - triggers on intent, not just keywords
-- **UX**: 3-second cancel window for high-confidence commands
-- **Safety**: Ship protection - ALWAYS requires explicit confirmation regardless of confidence
-
-### v3.3.9 (2025-11-18) - MANDATORY/ALWAYS Directive Descriptions
-- **Fixed**: Description language - removed conflicting MANDATORY + ALWAYS directives
-- **Changed**: Authoritative descriptions without override conflicts
-- **Impact**: Skills now properly respect confirmation instructions
-
-### v3.3.8 (2025-11-18) - Directory Name Matching
-- **CRITICAL FIX**: Renamed skill directories to match skill names exactly
-- **Changed**: `skills/build/` → `skills/specswarm-build/`
-- **Impact**: Skills now load and trigger correctly
-
-### v3.3.1 (2025-11-18) - Natural Language Bug Fix 🔧
-- **Fixed**: Natural language commands now work via Skills architecture
-- **Added**: Skills directory with build/fix/ship/upgrade SKILL.md files
-- **Impact**: Natural language actually works - "build auth" triggers `/specswarm:build`
-
-### v2.1.2 (2025-11-04) - Git Workflow Safety ⭐
-- **New**: Branch confirmation prompts during feature creation
-- **Enhanced**: Parent branch detection with robust fallback
-- **Safety**: Prevents accidental merges to wrong branches
-
-### v2.0.0 (2025-10-15) - Major Consolidation
-- Merged SpecLab lifecycle workflows
-- Complete lifecycle coverage
-
 **See full history:** [CHANGELOG.md](./CHANGELOG.md)
 
 ---
 
 ## Attribution
 
-### Forked From
+### Inspired By
 
-SpecSwarm builds upon **SpecKit**, which adapted **GitHub's spec-kit** for Claude Code.
+SpecSwarm is inspired by **GitHub's spec-kit** Spec-Driven Development methodology.
 
 **Attribution Chain:**
 
