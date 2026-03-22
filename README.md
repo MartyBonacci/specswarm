@@ -32,22 +32,6 @@ SpecSwarm is a comprehensive Claude Code plugin for the complete software develo
 
 Restart Claude Code to activate the plugin.
 
-### Portable Installation (Claude Code Web) — DEPRECATED
-
-> **Note:** The portable installation is deprecated and no longer maintained. Use the marketplace plugin above.
-
-For legacy per-project installation:
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/MartyBonacci/specswarm/main/portable/install.sh | bash
-```
-
-**Important:** Portable version uses a **different command prefix** than the marketplace plugin:
-- **Marketplace plugin:** `/specswarm:build`, `/specswarm:fix`, `/specswarm:ship`
-- **Portable version:** `/sw:build`, `/sw:fix`, `/sw:ship` (shorter prefix)
-
-**See details:** [portable/LIMITATIONS.md](./portable/LIMITATIONS.md)
-
 ---
 
 ## Quick Start
@@ -89,7 +73,7 @@ Creates `.specswarm/` directory with:
 - `quality-standards.md` - Quality gates and budgets
 - `constitution.md` - Project governance
 
-**Use when:** First-time project setup
+**Use when:** First-time project setup, or to refresh tech-stack and constitution after external changes
 
 ---
 
@@ -317,14 +301,12 @@ All flags work identically: `/ss:build "feature" --quick`
 
 ### Quality Validation (0-100 Points)
 
-Automated scoring across 6 dimensions (effective max is 100 — Visual Alignment and Bundle Size are not yet implemented):
+Automated scoring across 4 dimensions:
 
-- **Unit Tests** (25 pts) - Proportional by pass rate
-- **Code Coverage** (25 pts) - Proportional by coverage %
-- **Integration Tests** (15 pts) - API/service testing
-- **Browser Tests** (15 pts) - E2E user flows
-- **Bundle Size** (20 pts) - *Planned* (see Roadmap)
-- **Visual Alignment** (15 pts) - *Planned* (see Roadmap)
+- **Unit Tests** (30 pts) - Proportional by pass rate
+- **Code Coverage** (30 pts) - Proportional by coverage %
+- **Integration Tests** (20 pts) - API/service testing
+- **Browser Tests** (20 pts) - E2E user flows
 
 **See details:** [Features: Quality System](./docs/FEATURES.md#quality-validation-system)
 
@@ -354,61 +336,6 @@ SpecSwarm validates at plan, task, and implementation phases.
 SpecSwarm's core workflow (specify, clarify, plan, tasks, implement, ship) works with **any language or framework** Claude can read. There is no language-specific tooling — Claude handles the code understanding and generation.
 
 The quality analysis step includes test runner detection for common frameworks (Vitest, Jest, Pytest, go test, RSpec, PHPUnit, cargo test, JUnit) as a convenience for automated scoring.
-
----
-
-## Configuration
-
-### Recommended: Use `/specswarm:init`
-
-The easiest way to configure SpecSwarm with interactive prompts.
-
-### Manual Configuration
-
-Create these files in your project:
-
-**Tech Stack (`.specswarm/tech-stack.md`):**
-```markdown
-## Core Technologies
-- Your framework here
-
-## Approved Libraries
-- Your libraries here
-
-## Prohibited
-- ❌ Things to avoid (with reasons)
-```
-
-**Quality Standards (`.specswarm/quality-standards.md`):**
-```yaml
----
-min_test_coverage: 85
-min_quality_score: 80
-enforce_budgets: true
-max_bundle_size: 500  # KB
----
-```
-
-**See details:** [Setup Guide](./docs/SETUP.md)
-
----
-
-## Optional: Chrome DevTools MCP
-
-For **web projects** only (React, Vue, Next.js, etc.):
-
-```bash
-claude mcp add ChromeDevTools/chrome-devtools-mcp
-```
-
-**Benefits:**
-- ✅ Real-time console monitoring
-- ✅ Network request inspection
-- ✅ Saves ~200MB (no Chromium download)
-
-**Auto-detected** - SpecSwarm uses it automatically when available.
-
-**See details:** [Setup: Chrome DevTools](./docs/SETUP.md#optional-integrations)
 
 ---
 
@@ -442,17 +369,6 @@ Create `.specswarm/quality-standards.md` or run `/specswarm:init`
 
 ---
 
-## Roadmap
-
-These features are planned but **not yet implemented**:
-
-- **Chain Bug Detection** - Compare test counts before/after fixes to prevent cascading failures (Bug 912->913 scenarios)
-- **SSR Pattern Validation** - Detect hardcoded URLs, browser-only APIs in server contexts (React Router v7 / Remix / Next.js)
-- **Bundle Size Monitoring** - Analyze production bundles, enforce size budgets, score performance (Vite, Webpack, Rollup, esbuild, Parcel)
-- **Language Auto-Detection** - Automatic project language detection during init
-
----
-
 ## Version History
 
 ### v5.1.0 (2026-03-22) - Audit Fix & Documentation Update 🔧
@@ -479,7 +395,7 @@ These features are planned but **not yet implemented**:
 - **Fixed**: Memory/state management flaws in build loop
 - **Fixed**: README documentation discrepancies — honest feature claims, language-agnostic framing
 - **Removed**: Overclaimed metrics ("95% drift prevention", unsubstantiated confidence percentages)
-- **Moved**: Unimplemented features (Chain Bug Detection, SSR Validation, Bundle Size Monitoring) to Roadmap
+- **Removed**: Unimplemented feature placeholders (Chain Bug Detection, SSR Validation, Bundle Size Monitoring)
 - **Impact**: README now accurately reflects implemented functionality
 
 ### v4.0.0 (2026-02-25) - Command Compaction ⭐
@@ -561,8 +477,6 @@ These features are planned but **not yet implemented**:
 
 ### v2.0.0 (2025-10-15) - Major Consolidation
 - Merged SpecLab lifecycle workflows
-- Added chain bug detection
-- Added bundle size monitoring
 - Complete lifecycle coverage
 
 **See full history:** [CHANGELOG.md](./CHANGELOG.md)
@@ -589,6 +503,24 @@ SpecSwarm builds upon **SpecKit**, which adapted **GitHub's spec-kit** for Claud
    - Lifecycle workflows (build, fix, modify, ship, upgrade)
    - Quality validation (0-100 scoring)
    - Natural language commands
+
+---
+
+## Portable Installation (Deprecated)
+
+> **Note:** The portable installation is deprecated and no longer maintained. Use the marketplace plugin above.
+
+For legacy per-project installation:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/MartyBonacci/specswarm/main/portable/install.sh | bash
+```
+
+**Important:** Portable version uses a **different command prefix** than the marketplace plugin:
+- **Marketplace plugin:** `/specswarm:build`, `/specswarm:fix`, `/specswarm:ship`
+- **Portable version:** `/sw:build`, `/sw:fix`, `/sw:ship` (shorter prefix)
+
+**See details:** [portable/LIMITATIONS.md](./portable/LIMITATIONS.md)
 
 ---
 
