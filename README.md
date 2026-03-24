@@ -28,6 +28,9 @@ SpecSwarm is a comprehensive Claude Code plugin for the complete software develo
 
 # 2. Install the plugin
 /plugin install specswarm@specswarm-marketplace
+
+# 3. (Optional) Install /ss: shortcuts
+/plugin install ss@specswarm-marketplace
 ```
 
 Restart Claude Code to activate the plugin.
@@ -277,6 +280,8 @@ Many workflows that were previously separate commands are now flags:
 **See complete documentation:** [COMMANDS.md](./COMMANDS.md)
 
 ### `/ss:` Shortcuts
+
+Requires the `ss` plugin: `/plugin install ss@specswarm-marketplace`
 
 For faster typing, every visible command has a short alias:
 
