@@ -376,12 +376,13 @@ Create `.specswarm/quality-standards.md` or run `/specswarm:init`
 
 ## Version History
 
-### v5.1.1 (2026-03-24) - Reliable Feature Branch Creation 🔧
+### v5.1.1 (2026-03-24) - Branch Creation Fix & /ss: Plugin 🔧
 - **Fixed**: `/specswarm:build` not creating feature branches — split monolithic ~190-line pre-flight bash block into 5 small focused sections with directive language
+- **Fixed**: `/ss:` shortcuts registering as `/specswarm:ss-build` — moved to separate `ss` plugin with correct prefix
 - **Added**: Branch verification gate that catches missed branch creation before build proceeds
-- **Added**: State file persistence between pre-flight sections via breadcrumb file
+- **Added**: Separate `ss` plugin for `/ss:` shortcut commands (`/plugin install ss@specswarm-marketplace`)
 - **Removed**: Unimplemented placeholder features (SSR validation, bundle size monitoring, chain bug detection)
-- **Impact**: Feature branches now created reliably, enabling proper merge flow via `/specswarm:ship`
+- **Impact**: Feature branches now created reliably; `/ss:build` etc. work as intended
 
 ### v5.1.0 (2026-03-22) - Audit Fix & Documentation Update 🔧
 - **Fixed**: Hardcoded paths in build.md, validate.md, implement.md that broke for all non-author users

@@ -5,6 +5,25 @@ All notable changes to SpecSwarm and SpecSwarm plugins will be documented in thi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.1.1] - 2026-03-24 - Branch Creation Fix & /ss: Plugin
+
+### Fixed
+- `/specswarm:build` not creating feature branches — split monolithic ~190-line pre-flight bash block into 5 small focused sections with directive language
+- `/ss:` shortcuts showing as `/specswarm:ss-build` instead of `/ss:build` — moved to separate `ss` plugin so Claude Code registers them under the correct prefix
+
+### Added
+- Branch verification gate that catches missed branch creation before build proceeds
+- State file persistence between pre-flight sections via breadcrumb file
+- Separate `ss` plugin in marketplace for `/ss:` shortcut commands (install with `/plugin install ss@specswarm-marketplace`)
+
+### Removed
+- Unimplemented placeholder features: SSR validation, bundle size monitoring, chain bug detection
+- Broken `ss-*.md` files from specswarm plugin (replaced by separate ss plugin)
+
+### Changed
+- `CLAUDE.md` updated with two-plugin structure and three-file version bumping
+- README installation instructions now show optional ss plugin install step
+
 ## [5.1.0] - 2026-03-22 - Audit Fixes & /ss: Shortcuts
 
 ### Added
