@@ -1,6 +1,5 @@
 ---
 description: (shortcut) Feature-level metrics and analytics dashboard
-hidden: true
 effort: low
 model: claude-haiku-4-5
 args:

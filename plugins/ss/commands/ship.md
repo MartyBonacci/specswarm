@@ -1,6 +1,5 @@
 ---
 description: (shortcut) Quality-gated merge to parent branch
-hidden: true
 effort: high
 args:
   - name: flags

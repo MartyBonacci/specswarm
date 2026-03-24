@@ -1,6 +1,5 @@
 ---
 description: (shortcut) Fix bugs with test-driven approach and retry
-hidden: true
 effort: max
 args:
   - name: bug_description

@@ -1,6 +1,5 @@
 ---
 description: (shortcut) Upgrade dependencies or frameworks with breaking change analysis
-hidden: true
 effort: high
 args:
   - name: upgrade_target

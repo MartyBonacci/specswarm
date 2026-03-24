@@ -1,6 +1,5 @@
 ---
 description: (shortcut) Comprehensive release preparation workflow
-hidden: true
 effort: high
 args:
   - name: flags

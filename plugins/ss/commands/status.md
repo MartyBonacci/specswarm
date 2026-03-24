@@ -1,6 +1,5 @@
 ---
 description: (shortcut) Check status of background sessions and workflows
-hidden: true
 effort: low
 model: claude-haiku-4-5
 args:

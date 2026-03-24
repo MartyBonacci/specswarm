@@ -2,7 +2,7 @@
 
 ## Overview
 
-SpecSwarm is a Claude Code plugin providing spec-driven development workflows: Build, Modify, Fix, Ship. It includes 31 commands (21 primary + 10 hidden `/ss:` shortcuts), 10 natural language skills, and 2 agents for multi-agent orchestration.
+SpecSwarm is a Claude Code plugin providing spec-driven development workflows: Build, Modify, Fix, Ship. It includes 21 commands, 10 `/ss:` shortcut commands (separate plugin), 10 natural language skills, and 2 agents for multi-agent orchestration.
 
 ## Development
 
@@ -10,15 +10,17 @@ SpecSwarm is a Claude Code plugin providing spec-driven development workflows: B
 
 ```bash
 claude plugin validate plugins/specswarm/
+claude plugin validate plugins/ss/
 ```
 
 Run this after any change to command/skill/agent frontmatter or plugin.json. It catches YAML typos that would silently fail at runtime.
 
 ### Version Bumping
 
-Both files must be bumped in sync:
+Three files must be bumped in sync:
 1. `plugins/specswarm/.claude-plugin/plugin.json` — `version`
-2. `marketplace.json` — `plugins[0].version`
+2. `plugins/ss/.claude-plugin/plugin.json` — `version`
+3. `marketplace.json` — both `plugins[].version` entries
 
 ### Testing After Changes
 
@@ -30,12 +32,16 @@ Both files must be bumped in sync:
 
 ```
 plugins/specswarm/
-├── commands/        # 31 slash commands (21 primary + 10 hidden /ss: shortcuts)
+├── commands/        # 21 slash commands (10 visible + 11 internal/hidden)
 ├── skills/          # 10 natural language skills (SKILL.md)
 ├── agents/          # 2 agents (orchestrator, task-router)
 ├── hooks/           # Setup, stop, and PostToolUse quality hooks (bash)
 ├── lib/             # Shared shell helpers (incl. audit-logger.sh)
 ├── templates/       # Spec/plan/task templates
+└── .claude-plugin/  # Plugin metadata (plugin.json)
+
+plugins/ss/
+├── commands/        # 10 shortcut commands (/ss:build, /ss:ship, etc.)
 └── .claude-plugin/  # Plugin metadata (plugin.json)
 ```
 

@@ -1,6 +1,5 @@
 ---
 description: (shortcut) Safely rollback a failed or unwanted feature
-hidden: true
 effort: medium
 args:
   - name: flags
