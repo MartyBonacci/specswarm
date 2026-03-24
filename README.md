@@ -1,4 +1,4 @@
-# SpecSwarm v5.1.0
+# SpecSwarm v5.1.1
 
 **Complete Software Development Toolkit**
 
@@ -371,6 +371,13 @@ Create `.specswarm/quality-standards.md` or run `/specswarm:init`
 
 ## Version History
 
+### v5.1.1 (2026-03-24) - Reliable Feature Branch Creation 🔧
+- **Fixed**: `/specswarm:build` not creating feature branches — split monolithic ~190-line pre-flight bash block into 5 small focused sections with directive language
+- **Added**: Branch verification gate that catches missed branch creation before build proceeds
+- **Added**: State file persistence between pre-flight sections via breadcrumb file
+- **Removed**: Unimplemented placeholder features (SSR validation, bundle size monitoring, chain bug detection)
+- **Impact**: Feature branches now created reliably, enabling proper merge flow via `/specswarm:ship`
+
 ### v5.1.0 (2026-03-22) - Audit Fix & Documentation Update 🔧
 - **Fixed**: Hardcoded paths in build.md, validate.md, implement.md that broke for all non-author users
 - **Fixed**: 7 phantom command references pointing to commands removed in v4.0.0
@@ -457,6 +464,6 @@ MIT License - See LICENSE file for details
 
 ---
 
-**SpecSwarm v5.1.0** - Your complete software development toolkit. 🚀
+**SpecSwarm v5.1.1** - Your complete software development toolkit. 🚀
 
 Build it. Fix it. Modify it. Ship it. All in one place.
