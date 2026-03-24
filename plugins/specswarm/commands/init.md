@@ -108,21 +108,16 @@ echo "✅ Backed up existing files to .specswarm/.backup/"
 echo "🔍 Auto-detecting technology stack..."
 echo ""
 
-# Source the multi-language detector
+# Detect tech stack by reading project config files
+# (Claude analyzes package.json, pyproject.toml, go.mod, etc. directly)
 PLUGIN_DIR="$(dirname "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")")"
-if [ -f "${PLUGIN_DIR}/lib/language-detector.sh" ]; then
-  source "${PLUGIN_DIR}/lib/language-detector.sh"
-else
-  echo "ℹ️  Language detector not available — using manual configuration"
-  detect_tech_stack() { return 1; }
-fi
 
-# Attempt to detect tech stack
-if detect_tech_stack "$(pwd)"; then
+# Attempt to detect tech stack from config files
+if [ -f "package.json" ] || [ -f "pyproject.toml" ] || [ -f "requirements.txt" ] || [ -f "go.mod" ] || [ -f "Cargo.toml" ] || [ -f "Gemfile" ] || [ -f "composer.json" ]; then
   AUTO_DETECT=true
 
-  # Display detected stack
-  display_detected_stack
+  # Claude reads the config file and extracts framework, language, dependencies
+  echo "✅ Configuration file detected — analyzing tech stack..."
 else
   # No config file detected - manual configuration mode
   echo "ℹ️  No configuration file detected - auto-detection disabled"

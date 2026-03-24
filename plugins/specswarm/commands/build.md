@@ -61,6 +61,10 @@ Build a complete feature from natural language description through implementatio
 
 ## Pre-Flight Checks
 
+### Pre-Flight A: Parse Arguments
+
+**YOU MUST execute this block to parse the feature description and flags.**
+
 ```bash
 # Parse arguments
 FEATURE_DESC=""
@@ -123,8 +127,15 @@ if [ -z "$FEATURE_DESC" ]; then
   echo "  /specswarm:build \"Add API\" --analyze --checklist"
   exit 1
 fi
+```
 
-# Get project root
+---
+
+### Pre-Flight B: Validate Git Repository
+
+**YOU MUST execute this block to validate the git repository.**
+
+```bash
 if ! git rev-parse --git-dir > /dev/null 2>&1; then
   echo "❌ Error: Not in a git repository"
   echo ""
@@ -159,10 +170,30 @@ if ! git rev-parse --git-dir > /dev/null 2>&1; then
   exit 1
 fi
 
+echo "✓ Git repository validated"
+```
+
+---
+
+### CRITICAL: Create Feature Branch
+
+## YOU MUST CREATE THE FEATURE BRANCH
+
+**This step is MANDATORY. Execute this bash block NOW. Do NOT skip it. Do NOT summarize it. Run every line.**
+
+```bash
+# Re-derive feature description (shell state lost between blocks)
+FEATURE_DESC=""
+for arg in $ARGUMENTS; do
+  if [ "${arg:0:2}" != "--" ] && [ -z "$FEATURE_DESC" ]; then
+    FEATURE_DESC="$arg"
+  fi
+done
+
 REPO_ROOT=$(git rev-parse --show-toplevel)
 cd "$REPO_ROOT"
 
-# Create build state for stop hook
+# Compute next feature number
 FEATURE_NUM=$(printf "%03d" $(( $(find features/ .specswarm/features/ -maxdepth 1 -type d -name "[0-9][0-9][0-9]-*" 2>/dev/null | wc -l) + 1 )))
 
 # Create slug from feature description
@@ -178,7 +209,66 @@ echo "Creating feature branch: $BRANCH_NAME (from $PARENT_BRANCH)"
 git checkout -b "$BRANCH_NAME"
 echo ""
 
+# Write breadcrumb for next block (shell state is lost between blocks)
 mkdir -p .specswarm
+echo "$PARENT_BRANCH" > .specswarm/parent-branch.tmp
+
+echo "BRANCH_CREATED=$BRANCH_NAME"
+echo "PARENT=$PARENT_BRANCH"
+```
+
+---
+
+### Pre-Flight D: Create State File
+
+**YOU MUST execute this block to persist build state.**
+
+```bash
+REPO_ROOT=$(git rev-parse --show-toplevel)
+cd "$REPO_ROOT"
+
+# Read branch info from git state and breadcrumb file
+BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
+PARENT_BRANCH=$(cat .specswarm/parent-branch.tmp 2>/dev/null || echo "main")
+
+# Re-parse arguments for flags and feature description
+FEATURE_DESC=""
+RUN_VALIDATE=false
+QUALITY_GATE=80
+BACKGROUND_MODE=false
+NOTIFY_ON_COMPLETE=false
+ORCHESTRATE_FLAG=""
+RUN_ANALYZE=false
+RUN_CHECKLIST=false
+QUICK_MODE=false
+
+for arg in $ARGUMENTS; do
+  if [ "${arg:0:2}" != "--" ] && [ -z "$FEATURE_DESC" ]; then
+    FEATURE_DESC="$arg"
+  elif [ "$arg" = "--validate" ]; then
+    RUN_VALIDATE=true
+  elif [ "$arg" = "--quality-gate" ]; then
+    shift
+    QUALITY_GATE="$1"
+  elif [ "$arg" = "--background" ]; then
+    BACKGROUND_MODE=true
+  elif [ "$arg" = "--notify" ]; then
+    NOTIFY_ON_COMPLETE=true
+  elif [ "$arg" = "--orchestrate" ]; then
+    ORCHESTRATE_FLAG="force"
+  elif [ "$arg" = "--no-orchestrate" ]; then
+    ORCHESTRATE_FLAG="disable"
+  elif [ "$arg" = "--analyze" ]; then
+    RUN_ANALYZE=true
+  elif [ "$arg" = "--checklist" ]; then
+    RUN_CHECKLIST=true
+  elif [ "$arg" = "--quick" ]; then
+    QUICK_MODE=true
+  fi
+done
+
+FEATURE_NUM=$(echo "$BRANCH_NAME" | grep -oE '^[0-9]{3}')
+
 mkdir -p .specswarm/sessions
 
 # Prune old sessions (keep last 20)
@@ -218,22 +308,50 @@ EOF
 # Also save session for status tracking
 cp .specswarm/build-loop.state ".specswarm/sessions/${SESSION_ID}.json"
 
+# Clean up breadcrumb
+rm -f .specswarm/parent-branch.tmp
+
+echo "✓ Build state created (session: $SESSION_ID)"
+```
+
+---
+
+### Pre-Flight E: Initialize Session
+
+**Execute this block to complete pre-flight initialization.**
+
+```bash
+REPO_ROOT=$(git rev-parse --show-toplevel)
+cd "$REPO_ROOT"
+
+# Read state for audit and background mode
+FEATURE_NUM=$(jq -r '.feature_num' .specswarm/build-loop.state 2>/dev/null)
+FEATURE_DESC=$(jq -r '.feature_description' .specswarm/build-loop.state 2>/dev/null)
+SESSION_ID=$(jq -r '.session_id' .specswarm/build-loop.state 2>/dev/null)
+BACKGROUND_MODE=$(jq -r '.background_mode' .specswarm/build-loop.state 2>/dev/null)
+NOTIFY_ON_COMPLETE=$(jq -r '.notify_on_complete' .specswarm/build-loop.state 2>/dev/null)
+
 # Initialize audit log
 PLUGIN_DIR="$(dirname "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")")"
 if [ -f "${PLUGIN_DIR}/lib/audit-logger.sh" ]; then
   source "${PLUGIN_DIR}/lib/audit-logger.sh"
   BUILD_FLAGS=""
-  [ "$RUN_VALIDATE" = true ] && BUILD_FLAGS="${BUILD_FLAGS}validate,"
-  [ "$QUICK_MODE" = true ] && BUILD_FLAGS="${BUILD_FLAGS}quick,"
+  RUN_VALIDATE=$(jq -r '.run_validate' .specswarm/build-loop.state 2>/dev/null)
+  QUICK_MODE=$(jq -r '.quick_mode' .specswarm/build-loop.state 2>/dev/null)
+  ORCHESTRATE_FLAG=$(jq -r '.orchestrate_flag' .specswarm/build-loop.state 2>/dev/null)
+  RUN_ANALYZE=$(jq -r '.run_analyze' .specswarm/build-loop.state 2>/dev/null)
+  RUN_CHECKLIST=$(jq -r '.run_checklist' .specswarm/build-loop.state 2>/dev/null)
+  [ "$RUN_VALIDATE" = "true" ] && BUILD_FLAGS="${BUILD_FLAGS}validate,"
+  [ "$QUICK_MODE" = "true" ] && BUILD_FLAGS="${BUILD_FLAGS}quick,"
   [ "$ORCHESTRATE_FLAG" = "force" ] && BUILD_FLAGS="${BUILD_FLAGS}orchestrate,"
-  [ "$RUN_ANALYZE" = true ] && BUILD_FLAGS="${BUILD_FLAGS}analyze,"
-  [ "$RUN_CHECKLIST" = true ] && BUILD_FLAGS="${BUILD_FLAGS}checklist,"
+  [ "$RUN_ANALYZE" = "true" ] && BUILD_FLAGS="${BUILD_FLAGS}analyze,"
+  [ "$RUN_CHECKLIST" = "true" ] && BUILD_FLAGS="${BUILD_FLAGS}checklist,"
   BUILD_FLAGS="${BUILD_FLAGS%,}"
   audit_build_start "$FEATURE_NUM" "$FEATURE_DESC" "$BUILD_FLAGS"
 fi
 
 # If background mode, return session info and exit
-if [ "$BACKGROUND_MODE" = true ]; then
+if [ "$BACKGROUND_MODE" = "true" ]; then
   echo ""
   echo "🔄 Build started in background mode"
   echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
@@ -245,13 +363,45 @@ if [ "$BACKGROUND_MODE" = true ]; then
   echo "  /specswarm:status $SESSION_ID"
   echo ""
   echo "The build will continue in the background."
-  if [ "$NOTIFY_ON_COMPLETE" = true ]; then
+  if [ "$NOTIFY_ON_COMPLETE" = "true" ]; then
     echo "You will be notified when complete."
   fi
   echo ""
-  # Note: Claude Code handles background execution automatically
-  # The command continues normally but in background context
 fi
+
+echo "✓ Session initialized"
+```
+
+---
+
+### Pre-Flight Verification
+
+**STOP — Verify the feature branch was created before proceeding.**
+
+```bash
+REPO_ROOT=$(git rev-parse --show-toplevel)
+cd "$REPO_ROOT"
+
+CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+
+if ! echo "$CURRENT_BRANCH" | grep -qE '^[0-9]{3}-'; then
+  echo "FATAL: Feature branch was NOT created!"
+  echo "Current branch: $CURRENT_BRANCH"
+  echo ""
+  echo "This is a critical error. The build cannot continue without a feature branch."
+  echo "Please report this issue."
+  exit 1
+fi
+
+if [ ! -f ".specswarm/build-loop.state" ]; then
+  echo "FATAL: Build state file was NOT created!"
+  echo "Expected: .specswarm/build-loop.state"
+  exit 1
+fi
+
+echo "✓ Verified: On feature branch $CURRENT_BRANCH"
+echo "✓ Verified: Build state file exists"
+echo ""
 ```
 
 ---
@@ -271,12 +421,24 @@ Execute Steps 2-8 as a single continuous workflow.
 ### Step 1: Display Welcome Banner
 
 ```bash
+REPO_ROOT=$(git rev-parse --show-toplevel)
+cd "$REPO_ROOT"
+
+# Read all state from persisted build state file
+FEATURE_DESC=$(jq -r '.feature_description' .specswarm/build-loop.state 2>/dev/null)
+QUICK_MODE=$(jq -r '.quick_mode' .specswarm/build-loop.state 2>/dev/null)
+RUN_VALIDATE=$(jq -r '.run_validate' .specswarm/build-loop.state 2>/dev/null)
+RUN_CHECKLIST=$(jq -r '.run_checklist' .specswarm/build-loop.state 2>/dev/null)
+RUN_ANALYZE=$(jq -r '.run_analyze' .specswarm/build-loop.state 2>/dev/null)
+ORCHESTRATE_FLAG=$(jq -r '.orchestrate_flag' .specswarm/build-loop.state 2>/dev/null)
+
 echo "🏗️  SpecSwarm Build - Complete Feature Development"
 echo "══════════════════════════════════════════"
 echo ""
 echo "Feature: $FEATURE_DESC"
+echo "Branch: $(git rev-parse --abbrev-ref HEAD)"
 echo ""
-if [ "$QUICK_MODE" = true ]; then
+if [ "$QUICK_MODE" = "true" ]; then
 echo "⚡ QUICK MODE - Streamlined execution"
 echo ""
 echo "This workflow will:"
@@ -290,7 +452,7 @@ echo "  2. Ask clarification questions (interactive)"
 echo "  3. Generate implementation plan"
 echo "  4. Generate task breakdown"
 fi
-if [ "$RUN_CHECKLIST" = true ]; then
+if [ "$RUN_CHECKLIST" = "true" ]; then
 echo "  5. Generate requirements validation checklist"
 echo "  6. Implement all tasks"
 else
@@ -303,22 +465,22 @@ echo "     └─ Using sequential execution (--no-orchestrate)"
 else
 echo "     └─ Auto-detect: orchestration if 4+ parallelizable tasks"
 fi
-if [ "$RUN_ANALYZE" = true ]; then
+if [ "$RUN_ANALYZE" = "true" ]; then
 echo "     └─ Cross-artifact consistency analysis (--analyze)"
 fi
-if [ "$RUN_VALIDATE" = true ]; then
+if [ "$RUN_VALIDATE" = "true" ]; then
 echo "  ✦. Run browser validation (Playwright)"
 fi
 echo "  ✦. Analyze code quality"
 echo ""
-if [ "$QUICK_MODE" = true ]; then
+if [ "$QUICK_MODE" = "true" ]; then
 echo "⚡ No interactive prompts - fully autonomous execution."
 else
 echo "You'll only be prompted during Step 2 (clarification)."
 echo "All other steps run automatically."
 fi
 echo ""
-if [ "$QUICK_MODE" != true ]; then
+if [ "$QUICK_MODE" != "true" ]; then
   read -p "Press Enter to start, or Ctrl+C to cancel..."
   echo ""
 fi

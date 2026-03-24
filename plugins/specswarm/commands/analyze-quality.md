@@ -196,9 +196,7 @@ Top Issues:
 
 **YOU MUST NOW analyze architectural patterns:**
 
-1. **SSR pattern validation** — *Planned feature, skip this step.* (ssr-validator.sh does not exist yet)
-
-2. **Scan for common anti-patterns** using Grep:
+1. **Scan for common anti-patterns** using Grep:
 
    a. **useEffect with fetch** (should use loaders):
       ```bash
@@ -224,10 +222,6 @@ Top Issues:
    ```
    🏗️  Architecture Issues
    ======================
-
-   SSR Patterns: {SSR_ISSUES} issues
-   - Hardcoded URLs: {COUNT}
-   - Relative URLs in SSR: {COUNT}
 
    React Anti-Patterns: {REACT_ISSUES} issues
    - useEffect with fetch: {COUNT}
@@ -286,10 +280,7 @@ Top Issues:
 
 **YOU MUST NOW detect performance issues:**
 
-1. **Bundle size analysis** — *Planned feature, skip this step.* (bundle-size-monitor.sh does not exist yet)
-   Award 0 points for bundle size until this feature is implemented.
-
-2. **Find missing lazy loading:**
+1. **Find missing lazy loading:**
    ```bash
    grep -rn "import.*from" app/pages/ app/routes/ --include="*.tsx" | \
      grep -v "React.lazy\|lazy("
@@ -304,15 +295,6 @@ Top Issues:
    ```
    ⚡ Performance Issues
    =====================
-
-   Bundle Sizes (Phase 3):
-   - Total: {TOTAL_SIZE}
-   - Large bundles (>500KB): {COUNT}
-   - Critical bundles (>1MB): {COUNT}
-   - Top offenders:
-     * {LARGEST_BUNDLE_1}
-     * {LARGEST_BUNDLE_2}
-   - Score: {SCORE}/20 points
 
    Missing Lazy Loading: {COUNT} routes
    Unoptimized Images: {COUNT} files (>{SIZE})
@@ -408,7 +390,6 @@ Top Issues:
 
 1. **Critical Priority** (security, production failures):
    - Exposed secrets
-   - SSR pattern violations
    - Security vulnerabilities
 
 2. **High Priority** (quality, maintainability):
@@ -437,33 +418,23 @@ Top Issues:
       Files: app/config.ts:12, app/utils/api.ts:45, src/client.ts:8
       Fix: Move to environment variables
 
-   2. Fix 11 hardcoded URLs in SSR contexts
-      Impact: Production deployment will fail
-      Files: See SSR validation report
-      Fix: Use getApiUrl() helper
-
    🟠 HIGH (Fix This Week):
    3. Add tests for 15 untested core modules
       Impact: No regression protection
       Modules: app/pages/, app/components/Auth/
       Fix: Generate test templates
 
-   4. Reduce bundle size by 2.5MB
-      Impact: Slow page loads
-      Files: dist/main.js (3.2MB), dist/vendor.js (1.8MB)
-      Fix: Implement code splitting and lazy loading
-
    🟡 MEDIUM (Fix This Sprint):
-   5. Add JSDoc to 45 functions
+   4. Add JSDoc to 45 functions
       Impact: Maintainability
       Fix: Use IDE code generation
 
-   6. Replace 12 useEffect fetches with loaders
+   5. Replace 12 useEffect fetches with loaders
       Impact: Architecture consistency
       Fix: Migrate to React Router loaders
 
    🟢 LOW (Nice to Have):
-   7. Optimize 8 large images
+   6. Optimize 8 large images
       Impact: Minor performance gain
       Fix: Use next/image or image optimization service
 
@@ -512,12 +483,11 @@ Top Issues:
    =============
 
    1. Review full report: .specswarm/quality-analysis-{TIMESTAMP}.md
-   2. Fix critical issues first (security + SSR)
+   2. Fix critical issues first (security)
    3. Run quality validation: /specswarm:implement --validate-only
    4. Track improvements in metrics.json
 
    Commands:
-   - SSR validation: (planned feature — not yet available)
    - Generate test templates: /specswarm:implement {feature}
    - Re-run analysis: /specswarm:analyze-quality
    ```

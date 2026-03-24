@@ -352,78 +352,6 @@ You **MUST** consider the user input before proceeding (if not empty).
    - Confirm the implementation follows the technical plan
    - Report final status with summary of completed work
 
-<!-- ========== SSR PATTERN VALIDATION (PLANNED - NOT YET IMPLEMENTED) ========== -->
-<!-- ssr-validator.sh does not exist yet. Skip this section entirely. -->
-<!--
-9b. **SSR Architecture Validation** - Prevent Bug 913-type issues:
-
-   **Purpose**: Detect hardcoded URLs and relative URLs in server-side rendering contexts
-
-   **YOU MUST NOW run SSR pattern validation using the Bash tool:**
-
-   1. **Execute SSR validator:**
-      ```bash
-      if [ -f "${PLUGIN_DIR}/lib/ssr-validator.sh" ]; then cd ${REPO_ROOT} && bash "${PLUGIN_DIR}/lib/ssr-validator.sh"; else echo "⚠️  SSR validator not available — skipping"; fi
-      ```
-
-   2. **Parse validation results:**
-      - Exit code 0: No issues found (✓ PASS)
-      - Exit code 1: Issues detected (⚠️ FAIL)
-
-   3. **If issues detected:**
-
-      a. **Display issue summary** from validator output
-
-      b. **Ask user for action:**
-         ```
-         ⚠️  SSR Pattern Issues Detected
-         ================================
-
-         Would you like me to:
-         1. Auto-fix common issues (create getApiUrl helper, update imports)
-         2. Show detailed issues and fix manually
-         3. Skip (continue anyway - NOT RECOMMENDED)
-
-         Choose (1/2/3):
-         ```
-
-      c. **If user chooses option 1 (Auto-fix):**
-         - Check if app/utils/api.ts exists
-         - If not, create it with getApiUrl() helper:
-           ```typescript
-           export function getApiUrl(path: string): string {
-             const base = typeof window !== 'undefined'
-               ? ''
-               : process.env.API_BASE_URL || 'http://localhost:3000';
-             return `${base}${path}`;
-           }
-           ```
-         - Scan all files with hardcoded URLs using Grep tool
-         - For each file:
-           * Add import: `import { getApiUrl } from '../utils/api';`
-           * Replace `fetch('http://localhost:3000/api/...')` with `fetch(getApiUrl('/api/...'))`
-           * Replace `fetch('/api/...')` in loaders/actions with `fetch(getApiUrl('/api/...'))`
-         - Re-run SSR validator to confirm fixes
-         - Display: "✅ Auto-fix complete. All SSR patterns corrected."
-
-      d. **If user chooses option 2 (Manual fix):**
-         - Display detailed issue list from validator
-         - Display recommendations
-         - Wait for user to fix manually
-         - Offer to re-run validator: "Type 'validate' to re-check or 'continue' to proceed"
-
-      e. **If user chooses option 3 (Skip):**
-         - Display warning: "⚠️ Skipping SSR validation. Production deployment may fail."
-         - Continue to next step
-
-   4. **If no issues found:**
-      - Display: "✅ SSR patterns validated - No architectural issues detected"
-      - Continue to next step
-
-   **IMPORTANT**: This validation prevents production failures from Bug 913-type issues (relative URLs in SSR contexts).
--->
-<!-- ========== END SSR PATTERN VALIDATION ========== -->
-
 <!-- ========== QUALITY VALIDATION (SpecSwarm Phase 1) ========== -->
 <!-- Added by Marty Bonacci & Claude Code (2025) -->
 
@@ -552,54 +480,7 @@ You **MUST** consider the user input before proceeding (if not empty).
          - Display with "4. Browser Tests" header
          - If no browser framework: Display "No browser test framework detected - Skipping"
 
-      f2. **Analyze bundle sizes** (Planned — Not Yet Implemented):
-
-         > **NOTE**: bundle-size-monitor.sh does not exist yet. **Skip this step.** Award 0 points for bundle size. See README Roadmap.
-
-         <!--
-         1. **Run bundle size monitor:**
-            ```bash
-            if [ -f "${PLUGIN_DIR}/lib/bundle-size-monitor.sh" ]; then cd ${REPO_ROOT} && bash "${PLUGIN_DIR}/lib/bundle-size-monitor.sh"; else echo "⚠️  Bundle size monitor not available"; fi
-            ```
-
-         2. **Parse bundle analysis results:**
-            - Exit code 0: All bundles within budget (✓ PASS)
-            - Exit code 1: Large bundles detected (⚠️ WARNING)
-            - Exit code 2: Critical bundle size exceeded (🔴 CRITICAL)
-
-         3. **Extract bundle metrics:**
-            - Total bundle size (in KB)
-            - Number of large bundles (>500KB)
-            - Number of critical bundles (>1MB)
-            - List of top 5 largest bundles
-
-         4. **Calculate bundle size score:**
-            - < 500KB total: 20 points (excellent)
-            - 500-750KB: 15 points (good)
-            - 750-1000KB: 10 points (acceptable)
-            - 1000-2000KB: 5 points (poor)
-            - > 2000KB: 0 points (critical)
-
-         5. **Display results to user:**
-            ```
-            5. Bundle Size Performance
-            Total Size: {TOTAL_SIZE}
-            Largest Bundle: {LARGEST_BUNDLE}
-            Score: {SCORE}/20 points
-            Status: {EXCELLENT/GOOD/ACCEPTABLE/POOR/CRITICAL}
-            ```
-
-         6. **If no build directory found:**
-            - Display: "No build artifacts found - Run build first (0 points)"
-            - Score: 0 points
-            - Note: Bundle size analysis requires a production build
-
-         7. **Track bundle size in metrics:**
-            - Add bundle_size_kb to metrics.json
-            - Enables bundle size tracking over time
-         -->
-
-      f3. **Enforce performance budgets** (Phase 3 Enhancement - Optional):
+      f2. **Enforce performance budgets** (Phase 3 Enhancement - Optional):
 
          **YOU MUST NOW check if performance budgets are defined:**
 
@@ -641,102 +522,77 @@ You **MUST** consider the user input before proceeding (if not empty).
 
          **YOU MUST NOW calculate scores for each component:**
 
-         1. **Unit Tests** (0-25 points - proportional by pass rate):
-            - 100% passing: 25 points
-            - 90-99% passing: 20-24 points (proportional)
-            - 80-89% passing: 15-19 points (proportional)
-            - 70-79% passing: 10-14 points (proportional)
-            - 60-69% passing: 5-9 points (proportional)
-            - <60% passing: 0-4 points (proportional)
+         1. **Unit Tests** (0-30 points - proportional by pass rate):
+            - 100% passing: 30 points
+            - 90-99% passing: 24-29 points (proportional)
+            - 80-89% passing: 18-23 points (proportional)
+            - 70-79% passing: 12-17 points (proportional)
+            - 60-69% passing: 6-11 points (proportional)
+            - <60% passing: 0-5 points (proportional)
 
-            Formula: `score = min(25, (pass_rate / 100) * 25)`
+            Formula: `score = min(30, (pass_rate / 100) * 30)`
 
-         2. **Code Coverage** (0-25 points - proportional by coverage %):
-            - >=90% coverage: 25 points
-            - 80-89% coverage: 20-24 points (proportional)
-            - 70-79% coverage: 15-19 points (proportional)
-            - 60-69% coverage: 10-14 points (proportional)
-            - 50-59% coverage: 5-9 points (proportional)
-            - <50% coverage: 0-4 points (proportional)
+         2. **Code Coverage** (0-30 points - proportional by coverage %):
+            - >=90% coverage: 30 points
+            - 80-89% coverage: 24-29 points (proportional)
+            - 70-79% coverage: 18-23 points (proportional)
+            - 60-69% coverage: 12-17 points (proportional)
+            - 50-59% coverage: 6-11 points (proportional)
+            - <50% coverage: 0-5 points (proportional)
 
-            Formula: `score = min(25, (coverage / 90) * 25)`
+            Formula: `score = min(30, (coverage / 90) * 30)`
 
-         3. **Integration Tests** (0-15 points - proportional):
-            - 100% passing: 15 points
+         3. **Integration Tests** (0-20 points - proportional):
+            - 100% passing: 20 points
             - Proportional for <100%
             - 0 points if not detected
 
-            Formula: `score = min(15, (pass_rate / 100) * 15)`
+            Formula: `score = min(20, (pass_rate / 100) * 20)`
 
-         4. **Browser Tests** (0-15 points - proportional):
-            - 100% passing: 15 points
+         4. **Browser Tests** (0-20 points - proportional):
+            - 100% passing: 20 points
             - Proportional for <100%
             - 0 points if not detected
 
-            Formula: `score = min(15, (pass_rate / 100) * 15)`
+            Formula: `score = min(20, (pass_rate / 100) * 20)`
 
-         5. **Bundle Size** (0-20 points - Phase 3 feature):
-            - < 500KB total: 20 points
-            - 500-750KB: 15 points
-            - 750-1000KB: 10 points
-            - 1000-2000KB: 5 points
-            - > 2000KB: 0 points
-            - No build found: 0 points
-
-         6. **Visual Alignment** (0-15 points - Phase 3 future):
-            - Set to 0 for now (screenshot analysis not yet implemented)
-
-         **Total possible: 115 points** (but scaled to 100 for display)
-
-         **Scoring Note**: When Visual Alignment is implemented, adjust other components to maintain 100-point scale.
+         **Total possible: 100 points**
 
          **Example Calculation:**
-         - Unit Tests: 106/119 passing (89%) → 22.25 points
-         - Coverage: 75% → 20.83 points
+         - Unit Tests: 106/119 passing (89%) → 26.7 points
+         - Coverage: 75% → 25.0 points
          - Integration Tests: Not detected → 0 points
          - Browser Tests: Not configured → 0 points
-         - Bundle Size: 450KB → 20 points
-         - Visual Alignment: Not implemented → 0 points
-         - **Total: 63.08/115 points** (scaled to ~55/100)
+         - **Total: 51.7/100 points**
 
       h. **Display quality report** with proportional scoring details:
          ```
          Quality Validation Results
          ==========================
 
-         1. Unit Tests ({FRAMEWORK}): {SCORE}/25 points
+         1. Unit Tests ({FRAMEWORK}): {SCORE}/30 points
             ✓ Passed: {PASSED}/{TOTAL} ({PASS_RATE}%)
             ✗ Failed: {FAILED}
             Status: {EXCELLENT/GOOD/ACCEPTABLE/NEEDS IMPROVEMENT}
 
-         2. Code Coverage: {SCORE}/25 points
+         2. Code Coverage: {SCORE}/30 points
             Coverage: {COVERAGE}% (target: {TARGET}%)
             Status: {EXCELLENT/GOOD/ACCEPTABLE/NEEDS IMPROVEMENT/INSUFFICIENT}
 
-         3. Integration Tests: {SCORE}/15 points
+         3. Integration Tests: {SCORE}/20 points
             {DETAILS or "Not detected"}
 
-         4. Browser Tests: {SCORE}/15 points
+         4. Browser Tests: {SCORE}/20 points
             {DETAILS or "Not configured"}
 
-         5. Bundle Size: {SCORE}/20 points
-            Total: {TOTAL_SIZE} | Largest: {LARGEST_BUNDLE}
-            Status: {EXCELLENT/GOOD/ACCEPTABLE/POOR/CRITICAL}
-
-         6. Visual Alignment: 0/15 points
-            Status: Not yet implemented (Phase 3 future)
-
          ════════════════════════════════════════
-         Raw Score: {RAW_SCORE}/115 points
-         Scaled Score: {SCALED_SCORE}/100 points
+         Total Score: {SCORE}/100 points
          ════════════════════════════════════════
 
          Status: {PASS/FAIL} (threshold: {THRESHOLD}/100)
 
          Score Breakdown:
-         ████████████████░░░░░░░░ {SCALED_SCORE}% ({VISUAL_BAR})
-
-         Note: Score scaled from 115-point system to 100-point display
+         ████████████████░░░░░░░░ {SCORE}% ({VISUAL_BAR})
          ```
 
       i. **Check quality gates** from quality-standards.md:
