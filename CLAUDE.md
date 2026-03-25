@@ -20,7 +20,7 @@ Run this after any change to command/skill/agent frontmatter or plugin.json. It 
 Three files must be bumped in sync:
 1. `plugins/specswarm/.claude-plugin/plugin.json` — `version`
 2. `plugins/ss/.claude-plugin/plugin.json` — `version`
-3. `marketplace.json` — both `plugins[].version` entries
+3. `.claude-plugin/marketplace.json` — both `plugins[].version` entries
 
 ### Testing After Changes
 
