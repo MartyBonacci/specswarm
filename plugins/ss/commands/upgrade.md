@@ -1,5 +1,5 @@
 ---
-description: (shortcut) Upgrade dependencies or frameworks with breaking change analysis
+description: Upgrade dependencies or frameworks with breaking change analysis
 effort: high
 args:
   - name: upgrade_target

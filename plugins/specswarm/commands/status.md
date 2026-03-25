@@ -1,5 +1,5 @@
 ---
-description: Check status of background SpecSwarm sessions and workflows
+description: "[migrating to /ss:status] Check status of background sessions and workflows"
 effort: low
 model: claude-haiku-4-5
 args:

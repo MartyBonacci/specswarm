@@ -1,5 +1,5 @@
 ---
-description: Upgrade dependencies or frameworks with breaking change analysis and automated refactoring
+description: "[migrating to /ss:upgrade] Upgrade dependencies with breaking change analysis"
 effort: high
 args:
   - name: upgrade_target

@@ -1,5 +1,5 @@
 ---
-description: (shortcut) Initialize project with SpecSwarm
+description: Initialize project with SpecSwarm
 effort: medium
 args:
   - name: flags

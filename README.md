@@ -279,11 +279,14 @@ Many workflows that were previously separate commands are now flags:
 
 **See complete documentation:** [COMMANDS.md](./COMMANDS.md)
 
-### `/ss:` Shortcuts
+### `/ss:` Commands
 
 Requires the `ss` plugin: `/plugin install ss@specswarm-marketplace`
 
-For faster typing, every visible command has a short alias:
+> **Migration notice**: `/specswarm:` commands are being migrated to `/ss:` equivalents.
+> Both work identically today. In a future major version, `/ss:` will become the primary plugin.
+
+Every visible command has an `/ss:` equivalent:
 
 | Shortcut | Equivalent |
 |----------|-----------|

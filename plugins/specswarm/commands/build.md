@@ -1,5 +1,5 @@
 ---
-description: Build complete feature from specification to implementation - simplified workflow
+description: "[migrating to /ss:build] Build complete feature from spec to implementation"
 effort: high
 args:
   - name: feature_description

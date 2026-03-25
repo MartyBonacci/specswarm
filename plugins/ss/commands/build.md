@@ -1,5 +1,5 @@
 ---
-description: (shortcut) Build complete feature from spec to implementation
+description: Build complete feature from spec to implementation
 effort: high
 args:
   - name: feature_description

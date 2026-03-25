@@ -1,5 +1,5 @@
 ---
-description: (shortcut) Modify feature with impact analysis
+description: Modify feature with impact analysis
 effort: high
 args:
   - name: modification_description

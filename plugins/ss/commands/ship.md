@@ -1,5 +1,5 @@
 ---
-description: (shortcut) Quality-gated merge to parent branch
+description: Quality-gated merge to parent branch
 effort: high
 args:
   - name: flags

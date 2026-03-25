@@ -1,5 +1,5 @@
 ---
-description: Comprehensive release preparation workflow including quality gates, security audit, changelog generation, version bumping, tagging, and publishing
+description: "[migrating to /ss:release] Comprehensive release preparation workflow"
 effort: high
 args:
   - name: --patch

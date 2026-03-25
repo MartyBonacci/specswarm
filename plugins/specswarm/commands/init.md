@@ -1,5 +1,5 @@
 ---
-description: Interactive project initialization - creates constitution, tech stack, and quality standards
+description: "[migrating to /ss:init] Interactive project initialization"
 effort: medium
 args:
   - name: --skip-detection

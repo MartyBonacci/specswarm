@@ -1,5 +1,5 @@
 ---
-description: Safely rollback a failed or unwanted feature with automatic artifact cleanup
+description: "[migrating to /ss:rollback] Safely rollback a failed or unwanted feature"
 effort: medium
 args:
   - name: --dry-run

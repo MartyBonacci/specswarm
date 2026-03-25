@@ -1,5 +1,5 @@
 ---
-description: Feature modification workflow with impact analysis and backward compatibility assessment
+description: "[migrating to /ss:modify] Feature modification with impact analysis"
 effort: high
 args:
   - name: modification_description

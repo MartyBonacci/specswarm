@@ -1,5 +1,5 @@
 ---
-description: Fix bugs with test-driven approach and automatic retry - simplified bugfix workflow
+description: "[migrating to /ss:fix] Fix bugs with test-driven approach and automatic retry"
 effort: max
 args:
   - name: bug_description

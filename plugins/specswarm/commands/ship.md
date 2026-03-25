@@ -1,5 +1,5 @@
 ---
-description: Quality-gated merge to parent branch - validates code quality before allowing merge
+description: "[migrating to /ss:ship] Quality-gated merge to parent branch"
 effort: high
 args:
   - name: --force-quality
