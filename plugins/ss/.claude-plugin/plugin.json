@@ -1,6 +1,6 @@
 {
   "name": "ss",
-  "version": "5.1.1",
+  "version": "5.2.0",
   "description": "Shortcut aliases for SpecSwarm commands (/ss:build, /ss:ship, etc.)",
   "author": {
     "name": "Marty Bonacci",

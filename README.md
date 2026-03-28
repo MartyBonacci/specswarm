@@ -1,4 +1,4 @@
-# SpecSwarm v5.1.1
+# SpecSwarm v5.2.0
 
 **Complete Software Development Toolkit**
 
@@ -15,8 +15,9 @@ SpecSwarm is a comprehensive Claude Code plugin for the complete software develo
 - 🔧 **Code Maintenance** - Refactoring and feature modification
 - 📊 **Quality Assurance** - Automated validation (0-100 scoring)
 - 🗣️ **Natural Language** - Talk to SpecSwarm like a teammate
+- 🔌 **MCP Auto-Detection** - Configures MCP servers for your tech stack
 
-**10 Commands** | **Production Ready**
+**10 Commands** | **MCP Integration** | **Production Ready**
 
 ---
 
@@ -339,6 +340,21 @@ SpecSwarm validates at plan, task, and implementation phases.
 
 **See details:** [Features: Tech Stack](./docs/FEATURES.md#tech-stack-management)
 
+### MCP Server Auto-Detection
+
+`/ss:init` detects your tech stack and configures MCP servers automatically:
+
+- **Context7** — Version-specific docs for all dependencies (prevents outdated API usage)
+- **Supabase/Firebase** — Direct database and auth management
+- **Playwright** — Browser automation for visual validation and E2E testing
+- **GitHub/GitLab** — PR management and issue tracking
+- **Dynamic discovery** — Searches for official MCP servers for any detected dependency
+
+Commands automatically leverage configured MCP servers:
+- `/ss:build` uses Context7 to look up current framework docs before implementing
+- `/ss:fix` uses Context7 for API verification + Playwright for before/after screenshots
+- `/ss:ship` uses Playwright for browser smoke tests before merging
+
 ### Language Agnostic
 
 SpecSwarm's core workflow (specify, clarify, plan, tasks, implement, ship) works with **any language or framework** Claude can read. There is no language-specific tooling — Claude handles the code understanding and generation.
@@ -349,12 +365,12 @@ The quality analysis step includes test runner detection for common frameworks (
 
 ## Best Practices
 
-1. **Run `/specswarm:init` first** - Sets up proper foundation
-2. **Define tech-stack.md early** - Prevents technology drift
-3. **Enable quality gates** - Maintain >80% scores
-4. **Run quality analysis before shipping** - Catch issues early
-5. **Keep bundles <500KB** - Performance matters
-6. **Use natural language** - Faster workflows
+1. **Run `/ss:init` first** — Sets up foundation + configures MCP servers
+2. **Define tech-stack.md early** — Prevents technology drift
+3. **Install MCP servers** — Context7 alone prevents most outdated API issues
+4. **Enable quality gates** — Maintain >80% scores
+5. **Run quality analysis before shipping** — Catch issues early
+6. **Use `/ss:` commands** — Shorter, becoming the primary interface
 
 ---
 
@@ -379,11 +395,21 @@ Create `.specswarm/quality-standards.md` or run `/specswarm:init`
 
 ## Version History
 
+### v5.2.0 (2026-03-27) - MCP Auto-Detection & /ss: Migration ⭐
+- **New**: `/ss:init` auto-detects tech stack and recommends real MCP servers (Context7, Supabase, Firebase, Playwright, GitHub, etc.)
+- **New**: Hybrid MCP discovery — curated list for common tech + WebSearch for remaining dependencies
+- **New**: Creates/updates `.mcp.json` with user-approved MCP servers
+- **New**: Build, fix, and ship commands leverage MCP servers automatically (context7 docs, playwright screenshots)
+- **Changed**: `/specswarm:` commands show `[migrating to /ss:]` in descriptions — `/ss:` is now the primary interface
+- **Changed**: `/ss:` command descriptions no longer say "(shortcut)" — they're first-class commands
+- **Removed**: Misleading vendor skills placeholder from `/ss:init` (replaced with real MCP detection)
+- **Fixed**: Marketplace descriptor at `.claude-plugin/marketplace.json` (was stuck at v3.7.4)
+- **Impact**: MCP servers provide real-time docs, browser testing, and service integration during development
+
 ### v5.1.1 (2026-03-24) - Branch Creation Fix & /ss: Plugin 🔧
-- **Fixed**: `/specswarm:build` not creating feature branches — split monolithic ~190-line pre-flight bash block into 5 small focused sections with directive language
-- **Fixed**: `/ss:` shortcuts registering as `/specswarm:ss-build` — moved to separate `ss` plugin with correct prefix
-- **Added**: Branch verification gate that catches missed branch creation before build proceeds
-- **Added**: Separate `ss` plugin for `/ss:` shortcut commands (`/plugin install ss@specswarm-marketplace`)
+- **Fixed**: `/specswarm:build` not creating feature branches — split pre-flight into 5 focused sections
+- **Fixed**: `/ss:` shortcuts registering as `/specswarm:ss-build` — moved to separate `ss` plugin
+- **Added**: Branch verification gate, separate `ss` plugin for `/ss:` shortcuts
 - **Removed**: Unimplemented placeholder features (SSR validation, bundle size monitoring, chain bug detection)
 - **Impact**: Feature branches now created reliably; `/ss:build` etc. work as intended
 
@@ -473,6 +499,6 @@ MIT License - See LICENSE file for details
 
 ---
 
-**SpecSwarm v5.1.1** - Your complete software development toolkit. 🚀
+**SpecSwarm v5.2.0** - Your complete software development toolkit. 🚀
 
 Build it. Fix it. Modify it. Ship it. All in one place.

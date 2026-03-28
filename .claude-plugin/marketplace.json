@@ -11,13 +11,13 @@
     {
       "name": "specswarm",
       "source": "./plugins/specswarm",
-      "version": "5.1.1",
+      "version": "5.2.0",
       "description": "Build, Modify, Fix, and Ship with natural language. Specification-driven development skills that handle complete software lifecycle workflows autonomously."
     },
     {
       "name": "ss",
       "source": "./plugins/ss",
-      "version": "5.1.1",
+      "version": "5.2.0",
       "description": "Shortcut aliases for SpecSwarm commands (/ss:build, /ss:ship, etc.)"
     }
   ]

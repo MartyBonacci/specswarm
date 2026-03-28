@@ -5,6 +5,28 @@ All notable changes to SpecSwarm and SpecSwarm plugins will be documented in thi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.2.0] - 2026-03-27 - MCP Auto-Detection & /ss: Migration
+
+### Added
+- `/ss:init` auto-detects project tech stack and recommends real MCP servers
+- Hybrid MCP discovery: curated list (Context7, Supabase, Firebase, Laravel Boost, Playwright, GitHub, GitLab) + WebSearch for remaining dependencies
+- Creates/updates `.mcp.json` with user-approved MCP server configurations
+- MCP enhancement hints in `/ss:build` (context7 docs), `/ss:fix` (API verification + screenshots), `/ss:ship` (browser smoke test)
+- Migration notices on all 10 visible `/specswarm:` commands pointing to `/ss:` equivalents
+
+### Changed
+- `/ss:` commands promoted from shortcuts to primary interface (removed "(shortcut)" prefix)
+- `/ss:init` Next Steps now reference `/ss:build` and `/ss:ship`
+- Best Practices section updated for MCP and `/ss:` commands
+
+### Removed
+- Misleading vendor skills placeholder from `/ss:init` (asked about non-existent skills)
+- `--refresh-skills` flag from init command
+- Root-level `marketplace.json` (dead file — real descriptor is at `.claude-plugin/marketplace.json`)
+
+### Fixed
+- `.claude-plugin/marketplace.json` was stuck at v3.7.4 with only specswarm listed — updated to include both plugins
+
 ## [5.1.1] - 2026-03-24 - Branch Creation Fix & /ss: Plugin
 
 ### Fixed
