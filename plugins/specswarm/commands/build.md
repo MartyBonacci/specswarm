@@ -771,6 +771,11 @@ fi
 
 ### Step 6: Phase 5 - Implementation
 
+**MCP Enhancement (automatic — no action needed):**
+If MCP servers are configured in `.mcp.json`, Claude will automatically use them:
+- **context7**: Look up current framework/library docs before implementing to prevent using outdated APIs
+- **playwright**: Validate UI changes visually during implementation
+
 **Implementation mode depends on orchestration decision from Step 5.5:**
 
 ```bash

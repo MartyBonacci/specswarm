@@ -388,6 +388,11 @@ fi
 
 ### Step 3: Phase 2 - Implement Fix
 
+**MCP Enhancement (automatic — no action needed):**
+If MCP servers are configured:
+- **context7**: Verify correct API usage for the library causing the bug
+- **playwright**: Take before/after screenshots to verify the fix
+
 **YOU MUST NOW run the bugfix command using the SlashCommand tool:**
 
 ```bash

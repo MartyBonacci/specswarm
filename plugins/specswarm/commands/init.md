@@ -528,15 +528,131 @@ echo ""
 
 ---
 
-<!-- Future: Step 6.7 — MCP Server & Plugin Recommendations
-  Detect project tech stack and recommend REAL, working resources:
-  - Context7 MCP (version-specific docs for any dependency)
-  - Supabase/Firebase/Laravel Boost MCP (backend-specific)
-  - Playwright MCP (E2E testing)
-  - GitHub/GitLab MCP (repo integration)
-  - Appropriate LSP based on detected language
-  See: https://github.com/MartyBonacci/specswarm/issues (roadmap)
--->
+### Step 6.7: MCP Server Recommendations
+
+**Automatic — recommend and configure MCP servers based on detected tech stack.**
+
+**Skip this step entirely if `--minimal` flag is present.**
+
+```bash
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "🔌 MCP Server Recommendations"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+echo "MCP servers extend Claude Code with real-time access to"
+echo "documentation, databases, browsers, and more."
+echo ""
+```
+
+**Step 6.7a: Check for existing `.mcp.json`**
+
+```bash
+REPO_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
+EXISTING_MCP=""
+if [ -f "$REPO_ROOT/.mcp.json" ]; then
+  EXISTING_MCP=$(cat "$REPO_ROOT/.mcp.json")
+  echo "Found existing .mcp.json — will merge new servers with existing config."
+  echo ""
+fi
+```
+
+**Step 6.7b: Build curated recommendations from detected tech stack**
+
+Match the detected technologies against this verified MCP server list. For each match, add it to the recommendations. **Do NOT recommend servers already configured in existing `.mcp.json`.**
+
+| Detection Signal | Server Name | Type | Config | Benefit |
+|---|---|---|---|---|
+| Any project with a dependency file | `context7` | stdio | `npx -y @upstash/context7-mcp` | Version-specific docs for all dependencies — prevents using outdated APIs |
+| `@supabase/supabase-js` in package.json or `supabase` in composer.json | `supabase` | http | url: `https://mcp.supabase.com/mcp` | Direct database queries, auth management, storage |
+| `firebase` or `@firebase/*` in package.json | `firebase` | stdio | `npx -y firebase-tools@latest mcp` | Firestore, Cloud Functions, auth, hosting |
+| `composer.json` exists AND Laravel framework detected | `laravel-boost` | stdio | `php artisan boost:mcp` | Artisan commands, Eloquent guidance, migration help |
+| `playwright` or `@playwright/test` in package.json | `playwright` | stdio | `npx @playwright/mcp@latest` | Browser automation, E2E testing, visual validation |
+| Git remote contains `github.com` | `github` | http | url: `https://api.githubcopilot.com/mcp/`, headers: `Authorization: Bearer ${GITHUB_PERSONAL_ACCESS_TOKEN}` | PR management, issue tracking, code search |
+| Git remote contains `gitlab` | `gitlab` | http | url: `https://gitlab.com/api/v4/mcp` | Merge requests, CI/CD pipelines, issue tracking |
+
+**Step 6.7c: Dynamic discovery for remaining dependencies**
+
+For each major dependency detected in Step 2 that is NOT covered by the curated list above:
+
+1. Use the **WebSearch** tool to search for: `"[dependency-name] MCP server" site:github.com OR site:npmjs.com`
+2. Filter results for official repositories (published by the technology vendor, not community forks)
+3. If an official MCP server is found, extract its configuration (command, URL, env vars)
+4. Add it to recommendations with a `[discovered]` label
+
+Limit dynamic discovery to the **top 5 most significant dependencies** (by import frequency or prominence in the project) to avoid excessive searching. Skip dependencies that are utilities (lodash, date-fns) or build tools (vite, webpack) — focus on frameworks, databases, and services.
+
+**Step 6.7d: Present recommendations to user**
+
+Use the **AskUserQuestion** tool with multiSelect:
+
+```
+Question: "Which MCP servers should we configure for your project?"
+Header: "MCP Servers"
+multiSelect: true
+Options (curated servers first, then discovered):
+  - "context7 — Version-specific docs for all dependencies [verified]"
+  - "[other curated matches]"
+  - "[any discovered servers with [discovered] label]"
+```
+
+**Step 6.7e: Create or update `.mcp.json`**
+
+For each approved server, build the `.mcp.json` configuration:
+
+**stdio servers:**
+```json
+{
+  "mcpServers": {
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp"]
+    }
+  }
+}
+```
+
+**http servers:**
+```json
+{
+  "mcpServers": {
+    "supabase": {
+      "type": "http",
+      "url": "https://mcp.supabase.com/mcp"
+    }
+  }
+}
+```
+
+If `.mcp.json` already exists, merge new servers into the existing `mcpServers` object — do NOT overwrite existing server configurations.
+
+Write the file to the project root.
+
+**Step 6.7f: Display summary**
+
+```bash
+echo ""
+echo "🔌 MCP Server Configuration"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+# For each configured server:
+echo "   ✓ context7     — Version-specific docs for all dependencies"
+echo "   ✓ supabase     — Database, auth, storage management"
+# For each skipped server:
+echo "   ✗ playwright   — Skipped"
+echo ""
+echo "📄 Created .mcp.json with MCP server configuration"
+echo ""
+echo "⚠️  RESTART Claude Code to activate MCP servers."
+echo "   After restart, run /mcp to verify servers are connected."
+echo ""
+```
+
+If no servers were approved, skip `.mcp.json` creation and display:
+```bash
+echo "ℹ️  No MCP servers configured. You can add them later with:"
+echo "   claude mcp add context7 -- npx -y @upstash/context7-mcp"
+echo ""
+```
 
 ---
 
@@ -553,6 +669,9 @@ echo "   ✓ .specswarm/constitution.md      (governance & principles)"
 echo "   ✓ .specswarm/tech-stack.md        (approved technologies)"
 echo "   ✓ .specswarm/quality-standards.md (quality gates)"
 echo "   ✓ .specswarm/conventions.md       (code style & patterns)"
+if [ -f ".mcp.json" ]; then
+echo "   ✓ .mcp.json                      (MCP server configuration)"
+fi
 echo ""
 echo "📊 Configuration Summary:"
 echo "   Project:        $PROJECT_NAME"

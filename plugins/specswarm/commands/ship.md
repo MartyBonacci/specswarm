@@ -167,6 +167,10 @@ Generate security audit report: `security-audit-YYYY-MM-DD.md`
 
 ### Step 2: Run Quality Analysis
 
+**MCP Enhancement (automatic — no action needed):**
+If MCP servers are configured:
+- **playwright**: Run a quick browser smoke test before merging
+
 **YOU MUST NOW run the quality analysis using the SlashCommand tool:**
 
 ```
