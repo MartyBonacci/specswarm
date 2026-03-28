@@ -8,9 +8,6 @@ args:
   - name: --minimal
     description: Use minimal defaults without interactive questions
     required: false
-  - name: --refresh-skills
-    description: Re-detect vendor skills based on current dependencies
-    required: false
 ---
 
 ## User Input
@@ -27,8 +24,6 @@ Initialize a new project with SpecSwarm by creating three foundation files:
 3. `.specswarm/quality-standards.md` - Quality gates and performance budgets
 
 This command streamlines project setup from 3 manual steps to a single interactive workflow.
-
-**`--refresh-skills` shortcut**: If this flag is present, skip directly to Step 2 (tech detection) then Step 6.5 (convention analysis) and Step 6.7 (vendor skill recommendations), then show a summary. Skip Steps 1, 3-6 entirely — the existing constitution, tech-stack, and quality-standards files are preserved unchanged.
 
 ---
 
@@ -56,10 +51,6 @@ fi
 
 if [ -f ".specswarm/conventions.md" ]; then
   EXISTING_FILES+=("conventions.md")
-fi
-
-if [ -f ".specswarm/vendor-skills.md" ]; then
-  EXISTING_FILES+=("vendor-skills.md")
 fi
 
 if [ ${#EXISTING_FILES[@]} -gt 0 ]; then
@@ -537,57 +528,15 @@ echo ""
 
 ---
 
-### Step 6.7: Vendor Skill Recommendations
-
-**Automatic — suggest relevant vendor skills based on detected tech stack.**
-
-Check the detected framework and key dependencies against this curated list of known vendor skills:
-
-| Technology | Vendor Skill | Source |
-|-----------|-------------|--------|
-| React | `vercel/react` | Vercel official |
-| Next.js | `vercel/nextjs` | Vercel official |
-| Astro | `astro/astro` | Astro official |
-| Tailwind CSS | `tailwindlabs/tailwindcss` | Tailwind Labs |
-| Supabase | `supabase/supabase` | Supabase official |
-| Prisma | `prisma/prisma` | Prisma official |
-| tRPC | `trpc/trpc` | tRPC official |
-| Drizzle ORM | `drizzle-team/drizzle` | Drizzle official |
-| FastAPI | `fastapi/fastapi` | FastAPI official |
-| Django | `django/django` | Django official |
-| Flask | `flask/flask` | Flask official |
-| Rails | `rails/rails` | Rails official |
-| Three.js | `threejs/threejs` | Three.js official |
-| Stripe | `stripe/stripe` | Stripe official |
-
-**For each detected technology that has a matching vendor skill:**
-
-Use the **AskUserQuestion** tool:
-```
-Question: "Detected [TECHNOLOGY]. Install [VENDOR]'s official skill for better AI assistance?"
-Header: "Vendor Skills"
-Options:
-  1. "Yes, install"
-     Description: "Adds [VENDOR] best practices and patterns to your project"
-  2. "Skip"
-     Description: "Continue without this skill"
-```
-
-**If user selects "Yes":**
-- Note the skill for installation. The actual installation mechanism depends on whether the vendor publishes via `.well-known/skills/` endpoint, npm package, or GitHub repo.
-- For now, create a reference entry in `.specswarm/vendor-skills.md` listing approved vendor skills for future installation when the skill distribution ecosystem matures.
-
-```bash
-echo ""
-if [ -f ".specswarm/vendor-skills.md" ]; then
-  echo "📦 Vendor skill preferences saved to .specswarm/vendor-skills.md"
-else
-  echo "ℹ️  No vendor skills selected"
-fi
-echo ""
-```
-
-**Skip this step entirely if `--minimal` flag is present.**
+<!-- Future: Step 6.7 — MCP Server & Plugin Recommendations
+  Detect project tech stack and recommend REAL, working resources:
+  - Context7 MCP (version-specific docs for any dependency)
+  - Supabase/Firebase/Laravel Boost MCP (backend-specific)
+  - Playwright MCP (E2E testing)
+  - GitHub/GitLab MCP (repo integration)
+  - Appropriate LSP based on detected language
+  See: https://github.com/MartyBonacci/specswarm/issues (roadmap)
+-->
 
 ---
 
@@ -604,9 +553,6 @@ echo "   ✓ .specswarm/constitution.md      (governance & principles)"
 echo "   ✓ .specswarm/tech-stack.md        (approved technologies)"
 echo "   ✓ .specswarm/quality-standards.md (quality gates)"
 echo "   ✓ .specswarm/conventions.md       (code style & patterns)"
-if [ -f ".specswarm/vendor-skills.md" ]; then
-echo "   ✓ .specswarm/vendor-skills.md     (vendor skill preferences)"
-fi
 echo ""
 echo "📊 Configuration Summary:"
 echo "   Project:        $PROJECT_NAME"
@@ -619,14 +565,14 @@ echo ""
 echo "📚 Next Steps:"
 echo ""
 echo "   1. Review the created files in .specswarm/"
-echo "   2. Customize as needed for your team"
+echo "   2. Customize as needed"
 echo "   3. Build your first feature:"
-echo "      /specswarm:build \"your feature description\""
+echo "      /ss:build \"your feature description\""
 echo "   4. Ship when ready:"
-echo "      /specswarm:ship"
+echo "      /ss:ship"
 echo ""
 echo "💡 Tips:"
-echo "   • Run /specswarm:build to start your first feature"
+echo "   • Run /ss:build to start your first feature"
 echo "   • Tech stack enforcement prevents drift across features"
 echo "   • Quality gates ensure consistent code quality"
 echo ""
