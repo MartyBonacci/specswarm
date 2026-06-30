@@ -280,7 +280,7 @@ fi
 
 1. Claude edits `tasks.md` and ticks `- [X] T011`.
 2. PostToolUse hook `tasks-completion-detector.sh` notices the checkbox flip, writes `.specswarm/verify-queue/T011.pending`, emits a one-line systemMessage.
-3. At Claude's next Stop event, `verify-queue-prompt.sh` emits a stronger reminder listing all pending tasks.
+3. At Claude's next Stop event, `verify-queue-prompt.sh` emits a reminder — a per-task bullet list when the queue is small (≤ `SPECSWARM_VERIFY_QUEUE_LIST_MAX`, default 8), or a compact per-feature summary when it's larger (v7.12.0).
 4. User (or Claude responding to the reminder) invokes `/ss:verify T011` — and you're here.
 
 ## Project-agnostic guarantees

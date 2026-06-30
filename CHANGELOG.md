@@ -5,6 +5,21 @@ All notable changes to SpecSwarm and SpecSwarm plugins will be documented in thi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.12.0] - 2026-06-30 - Verify-Queue Stop-Hook Compact Summary
+
+The Stop hook that surfaces pending verifications (`hooks/verify-queue-prompt.sh`) was flooding every assistant turn with one bullet per pending task. On real chunks with 20–35 pending markers, the systemMessage pushed actual responses off-screen.
+
+### Changed
+
+- **`hooks/verify-queue-prompt.sh` switches to a compact per-feature summary when the queue exceeds a threshold.** Default threshold is **8**; override with `SPECSWARM_VERIFY_QUEUE_LIST_MAX` (set very high to always force the full list). At/under threshold the existing per-task bullet output is preserved verbatim — small queues stay fully actionable.
+  - Above threshold the systemMessage collapses to: header (total count) + one line per `feature_dir` basename with its pending count + a short footer pointing at `/ss:verify` and the queue dir for details.
+  - All preserved: silent `{"decision":"approve"}` at 0 pending / no queue dir; always non-blocking `decision:"approve"`; output is always a single valid JSON object (jq-escaped); `set -e` + robust find/grep; no new external dependencies.
+  - *Verified by:* `plugins/ss/test-fixtures/v7.12-verify-queue-summary.sh` (20 assertions across four cases: empty, full-list, compact-summary across two features, env-var override).
+
+### Notes
+
+- *Trade-off:* small queues read the same as before; large queues lose per-task descriptions in the Stop hook. Per-task detail is still one `cat .specswarm/verify-queue/T###.pending` away, and `/ss:verify` already lists them when it runs.
+
 ## [7.11.0] - 2026-05-20 - Verification-Loop Hardening (Phase 1 intervention harvest)
 
 Landed from six interventions captured during a real production project's Phase 1 (4 chunks shipped via the `/ss:*` workflow). Each fix targets the **general plugin failure class**, not the project-specific symptom — every change was tested against synthetic, non-customcult fixtures (Go / Python / Rust stacks) in `plugins/ss/test-fixtures/v7.11-agnosticism.sh` (15 assertions, all green).
