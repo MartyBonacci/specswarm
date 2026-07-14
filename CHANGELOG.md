@@ -5,6 +5,35 @@ All notable changes to SpecSwarm and SpecSwarm plugins will be documented in thi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.14.0] - 2026-07-13 - Deterministic Slice Gates + Sighted Classification (AUTO-MAGIC Phase 3: WS4+WS5)
+
+Cheap deterministic trust wins. Every check below carries its origin lesson in-file and ships with a violating fixture proving it FIRES.
+
+### Added
+
+- **`lib/quality-gates.sh` + `lib/test-framework-detector.sh` — authored for real.** Both have been referenced by `/ss:implement` Step 10 since Phase 1 but never existed; the entire quality-validation block silently no-op'd its "not available — skipping" branch. Framework/build/lint/coverage/test-root detection is now from repo reality (manifests, lockfiles, configs, test-file patterns) across JS/TS, Python, Go, Rust, Ruby, PHP.
+  - *Source:* audit finding (AUTO-MAGIC Phase 1). *Origin lesson:* a gate that silently skips reads as "covered" when nothing ran.
+  - *Verified by:* `plugins/ss/test-fixtures/v7.14-gates-and-sighted.sh` blocks [C]+[D].
+
+- **Per-slice build + lint gates** (`/ss:implement` Step 8c, `run_slice_gates`, epic decision D4). The production build + lint run SYNCHRONOUSLY after every task; failure halts the loop and becomes the immediate fix task. `SPECSWARM_SLICE_GATES=block|warn|off` (default block). WARN-on-zero when manifests exist but no command is detectable; clean PASS-skip for non-buildable repos.
+  - *Source:* two production incidents — React Router v7 `.server` module breaks invisible to typecheck AND unit tests (only the build catches them); a ship halted at the end by lint errors in unwired code.
+  - *Generalized from customcult-v3 instance to:* any stack with a detectable build/lint command; detect-don't-assume.
+
+- **Verify-time diff screeners** (`lib/verify/screeners.sh`), injected as enforcement CLAUSEs into spec-mentor's brief (unmet clause ⇒ DRIFT):
+  - *geometry* — diffs touching coordinate/orientation/mirror logic require an asymmetric-in-every-axis fixture + flip test. *Origin:* a y-inversion and a nose/tail label swap both survived green suites; symmetric fixtures are their own mirror image.
+  - *roundtrip* — encode/decode diffs require at least one OFF-MODULE physical truth assertion. *Origin:* round-trip identity stays green when both directions share the same convention bug.
+  - *fixture-shape* — fixture changes must mirror what the PRODUCTION writer emits. *Origin:* schema-derived fixtures pass while production data fails.
+  - *test-globs* — repos with multiple detected test roots require sweeps covering all of them. *Origin:* a repo with both `test/` and `tests/` lost two verification rounds to single-root sweeps.
+
+- **NEEDS-SIGHTED queue state + ship block** (WS5, epic decision D3). The sighted classifier (diff paths + file types + component patterns; test/`.server.` files excluded) auto-holds visual slices: spec-mentor PASS resolves to `.needs-sighted`, not `.verified`. `/ss:ship` Step 1.7 now **BLOCKS** (the one hard verify-queue gate) until each is signed off via `/ss:verify --sighted TASK_ID` (guided walkthrough incl. reading the browser console) or the ship-time batch review (Step 1.8, batched AskUserQuestion). Sighted verdicts expressing reusable visual rulings distill into the taste model.
+  - *Source:* every false-green that reached the product owner in production was in this class — correct DOM + green suites, visually wrong result.
+  - *Verified by:* `plugins/ss/test-fixtures/v7.14-gates-and-sighted.sh` blocks [A]+[B] (40 assertions total, all green).
+
+### Notes
+
+- *Trade-off:* blocking slice gates add a build+lint run per task — real minutes on slow builds. The `SPECSWARM_SLICE_GATES` knob exists precisely for that; the default optimizes for trust, not speed (that's what buys autonomy).
+- Backwards compatible: repos without manifests PASS-skip; pre-v7.14 queues have no `.needs-sighted` markers so ship is unaffected until the classifier first fires.
+
 ## [7.13.0] - 2026-07-13 - Taste Model + Assume-First Clarify (AUTO-MAGIC Phase 2: WS1+WS2)
 
 First slice of the AUTO-MAGIC epic (`docs/designs/automagic-epic-plan.md`): the "mind-reading" architecture's two core loops. Distilled from months of hand-run mentor/builder production loops on a real commerce rebuild — the north-star metric is median ≤4 human touchpoints per shipped chunk.

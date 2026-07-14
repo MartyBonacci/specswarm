@@ -6,9 +6,15 @@
 #   <repo>/.specswarm/verify-queue/<task_id>.pending
 #
 # Lifecycle:
-#   .pending  — task was marked done; verification not yet run
-#   .verified — verification ran, PASS
-#   .flagged  — verification ran, DRIFT or NEEDS-MARTY
+#   .pending       — task was marked done; verification not yet run
+#   .verified      — verification ran, PASS (or human sighted sign-off, SIGHTED-PASS)
+#   .flagged       — verification ran, DRIFT or NEEDS-MARTY (or sighted reject, SIGHTED-REJECT)
+#   .needs-sighted — (v7.14.0) diff touches UI/visual/3D/rendering surfaces;
+#                    spec-mentor PASS alone cannot clear it — requires explicit
+#                    human sighted sign-off (/ss:verify --sighted or the /ss:ship
+#                    batch review). Origin lesson: every false-green that reached
+#                    the product owner was in this class — correct DOM + green
+#                    suites with a visually wrong result.
 #
 # Public API (all silent + non-fatal on missing repo / queue dir):
 #   ss_verify_queue_dir
@@ -25,12 +31,14 @@
 #     Returns 1 if no .pending file exists.
 #
 #   ss_verify_queue_resolve <task_id> <verdict> [details]
-#     verdict: PASS | DRIFT | NEEDS-MARTY
-#     Renames .pending → .verified (PASS) or .flagged (DRIFT/NEEDS-MARTY).
+#     verdict: PASS | DRIFT | NEEDS-MARTY | NEEDS-SIGHTED | SIGHTED-PASS | SIGHTED-REJECT
+#     Renames .pending → .verified (PASS), .flagged (DRIFT/NEEDS-MARTY), or
+#     .needs-sighted (NEEDS-SIGHTED). SIGHTED-PASS/-REJECT resolve a
+#     .needs-sighted marker to .verified/.flagged after human review.
 #     Appends verdict + details + resolved_at to the file.
 #
 #   ss_verify_queue_clear <task_id>
-#     Removes any queue file for the given task (.pending / .verified / .flagged).
+#     Removes any queue file for the given task (any state suffix).
 
 set -e
 
@@ -56,7 +64,7 @@ ss_verify_queue_add() {
   local target="${dir}/${task_id}.pending"
 
   # Wipe any prior state for this task so re-completion re-queues cleanly
-  rm -f "${dir}/${task_id}.verified" "${dir}/${task_id}.flagged" 2>/dev/null || true
+  rm -f "${dir}/${task_id}.verified" "${dir}/${task_id}.flagged" "${dir}/${task_id}.needs-sighted" 2>/dev/null || true
 
   {
     printf 'task_id=%s\n' "$task_id"
@@ -98,12 +106,19 @@ ss_verify_queue_resolve() {
   local dir
   dir=$(ss_verify_queue_dir)
   local pending="${dir}/${task_id}.pending"
+  # Sighted sign-off verdicts resolve a .needs-sighted marker instead of .pending
+  case "$verdict" in
+    SIGHTED-PASS|SIGHTED-REJECT)
+      pending="${dir}/${task_id}.needs-sighted"
+      ;;
+  esac
   [ -f "$pending" ] || return 1
 
   local suffix="verified"
   case "$verdict" in
-    PASS) suffix="verified" ;;
-    DRIFT|NEEDS-MARTY) suffix="flagged" ;;
+    PASS|SIGHTED-PASS) suffix="verified" ;;
+    DRIFT|NEEDS-MARTY|SIGHTED-REJECT) suffix="flagged" ;;
+    NEEDS-SIGHTED) suffix="needs-sighted" ;;
     *) suffix="flagged"; verdict="UNKNOWN" ;;
   esac
 
@@ -124,7 +139,7 @@ ss_verify_queue_clear() {
   [ -z "$task_id" ] && return 1
   local dir
   dir=$(ss_verify_queue_dir)
-  rm -f "${dir}/${task_id}.pending" "${dir}/${task_id}.verified" "${dir}/${task_id}.flagged" 2>/dev/null || true
+  rm -f "${dir}/${task_id}.pending" "${dir}/${task_id}.verified" "${dir}/${task_id}.flagged" "${dir}/${task_id}.needs-sighted" 2>/dev/null || true
 }
 
 ss_verify_queue_count() {

@@ -382,7 +382,9 @@ Capture "wait, something feels off" moments as durable training-data memory file
 
 Adversarial spec-vs-code verification. Dispatches a fresh-context `spec-mentor` subagent (opus, read-only) that returns PASS / DRIFT / NEEDS-MARTY. Auto-queue is populated by the v7.4.0 `PostToolUse tasks-completion-detector.sh` hook when `- [ ] T###` flips to `- [X] T###`. Stop-hook surfaces pending verifications at every Claude pause.
 
-**Usage:** `/ss:verify [TASK_ID] [--all] [--feature NUM] [--queue]`
+**Usage:** `/ss:verify [TASK_ID] [--all] [--feature NUM] [--queue] [--sighted TASK_ID]`
+
+*v7.14.0:* deterministic diff screeners run before dispatch — visual-surface slices are auto-held as **NEEDS-SIGHTED** (spec-mentor PASS covers spec conformance only; every production false-green was a visual slice), and geometry/round-trip/fixture-shape/test-glob screeners inject enforcement clauses into spec-mentor's brief. `--sighted TASK_ID` runs the human sign-off walkthrough (drive the surface, read the browser console, verdict via AskUserQuestion, distill reusable rulings into the taste model). NEEDS-SIGHTED markers BLOCK `/ss:ship` until signed off.
 
 ---
 

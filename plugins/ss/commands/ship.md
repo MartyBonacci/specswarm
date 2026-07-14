@@ -177,6 +177,7 @@ source "${PLUGIN_DIR}/lib/verify/queue.sh"
 PENDING=$(ss_verify_queue_count pending)
 VERIFIED=$(ss_verify_queue_count verified)
 FLAGGED=$(ss_verify_queue_count flagged)
+NEEDS_SIGHTED=$(ss_verify_queue_count needs-sighted)
 
 # Count completed task checkboxes across the current feature's tasks.md.
 # Canonical format: "- [X] T### …" (see /ss:tasks Canonical Task Line Format).
@@ -194,7 +195,19 @@ if [ -n "$FEATURE_NUM" ]; then
   fi
 fi
 
-echo "🔍 Verify-queue: pending=${PENDING}, verified=${VERIFIED}, flagged=${FLAGGED}; completed tasks=${COMPLETED_TASKS}"
+echo "🔍 Verify-queue: pending=${PENDING}, verified=${VERIFIED}, flagged=${FLAGGED}, needs-sighted=${NEEDS_SIGHTED}; completed tasks=${COMPLETED_TASKS}"
+
+# NEEDS-SIGHTED markers BLOCK the ship (v7.14.0 — AUTO-MAGIC WS5, decision D3).
+# Origin lesson: every false-green that reached the product owner was a visual
+# slice — correct DOM + green suites, visually wrong result. Unlike the WARNs
+# below, this gate cannot be scrolled past; it is resolved by the batch sighted
+# review (next step) or per-task /ss:verify --sighted, never by ignoring it.
+if [ "$NEEDS_SIGHTED" -gt 0 ]; then
+  echo "🛑 ${NEEDS_SIGHTED} task(s) NEED SIGHTED REVIEW — /ss:ship is blocked until each has explicit human sign-off:"
+  find "$(ss_verify_queue_dir)" -maxdepth 1 -type f -name '*.needs-sighted' 2>/dev/null \
+    | while IFS= read -r f; do echo "    • $(basename "$f" .needs-sighted)"; done
+  echo "    Proceeding to the batch sighted review below."
+fi
 
 # FLAGGED markers must be reviewed before shipping.
 if [ "$FLAGGED" -gt 0 ]; then
@@ -219,7 +232,22 @@ if [ "$COMPLETED_TASKS" -gt 0 ] && [ "$PENDING" -eq 0 ] && [ "$VERIFIED" -eq 0 ]
 fi
 ```
 
-This step is **non-blocking by default** (it WARNs, it does not `exit`). The flagged/pending findings are surfaced so the user makes an informed merge decision. Quality-threshold blocking remains the job of Step 3.
+The flagged/pending findings are **non-blocking** (WARNs) so the user makes an informed merge decision; quality-threshold blocking remains the job of Step 3. **NEEDS-SIGHTED markers are the exception: they BLOCK.**
+
+### Step 1.8: Batch Sighted Review (v7.14.0 — runs only when needs-sighted > 0)
+
+**Claude — resolve every `.needs-sighted` marker before any merge step runs:**
+
+1. For each needs-sighted task, load its marker (task_desc, details) and diff summary; prepare a one-line "what changed visually, where to look" per task. If a browser MCP is available, offer screenshots of each surface (and ALWAYS read the browser console — console errors are part of the review).
+2. Capture verdicts in batched AskUserQuestion calls (≤4 per call), one question per task:
+   - question: "Sighted review of <tid>: <what changed>. Does it look right?"
+   - header: "Sighted <tid>"
+   - options: "Looks right" / "Wrong — needs fixes (describe in notes)" / "Right + note a ruling"
+3. Resolve each marker (`source ${PLUGIN_DIR}/lib/verify/queue.sh`):
+   - approve → `ss_verify_queue_resolve <tid> SIGHTED-PASS "ship-time sighted sign-off"`
+   - reject  → `ss_verify_queue_resolve <tid> SIGHTED-REJECT "<what's wrong>"` — then **HALT the ship**: the rejects become the immediate fix list; re-run /ss:ship after fixes re-verify.
+4. Distill reusable visual rulings into the taste model (`ss_taste_add … judgment "sighted-gate verdict <tid> …"`) per the v7.13.0 rule.
+5. Re-check: `ss_verify_queue_count needs-sighted` must be 0 before continuing to Step 2. No flag bypasses this gate.
 
 ---
 

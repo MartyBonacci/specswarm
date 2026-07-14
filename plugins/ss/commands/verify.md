@@ -15,7 +15,10 @@ args:
     description: Override auto-detected feature number (e.g., --feature 002).
     required: false
   - name: --queue
-    description: List the current queue (pending + verified + flagged counts).
+    description: List the current queue (pending + verified + flagged + needs-sighted counts).
+    required: false
+  - name: --sighted
+    description: Human sighted sign-off walkthrough for a NEEDS-SIGHTED task (v7.14.0). Usage — /ss:verify --sighted T012.
     required: false
 ---
 
@@ -43,11 +46,13 @@ TASK_ID=""
 PROCESS_ALL=false
 FEATURE_OVERRIDE=""
 QUEUE_MODE=false
+SIGHTED_MODE=false
 
 while [ $# -gt 0 ]; do
   case "$1" in
     --all|--drain) PROCESS_ALL=true; shift ;;
     --queue)   QUEUE_MODE=true;      shift ;;
+    --sighted) SIGHTED_MODE=true;    shift ;;
     --feature) FEATURE_OVERRIDE="$2"; shift 2 ;;
     -h|--help)
       cat <<EOF
@@ -59,13 +64,15 @@ Options:
   --all              Process every pending task in the queue
   --drain            Alias for --all (drains the whole queue)
   --feature NUM      Override auto-detected feature number
-  --queue            Show queue status (pending / verified / flagged counts)
+  --queue            Show queue status (pending / verified / flagged / needs-sighted)
+  --sighted TASK_ID  Human sighted sign-off walkthrough for a NEEDS-SIGHTED task
 
 Examples:
   /ss:verify T011
   /ss:verify --all
   /ss:verify --drain
   /ss:verify --queue
+  /ss:verify --sighted T012
 EOF
       exit 0
       ;;
@@ -81,10 +88,12 @@ if [ "$QUEUE_MODE" = true ]; then
   PENDING=$(ss_verify_queue_count pending)
   VERIFIED=$(ss_verify_queue_count verified)
   FLAGGED=$(ss_verify_queue_count flagged)
+  NEEDS_SIGHTED=$(ss_verify_queue_count needs-sighted)
   echo "📋 SpecSwarm verification queue:"
-  echo "  pending:  $PENDING"
-  echo "  verified: $VERIFIED"
-  echo "  flagged:  $FLAGGED"
+  echo "  pending:       $PENDING"
+  echo "  verified:      $VERIFIED"
+  echo "  flagged:       $FLAGGED"
+  echo "  needs-sighted: $NEEDS_SIGHTED"
   if [ "$PENDING" -gt 0 ]; then
     echo ""
     echo "Pending:"
@@ -171,6 +180,18 @@ for tid in "${TARGETS[@]}"; do
   fi
   DIFF=$(git -C "$REPO_ROOT" diff "$DIFF_RANGE" -- ':(exclude)*/tasks.md' 2>/dev/null | head -c 30000)
 
+  # v7.14.0 (AUTO-MAGIC WS4/WS5): run deterministic diff screeners.
+  # Each fired screener emits a CLAUSE line that gets injected verbatim into
+  # spec-mentor's brief; a SIGHTED line marks the task for human review.
+  # shellcheck disable=SC1091
+  source "${PLUGIN_DIR}/lib/verify/screeners.sh"
+  CHANGED_FILES_TMP=$(mktemp)
+  DIFF_TMP=$(mktemp)
+  git -C "$REPO_ROOT" diff --name-only "$DIFF_RANGE" -- ':(exclude)*/tasks.md' 2>/dev/null > "$CHANGED_FILES_TMP"
+  printf '%s' "$DIFF" > "$DIFF_TMP"
+  SCREENER_OUTPUT=$(ss_screen_diff "$CHANGED_FILES_TMP" "$DIFF_TMP" "$REPO_ROOT" || true)
+  rm -f "$CHANGED_FILES_TMP" "$DIFF_TMP"
+
   # Stash the structured context so Claude can pass it verbatim to the subagent
   CONTEXT_FILE="${REPO_ROOT}/.specswarm/verify-queue/${tid}.context"
   {
@@ -186,6 +207,9 @@ for tid in "${TARGETS[@]}"; do
     echo "task_block<<EOF_BLOCK"
     echo "$TASK_BLOCK"
     echo "EOF_BLOCK"
+    echo "screeners<<EOF_SCREEN"
+    echo "$SCREENER_OUTPUT"
+    echo "EOF_SCREEN"
     echo "diff<<EOF_DIFF"
     echo "$DIFF"
     echo "EOF_DIFF"
@@ -194,6 +218,7 @@ for tid in "${TARGETS[@]}"; do
   echo "  ✓ Context written to: ${CONTEXT_FILE}"
   echo "  task_desc: ${TASK_DESC}"
   echo "  refs:      ${REFS:-(none)}"
+  echo "  screeners: $(echo "$SCREENER_OUTPUT" | grep -c '^CLAUSE' || true) clause(s)$(echo "$SCREENER_OUTPUT" | grep -q '^SIGHTED yes' && echo ', SIGHTED')"
   echo "  diff:      $(echo "$DIFF" | wc -l) lines, $(echo "$DIFF" | wc -c) chars"
   echo ""
 done
@@ -222,6 +247,10 @@ For each target, Claude must dispatch ONE `Task` tool call with `subagent_type="
    Spec corpus paths (one per line):
    <spec_corpus_paths>
 
+   Deterministic screener findings (v7.14.0 — each CLAUSE is a REQUIREMENT you
+   must check in addition to spec conformance; treat an unmet clause as DRIFT):
+   <screeners>
+
    Git diff (range <diff_range>, excluding tasks.md):
    <diff>
 
@@ -240,6 +269,11 @@ For each target, Claude must dispatch ONE `Task` tool call with `subagent_type="
    source ${CLAUDE_PLUGIN_ROOT}/lib/verify/queue.sh
    ss_verify_queue_resolve <tid> <VERDICT> "<SUMMARY + key findings>"
    ```
+   **Sighted override (v7.14.0):** if the context bundle's `screeners` block contains `SIGHTED yes` AND the verdict is PASS, resolve as `NEEDS-SIGHTED` instead:
+   ```bash
+   ss_verify_queue_resolve <tid> NEEDS-SIGHTED "spec-mentor PASS; visual surface — awaiting human sighted review. <SUMMARY>"
+   ```
+   A visually-wrong result with correct DOM and green suites is exactly what spec-mentor cannot see; PASS covers spec conformance only. DRIFT/NEEDS-MARTY verdicts resolve as usual (the drift must be fixed first — it will re-queue on re-completion and get sighted-held then).
 5. On DRIFT or NEEDS-MARTY: fire `ss_notify urgent "SpecSwarm <tid> flagged" "<SUMMARY>"`.
 6. **Distill recurring drift into the taste model (v7.13.0):** if the DRIFT finding names a failure class likely to recur (a convention the implementer keeps missing, a spec-reading habit, a framework trap) — not a one-off typo — distill it:
    ```bash
@@ -264,14 +298,26 @@ source "${PLUGIN_DIR}/lib/verify/queue.sh"
 PENDING=$(ss_verify_queue_count pending)
 VERIFIED=$(ss_verify_queue_count verified)
 FLAGGED=$(ss_verify_queue_count flagged)
+NEEDS_SIGHTED=$(ss_verify_queue_count needs-sighted)
 
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "SpecSwarm verification complete"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-printf "  pending:  %d\n" "$PENDING"
-printf "  verified: %d\n" "$VERIFIED"
-printf "  flagged:  %d\n" "$FLAGGED"
+printf "  pending:       %d\n" "$PENDING"
+printf "  verified:      %d\n" "$VERIFIED"
+printf "  flagged:       %d\n" "$FLAGGED"
+printf "  needs-sighted: %d\n" "$NEEDS_SIGHTED"
+
+if [ "$NEEDS_SIGHTED" -gt 0 ]; then
+  echo ""
+  echo "👁  ${NEEDS_SIGHTED} task(s) await human sighted review (blocks /ss:ship):"
+  find "$(ss_verify_queue_dir)" -maxdepth 1 -type f -name '*.needs-sighted' 2>/dev/null \
+    | while IFS= read -r f; do
+        tid=$(basename "$f" .needs-sighted)
+        echo "  • ${tid} — sign off with: /ss:verify --sighted ${tid}"
+      done
+fi
 
 if [ "$FLAGGED" -gt 0 ]; then
   echo ""
@@ -284,6 +330,41 @@ if [ "$FLAGGED" -gt 0 ]; then
       done
 fi
 ```
+
+## Sighted sign-off mode (--sighted, v7.14.0)
+
+When `SIGHTED_MODE=true`, skip Phases 2–4 entirely and run this walkthrough instead. Requires a TASK_ID whose queue marker is `.needs-sighted` (error out otherwise, listing the current needs-sighted tasks).
+
+**Origin lesson:** every false-green that reached the product owner in production was a visual slice — correct DOM, green suites, visually wrong result (including one only visible in the browser console). Human eyes are the gate; this mode makes those eyes systematic.
+
+**Claude — perform the walkthrough:**
+
+1. **Load context**: read `${QUEUE_DIR}/${tid}.needs-sighted` (task_desc, feature_dir, details) and the task block from tasks.md. Summarize for the user WHAT visual change this task made and WHERE to look (name the routes/components/files from the diff).
+
+2. **Drive the surface if possible**: if a browser MCP (chrome-devtools / playwright) is available and the project has a dev server, offer to launch the affected flow and capture a screenshot of each changed surface. **ALWAYS read the browser console while doing so** — console errors/warnings are part of the sighted review, not an optional extra. If no browser tooling is available, give the user precise manual steps ("run `<dev command>`, open `<route>`, look at `<element>`").
+
+3. **Capture the verdict** via ONE AskUserQuestion call:
+   - question: "Sighted review of <tid>: <one-line what changed>. Does it look right?"
+   - header: "Sighted <tid>" (≤12 chars, e.g. "Sighted T12")
+   - options: "Looks right" (approve) / "Wrong — needs fixes" (reject, describe in notes) / "Right, but note a ruling" (approve + the user states a visual preference worth remembering)
+
+4. **Resolve the marker**:
+   ```bash
+   source ${CLAUDE_PLUGIN_ROOT}/lib/verify/queue.sh
+   # approve:
+   ss_verify_queue_resolve <tid> SIGHTED-PASS "human sighted sign-off: <user notes or 'approved'>"
+   # reject:
+   ss_verify_queue_resolve <tid> SIGHTED-REJECT "human sighted reject: <what's wrong>"
+   ```
+   On reject, surface the fix list — it becomes the immediate next work item.
+
+5. **Distill the taste signal** (v7.13.0 rule): a sighted verdict that expresses a reusable visual ruling ("hover states everywhere", "never center-align body text") is prime taste-model material:
+   ```bash
+   source ${CLAUDE_PLUGIN_ROOT}/lib/taste.sh
+   ss_taste_add "<kebab-slug>" judgment "sighted-gate verdict <tid> feature <feature>" \
+     "<the visual rule>" "<why — cite this review>" "<how to apply>"
+   ```
+   Skip for one-off "this specific margin is wrong" fixes.
 
 ## How auto-queue works (recap)
 

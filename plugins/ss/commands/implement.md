@@ -441,6 +441,32 @@ You **MUST** consider the user input before proceeding (if not empty).
 
 <!-- ========== END PER-TASK VERIFIER ========== -->
 
+<!-- ========== PER-TASK SLICE GATES (SpecSwarm v7.14.0 — AUTO-MAGIC WS4) ========== -->
+<!-- Origin lessons: framework-boundary breaks (React Router v7 `.server`      -->
+<!-- modules) are invisible to typecheck AND unit tests — only the production  -->
+<!-- build catches them. A real ship was halted at the end by lint errors in   -->
+<!-- unwired code. Per-slice gates make both a 30-second fix instead of        -->
+<!-- ship-time archaeology.                                                    -->
+
+8c. **Per-Task Slice Gates** (runs after each task's verification, before moving to the next task):
+
+   **YOU MUST run the project's production build + lint SYNCHRONOUSLY after every task that produced file changes.** Never background these gates and proceed.
+
+   ```bash
+   source "${PLUGIN_DIR}/lib/quality-gates.sh"
+   run_slice_gates "${REPO_ROOT}"
+   GATE_RC=$?
+   ```
+
+   Interpret the result (first line is `PASS|WARN|FAIL slice-gates: <summary>`):
+   - **PASS** (exit 0) → proceed to the next task. A "skipped (no build manifest)" PASS is fine for non-buildable repos.
+   - **WARN** (exit 1) → surface the summary to the user, log `audit_log "slice_gate_warn" task_id="<ID>"`, proceed. (Occurs under `SPECSWARM_SLICE_GATES=warn`, or WARN-on-zero when manifests exist but no build/lint command is detectable.)
+   - **FAIL** (exit 2, default `SPECSWARM_SLICE_GATES=block`) → **HALT the task loop.** The failure becomes the immediate next task: fix the build/lint break (the gate output names the failing command and tails its output), re-run `run_slice_gates`, and only proceed once it passes. Log `audit_log "slice_gate_failed" task_id="<ID>"`. Do NOT continue to later tasks on a broken build — breakage compounds.
+
+   Cost-control knob: `SPECSWARM_SLICE_GATES=block|warn|off` (default `block`). Users with slow builds can set `warn` or `off`; the ship-time gate still runs regardless.
+
+<!-- ========== END PER-TASK SLICE GATES ========== -->
+
 9. Completion validation:
    - Verify all required tasks are completed
    - Check that implemented features match the original specification
