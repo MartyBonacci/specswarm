@@ -1,6 +1,6 @@
 # AUTO-MAGIC Upgrade Epic — Audit Map, Locked Decisions, Phased Plan
 
-**Status:** Phase 1 complete (audit + decision sheet + plan) — 2026-07-13
+**Status:** ✅ ALL 6 PHASES SHIPPED — 2026-07-13. v7.13.0 (`9a948ab`, WS1+WS2) · v7.14.0 (`7b5b4cd`, WS4+WS5) · v7.15.0 (`2883429`, WS3+WS6) · v7.16.0 (`98970b7`, WS7+WS8) · v7.17.0 (`f4196f8`, WS9). 152 test assertions across 5 new suites, all green; v7.11/v7.12 regression suites green throughout.
 **Design compass:** mind-reading = 4 loops (distilled taste memory, assume-with-provenance,
 adversarial verification, calibration loops). North star: median ≤4 human touchpoints per chunk
 (kickoff, batched decision sheet + assumptions review, sighted gate, ship blessing).
