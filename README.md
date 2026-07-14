@@ -43,8 +43,11 @@ The 5 core commands above remain the canonical loop. The v7.1+ commands compose 
 | `/ss:dry-run`       | v7.8.0  | Predict the full chunk lifecycle without running it (anticipated decisions, risk register)    |
 | `/ss:watchdog`      | v7.9.0  | Background daemon — out-of-session monitor; auto-queues verifications on new commits         |
 | `/ss:overnight`     | v7.10.0 | Run a chunk autonomously while you sleep (cron/systemd/launchd-compatible)                   |
+| `/ss:bakeoff`       | v7.16.0 | Calibration loop: N candidates → contact sheet → verdict → pinned winner + distilled ruling  |
 
 Together these implement the **autonomous chunk loop**: pre-batch decisions at 9pm, schedule `/ss:overnight` via cron between 10pm-6am, wake to a phone notification (success or "needs review"). The dual mentor↔builder session pattern is now optional, not required. See [CHANGELOG.md](./CHANGELOG.md) for the full architectural story.
+
+**v7.16.0 — bakeoff + decided-by-data.** `/ss:bakeoff` makes the calibration loop first-class: N deliberately-diverse candidates → side-by-side contact sheet → one batched verdict → winner pinned with a regression test → ruling distilled into the taste model (hand-run ~15×, this loop converted more fuzzy judgment into deterministic constants than anything else). Specs may defer a fork to a named metric with `[DECIDED-BY-DATA: <metric>, <review-when>]` — tracked by `/ss:metrics` and the watchdog. A new `ground-truth-bias` preflight check WARNs when a plan tunes against acceptance data without addressing provenance (22/26 "user-accepted" items in production were the scorer's own suggestions).
 
 **v7.15.0 — ruling distiller + overnight resilience.** Deterministic taste rulings now carry embedded `specswarm-rule` blocks and generate edit-time hooks the moment they're distilled — an intervention captured in chunk N fires automatically in chunk N+1, no `/ss:init` re-run. Spec-mentor's verify bundle now includes the judgment taste rules (previously never wired). Headless runs get sync-gate + budget clauses at both dispatch sites, work-tree-aware failure classification (timeout-stranded / api-error / yield-await), and a one-shot auto-resume whose prompt orders a critical self-review of the half-done diff — the protocol that recovered 3/3 real overnight failures.
 

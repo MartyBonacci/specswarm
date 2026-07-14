@@ -162,6 +162,25 @@ if [ -n "$FEATURE_NUMBER" ]; then
   Merge Date: \(.git.merge_date // "N/A")"'
   echo ""
 
+  # v7.16.0 (AUTO-MAGIC WS8): open DECIDED-BY-DATA deferrals for this feature.
+  # A fork deferred to a metric is a decision with a due date — surface it so
+  # the review-when condition doesn't rot forgotten in the spec.
+  DBD_LIB="${PLUGIN_DIR}/lib/decisions/decided-by-data.sh"
+  if [ -f "$DBD_LIB" ]; then
+    # shellcheck disable=SC1091
+    source "$DBD_LIB"
+    DBD_MARKERS=$(ss_dbd_scan_feature "$FEATURE_DIR" 2>/dev/null || true)
+    if [ -n "$DBD_MARKERS" ]; then
+      echo "📊 Decided-by-Data (open deferrals)"
+      echo "───────────────────────────────────"
+      while IFS=$'\t' read -r mfile mline metric review; do
+        printf "  • %s — review when: %s  (%s:%s)\n" "$metric" "$review" "$(basename "$mfile")" "$mline"
+      done <<< "$DBD_MARKERS"
+      echo "  Resolve each: gather the metric, make the ruling, replace the marker with the decision (+ distill via ss_taste_add)."
+      echo ""
+    fi
+  fi
+
 elif [ -n "$SPRINT_FILTER" ]; then
   #==========================================================================
   # SPRINT AGGREGATE VIEW

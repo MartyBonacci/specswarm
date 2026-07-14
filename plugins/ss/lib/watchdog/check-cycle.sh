@@ -103,10 +103,33 @@ ss_watchdog_check_cycle() {
             fi
           done <<< "$newly_checked"
           ;;
-        *.specswarm/features/*/plan.md)
-          ss_watchdog_log "plan.md changed: ${f} — preflight recommended"
+        *.specswarm/features/*/plan.md|*.specswarm/features/*/spec.md)
+          ss_watchdog_log "spec artifact changed: ${f} — preflight recommended"
           # We don't auto-run preflight (network calls in background daemon
           # may hit rate limits or fail silently). Log the hint instead.
+
+          # v7.16.0 (WS8): surface DECIDED-BY-DATA deferrals so review-when
+          # conditions don't rot forgotten in the spec.
+          local dbd_lib
+          dbd_lib="$(dirname "${BASH_SOURCE[0]}")/../decisions/decided-by-data.sh"
+          if [ -f "$dbd_lib" ]; then
+            # shellcheck disable=SC1091
+            source "$dbd_lib"
+            local markers
+            markers=$(ss_dbd_scan "${repo_root}/${f}" 2>/dev/null || true)
+            if [ -n "$markers" ]; then
+              local mcount
+              mcount=$(echo "$markers" | wc -l)
+              ss_watchdog_log "DECIDED-BY-DATA: ${mcount} open deferral(s) in ${f}"
+              while IFS=$'\t' read -r mfile mline metric review; do
+                ss_watchdog_log "  • ${metric} (review-when: ${review}) at ${mfile##*/}:${mline}"
+              done <<< "$markers"
+              if declare -f ss_notify >/dev/null 2>&1; then
+                ss_notify info "SpecSwarm: data-deferred decisions" \
+                  "${mcount} DECIDED-BY-DATA marker(s) in ${f##*/} — check review-when conditions" || true
+              fi
+            fi
+          fi
           ;;
       esac
     done <<< "$changed_files"

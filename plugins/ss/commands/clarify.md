@@ -208,6 +208,8 @@ Execution steps:
    - **CORPUS-SILENT** — nothing decides and outcomes materially differ; this is a **genuine fork (class c)** — question proceeds, batched.
    - **CORPUS-CONFLICT** — corpus says X but the spec says Y. Surface this as a special blocking question: "The corpus (`{path}`) says X. Spec says Y. Which is canonical?" — answers feed back to spec.md.
 
+   **Defer-to-data escape (v7.16.0):** a genuine fork whose answer depends on real usage data may be deferred instead of asked — write the cheap default into the spec plus a `[DECIDED-BY-DATA: <metric>, <review-when>]` marker (tracked by `/ss:metrics` and the watchdog). Use sparingly: only when data would actually decide it, and name a real observable metric.
+
    **Auto-fill discipline:** an auto-fill must be a *resolution*, not a guess. If two taste entries conflict, or the codebase shows two competing precedents, that is a genuine fork — ask. Never auto-fill a gap whose wrong resolution would be expensive to unwind (schema identity, security posture, money handling) unless the resolving source is explicit and on-point.
 
    d. **Skip-question accounting**: keep an internal count of CORPUS-RESOLVED questions skipped. The Step 3 question budget (max 5) MAY be increased proportionally — if 3 questions were skipped because the corpus answered them, you have effectively 5 + 0 = 5 remaining (don't pad the queue with low-value questions just because budget exists). Lower-impact questions you previously held back can now surface if needed, but it's better to ask 2 high-impact questions than to pad to 5.

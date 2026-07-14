@@ -229,6 +229,7 @@ fi
    - `questions[].options[].label` ← the `Options:` labels
    - `questions[].options[].description` ← each option's description
    - If `**Recommended:**` is set, put that option FIRST and append "(Recommended)" to its label
+   - **Defer-to-data (v7.16.0):** when a decision genuinely has no defensible answer until real usage data exists, include a "Defer to data" option naming the deciding metric. If chosen, the decision-sheet answer becomes the cheap default PLUS a `[DECIDED-BY-DATA: <metric>, <review-when>]` marker written into spec.md — `/ss:metrics` and the watchdog track it until the review-when condition is met.
 4. Collect all answers (across however many calls) into a map `{tag → answer}`.
 
 ## Phase 7: Write the final decision-sheet + mutate plan.md

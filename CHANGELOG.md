@@ -5,6 +5,25 @@ All notable changes to SpecSwarm and SpecSwarm plugins will be documented in thi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.16.0] - 2026-07-13 - Bakeoff + Decided-by-Data (AUTO-MAGIC Phase 5: WS7+WS8)
+
+### Added
+
+- **`/ss:bakeoff` — the calibration loop as a first-class command** (WS7). N deliberately-diverse candidates (parallel subagents, distinct angles) → `ss_bakeoff_sheet` assembles a side-by-side contact sheet (NOTES + code inlined, screenshots embedded when a browser MCP is available, truncation always explicit — no silent caps) → ONE batched AskUserQuestion verdict (winner + grafts + free-text notes) → winner pinned with a regression test citing `verdict.md` as provenance → ruling distilled via `ss_taste_add`. Generic across domains: color pickers, copy tone, layout variants, ranking weights.
+  - *Source:* epic thesis loop 4 — hand-run ~15× in production; the single most effective pattern for converting fuzzy judgment into deterministic constants.
+  - *Verified by:* `plugins/ss/test-fixtures/v7.16-bakeoff-databias.sh` block [A].
+
+- **`[DECIDED-BY-DATA: <metric>, <review-when>]` markers** (WS8, `lib/decisions/decided-by-data.sh`). A genuine fork with no defensible spec-time answer may ship the cheap default and defer to a named metric. `/ss:decisions` offers "Defer to data" as an option class; `/ss:clarify` documents the escape; `/ss:metrics` surfaces open deferrals per feature; the watchdog logs + notifies when changed specs carry markers — deferrals stop rotting forgotten.
+  - *Verified by:* `v7.16-bakeoff-databias.sh` block [B].
+
+- **`ground-truth-bias` preflight check** (7th check, WS8). WARNs when plan.md evaluates/tunes against acceptance or ground-truth data without addressing provenance (segmenting/excluding self-generated items). Never blocks — it asks the question a human forgot to ask. Conditional guard: plans with no eval language PASS-skip.
+  - *Source:* production case — 22/26 "user-accepted" items were the scorer's own prior suggestions (interface gravity); tuning to them would have been the scorer grading its own homework.
+  - *Verified by:* `v7.16-bakeoff-databias.sh` block [C] (18 assertions total, all green; the WARN FIRES on a biased-plan fixture).
+
+### Notes
+
+- Command surface: 20 visible + 11 internal = 31 total (bakeoff is the first new visible command since v7.10.0; WS9 will consolidate).
+
 ## [7.15.0] - 2026-07-13 - Ruling Distiller + Overnight Resilience (AUTO-MAGIC Phase 4: WS3+WS6)
 
 ### Added

@@ -1,6 +1,6 @@
 # SpecSwarm Commands Reference
 
-Complete documentation for all SpecSwarm commands: **19 visible** + **11 internal** = **30 total**.
+Complete documentation for all SpecSwarm commands: **20 visible** + **11 internal** = **31 total**.
 
 ## Command Overview
 
@@ -8,7 +8,7 @@ Complete documentation for all SpecSwarm commands: **19 visible** + **11 interna
 |----------|----------|-------|
 | [Core Workflows](#core-workflows) | init, build, fix, modify, ship | 5 |
 | [Distinct Workflows](#distinct-workflows) | release, upgrade, rollback, status, metrics | 5 |
-| [Autonomous Loop (v7.1.0–v7.10.0)](#autonomous-loop-v710v7100) | preflight, notify, intervention, verify, retrospective, decisions, dry-run, watchdog, overnight | 9 |
+| [Autonomous Loop (v7.1.0–v7.16.0)](#autonomous-loop-v710v7100) | preflight, notify, intervention, verify, retrospective, decisions, dry-run, watchdog, overnight, bakeoff | 10 |
 | [Internal Commands](#internal-commands) | specify, clarify, plan, tasks, implement, validate, analyze-quality, bugfix, hotfix, complete, constitution | 11 |
 
 ---
@@ -433,6 +433,18 @@ The full unattended chunk run. Combines pre-batched decisions + verification que
 **Strict autonomous prompt enforces:** no AskUserQuestion, no /ss:ship, no push. On unanswered decision, writes `overnight-unanswered.md` and exits.
 
 **Scheduler integration:** `/ss:overnight schedule` prints copy-paste cron / systemd timer / launchd plist snippets. Note: the `/schedule` plugin runs in Anthropic's remote infrastructure and can't touch local filesystems — use local OS schedulers instead.
+
+*v7.15.0:* every dispatched prompt carries sync-gate + budget clauses; failed runs are classified work-tree-aware (timeout-stranded / api-error / yield-await) and get ONE auto-authored resume dispatch ordering a critical self-review of the half-done diff.
+
+---
+
+### `/ss:bakeoff` (v7.16.0)
+
+Calibration loop for taste-heavy choices: generate N deliberately-diverse candidates → render a side-by-side contact sheet (`bakeoff/<slug>/contact-sheet.md`, screenshots when a browser MCP is available) → capture your verdict in one batched AskUserQuestion → pin the winner with a regression test → distill the ruling into the taste model. *Origin lesson: hand-run ~15× in production, this loop converted more fuzzy judgment into deterministic constants than anything else.*
+
+**Usage:** `/ss:bakeoff "<the taste-heavy choice>" [--candidates N] [--feature NUM]`
+
+**Related (v7.16.0, WS8):** specs may defer a fork to data with `[DECIDED-BY-DATA: <metric>, <review-when>]` — tracked by `/ss:metrics` (open-deferrals section) and the watchdog (notify on spec changes). The `ground-truth-bias` preflight check (7th) WARNs when a plan tunes against acceptance data without addressing whether that data was self-generated.
 
 ---
 
