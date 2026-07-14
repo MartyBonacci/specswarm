@@ -59,6 +59,20 @@ Closes the autonomous loop. Dual mentor↔builder session pattern is now fully o
 - **W4 (vector-indexed spec corpus)** — requires Python deps; breaks bash-only design; current corpus sizes don't justify
 - **W6 (MCP-based orchestrator)** — overkill at current scale; SpecSwarm has 6 agents working without a server layer
 
+### ✅ AUTO-MAGIC Epic → v7.13.0–v7.17.0 (2026-07-13)
+
+Five releases in one day turning months of hand-run production loops (Custom Cult v3, 50+ shipped slices) into first-class machinery. Design compass: mind-reading = four loops (distilled taste memory, assume-with-provenance, adversarial verification, calibration). North star: **median ≤4 human touchpoints per shipped chunk**. Full audit map + locked decisions in [docs/designs/automagic-epic-plan.md](./docs/designs/automagic-epic-plan.md).
+
+- **v7.13.0 — taste model + assume-first clarify (WS1+WS2).** `lib/taste.sh` is the ONE writer for distilled rulings (`check-type: deterministic|judgment` + provenance); decisions/clarify/verify answers accrete instead of dying in artifacts. Clarify inverted: auto-fill from taste/corpus/codebase-precedent into a provenance-cited `## Assumptions` ledger; only genuine forks asked, batched.
+- **v7.14.0 — deterministic slice gates + sighted classification (WS4+WS5).** Real `test-framework-detector.sh`/`quality-gates.sh` (referenced since Phase 1, never existed); blocking per-task build+lint (`SPECSWARM_SLICE_GATES`); verify-time diff screeners (geometry/round-trip/fixture-shape/test-globs); `NEEDS-SIGHTED` queue state hard-blocks `/ss:ship`.
+- **v7.15.0 — ruling distiller + overnight resilience (WS3+WS6).** Deterministic rulings embed `specswarm-rule` blocks → edit-time hooks generated immediately (chunk N's catch fires in chunk N+1); spec-mentor finally receives judgment taste rules; headless dispatches carry sync-gate + budget clauses; work-tree-aware failure classification + one-shot auto-resume.
+- **v7.16.0 — bakeoff + decided-by-data (WS7+WS8).** `/ss:bakeoff` calibration loop (candidates → contact sheet → verdict → pinned winner → distilled ruling); `[DECIDED-BY-DATA: metric, review-when]` fork-deferral markers tracked by metrics + watchdog; `ground-truth-bias` preflight guard.
+- **v7.17.0 — `/ss:go` (WS9).** The single default entry point walking the full ladder via a dedicated Stop hook; pauses only at the 4 touchpoints; `/ss:build` untouched (deprecate once /ss:go is proven).
+
+**Lessons:** (a) the audit found two silent no-ops (ghost libs, dead `/ss:analyze` call) — a gate that silently skips reads as "covered"; (b) every new check shipped with a violating fixture proving it FIRES (152 assertions across 5 suites); (c) applying the epic's own assume-first philosophy to its decision sheet worked — 4 questions covered 9 workstreams.
+
+**Post-epic follow-ups:** run a real chunk through `/ss:go` (the prompt-level acceptance test); expect a sighted-classifier tuning pass after the first false-positive holds; consider `/ss:build` deprecation after /ss:go proves out.
+
 ## Pending — Core SS
 
 ### #3 Project-Level Phases (medium-high impact, medium implementation)

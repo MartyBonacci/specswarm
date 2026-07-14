@@ -358,7 +358,7 @@ Feature-level orchestration metrics and analytics from completed features.
 
 ## Autonomous Loop (v7.1.0–v7.10.0)
 
-These nine commands implement SpecSwarm's autonomous chunk execution loop. They compose with the core 5 — none of them replace any existing command; each adds a specific automation surface. Together they replace the dual mentor↔builder session pattern.
+These commands implement SpecSwarm's autonomous chunk execution loop (v7.17.0 adds /ss:go, which chains them into one default entry point). They compose with the core 5 — none of them replace any existing command; each adds a specific automation surface. Together they replace the dual mentor↔builder session pattern.
 
 ### `/ss:preflight` (v7.1.0)
 

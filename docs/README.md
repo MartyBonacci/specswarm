@@ -6,7 +6,7 @@ Complete documentation for the SpecSwarm Claude Code plugin.
 
 ### Quick Start
 - **[Main README](../README.md)** - Overview, installation, and quick start guide
-- **[Commands Reference](../COMMANDS.md)** - Complete documentation for all 30 commands (19 visible + 11 internal)
+- **[Commands Reference](../COMMANDS.md)** - Complete documentation for all 32 commands (21 visible + 11 internal)
 
 ### Detailed Guides
 - **[Setup Guide](./SETUP.md)** - Technical setup, configuration, and troubleshooting
@@ -31,8 +31,8 @@ Complete documentation for the SpecSwarm Claude Code plugin.
 - Directory structure → [Setup: Directory Structure](./SETUP.md#directory-structure)
 
 **Learning Commands:**
-- Core 5 commands → [Commands: Core Workflows](../COMMANDS.md#core-workflows)
-- All 30 commands → [Commands Reference](../COMMANDS.md)
+- Core commands → [Commands: Core Workflows](../COMMANDS.md#core-workflows)
+- All 32 commands → [Commands Reference](../COMMANDS.md)
 - Natural language usage → [README: Natural Language](../README.md#natural-language-commands-v33)
 
 **Advanced Features:**
@@ -73,7 +73,7 @@ Complete documentation for the SpecSwarm Claude Code plugin.
 **Purpose:** Complete command documentation
 
 **Contents:**
-- All commands organized by category (19 visible + 11 internal)
+- All commands organized by category (21 visible + 11 internal)
 - Usage examples for each command
 - When to use each command
 - Command comparison tables
@@ -184,7 +184,7 @@ Complete documentation for the SpecSwarm Claude Code plugin.
 ## 📊 Documentation Stats
 
 - **Main README**: 400 lines (simplified from 670)
-- **Commands Reference**: 700+ lines covering 30 commands (19 visible + 11 internal)
+- **Commands Reference**: 700+ lines covering 32 commands (21 visible + 11 internal)
 - **Setup Guide**: 500+ lines of technical setup
 - **Features Deep-Dive**: 600+ lines of feature documentation
 - **Total Documentation**: 2,100+ lines
@@ -222,6 +222,6 @@ See [README: Version History](../README.md#version-history) for release notes an
 
 ---
 
-**SpecSwarm v7.10.0** — Documentation index (autonomous chunk loop + 30 commands)
+**SpecSwarm v7.17.0** — Documentation index (AUTO-MAGIC loop + 32 commands)
 
 *Navigate confidently through SpecSwarm's comprehensive documentation.*

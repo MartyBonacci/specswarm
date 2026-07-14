@@ -2,6 +2,8 @@
 
 **Complete lifecycle coverage through production-ready and experimental plugin integration**
 
+> **📜 HISTORICAL DOCUMENT.** SpecLabs was retired; this guide is preserved for provenance only. Everything it envisioned now lives in core SpecSwarm: autonomous chunk execution → `/ss:overnight` (v7.10.0), the single-command full lifecycle → `/ss:go` (v7.17.0), adversarial verification → `/ss:verify` + spec-mentor (v7.4.0). See [WORKFLOW.md](./WORKFLOW.md) and the main [README](../README.md) for current usage.
+
 ---
 
 ## Overview

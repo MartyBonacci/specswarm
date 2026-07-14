@@ -2,7 +2,9 @@
 
 **Fast reference for common SpecSwarm commands and workflows.**
 
-**Version**: v7.10.0 | **Commands**: 19 visible + 11 internal = 30 total | **Language-Agnostic**
+**Version**: v7.17.0 | **Commands**: 21 visible + 11 internal = 32 total | **Language-Agnostic**
+
+**TL;DR (v7.17.0):** `/ss:init` once, then `/ss:go "<feature>"` — the full ladder runs itself, pausing only for the assumptions review, the batched decision sheet, sighted gates, and the ship blessing (`/ss:ship`).
 
 ---
 
@@ -17,7 +19,7 @@
 
 # Verify
 /plugin list
-# Should show: ss v7.10.0
+# Should show: ss v7.17.0
 ```
 
 ---
@@ -93,25 +95,42 @@
 | `/ss:modify --analyze-only` | Assess changes | `/ss:modify "Update React" --analyze-only` |
 | `/ss:analyze-quality` | Quality check | `/ss:analyze-quality` |
 
-### Autonomous Loop (v7.1.0–v7.10.0)
+### Autonomous Loop (v7.1.0–v7.17.0)
 
 | Command | Since | Use When | Example |
 |---------|-------|----------|---------|
-| `/ss:preflight` | v7.1.0 | Before `/ss:tasks` — validate plan.md | `/ss:preflight` |
+| `/ss:go` | v7.17.0 | **Default entry point** — full ladder, ≤4 touchpoints | `/ss:go "Add contact form"` |
+| `/ss:preflight` | v7.1.0 | Before `/ss:implement` — validate plan.md (7 checks) | `/ss:preflight` |
 | `/ss:notify` | v7.2.0 | Fire a notification from any context | `/ss:notify --urgent "build broke"` |
 | `/ss:intervention` | v7.3.0 | Capture "something feels off" moment | `/ss:intervention "plan says 43, spec says 47"` |
 | `/ss:verify` | v7.4.0 | Adversarial verify a completed task | `/ss:verify T011` |
+| `/ss:verify --sighted` | v7.14.0 | Human sign-off on a visual (NEEDS-SIGHTED) slice | `/ss:verify --sighted T012` |
 | `/ss:retrospective` | v7.5.0 | Distill chunk lessons before /ss:ship | `/ss:retrospective` |
 | `/ss:decisions` | v7.6.0 | Pre-batch strategic decisions | `/ss:decisions` |
 | `/ss:dry-run` | v7.8.0 | Predict the chunk without running it | `/ss:dry-run` |
 | `/ss:watchdog` | v7.9.0 | Background out-of-session monitor | `/ss:watchdog start` |
 | `/ss:overnight` | v7.10.0 | Autonomous unattended chunk run | `/ss:overnight check` |
+| `/ss:bakeoff` | v7.16.0 | Taste-heavy choice → N candidates → pinned winner | `/ss:bakeoff "hero palette" --candidates 3` |
+
+**Env knobs (v7.13.0+):** `SPECSWARM_SLICE_GATES=block|warn|off` (per-task build+lint gate, default `block`) · `SPECSWARM_VERIFY_QUEUE_LIST_MAX` (Stop-hook list threshold, default 8)
 
 ---
 
 ## Common Command Patterns
 
-### Pattern 1: Feature Development
+### Pattern 0: The Full Ladder (v7.17.0 — recommended default)
+
+```bash
+/ss:go "Add contact form with name, email, message fields, validation, and email sending"
+# → specify → assume-first clarify → plan → decisions → tasks → preflight
+#   → implement (build+lint per task, verify queue drains) → retrospective
+# You touch it exactly 4 times: kickoff, assumptions review + decision sheet
+# (one sitting), sighted sign-off on visual slices, and:
+/ss:ship   # ship blessing (batch-reviews any NEEDS-SIGHTED items)
+# Abort the ladder any time: rm .specswarm/go-loop.state
+```
+
+### Pattern 1: Feature Development (pre-v7.17 ladder; still supported)
 
 ```bash
 /ss:build "Add contact form with name, email, message fields, validation, and email sending"
@@ -405,8 +424,8 @@ project-root/
 ## Version Information
 
 This cheat sheet is for:
-- **SpecSwarm**: v7.10.0
-  - **30 commands** (19 visible + 11 internal)
+- **SpecSwarm**: v7.17.0
+  - **32 commands** (21 visible + 11 internal)
   - **6 multi-agent subagents** with v7.7.0 explicit model assignments (5 opus, 1 haiku)
   - Natural language core (`build`, `fix`, `ship`, `modify`)
   - Language-agnostic
@@ -418,6 +437,7 @@ This cheat sheet is for:
   - `/ss:init` reconciliation refactor — v6.4.0
   - Subagent-Driven Foundation File Generation — v7.0.0
   - **Autonomous Chunk Loop (v7.1.0–v7.10.0):** preflight, notify, intervention, verify (+ spec-mentor), retrospective (+ chunk-retrospective), decisions (+ decision-miner), dry-run (+ dry-run-simulator), watchdog daemon, overnight (cron/systemd/launchd)
+  - **AUTO-MAGIC Epic (v7.13.0–v7.17.0):** taste model (distilled rulings that accrete automatically), assume-first clarify (provenance-cited `## Assumptions` ledger), per-task build+lint slice gates, NEEDS-SIGHTED gate on visual slices, ruling distiller (chunk N's catch fires in chunk N+1), overnight auto-resume, `/ss:bakeoff` calibration loop, `[DECIDED-BY-DATA]` markers, and `/ss:go` — the single entry point (≤4 human touchpoints per chunk)
 
 Check your version:
 ```bash

@@ -1,6 +1,18 @@
 # SpecSwarm Complete Workflow Guide
 
-**Complete step-by-step guide for using SpecSwarm and SpecLabs plugins effectively.**
+**Complete step-by-step guide for using SpecSwarm effectively.**
+
+> **⚡ v7.17.0 update — the short version of this whole guide:**
+>
+> ```bash
+> /ss:init                      # once per project
+> /ss:go "<feature description>"  # the full ladder runs itself
+> /ss:ship                      # your blessing, after sighted sign-offs
+> ```
+>
+> `/ss:go` walks specify → assume-first clarify → plan → decisions → tasks → preflight → implement (build+lint per task, adversarial verify) → retrospective, pausing only for the assumptions review, the batched decision sheet, sighted gates on visual slices, and the ship blessing. Every step below remains available as a standalone escape hatch — this guide documents them individually.
+>
+> **Historical note:** references to **SpecLabs** below describe a retired experimental companion plugin. Its autonomous vision ("describe a feature Monday evening, wake up Tuesday with working code") now lives in core SpecSwarm as `/ss:overnight` (v7.10.0) + `/ss:go` (v7.17.0).
 
 ---
 

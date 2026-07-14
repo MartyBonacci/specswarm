@@ -4,6 +4,7 @@ Technical documentation for SpecSwarm's advanced features and capabilities.
 
 ## Table of Contents
 
+- [The AUTO-MAGIC Loop (v7.13.0–v7.17.0)](#the-auto-magic-loop-v7130v7170)
 - [Quality Validation System](#quality-validation-system)
 - [Tech Stack Management](#tech-stack-management)
 - [Multi-Framework Testing](#multi-framework-testing)
@@ -11,6 +12,38 @@ Technical documentation for SpecSwarm's advanced features and capabilities.
 - [Language Agnostic](#language-agnostic)
 - [Planned Features](#planned-features)
 - [Workflow Orchestration](#workflow-orchestration)
+
+---
+
+## The AUTO-MAGIC Loop (v7.13.0–v7.17.0)
+
+The "mind-reading" quality of a good AI build partner is not a model capability — it is an architecture with four loops, all first-class in SpecSwarm since v7.17.0. North-star metric: **median ≤4 human touchpoints per shipped chunk** (kickoff, one assumptions-review + decision-sheet sitting, sighted gates, ship blessing). Entry point: `/ss:go "<feature>"`.
+
+### Loop 1 — Distilled taste memory (v7.13.0)
+
+Every user ruling — AskUserQuestion answers in `/ss:decisions` and `/ss:clarify`, verify-DRIFT lessons, sighted-gate verdicts, retrospective output — is distilled through one shared writer (`lib/taste.sh` → `ss_taste_add`) into `feedback_*.md` memory entries: the rule, **Why**, **How to apply**, `check-type: deterministic|judgment`, and provenance. Compressed rules, never transcripts — rules survive sessions; transcripts don't.
+
+### Loop 2 — Assume-with-provenance (v7.13.0)
+
+`/ss:clarify` classifies every spec gap three ways before it may become a question: (a) resolvable from the taste model → auto-fill citing the entry; (b) resolvable from the spec corpus or codebase precedent → auto-fill citing `file §section` / `path:line`; (c) genuine fork → asked, batched ≤4 per call. Auto-fills land in a structured `## Assumptions` ledger (`- A<n>: … — *source:* … — *status:* auto-filled|confirmed|overridden`) reviewable like a diff — ~5× faster for a human than answering questions. The `assumptions-provenance` preflight check keeps the ledger honest.
+
+### Loop 3 — Adversarial verification with teeth (v7.14.0–v7.15.0)
+
+The implementer's self-report is never trusted:
+- **Slice gates** — the production build + lint run synchronously after every task (`SPECSWARM_SLICE_GATES=block|warn|off`, default block). Only the build catches framework-boundary breaks; per-slice beats ship-time archaeology.
+- **Diff screeners** — deterministic classifiers inject binding clauses into spec-mentor's brief: geometry diffs need asymmetric fixtures + a flip test; encode/decode tests need an off-module truth assertion; fixtures must mirror the production writer; targeted test sweeps must cover every detected test root.
+- **NEEDS-SIGHTED** — visual/UI/3D slices are auto-held even after spec-mentor PASS and **block `/ss:ship`** until a human signs off (`/ss:verify --sighted T###` or the ship-time batch review — browser console included). Every production false-green was in this class.
+- **The distiller** — deterministic rulings embed a `specswarm-rule` block and generate an edit-time PostToolUse hook the moment they're distilled: the intervention captured in chunk N fires automatically in chunk N+1. Judgment rulings load into spec-mentor's verification context.
+
+### Loop 4 — Calibration (v7.16.0)
+
+`/ss:bakeoff "<taste-heavy choice>"` generates N deliberately-diverse candidates, assembles a side-by-side contact sheet, captures your verdict in one batched question, pins the winner with a regression test, and distills the ruling. Specs may also defer a fork to data with `[DECIDED-BY-DATA: <metric>, <review-when>]` (tracked by `/ss:metrics` + the watchdog), and the `ground-truth-bias` preflight check warns when an eval tunes against acceptance data that the system under evaluation generated itself.
+
+### Headless resilience (v7.15.0)
+
+`/ss:overnight` and watchdog dispatches carry sync-gate + budget clauses ("run every gate synchronously; never background-and-await; nearing the limit → commit + honest partial report"). Failed runs are classified work-tree-aware (timeout-stranded / api-error / yield-await) and get one auto-authored resume dispatch that orders a critical self-review of the half-done diff before completing + committing.
+
+Full design provenance: [docs/designs/automagic-epic-plan.md](./designs/automagic-epic-plan.md) and the v7.13.0–v7.17.0 [CHANGELOG](../CHANGELOG.md) entries.
 
 ---
 
@@ -514,4 +547,4 @@ const agents = [
 
 ---
 
-**SpecSwarm v7.10.0** — Features deep-dive (autonomous chunk loop)
+**SpecSwarm v7.17.0** — Features deep-dive (AUTO-MAGIC loop)

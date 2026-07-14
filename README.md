@@ -1,6 +1,6 @@
-# SpecSwarm v7.10.0
+# SpecSwarm v7.17.0
 
-Spec-driven development for Claude Code. Build → Fix → Modify → Ship, with quality gates, multi-agent orchestration, version-controlled specs, and **autonomous chunk execution** (v7.1.0–v7.10.0).
+Spec-driven development for Claude Code. Build → Fix → Modify → Ship, with quality gates, multi-agent orchestration, version-controlled specs, **autonomous chunk execution** (v7.1.0–v7.10.0), and the **AUTO-MAGIC loop** (v7.13.0–v7.17.0): a taste model that learns your rulings, assume-first clarification, adversarial verification with teeth, and `/ss:go` — a full feature ladder with a median of ≤4 human touchpoints.
 
 ---
 
@@ -29,13 +29,13 @@ Restart Claude Code to activate the plugin. *(Upgrading from v5.x? See [Migratin
 | `/ss:modify` | Behavior change with impact analysis and backward-compat plan      |
 | `/ss:ship`   | Multi-agent review + quality gate + merge to parent branch         |
 
-## v7.1.0–v7.13.0 autonomous-loop commands
+## v7.1.0–v7.17.0 autonomous-loop commands
 
-The 5 core commands above remain the canonical loop. The v7.1+ commands compose with them to enable single-session execution and unattended chunks. Each is optional; the core loop works without any of them.
+The core commands above remain the canonical loop (with `/ss:go` as the v7.17.0 default entry point). The v7.1+ commands compose with them to enable single-session execution and unattended chunks. Each is optional; the core loop works without any of them.
 
 | Command             | Since   | What it does                                                                                  |
 | ------------------- | ------- | --------------------------------------------------------------------------------------------- |
-| `/ss:preflight`     | v7.1.0  | Deterministic 6-check `plan.md` validator (versions, memory, §refs, grep boundaries, headings, assumption provenance) |
+| `/ss:preflight`     | v7.1.0  | Deterministic 7-check `plan.md` validator (versions, memory, §refs, grep boundaries, headings, assumption provenance, ground-truth bias) |
 | `/ss:notify`        | v7.2.0  | Fire a notification (cascading fallback: notifier plugin → notify-send → osascript → bell)   |
 | `/ss:intervention`  | v7.3.0  | Capture "wait, something feels off" moments as durable training-data memory files            |
 | `/ss:verify`        | v7.4.0  | Adversarial spec-vs-code verification via fresh-context `spec-mentor` subagent                |
@@ -64,7 +64,7 @@ Together these implement the **autonomous chunk loop**: pre-batch decisions at 9
 
 1. Write a clear spec of the feature, sprint, or project that you want.
 2. Run `/ss:init` in your project.
-3. Run `/ss:build "<your feature description referencing your spec document>"`.
+3. Run `/ss:go "<your feature description referencing your spec document>"` — the full ladder runs itself; you touch it at the assumptions review, the batched decision sheet, sighted sign-offs on visual slices, and the ship blessing. (Prefer step-by-step control? `/ss:build` still works exactly as before.)
 4. Use `/ss:fix "<bug>"` for anything broken, or `/ss:modify "<change>"` for things that work but aren't right. Repeat as needed.
 5. Run `/ss:ship` when everything's good.
 
@@ -204,4 +204,4 @@ If you have the old `specswarm` plugin installed, install the canonical `ss` plu
 
 All commands have moved from `/specswarm:*` to `/ss:*`. Skill IDs renamed from `specswarm-*` to `ss-*`. The `.specswarm/` per-project state directory and the SpecSwarm name are unchanged — only the command prefix moved.
 
-The deprecated `specswarm` plugin still appears in the marketplace as a stub through v7.x. It's kept in lockstep version-wise (currently v7.10.0) so users who installed the old name see a clear migration message. Slated for full removal in v8.0.0.
+The deprecated `specswarm` plugin still appears in the marketplace as a stub through v7.x. It's kept in lockstep version-wise (currently v7.17.0) so users who installed the old name see a clear migration message. Slated for full removal in v8.0.0.
