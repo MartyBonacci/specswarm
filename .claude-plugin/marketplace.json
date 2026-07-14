@@ -11,13 +11,13 @@
     {
       "name": "ss",
       "source": "./plugins/ss",
-      "version": "7.12.0",
+      "version": "7.13.0",
       "description": "SpecSwarm v7 — Build, Modify, Fix, and Ship with natural language. Spec-driven development with subagent-powered foundation-file generation that reads your project's existing spec corpus. Commands at /ss:*."
     },
     {
       "name": "specswarm",
       "source": "./plugins/specswarm",
-      "version": "7.12.0",
+      "version": "7.13.0",
       "description": "DEPRECATED — SpecSwarm commands have moved to the `ss` plugin. Install `ss@specswarm-marketplace` and uninstall this plugin. Slated for full removal in v8.0.0."
     }
   ]

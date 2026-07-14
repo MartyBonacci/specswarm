@@ -352,7 +352,7 @@ These nine commands implement SpecSwarm's autonomous chunk execution loop. They 
 
 ### `/ss:preflight` (v7.1.0)
 
-Deterministic 5-check validator for a feature's `plan.md`. Catches version pins not anchored in tech-stack, missing memory references, unresolvable §X.Y refs, ambiguous grep patterns, and quoted-heading drift. Runs in <5 seconds with zero LLM cost.
+Deterministic 6-check validator for a feature's `plan.md`. Catches version pins not anchored in tech-stack, missing memory references, unresolvable §X.Y refs, ambiguous grep patterns, quoted-heading drift, and (v7.13.0) spec assumptions without provenance citations. Runs in <5 seconds with zero LLM cost.
 
 **Usage:** `/ss:preflight [--feature NUM] [--json] [--quiet]`
 
@@ -399,6 +399,8 @@ Auto-distill a completed chunk's lessons into 1–3 durable memory files via the
 Pre-batch every strategic decision a chunk needs into ONE upfront `AskUserQuestion` touchpoint. Hybrid deterministic scan + `decision-miner` subagent (opus) for triage. Writes `decision-sheet.md` AND appends a "Pre-Batched Decisions" section to plan.md so `/ss:tasks` and `/ss:implement` apply the answers without code changes.
 
 **Usage:** `/ss:decisions [FEATURE_NUM] [--scan-only] [--dry-run]`
+
+*v7.13.0:* answers that express reusable policy (not one-off scope choices) are distilled into the taste model (`feedback_*.md` via `lib/taste.sh`) with AskUserQuestion provenance — the ruling you gave today auto-fills the same gap next chunk.
 
 ---
 
@@ -467,11 +469,15 @@ Called by: `build` (Step 2)
 
 ### `/ss:clarify`
 
-Ask up to 5 targeted clarification questions and encode answers into specification.
+Assume-first gap resolution (v7.13.0): auto-fill what precedent resolves, ask only genuine forks — batched.
 
 **v6.1.0 — Corpus-aware question filtering:**
 
 When references.md is populated, each candidate clarification question is cross-checked against the corpus before being asked. Categories: **CORPUS-RESOLVED** (drop and inject corpus answer with citation), **CORPUS-PARTIAL** (keep but pre-load corpus-suggested options), **CORPUS-SILENT** (proceed normally), **CORPUS-CONFLICT** (blocking question — spec disagrees with corpus). Final report surfaces "Auto-resolved from references (N)" sub-list. When references.md is absent, behavior is identical to v6.0.0.
+
+**v7.13.0 — Assume-first three-way ladder:**
+
+Each gap is classified before it may become a question: **(a) TASTE-RESOLVED** — a distilled `feedback_*.md` ruling decides it → auto-fill, cite the entry; **(b) CORPUS/CONVENTION-RESOLVED** — the spec corpus or codebase precedent decides it → auto-fill, cite `file §section` / `path:line`; **(c) genuine fork** → asked, batched ≤4 per AskUserQuestion call (no more one-at-a-time drip). Auto-fills land in the spec's structured `## Assumptions` ledger (`- A<n>: … — *source:* … — *status:* auto-filled|confirmed|overridden`), reviewable like a diff. Fork answers that express reusable policy are distilled back into the taste model via `lib/taste.sh`. *Origin lesson: reviewing assumptions is ~5× faster for a human than answering questions.*
 
 Called by: `build` (Step 3)
 

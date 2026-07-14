@@ -241,7 +241,16 @@ For each target, Claude must dispatch ONE `Task` tool call with `subagent_type="
    ss_verify_queue_resolve <tid> <VERDICT> "<SUMMARY + key findings>"
    ```
 5. On DRIFT or NEEDS-MARTY: fire `ss_notify urgent "SpecSwarm <tid> flagged" "<SUMMARY>"`.
-6. Clean up the temporary context file: `rm -f ${REPO_ROOT}/.specswarm/verify-queue/${tid}.context`.
+6. **Distill recurring drift into the taste model (v7.13.0):** if the DRIFT finding names a failure class likely to recur (a convention the implementer keeps missing, a spec-reading habit, a framework trap) — not a one-off typo — distill it:
+   ```bash
+   source ${CLAUDE_PLUGIN_ROOT}/lib/taste.sh
+   ss_taste_add "<kebab-slug>" "<deterministic|judgment>" \
+     "verify DRIFT <tid> feature <feature>" \
+     "<the rule that would have prevented this drift>" \
+     "<why — cite the drift finding>" "<how to apply>"
+   ```
+   Skip distillation for one-off mistakes; the queue record already holds those.
+7. Clean up the temporary context file: `rm -f ${REPO_ROOT}/.specswarm/verify-queue/${tid}.context`.
 
 ## Phase 4: Report
 

@@ -2,7 +2,7 @@
 
 ## Overview
 
-SpecSwarm is a Claude Code plugin providing spec-driven development workflows: Build, Modify, Fix, Ship. As of v6.0.0, all functionality lives in the `ss` plugin and is invoked via `/ss:*` commands (19 visible + 11 internal/hidden = 30 total — v7.1.0 `/ss:preflight`, v7.2.0 `/ss:notify`, v7.3.0 `/ss:intervention`, v7.4.0 `/ss:verify`, v7.5.0 `/ss:retrospective`, v7.6.0 `/ss:decisions`, v7.8.0 `/ss:dry-run`, v7.9.0 `/ss:watchdog`, v7.10.0 `/ss:overnight`). v7.11.0 hardens the verification loop (WARN-on-zero preflight gates, canonical-checkbox `/ss:tasks`, verify-queue drain in `/ss:implement`, ship verify-queue precondition, decision-miner prior-commitments input). v7.12.0 collapses the verify-queue Stop hook into a per-feature summary when pending > `SPECSWARM_VERIFY_QUEUE_LIST_MAX` (default 8), so large queues stop flooding the conversation. Includes 10 natural-language skills, 6 multi-agent orchestration agents with v7.7.0 explicit model assignments (5 on opus, 1 on haiku), and the `.specswarm/` per-project state directory (directory name preserves the SpecSwarm brand).
+SpecSwarm is a Claude Code plugin providing spec-driven development workflows: Build, Modify, Fix, Ship. As of v6.0.0, all functionality lives in the `ss` plugin and is invoked via `/ss:*` commands (19 visible + 11 internal/hidden = 30 total — v7.1.0 `/ss:preflight`, v7.2.0 `/ss:notify`, v7.3.0 `/ss:intervention`, v7.4.0 `/ss:verify`, v7.5.0 `/ss:retrospective`, v7.6.0 `/ss:decisions`, v7.8.0 `/ss:dry-run`, v7.9.0 `/ss:watchdog`, v7.10.0 `/ss:overnight`). v7.11.0 hardens the verification loop (WARN-on-zero preflight gates, canonical-checkbox `/ss:tasks`, verify-queue drain in `/ss:implement`, ship verify-queue precondition, decision-miner prior-commitments input). v7.12.0 collapses the verify-queue Stop hook into a per-feature summary when pending > `SPECSWARM_VERIFY_QUEUE_LIST_MAX` (default 8), so large queues stop flooding the conversation. v7.13.0 (AUTO-MAGIC epic Phase 2 — see `docs/designs/automagic-epic-plan.md`) adds the taste model (`lib/taste.sh`, memory corpus as distilled-rulings store with `check-type:` frontmatter, accreting from decisions/clarify/verify answers) and assume-first clarify (three-way gap ladder, structured provenance-cited `## Assumptions` ledger, batched fork questions, `assumptions-provenance` preflight check). Includes 10 natural-language skills, 6 multi-agent orchestration agents with v7.7.0 explicit model assignments (5 on opus, 1 on haiku), and the `.specswarm/` per-project state directory (directory name preserves the SpecSwarm brand).
 
 The legacy `specswarm` plugin remains as a deprecation stub (no commands/skills/hooks) so users who installed it see a clear migration message. Slated for full removal in v7.0.0.
 
@@ -79,7 +79,7 @@ plugins/ss/
 ├── rules/           # Project-level rule references (specswarm-active-build, specswarm-feature-branch)
 ├── templates/       # Spec/plan/task templates, agent template, constitutional-hook templates
 │                    # v7.3.0 adds intervention.template.md
-└── .claude-plugin/  # plugin.json (name: "ss", version: "7.6.0")
+└── .claude-plugin/  # plugin.json (name: "ss", version: matches marketplace.json)
 
 plugins/specswarm/
 └── .claude-plugin/

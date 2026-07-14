@@ -1,5 +1,5 @@
 ---
-description: Run deterministic preflight checks against a feature's plan.md before /ss:implement. Catches hallucinated versions, missing memory files, spec drift, ambiguous grep patterns, and heading typos in <5 seconds.
+description: Run deterministic preflight checks against a feature's plan.md before /ss:implement. Catches hallucinated versions, missing memory files, spec drift, ambiguous grep patterns, heading typos, and uncited spec assumptions in <5 seconds.
 effort: low
 args:
   - name: target
@@ -18,7 +18,7 @@ args:
 
 # SpecSwarm Preflight
 
-Runs 5 deterministic checks against the current feature's `plan.md` and surfaces issues that would otherwise be caught by manual review (or worse, slip through to `/ss:implement`).
+Runs 6 deterministic checks against the current feature's `plan.md` and surfaces issues that would otherwise be caught by manual review (or worse, slip through to `/ss:implement`).
 
 **Project-agnostic** — every check discovers project context via existing SpecSwarm infrastructure (`.specswarm/references.md`, lockfiles, git root). No project-specific configuration required.
 
@@ -45,6 +45,7 @@ fi
 | **spec-section-existence** | `§X.Y` refs that don't resolve to any spec corpus heading | No spec corpus declared in references.md |
 | **grep-word-boundary** | Short literal grep patterns prone to false positives | (none — always applicable) |
 | **heading-fidelity** | Quoted headings whose text doesn't match the source | No spec corpus declared in references.md |
+| **assumptions-provenance** (v7.13.0) | Spec `## Assumptions` entries without a `taste:`/`corpus:`/`codebase:`/`convention:` citation or valid status — an uncited assumption is a guess, not a reviewable ledger entry | No spec.md sibling, or spec has no `## Assumptions` section (pre-v7.13 spec) |
 
 Each check independently emits `PASS`, `WARN`, or `FAIL`. The overall exit code is the worst result:
 

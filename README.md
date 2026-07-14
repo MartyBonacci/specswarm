@@ -28,13 +28,13 @@ Restart Claude Code to activate the plugin. *(Upgrading from v5.x? See [Migratin
 | `/ss:modify` | Behavior change with impact analysis and backward-compat plan      |
 | `/ss:ship`   | Multi-agent review + quality gate + merge to parent branch         |
 
-## v7.1.0–v7.10.0 autonomous-loop commands
+## v7.1.0–v7.13.0 autonomous-loop commands
 
 The 5 core commands above remain the canonical loop. The v7.1+ commands compose with them to enable single-session execution and unattended chunks. Each is optional; the core loop works without any of them.
 
 | Command             | Since   | What it does                                                                                  |
 | ------------------- | ------- | --------------------------------------------------------------------------------------------- |
-| `/ss:preflight`     | v7.1.0  | Deterministic 5-check `plan.md` validator (versions, memory, §refs, grep boundaries, headings) |
+| `/ss:preflight`     | v7.1.0  | Deterministic 6-check `plan.md` validator (versions, memory, §refs, grep boundaries, headings, assumption provenance) |
 | `/ss:notify`        | v7.2.0  | Fire a notification (cascading fallback: notifier plugin → notify-send → osascript → bell)   |
 | `/ss:intervention`  | v7.3.0  | Capture "wait, something feels off" moments as durable training-data memory files            |
 | `/ss:verify`        | v7.4.0  | Adversarial spec-vs-code verification via fresh-context `spec-mentor` subagent                |
@@ -45,6 +45,8 @@ The 5 core commands above remain the canonical loop. The v7.1+ commands compose 
 | `/ss:overnight`     | v7.10.0 | Run a chunk autonomously while you sleep (cron/systemd/launchd-compatible)                   |
 
 Together these implement the **autonomous chunk loop**: pre-batch decisions at 9pm, schedule `/ss:overnight` via cron between 10pm-6am, wake to a phone notification (success or "needs review"). The dual mentor↔builder session pattern is now optional, not required. See [CHANGELOG.md](./CHANGELOG.md) for the full architectural story.
+
+**v7.13.0 — the taste model + assume-first clarify.** Every AskUserQuestion answer, verify-DRIFT lesson, and retrospective ruling now accretes into distilled `feedback_*.md` entries (rule + WHY + HOW-TO-APPLY + `check-type`) via a shared writer (`lib/taste.sh`) — rules survive sessions; transcripts don't. Clarify inverts from "ask up to 5 questions" to assume-first: gaps resolvable from the taste model, spec corpus, or codebase precedent are AUTO-FILLED into a provenance-cited `## Assumptions` ledger (reviewing assumptions is ~5× faster than answering questions); only genuine forks are asked, batched. A new `assumptions-provenance` preflight check keeps the ledger honest.
 
 ---
 

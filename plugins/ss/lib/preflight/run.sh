@@ -1,7 +1,7 @@
 #!/bin/bash
 # SpecSwarm Preflight Orchestrator
 #
-# Runs all 5 deterministic preflight checks against a target plan.md (or any
+# Runs all 6 deterministic preflight checks against a target plan.md (or any
 # markdown file) and aggregates results. Designed to be called from the
 # /ss:preflight slash command, from inside /ss:plan as a final validation step,
 # or directly from CI.
@@ -59,6 +59,7 @@ Checks (each runs only if it can — graceful skip otherwise):
   • spec-section-existence  — §X.Y refs resolve in spec corpus
   • grep-word-boundary      — grep patterns won't false-positive
   • heading-fidelity        — quoted headings match spec corpus verbatim
+  • assumptions-provenance  — spec ## Assumptions entries carry source + status
 
 Exit codes: 0=pass, 1=warn, 2=fail.
 EOF
@@ -110,6 +111,7 @@ CHECKS=(
   "spec-section-existence"
   "grep-word-boundary"
   "heading-fidelity"
+  "assumptions-provenance"
 )
 
 declare -A STATUS

@@ -150,7 +150,9 @@ Given that feature description, do this:
    [Important data entities involved]
 
    ## Assumptions
-   [Documented assumptions and reasonable defaults]
+   <!-- Structured ledger (v7.13.0). One entry per assumption, provenance-cited,
+        reviewable like a diff. /ss:clarify appends auto-fills here. -->
+   - A1: [assumption statement] — *source:* [taste:<entry-name> | corpus:<file §section> | codebase:<path:line> | convention:<industry-standard rationale>] — *status:* auto-filled
    ```
 
 3. **Parse the user's feature description** from `$ARGUMENTS` and validate:
@@ -345,7 +347,7 @@ Given that feature description, do this:
        If no clear user flow: ERROR "Cannot determine user scenarios"
     3. Generate Functional Requirements
        Each requirement must be testable
-       Use reasonable defaults for unspecified details (document assumptions in Assumptions section)
+       Use reasonable defaults for unspecified details (document each as a structured `- A<n>: … — *source:* … — *status:* auto-filled` entry in the Assumptions section; cite `corpus:`/`codebase:` when a repo source informed the default, `convention:` when it's an industry-standard default)
     4. Define Success Criteria
        Create measurable, technology-agnostic outcomes
        Include both quantitative metrics (time, performance, volume) and qualitative measures (user satisfaction, task completion)

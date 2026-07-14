@@ -67,11 +67,14 @@ Your invoking command (`/ss:retrospective`) passes a structured context bundle c
    description: <one-line summary — used to decide relevance in future conversations, so be specific>
    metadata:
      type: <feedback|project|intervention>
+     check-type: <deterministic|judgment>   # feedback entries only (v7.13.0)
      source: chunk-retrospective
      feature: <feature_id>
      date: <YYYY-MM-DD>
    ---
    ```
+
+   `check-type` (feedback entries only): `deterministic` if the rule is mechanically enforceable — a grep pattern, glob, or command could catch violations (these later graduate into preflight checks / generated hooks); `judgment` if applying it needs a judging mind (these get loaded into spec-mentor's verification context). When unsure, choose `judgment`.
 
 6. **Return a structured summary** so the calling command can update `MEMORY.md`. Use this exact shape:
 
@@ -118,6 +121,7 @@ name: registry-verify-version-pins
 description: Every version pin in plan.md must verify against the actual package registry; marketing names ≠ npm package names
 metadata:
   type: feedback
+  check-type: deterministic
   source: chunk-retrospective
   feature: 002-database-schema-migrations-seeds
   date: 2026-05-20

@@ -269,8 +269,19 @@ fi
 
    See `./decision-sheet.md` for full provenance.
    ```
-3. Delete the draft: `rm -f ${DRAFT_PATH}`.
-4. Clean up the context bundle: `rm -f ${CONTEXT_FILE}`.
+3. **Distill reusable rulings into the taste model (v7.13.0):** for each answered decision, classify it:
+   - **Reusable ruling** — the answer expresses a policy/preference that will recur beyond this feature (naming standards, UX conventions, error-handling posture, tooling choices). Distill it:
+     ```bash
+     source "${PLUGIN_DIR}/lib/taste.sh"
+     ss_taste_add "<kebab-slug>" "<deterministic|judgment>" \
+       "AskUserQuestion /ss:decisions D<n> feature <FEATURE_ID>" \
+       "<the rule>" "<why — what forced the decision>" "<how to apply next time>"
+     ```
+     `check-type`: `deterministic` if mechanically checkable (grep/glob/command), else `judgment`. Duplicates are skipped automatically.
+   - **One-off scope choice** — specific to this feature → do NOT distill; decision-sheet.md records it.
+   Report how many rulings were distilled (with entry names) in Phase 8's summary.
+4. Delete the draft: `rm -f ${DRAFT_PATH}`.
+5. Clean up the context bundle: `rm -f ${CONTEXT_FILE}`.
 
 ## Phase 8: Confirm + notify
 

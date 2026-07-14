@@ -1,5 +1,5 @@
 ---
-description: Identify underspecified areas in the current feature spec by asking up to 5 highly targeted clarification questions and encoding answers back into the spec.
+description: Assume-first gap resolution for the current feature spec (v7.13.0). Auto-fills gaps resolvable from the taste model, spec corpus, or codebase precedent — recorded as provenance-cited entries in the spec's ASSUMPTIONS section — and asks only genuine forks, batched. Reviewing assumptions is ~5× faster for a human than answering questions.
 hidden: true
 effort: high
 ---
@@ -25,6 +25,14 @@ You **MUST** consider the user input before proceeding (if not empty).
 ## Outline
 
 Goal: Detect and reduce ambiguity or missing decision points in the active feature specification and record the clarifications directly in the spec file.
+
+**Assume-first principle (v7.13.0):** every detected gap is classified three ways before it is allowed to become a question:
+
+- **(a) Resolvable from the taste model** (distilled `feedback_*.md` rulings in the memory dirs) → AUTO-FILL, cite the entry by name.
+- **(b) Resolvable from the spec corpus or codebase precedent** → AUTO-FILL, cite the corpus section or `file:line` of the precedent.
+- **(c) Genuine fork** — no precedent, materially different outcomes → question, batched with the other forks.
+
+Auto-fills are recorded in the spec's `## Assumptions` section with per-entry provenance, reviewable like a diff. Only class (c) reaches the user. Origin lesson: reviewing assumptions is ~5× faster than answering questions; a 10-gap spec with a populated taste model should yield ≤3 questions.
 
 Note: This clarification workflow is expected to run (and be completed) BEFORE invoking `/speckit.plan`. If the user explicitly states they are skipping clarification (e.g., exploratory spike), you may proceed, but must warn that downstream rework risk increases.
 
@@ -190,15 +198,17 @@ Execution steps:
    - Schema definitions (data model sections)
    - Authoritative-source pointers (e.g., a builder kickoff doc that names which doc owns which topic)
 
-   b. **Scan memory dirs** in `MEMORY_DIRS[@]` for `feedback_*.md` (preferences/rules) and `project_*.md` (state/context) files. These often encode decisions that aren't in the formal corpus.
+   b. **Scan memory dirs** in `MEMORY_DIRS[@]` for `feedback_*.md` (the taste model — distilled rulings with `check-type:` frontmatter, WHY, and HOW-TO-APPLY) and `project_*.md` (state/context) files. These often encode decisions that aren't in the formal corpus. Taste entries are the HIGHEST-precedence resolution source: they are compressed user rulings, so an on-point entry decides the gap outright.
 
-   c. **For EACH candidate question from Step 2's ambiguity scan**, do this filter pass:
-   - Search the corpus for matching content (use `Bash` + grep when corpus is large; use `Read` when targeted)
-   - Categorize the question:
-     - **CORPUS-RESOLVED** — corpus contains an explicit decision; drop the question and instead inject the corpus answer directly into the spec with a citation. Note this in the report (Step 8).
-     - **CORPUS-PARTIAL** — corpus has related context but doesn't decide; keep the question, but PRE-LOAD the candidate answers from corpus context. AskUserQuestion options should reflect what the corpus has hinted at, plus any genuine alternatives.
-     - **CORPUS-SILENT** — corpus says nothing; question proceeds as normal.
-     - **CORPUS-CONFLICT** — corpus says X but the spec says Y. Surface this as a special blocking question: "The corpus (`{path}`) says X. Spec says Y. Which is canonical?" — answers feed back to spec.md.
+   c. **For EACH candidate question from Step 2's ambiguity scan**, run the assume-first ladder — stop at the first rung that resolves:
+   - **TASTE-RESOLVED** — a `feedback_*.md` entry decides the gap. Drop the question; record an assumption citing `taste:<entry-name>` (Step 2.6). Apply the entry's HOW-TO-APPLY guidance when injecting the answer into the spec body.
+   - **CORPUS-RESOLVED** — corpus contains an explicit decision; drop the question and instead inject the corpus answer directly into the spec with a citation, plus an assumption citing `corpus:<file §section>`. Note this in the report (Step 8).
+   - **CONVENTION-RESOLVED** — the codebase itself sets the precedent. Search the project source (Grep/Glob: sibling components, existing patterns, config) for how this decision was made before. If a consistent precedent exists and the gap is not a deliberate departure, drop the question; record an assumption citing `codebase:<path:line>`. Examples: naming schemes, error-handling shape, existing auth middleware, test-file placement.
+   - **CORPUS-PARTIAL** — sources have related context but don't decide; keep the question, but PRE-LOAD the candidate answers from that context. AskUserQuestion options should reflect what the sources have hinted at, plus any genuine alternatives.
+   - **CORPUS-SILENT** — nothing decides and outcomes materially differ; this is a **genuine fork (class c)** — question proceeds, batched.
+   - **CORPUS-CONFLICT** — corpus says X but the spec says Y. Surface this as a special blocking question: "The corpus (`{path}`) says X. Spec says Y. Which is canonical?" — answers feed back to spec.md.
+
+   **Auto-fill discipline:** an auto-fill must be a *resolution*, not a guess. If two taste entries conflict, or the codebase shows two competing precedents, that is a genuine fork — ask. Never auto-fill a gap whose wrong resolution would be expensive to unwind (schema identity, security posture, money handling) unless the resolving source is explicit and on-point.
 
    d. **Skip-question accounting**: keep an internal count of CORPUS-RESOLVED questions skipped. The Step 3 question budget (max 5) MAY be increased proportionally — if 3 questions were skipped because the corpus answered them, you have effectively 5 + 0 = 5 remaining (don't pad the queue with low-value questions just because budget exists). Lower-impact questions you previously held back can now surface if needed, but it's better to ask 2 high-impact questions than to pad to 5.
 
@@ -211,7 +221,29 @@ Execution steps:
    **Decision date**: 2026-04-30 per CREATING-THE-STRATEGY.md decision log
    ```
 
-   **If `REFERENCES_AVAILABLE = false`** (no references.md, or empty), skip Step 2.5 entirely. Question queue generation in Step 3 proceeds with v6.0.0 behavior — ambiguity-scan candidates flow directly into the prioritized queue with no corpus filter. No skip-accounting, no citations, no Sources.
+   **If `REFERENCES_AVAILABLE = false`** (no references.md, or empty), skip the taste/corpus rungs of the ladder — but the **CONVENTION-RESOLVED rung still applies** (codebase precedent needs no references.md). Candidates that no codebase precedent resolves flow into the prioritized queue.
+
+2.6. **Record every auto-fill in the spec's `## Assumptions` section** (NEW in v7.13.0):
+
+   Ensure the spec has a `## Assumptions` section (the /ss:specify template provides one; create it after the overview section if missing). Convert any pre-existing prose assumptions to the structured form, then append one entry per auto-fill:
+
+   ```markdown
+   ## Assumptions
+
+   <!-- Auto-filled by assume-first clarify. Review like a diff: each entry cites its
+        provenance. To override, edit the entry (or tell Claude) — set status: overridden
+        and the correction is distilled back into the taste model. -->
+
+   - A1: Sessions auto-extend on activity (30-min idle timeout) — *source:* taste:session-timeout-ux — *status:* auto-filled
+   - A2: OAuth-first signup, email/password fallback — *source:* corpus:INTERACTION-FLOWS.md §5.11.5.1 — *status:* auto-filled
+   - A3: Form errors render inline below fields, no toast — *source:* codebase:app/components/ContactForm.tsx:88 — *status:* auto-filled
+   ```
+
+   Rules:
+   - Sequential `A<n>` IDs, never reused within a spec.
+   - `*source:*` prefix MUST be one of `taste:`, `corpus:`, `codebase:`, `convention:` followed by the citation (entry name / file §section / path:line / industry-standard rationale). `convention:` is reserved for /ss:specify-time reasonable defaults with no repo source; clarify auto-fills always have one of the other three.
+   - `*status:*` ∈ `auto-filled` (machine-resolved, unreviewed), `confirmed` (human reviewed and kept), `overridden` (human corrected — keep the entry, strike the old text, record the correction; then distill the correction into the taste model via Step 5's distillation rule).
+   - The spec body still gets the substantive update (Step 5 integration); the Assumptions entry is the provenance ledger, not the only record.
 
 3. Generate (internally) a prioritized queue of candidate clarification questions (maximum 5). Do NOT output them all at once. Apply these constraints:
     - Maximum of 10 total questions across the whole session.
@@ -224,39 +256,29 @@ Execution steps:
    - Favor clarifications that reduce downstream rework risk or prevent misaligned acceptance tests.
    - If more than 5 categories remain unresolved, select the top 5 by (Impact * Uncertainty) heuristic.
 
-4. Sequential questioning loop (interactive):
-    - Present EXACTLY ONE question at a time.
-    - Use the **AskUserQuestion** tool for each question:
-       * For multiple-choice questions, provide options with descriptions
-       * Include an "Other" option for free-form alternatives (when appropriate)
-       * Set header to show progress: "Clarification N/M" (e.g., "Clarification 2/5")
-       * Options should be concise labels (1-5 words) with detailed descriptions
+4. Batched questioning (v7.13.0 — genuine forks only, no drip-feed):
+    - Only class (c) genuine forks and CORPUS-CONFLICT items reach this step. All of them are presented in ONE batched pass (the same batching contract /ss:decisions uses):
+       * 0 forks → skip this step entirely.
+       * 1–4 forks → ONE AskUserQuestion call with all of them.
+       * 5+ forks → consecutive AskUserQuestion calls of ≤4, back-to-back with no work in between (a second call is a smell — recheck whether the overflow questions are truly forks before asking).
+    - Per question:
+       * `header`: short topic chip (≤12 chars), e.g. "Auth", "Data shape" — NOT a progress counter.
+       * 2–4 mutually exclusive options with concise labels (1–5 words) and trade-off descriptions. Pre-load option content from CORPUS-PARTIAL context where available.
+       * If one option is clearly favored by adjacent precedent, put it first and mark "(Recommended)".
+       * The tool provides "Other" automatically; do not add your own.
 
-    **Example AskUserQuestion usage:**
+    **Example (one batched call, two forks):**
     ```
-    Question: "What authentication method should we use?"
-    Header: "Clarification 2/5"
-    Options:
-      1. "JWT tokens"
-         Description: "JWT tokens with refresh rotation"
-      2. "Session-based"
-         Description: "Session-based with Redis storage"
-      3. "OAuth 2.0"
-         Description: "OAuth 2.0 with external provider"
-      4. "Other"
-         Description: "Provide alternative (<=5 words)"
+    Q1 header "Auth": "What authentication method should we use?"
+      - "JWT tokens" / "OAuth 2.0" / "Session-based" (+ descriptions)
+    Q2 header "Retention": "How long do we keep soft-deleted records?"
+      - "30 days (Recommended)" / "90 days" / "Forever"
     ```
 
-    - When "Other" option is selected, prompt for free-form text input (<=5 words).
-    - After receiving answer:
-       * Record it in working memory (do not yet write to disk)
-       * Move to the next queued question immediately
-    - Stop asking further questions when:
-       * All critical ambiguities resolved early (remaining queued items become unnecessary), OR
-       * User signals completion (via "Other" response like "done", "good", "no more"), OR
-       * You reach 5 asked questions.
-    - Never reveal future queued questions in advance.
-    - If no valid questions exist at start, immediately report no critical ambiguities.
+    - After the batch returns:
+       * Record every answer in working memory (Step 5 integrates them one by one).
+       * If an answer is a free-form "Other", treat its text as the final answer.
+    - If no valid questions exist at start, immediately report: gaps were auto-filled as assumptions (point to the section), no forks required input.
 
 5. Integration after EACH accepted answer (incremental update approach):
     - Maintain in-memory representation of the spec (loaded once at start) plus the raw file contents.
@@ -276,25 +298,47 @@ Execution steps:
     - Preserve formatting: do not reorder unrelated sections; keep heading hierarchy intact.
     - Keep each inserted clarification minimal and testable (avoid narrative drift).
 
+    **Distill reusable rulings into the taste model (NEW in v7.13.0):** after integrating each fork answer, classify it:
+    - **Reusable ruling** — the answer expresses a preference/policy that will recur beyond this feature ("always OAuth-first", "soft-deletes kept 30 days", "errors inline, never toasts"). Distill it:
+      ```bash
+      source "${PLUGIN_DIR_SS}/lib/taste.sh"
+      ss_taste_add "<kebab-slug>" "<deterministic|judgment>" \
+        "AskUserQuestion /ss:clarify Q<n> feature ${FEATURE_NUM}" \
+        "<the rule, one or two sentences>" \
+        "<why — cite what prompted the question>" \
+        "<how to apply next time>"
+      ```
+      `check-type`: `deterministic` if a grep/glob/command could enforce it mechanically; `judgment` if it needs a judging mind. Duplicates are skipped automatically — do not pre-check.
+    - **One-off scope choice** — specific to this feature ("include the export button in v1") → do NOT distill; the spec records it.
+    - Same rule applies to `overridden` assumptions from Step 2.6: a human correcting an auto-fill is the strongest taste signal there is — always distill the correction.
+
 6. Validation (performed after EACH write plus final pass):
    - Clarifications session contains exactly one bullet per accepted answer (no duplicates).
    - Total asked (accepted) questions ≤ 5.
    - Updated sections contain no lingering vague placeholders the new answer was meant to resolve.
    - No contradictory earlier statement remains (scan for now-invalid alternative choices removed).
-   - Markdown structure valid; only allowed new headings: `## Clarifications`, `### Session YYYY-MM-DD`.
+   - Markdown structure valid; only allowed new headings: `## Clarifications`, `### Session YYYY-MM-DD`, `## Assumptions`.
+   - Every `## Assumptions` entry carries a `*source:*` with a `taste:`/`corpus:`/`codebase:` prefix and a `*status:*` (the `assumptions-provenance` preflight check enforces this later — don't ship malformed entries).
    - Terminology consistency: same canonical term used across all updated sections.
 
 7. Write the updated spec back to `FEATURE_SPEC`.
 
 8. Report completion (after questioning loop ends or early termination):
    - Number of questions asked & answered.
-   - **Number of questions auto-resolved from corpus (NEW in v6.1.0)** — questions that would have been asked but were instead answered from references with citations. Display these in a separate sub-list:
+   - **The assumptions ledger (v7.13.0)** — the primary reviewable artifact. List every auto-filled assumption with its provenance, grouped by source type, and explicitly invite review:
      ```
-     Auto-resolved from references (3):
-       • Authentication method → OAuth-first (per INTERACTION-FLOWS.md §5.11.5.1)
-       • Email service → Resend (per CREATING-THE-STRATEGY.md §4.15)
-       • Cookie consent scope → EU/UK/CA via cf-ipcountry (per CC.7)
+     Auto-filled 7 assumptions (review like a diff — say "A3 is wrong, use X" to override):
+       taste (3):
+         • A1: Sessions auto-extend on activity → taste:session-timeout-ux
+         ...
+       corpus (2):
+         • A4: OAuth-first signup → corpus:INTERACTION-FLOWS.md §5.11.5.1
+         ...
+       codebase (2):
+         • A6: Inline form errors → codebase:app/components/ContactForm.tsx:88
+         ...
      ```
+   - Number of taste-model rulings distilled from this session's answers (list entry names).
    - **Number of CORPUS-CONFLICT questions surfaced (if any)** — these block proceeding to /ss:plan.
    - Path to updated spec.
    - Sections touched (list names).

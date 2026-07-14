@@ -5,6 +5,34 @@ All notable changes to SpecSwarm and SpecSwarm plugins will be documented in thi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.13.0] - 2026-07-13 - Taste Model + Assume-First Clarify (AUTO-MAGIC Phase 2: WS1+WS2)
+
+First slice of the AUTO-MAGIC epic (`docs/designs/automagic-epic-plan.md`): the "mind-reading" architecture's two core loops. Distilled from months of hand-run mentor/builder production loops on a real commerce rebuild — the north-star metric is median ≤4 human touchpoints per shipped chunk.
+
+### Added
+
+- **`lib/taste.sh` — the taste-model writer** (WS1). The memory corpus IS the taste model (epic decision D1): `ss_taste_add` is the ONE shared writer through which every accretion source distills user rulings into `feedback_*.md` entries — rule + `**Why:**` + `**How to apply:**` + new `check-type: deterministic|judgment` frontmatter + provenance `source:`. Dedup-by-slug, MEMORY.md index maintenance ("## Distilled Rules" section), 3-tier dir resolution (references.md memory dirs → `<repo>/memory` → `.specswarm/memory` fallback).
+  - *Source:* epic thesis loop 1 — rules survive sessions; transcripts don't.
+  - *Generalized from customcult-v3 instance to:* any project with (or without) a declared memory dir; entries are stack-agnostic distilled rules.
+  - *Verified by:* `plugins/ss/test-fixtures/v7.13-taste-accretion.sh` (43 assertions, all green).
+
+- **Accretion wiring** (WS1): `/ss:decisions` Phase 7, `/ss:clarify` Step 5, and `/ss:verify` Phase 3 now distill reusable rulings (not one-off scope choices) into the taste model with AskUserQuestion/DRIFT provenance. Previously these answers died in `decision-sheet.md` / `spec.md` / the verify queue — today's ruling now auto-fills tomorrow's identical gap. `chunk-retrospective` agent emits `check-type:` on feedback entries.
+  - *Source:* audit finding — only 2 of 4 accretion sources were wired, both manual/batch.
+
+- **Assume-first clarify** (WS2, `commands/clarify.md`). Inverts "ask up to 5 questions": each gap runs a three-way ladder — (a) TASTE-RESOLVED (a `feedback_*.md` ruling decides; auto-fill, cite entry), (b) CORPUS/CONVENTION-RESOLVED (spec corpus or codebase precedent decides; auto-fill, cite `file §section` / `path:line` — the codebase-precedent rung is NEW and works without references.md), (c) genuine fork → asked, **batched ≤4 per AskUserQuestion call** (drip-feed one-at-a-time loop removed). Auto-fill discipline: conflicts between sources and expensive-to-unwind gaps (schema identity, security, money) are never auto-filled.
+  - *Source:* epic thesis loop 2 — reviewing assumptions is ~5× faster for a human than answering questions. Acceptance: 10-gap spec + populated taste model → ≤3 questions.
+
+- **Structured `## Assumptions` ledger** (WS2, `commands/specify.md` template + clarify Step 2.6). Every auto-fill is recorded as `- A<n>: <assumption> — *source:* taste:|corpus:|codebase:|convention:<citation> — *status:* auto-filled|confirmed|overridden`, reviewable like a diff. Human overrides are the strongest taste signal and are always distilled back into the taste model.
+
+- **`assumptions-provenance` preflight check** (6th check, `lib/preflight/checks/assumptions-provenance.sh`). Enforces the ledger: structured entries without a valid source citation or status FAIL; section-present-but-empty WARNs (v7.11.0 WARN-on-zero rule); pre-v7.13 specs without the section PASS-skip (backwards compatible).
+  - *Origin lesson (in-file):* an uncited assumption is a guess wearing a ledger entry's clothes.
+  - *Verified by:* `plugins/ss/test-fixtures/v7.13-taste-accretion.sh` blocks [G]–[J] (17 of the 43 assertions; violating fixtures FIRE).
+
+### Notes
+
+- *Trade-off:* auto-filling shifts human effort from answering to reviewing; a wrong auto-fill that survives review ships as if decided. Mitigations: provenance citations make review cheap, the never-auto-fill list guards expensive gaps, and `overridden` status feeds corrections back into the model.
+- Backwards compatible: no references.md → taste/corpus rungs skip (codebase rung still works); pre-v7.13 specs PASS-skip the new check; all writes are additive.
+
 ## [7.12.0] - 2026-06-30 - Verify-Queue Stop-Hook Compact Summary
 
 The Stop hook that surfaces pending verifications (`hooks/verify-queue-prompt.sh`) was flooding every assistant turn with one bullet per pending task. On real chunks with 20–35 pending markers, the systemMessage pushed actual responses off-screen.
