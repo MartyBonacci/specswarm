@@ -5,6 +5,26 @@ All notable changes to SpecSwarm and SpecSwarm plugins will be documented in thi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.17.0] - 2026-07-13 - /ss:go — The Single Entry Point (AUTO-MAGIC Phase 6: WS9)
+
+The epic's capstone: one default command walks the full ladder, and the ~4-touchpoint chunk becomes the default instead of the reward for expertise.
+
+### Added
+
+- **`/ss:go "<feature description>"`** — specify → assume-first clarify (+assumptions review) → plan → decisions (batched sheet) → tasks → preflight → implement (slice gates + verify drain) → retrospective → ship-blessing handover. Pauses ONLY for: the assumptions review, the batched decision sheet (adjacent — one sitting), sighted gates, and the ship blessing. Ad-hoc questions mid-ladder are banned in favor of assume-with-provenance.
+- **`hooks/go-loop-hook.sh`** — a dedicated Stop hook keyed exclusively on `.specswarm/go-loop.state`, advancing phases on artifact evidence only (spec.md → structured `A<n>` assumptions → locked decision-sheet → tasks.md → all-checkboxes-done + drained verify queue → done, surfacing any needs-sighted/flagged counts in the handover). **`/ss:build` and `stop-hook.sh` are untouched** (epic decision D2) — zero regression risk to existing users; deprecate build later once /ss:go is proven.
+  - *Verified by:* `plugins/ss/test-fixtures/v7.17-go-loop.sh` (20 assertions: JSON contract, per-phase stay-put/advance, build-state isolation, sighted surfacing).
+
+### Fixed
+
+- **`/ss:build --analyze` silently no-op'd** — it invoked `/ss:analyze`, removed in v4.0.0. Now calls `/ss:analyze-quality`. *(Source: Phase 1 audit.)*
+- **`/ss:status` showed "unknown" for active builds** — it read `.status`, but build.md writes `.active`. Now falls back correctly. *(Source: Phase 1 audit.)*
+
+### Notes
+
+- Command surface: 21 visible + 11 internal = 32. `/ss:go` is additive and opt-in by invocation; nothing changes until you run it.
+- **Epic acceptance:** a small feature ships end-to-end with ≤4 human touchpoints; all existing commands remain escape hatches.
+
 ## [7.16.0] - 2026-07-13 - Bakeoff + Decided-by-Data (AUTO-MAGIC Phase 5: WS7+WS8)
 
 ### Added

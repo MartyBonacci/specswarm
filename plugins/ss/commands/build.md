@@ -703,8 +703,11 @@ fi
 **IF RUN_ANALYZE = true, use the SlashCommand tool:**
 
 ```
-Use the SlashCommand tool to execute: /ss:analyze
+Use the SlashCommand tool to execute: /ss:analyze-quality
 ```
+<!-- v7.17.0 fix: this previously invoked /ss:analyze, which was removed in
+     v4.0.0 — the --analyze flag silently no-op'd. -->
+
 
 ```bash
 if [ "$RUN_ANALYZE" = true ]; then

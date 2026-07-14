@@ -80,7 +80,9 @@ display_session() {
   # Parse session JSON
   if command -v jq &> /dev/null; then
     local session_type=$(jq -r '.type // "build"' "$session_file")
-    local status=$(jq -r '.status // "unknown"' "$session_file")
+    # v7.17.0 fix: build.md writes .active (bool), not .status — fall back so
+    # active builds show "running" instead of "unknown".
+    local status=$(jq -r 'if .status then .status elif .active == true then "running" elif .active == false then "completed" else "unknown" end' "$session_file")
     local started_at=$(jq -r '.started_at // "unknown"' "$session_file")
     local current_phase=$(jq -r '.current_phase // "unknown"' "$session_file")
     local description=$(jq -r '.feature_description // .bug_description // "N/A"' "$session_file")

@@ -18,12 +18,13 @@ Restart Claude Code to activate the plugin. *(Upgrading from v5.x? See [Migratin
 
 ---
 
-## The 5 core commands
+## The core commands
 
 | Command      | What it does                                                       |
 | ------------ | ------------------------------------------------------------------ |
+| `/ss:go`     | **The default entry point (v7.17.0)** — the full ladder end-to-end, pausing only at 4 human touchpoints |
 | `/ss:init`   | Set up or refresh project knowledge: tech stack, constitution, quality gates |
-| `/ss:build`  | Spec → plan → tasks → implement → quality score                    |
+| `/ss:build`  | Spec → plan → tasks → implement → quality score (pre-v7.17 ladder; still supported) |
 | `/ss:fix`    | Test-driven bug fix with auto-retry and silent-failure audit       |
 | `/ss:modify` | Behavior change with impact analysis and backward-compat plan      |
 | `/ss:ship`   | Multi-agent review + quality gate + merge to parent branch         |
@@ -46,6 +47,8 @@ The 5 core commands above remain the canonical loop. The v7.1+ commands compose 
 | `/ss:bakeoff`       | v7.16.0 | Calibration loop: N candidates → contact sheet → verdict → pinned winner + distilled ruling  |
 
 Together these implement the **autonomous chunk loop**: pre-batch decisions at 9pm, schedule `/ss:overnight` via cron between 10pm-6am, wake to a phone notification (success or "needs review"). The dual mentor↔builder session pattern is now optional, not required. See [CHANGELOG.md](./CHANGELOG.md) for the full architectural story.
+
+**v7.17.0 — `/ss:go`, the single entry point.** The mind-reading loops (taste model, assume-first, adversarial verification, calibration) compose into one command: median ≤4 human touchpoints per shipped chunk — kickoff, one assumptions-review + decision-sheet sitting, sighted gates, ship blessing. Driven by a dedicated Stop hook (`go-loop-hook.sh`, state in `.specswarm/go-loop.state`); every phase command remains a standalone escape hatch and `/ss:build` is unchanged.
 
 **v7.16.0 — bakeoff + decided-by-data.** `/ss:bakeoff` makes the calibration loop first-class: N deliberately-diverse candidates → side-by-side contact sheet → one batched verdict → winner pinned with a regression test → ruling distilled into the taste model (hand-run ~15×, this loop converted more fuzzy judgment into deterministic constants than anything else). Specs may defer a fork to a named metric with `[DECIDED-BY-DATA: <metric>, <review-when>]` — tracked by `/ss:metrics` and the watchdog. A new `ground-truth-bias` preflight check WARNs when a plan tunes against acceptance data without addressing provenance (22/26 "user-accepted" items in production were the scorer's own suggestions).
 

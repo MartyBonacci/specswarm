@@ -1,12 +1,14 @@
 # SpecSwarm Commands Reference
 
-Complete documentation for all SpecSwarm commands: **20 visible** + **11 internal** = **31 total**.
+Complete documentation for all SpecSwarm commands: **21 visible** + **11 internal** = **32 total**.
+
+**New in v7.17.0: `/ss:go` is the recommended default entry point** — it walks the full ladder (specify → assume-first clarify → plan+decisions → tasks → preflight → implement → verify → retrospective) pausing only for the assumptions review, the batched decision sheet, sighted gates, and the ship blessing. Everything below remains available as escape hatches.
 
 ## Command Overview
 
 | Category | Commands | Count |
 |----------|----------|-------|
-| [Core Workflows](#core-workflows) | init, build, fix, modify, ship | 5 |
+| [Core Workflows](#core-workflows) | **go (v7.17.0)**, init, build, fix, modify, ship | 6 |
 | [Distinct Workflows](#distinct-workflows) | release, upgrade, rollback, status, metrics | 5 |
 | [Autonomous Loop (v7.1.0–v7.16.0)](#autonomous-loop-v710v7100) | preflight, notify, intervention, verify, retrospective, decisions, dry-run, watchdog, overnight, bakeoff | 10 |
 | [Internal Commands](#internal-commands) | specify, clarify, plan, tasks, implement, validate, analyze-quality, bugfix, hotfix, complete, constitution | 11 |
@@ -15,7 +17,15 @@ Complete documentation for all SpecSwarm commands: **20 visible** + **11 interna
 
 ## Core Workflows
 
-These 5 commands handle the vast majority of daily development work. **Start here** if you're new to SpecSwarm.
+These commands handle the vast majority of daily development work. **Start here** if you're new to SpecSwarm.
+
+### `/ss:go` (v7.17.0)
+
+The single default entry point: `/ss:init` once, then `/ss:go "<feature description>"` and the full AUTO-MAGIC ladder runs itself — specify → assume-first clarify (+assumptions review) → plan → decisions (batched sheet) → tasks → preflight → implement (slice gates + verify drain) → retrospective → ship-blessing handover. Driven by the `go-loop-hook.sh` Stop hook keyed on `.specswarm/go-loop.state`; `/ss:build` and its state machine are untouched. Abort any time: `rm .specswarm/go-loop.state`.
+
+**Usage:** `/ss:go "<feature description>" [--quality N]`
+
+*Origin lesson: the ~4-touchpoint chunk (kickoff, one batched decision sitting, sighted gate, ship blessing) was production's steady state — SS now makes it the default instead of the reward for expertise.*
 
 ### `/ss:init`
 
