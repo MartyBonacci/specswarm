@@ -5,6 +5,29 @@ All notable changes to SpecSwarm and SpecSwarm plugins will be documented in thi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.15.0] - 2026-07-13 - Ruling Distiller + Overnight Resilience (AUTO-MAGIC Phase 4: WS3+WS6)
+
+### Added
+
+- **The distiller loop closes** (WS3). `ss_taste_add` accepts an optional embedded `<!-- specswarm-rule: ... -->` block (existing constitution grammar — no new format) on `deterministic` entries and generates the edit-time PostToolUse hook IMMEDIATELY via constitution-parser; `ss_taste_generate_hooks` re-harvests all feedback entries (also wired into `/ss:retrospective` Phase 4). Today's manual catch → tomorrow's automatic catch, with no human `/ss:init` re-run in between.
+  - *Source:* epic thesis loop 3; audit finding that the only prior rule-execution path was human-triggered `/ss:init`.
+  - *Verified by:* `plugins/ss/test-fixtures/v7.15-distiller-resilience.sh` block [C] — a distilled ruling's generated hook FIRES on a violating file and stays silent on a clean one.
+
+- **spec-mentor finally sees the taste model** (WS3). The `/ss:verify` context bundle gains `memory_paths` (judgment-type entries via `ss_taste_judgment_paths`); spec-mentor's brief and workflow now read them explicitly — a violated applicable ruling is DRIFT citing the entry name. Before this, the bundle omitted memory entirely and spec-mentor's "read referenced memory files" step was aspirational.
+  - *Source:* audit finding (verify.md:174-192 omitted memory paths).
+
+- **Headless prompt hardening** (WS6, `lib/overnight/resilience.sh`). Both dispatch sites (overnight runner + watchdog `--with-verify`) inject shared clauses: run every gate SYNCHRONOUSLY / never background-and-await, and budget honestly — nearing the limit → commit completed work + honest partial report, never die silent.
+  - *Source:* three observed headless death modes; the yield-await run that backgrounded its own gates and ended its turn "awaiting completion."
+
+- **Auto-resume protocol** (WS6). Post-run classification now inspects the WORKING TREE (`git status --porcelain`), not just commit count: `timeout-stranded` / `api-error` / `yield-await` each trigger ONE bounded re-dispatch with an auto-authored resume prompt that names the failure mode, points at the in-tree work, and orders a critical self-review of the half-done diff before completing + committing.
+  - *Source:* this exact protocol recovered 3/3 real production failures by hand.
+  - *Verified by:* `plugins/ss/test-fixtures/v7.15-distiller-resilience.sh` blocks [A]+[B] (31 assertions total, all green).
+
+### Notes
+
+- *Trade-off:* the resume re-dispatch spends up to TIMEOUT/4 more wall-clock on a failed run. Bounded to one attempt; a resume that fails again finalizes with the honest classification.
+- Backwards compatible: entries without rule blocks behave exactly as v7.13.0; runs that classify `success`/`partial`/`blocked` never re-dispatch.
+
 ## [7.14.0] - 2026-07-13 - Deterministic Slice Gates + Sighted Classification (AUTO-MAGIC Phase 3: WS4+WS5)
 
 Cheap deterministic trust wins. Every check below carries its origin lesson in-file and ships with a violating fixture proving it FIRES.

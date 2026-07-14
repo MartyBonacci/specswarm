@@ -76,6 +76,16 @@ Your invoking command (`/ss:retrospective`) passes a structured context bundle c
 
    `check-type` (feedback entries only): `deterministic` if the rule is mechanically enforceable — a grep pattern, glob, or command could catch violations (these later graduate into preflight checks / generated hooks); `judgment` if applying it needs a judging mind (these get loaded into spec-mentor's verification context). When unsure, choose `judgment`.
 
+   **For `deterministic` entries (v7.15.0), also embed a machine-enforceable rule block at the end of the body** so the calling command can generate the edit-time hook immediately:
+   ```
+   <!-- specswarm-rule: no-pattern -->
+   <!-- path-glob: src/**/*.ts -->
+   <!-- bad-pattern: console\.log\( -->
+   <!-- summary: <one-line restatement of the rule> -->
+   <!-- severity: warn -->
+   ```
+   (Grammar: `no-pattern` needs `bad-pattern`; `required-pattern` needs `required-pattern`; `required-pair` needs `trigger-pattern` + `pair-pattern`. `severity: warn|block`.) Only emit a block when a real grep-able pattern exists — a forced pattern that false-positives is worse than judgment-only.
+
 6. **Return a structured summary** so the calling command can update `MEMORY.md`. Use this exact shape:
 
    ```

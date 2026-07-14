@@ -192,6 +192,16 @@ for tid in "${TARGETS[@]}"; do
   SCREENER_OUTPUT=$(ss_screen_diff "$CHANGED_FILES_TMP" "$DIFF_TMP" "$REPO_ROOT" || true)
   rm -f "$CHANGED_FILES_TMP" "$DIFF_TMP"
 
+  # v7.15.0 (AUTO-MAGIC WS3): hand spec-mentor the JUDGMENT taste rules.
+  # Before this, the bundle omitted memory entirely — spec-mentor's "read
+  # referenced memory files" workflow step was aspirational, never wired.
+  # shellcheck disable=SC1091
+  source "${PLUGIN_DIR}/lib/taste.sh" 2>/dev/null || true
+  MEMORY_PATHS=""
+  if declare -f ss_taste_judgment_paths >/dev/null 2>&1; then
+    MEMORY_PATHS=$(ss_taste_judgment_paths 2>/dev/null | head -n 20)
+  fi
+
   # Stash the structured context so Claude can pass it verbatim to the subagent
   CONTEXT_FILE="${REPO_ROOT}/.specswarm/verify-queue/${tid}.context"
   {
@@ -210,6 +220,9 @@ for tid in "${TARGETS[@]}"; do
     echo "screeners<<EOF_SCREEN"
     echo "$SCREENER_OUTPUT"
     echo "EOF_SCREEN"
+    echo "memory_paths<<EOF_MEM"
+    echo "$MEMORY_PATHS"
+    echo "EOF_MEM"
     echo "diff<<EOF_DIFF"
     echo "$DIFF"
     echo "EOF_DIFF"
@@ -250,6 +263,11 @@ For each target, Claude must dispatch ONE `Task` tool call with `subagent_type="
    Deterministic screener findings (v7.14.0 — each CLAUSE is a REQUIREMENT you
    must check in addition to spec conformance; treat an unmet clause as DRIFT):
    <screeners>
+
+   Judgment taste rules (v7.15.0 — distilled user rulings; READ each file and
+   check the implementation respects any rule applicable to this diff; a
+   violated applicable rule is DRIFT, citing the entry name):
+   <memory_paths>
 
    Git diff (range <diff_range>, excluding tasks.md):
    <diff>

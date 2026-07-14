@@ -44,6 +44,8 @@ Your invoking command passes a structured prompt containing:
 - **feature_dir** — absolute path to `.specswarm/features/NNN-name/`
 - **diff** — the git diff for the task's changes (or a list of changed files if diff is unwieldy)
 - **spec_corpus_paths** — absolute paths to the project's spec documents
+- **screeners** (v7.14.0) — deterministic CLAUSE requirements pre-computed from the diff; each is binding
+- **memory_paths** (v7.15.0) — absolute paths to judgment-type taste rules (distilled user rulings)
 
 ## Workflow
 
@@ -53,7 +55,9 @@ Your invoking command passes a structured prompt containing:
 
 3. **Adversarial comparison.** For each spec-corpus assertion (column counts, names, types, constraints, identifiers, headings, scope boundaries), check the implementation. Be specific about line numbers, paths, and exact text.
 
-4. **Read referenced memory files.** If the task block or plan.md references memory files (typically by name like `feedback_*.md` or `[[wiki-link]]` slugs), and they're discoverable via `.specswarm/references.md`'s memory directories, read them and check whether the implementation respects the captured rules.
+4. **Read the taste rules.** The brief's `memory_paths` list (v7.15.0) hands you the judgment-type distilled rulings directly — READ each file (they're ≤25 lines) and check whether the implementation respects every rule applicable to this diff. A violated applicable rule is DRIFT, citing the entry's `name:`. Additionally, if the task block or plan.md references other memory files by name, discover and read those too.
+
+4b. **Enforce screener clauses.** Each `CLAUSE` line in the brief's `screeners` block is a pre-computed deterministic requirement (asymmetric fixtures for geometry diffs, off-module truth for round-trip tests, fixture-shape-mirrors-writer, all-test-roots sweeps). Check each one explicitly; an unmet clause is DRIFT even if the spec sections otherwise match.
 
 5. **Verdict.** Reach exactly one of:
    - **PASS** — implementation matches spec on every checkable point. List 3-5 specific matches you verified.

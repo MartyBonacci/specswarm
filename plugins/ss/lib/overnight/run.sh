@@ -29,6 +29,8 @@ source "${PLUGIN_DIR}/lib/overnight/state.sh"
 # shellcheck disable=SC1091
 source "${PLUGIN_DIR}/lib/overnight/preflight.sh"
 # shellcheck disable=SC1091
+source "${PLUGIN_DIR}/lib/overnight/resilience.sh"
+# shellcheck disable=SC1091
 [ -f "${PLUGIN_DIR}/lib/notify.sh" ] && source "${PLUGIN_DIR}/lib/notify.sh"
 
 # ─── Parse args ─────────────────────────────────────────────────────────────
@@ -118,38 +120,10 @@ START_COMMIT=$(git -C "$REPO_ROOT" rev-parse HEAD 2>/dev/null || echo "")
 ss_overnight_log "start commit: ${START_COMMIT:0:12}"
 ss_overnight_log "dispatching headless claude --print (timeout ${TIMEOUT_SECONDS}s)"
 
-AUTONOMOUS_PROMPT=$(cat <<EOF
-You are running an autonomous SpecSwarm overnight chunk for feature ${FEATURE_ID}.
-
-Pre-conditions verified by /ss:overnight preflight:
-- spec.md, plan.md, tasks.md are present
-- decision-sheet.md is locked (read it for any decision you need to make)
-- Git working tree is clean (or --allow-dirty acknowledged)
-
-STRICT RULES (read these twice):
-1. Do NOT call AskUserQuestion under any circumstances. If a strategic
-   decision arises that isn't already locked in
-   ${FEATURE_DIR}/decision-sheet.md, STOP work, write a short
-   summary to ${FEATURE_DIR}/overnight-unanswered.md describing what
-   couldn't be answered, and exit. The user will resolve it in the morning.
-
-2. Do NOT run /ss:ship. Squash merge requires human sign-off. Leave the
-   feature branch ready for /ss:ship.
-
-3. Do NOT push to origin. Commits stay local for morning review.
-
-WORKFLOW (run in order; stop and exit at first failure):
-  1. /ss:preflight ${FEATURE_NUM}       — deterministic checks (any FAIL → exit early)
-  2. /ss:implement                      — execute tasks from tasks.md
-  3. /ss:verify --all                   — adversarial verification per task
-  4. /ss:retrospective ${FEATURE_NUM}   — distill lessons into memory
-
-At the end, print a single-line summary:
-  OVERNIGHT_RESULT: <success|partial|blocked> <one-line notes>
-
-The user has stepped away for the night. They are not watching this run.
-EOF
-)
+# Prompt construction lives in lib/overnight/resilience.sh (v7.15.0) so the
+# sync-gate + budget clauses are injected into every dispatch site and are
+# unit-testable without running claude.
+AUTONOMOUS_PROMPT=$(ss_overnight_build_prompt "$FEATURE_ID" "$FEATURE_DIR" "$FEATURE_NUM")
 
 OVERNIGHT_OUTPUT_FILE="${FEATURE_DIR}/overnight.output.log"
 
@@ -162,38 +136,65 @@ set -e
 
 ss_overnight_log "claude --print exited with code ${CLAUDE_EXIT}"
 
-# ─── Phase 3: Classify result ───────────────────────────────────────────────
-END_COMMIT=$(git -C "$REPO_ROOT" rev-parse HEAD 2>/dev/null || echo "")
-COMMITS_ADDED=$(git -C "$REPO_ROOT" rev-list --count "${START_COMMIT}..${END_COMMIT}" 2>/dev/null || echo 0)
-ss_overnight_log "end commit:   ${END_COMMIT:0:12} (${COMMITS_ADDED} new commit(s))"
+# ─── Phase 3: Classify result + bounded resume (v7.15.0 — AUTO-MAGIC WS6) ───
+# Classification now inspects the WORKING TREE, not just the commit count —
+# stranded uncommitted work is the primary signal of a mid-slice death.
+classify_current() {
+  END_COMMIT=$(git -C "$REPO_ROOT" rev-parse HEAD 2>/dev/null || echo "")
+  COMMITS_ADDED=$(git -C "$REPO_ROOT" rev-list --count "${START_COMMIT}..${END_COMMIT}" 2>/dev/null || echo 0)
+  DIRTY_COUNT=$(git -C "$REPO_ROOT" status --porcelain 2>/dev/null | wc -l)
+  MODE=$(ss_overnight_classify "$CLAUDE_EXIT" "$OVERNIGHT_OUTPUT_FILE" "$COMMITS_ADDED" "$DIRTY_COUNT")
+  ss_overnight_log "end commit:   ${END_COMMIT:0:12} (${COMMITS_ADDED} new commit(s), ${DIRTY_COUNT} dirty path(s))"
+  ss_overnight_log "classified:   ${MODE}"
+}
 
-case "$CLAUDE_EXIT" in
-  0)
-    # Look for an OVERNIGHT_RESULT line in the output
+classify_current
+
+# One bounded resume attempt for the three recoverable failure modes.
+# The resume prompt names the failure mode, points at the in-tree work, and
+# orders a critical self-review of the half-done diff before completing +
+# committing (this exact protocol recovered 3/3 real production failures).
+if ss_overnight_is_resumable "$MODE"; then
+  RESUME_TIMEOUT=$(( TIMEOUT_SECONDS / 4 ))
+  [ "$RESUME_TIMEOUT" -lt 900 ] && RESUME_TIMEOUT=900
+  RESUME_PROMPT_FILE="${FEATURE_DIR}/overnight-resume.prompt"
+  ss_overnight_build_resume_prompt "$MODE" "$FEATURE_ID" "$FEATURE_DIR" "$FEATURE_NUM" "$DIRTY_COUNT" \
+    > "$RESUME_PROMPT_FILE"
+  ss_overnight_log "resume: mode=${MODE}; re-dispatching once (timeout ${RESUME_TIMEOUT}s); prompt at ${RESUME_PROMPT_FILE}"
+
+  set +e
+  timeout --signal=TERM "${RESUME_TIMEOUT}s" claude --print < "$RESUME_PROMPT_FILE" \
+    >> "$OVERNIGHT_OUTPUT_FILE" 2>> "$LOG_FILE"
+  CLAUDE_EXIT=$?
+  set -e
+  ss_overnight_log "resume claude --print exited with code ${CLAUDE_EXIT}"
+  RESUMED_FROM="$MODE"
+  classify_current
+  MODE_NOTE="resumed after ${RESUMED_FROM}; final ${MODE}"
+else
+  MODE_NOTE="$MODE"
+fi
+
+case "$MODE" in
+  success)
     RESULT_LINE=$(grep -E '^OVERNIGHT_RESULT:' "$OVERNIGHT_OUTPUT_FILE" 2>/dev/null | tail -n1)
-    if echo "$RESULT_LINE" | grep -q 'success'; then
-      finalize success 0 "${COMMITS_ADDED} commit(s); $(echo "$RESULT_LINE" | sed -E 's/^OVERNIGHT_RESULT:[[:space:]]*//;s/^success[[:space:]]*//')"
-      exit 0
-    elif echo "$RESULT_LINE" | grep -q 'partial'; then
-      finalize partial 0 "${COMMITS_ADDED} commit(s); $(echo "$RESULT_LINE" | sed -E 's/^OVERNIGHT_RESULT:[[:space:]]*//;s/^partial[[:space:]]*//')"
-      exit 2
-    else
-      # No explicit OVERNIGHT_RESULT line — infer from commits
-      if [ "$COMMITS_ADDED" -gt 0 ]; then
-        finalize partial 0 "${COMMITS_ADDED} commits landed but no OVERNIGHT_RESULT line; review output"
-        exit 2
-      else
-        finalize blocked 0 "claude exited 0 but no commits landed; review output"
-        exit 2
-      fi
-    fi
+    finalize success 0 "${COMMITS_ADDED} commit(s); ${MODE_NOTE}; $(echo "$RESULT_LINE" | sed -E 's/^OVERNIGHT_RESULT:[[:space:]]*//;s/^success[[:space:]]*//')"
+    exit 0
     ;;
-  124|143)
-    finalize timeout 3 "wall-clock timeout after ${TIMEOUT_SECONDS}s; ${COMMITS_ADDED} commit(s) landed"
+  partial)
+    finalize partial 0 "${COMMITS_ADDED} commit(s); ${MODE_NOTE}; ${DIRTY_COUNT} dirty path(s); review output"
+    exit 2
+    ;;
+  timeout|timeout-stranded)
+    finalize timeout 3 "wall-clock timeout (${MODE_NOTE}); ${COMMITS_ADDED} commit(s), ${DIRTY_COUNT} dirty path(s)"
     exit 3
     ;;
-  *)
-    finalize aborted "$CLAUDE_EXIT" "claude --print exited ${CLAUDE_EXIT}; ${COMMITS_ADDED} commit(s) landed"
+  api-error)
+    finalize aborted "$CLAUDE_EXIT" "claude --print exited ${CLAUDE_EXIT} (${MODE_NOTE}); ${COMMITS_ADDED} commit(s), ${DIRTY_COUNT} dirty path(s)"
+    exit 2
+    ;;
+  yield-await|blocked|*)
+    finalize blocked 0 "${MODE_NOTE}; ${COMMITS_ADDED} commit(s), ${DIRTY_COUNT} dirty path(s); review output"
     exit 2
     ;;
 esac

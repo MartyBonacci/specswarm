@@ -150,9 +150,19 @@ ss_watchdog_check_cycle() {
     if command -v claude >/dev/null 2>&1; then
       ss_watchdog_log "dispatching headless /ss:verify --all (with_verify enabled, ${pending} pending)"
       # Detached + cwd at repo root + non-interactive. Output captured to log.
+      # v7.15.0 (WS6): every headless dispatch carries the sync-gate + budget
+      # clauses — this site died the same yield-await death as overnight runs.
+      local wd_clauses=""
+      if [ -f "${SS_WATCHDOG_LIB_DIR:-$(dirname "${BASH_SOURCE[0]}")}/../overnight/resilience.sh" ]; then
+        # shellcheck disable=SC1091
+        source "${SS_WATCHDOG_LIB_DIR:-$(dirname "${BASH_SOURCE[0]}")}/../overnight/resilience.sh"
+        wd_clauses=$(ss_overnight_prompt_clauses)
+      fi
       (
         cd "$repo_root" || exit 0
-        claude --print "Run /ss:verify --all and report any DRIFT or NEEDS-MARTY verdicts." \
+        claude --print "Run /ss:verify --all and report any DRIFT or NEEDS-MARTY verdicts.
+
+${wd_clauses}" \
           >> "$(ss_watchdog_log_file)" 2>&1 &
         disown
       )

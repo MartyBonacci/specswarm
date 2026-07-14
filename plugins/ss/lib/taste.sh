@@ -27,7 +27,7 @@
 #   ss_taste_exists <dir> <slug>
 #     Returns 0 (and echoes the path) if feedback_<slug>.md already exists.
 #
-#   ss_taste_add <slug> <check-type> <source> <rule> <why> <how> [description]
+#   ss_taste_add <slug> <check-type> <source> <rule> <why> <how> [description] [rule_block]
 #     Writes feedback_<slug>.md to ss_taste_dir and updates the MEMORY.md
 #     index. check-type ∈ deterministic|judgment.
 #       deterministic — mechanically checkable (a preflight check / generated
@@ -37,6 +37,28 @@
 #     feature 004" or "sighted-gate verdict T012". Echoes the written path.
 #     Duplicate slug → skips (idempotent), notes on stderr, still exit 0.
 #     Invalid/missing args → exit 1 with reason on stderr.
+#
+#     rule_block (v7.15.0, deterministic entries): an optional machine-
+#     enforceable block in the constitution grammar, appended to the body:
+#       <!-- specswarm-rule: no-pattern -->
+#       <!-- path-glob: src/**/*.ts -->
+#       <!-- bad-pattern: console\.log\( -->
+#       <!-- summary: ... -->
+#       <!-- severity: warn -->
+#     When present, ss_taste_add immediately regenerates edit-time hooks from
+#     it (constitution-parser) — today's manual catch becomes tomorrow's
+#     automatic catch WITHOUT waiting for a human to re-run /ss:init.
+#
+#   ss_taste_generate_hooks [out_dir]
+#     Scans every feedback_*.md across memory dirs for embedded specswarm-rule
+#     blocks and (re)generates PostToolUse hooks under
+#     .specswarm/hooks/generated/ (existing files preserved). Echoes the
+#     parser summary.
+#
+#   ss_taste_judgment_paths
+#     Echoes the path of every feedback_*.md whose check-type is judgment
+#     (or unset — judgment is the default). Consumed by /ss:verify to hand
+#     spec-mentor the judgment rules relevant to its diff.
 #
 #   ss_taste_index_update <dir> <filename> <description>
 #     Appends a one-line pointer under "## Distilled Rules" in MEMORY.md
@@ -105,6 +127,7 @@ ss_taste_add() {
   local why="$5"
   local how="$6"
   local description="${7:-}"
+  local rule_block="${8:-}"
 
   if [ -z "$slug_raw" ] || [ -z "$rule" ] || [ -z "$why" ] || [ -z "$how" ]; then
     echo "taste: missing required arg (need slug, rule, why, how)" >&2
@@ -158,9 +181,70 @@ ${rule}
 **How to apply:** ${how}
 EOF
 
+  if [ -n "$rule_block" ]; then
+    {
+      echo ""
+      printf '%s\n' "$rule_block"
+    } >> "$target"
+  fi
+
   ss_taste_index_update "$dir" "$fname" "$description"
 
+  # Deterministic entry with a machine block → generate its edit-time hook NOW
+  # (WS3: no waiting for /ss:init). Best-effort; never fails the add.
+  if [ "$check_type" = "deterministic" ] && [ -n "$rule_block" ]; then
+    if [ -f "${__SS_TASTE_LIB}/constitution-parser.sh" ]; then
+      # shellcheck disable=SC1091
+      source "${__SS_TASTE_LIB}/constitution-parser.sh"
+      local repo_root
+      repo_root=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
+      generate_constitutional_hooks "$target" "${repo_root}/.specswarm/hooks/generated" >&2 || true
+    fi
+  fi
+
   echo "$target"
+}
+
+# All feedback entries across declared memory dirs PLUS the taste dir itself
+# (covers the repo/memory and .specswarm/memory tiers that references.md may
+# not declare yet). Deduped.
+__ss_taste_all_feedback() {
+  {
+    ss_memory_scan_files 2>/dev/null || true
+    local tdir
+    tdir=$(ss_taste_dir 2>/dev/null)
+    [ -d "$tdir" ] && find "$tdir" -maxdepth 1 -type f -name 'feedback_*.md' 2>/dev/null
+  } | sort -u
+}
+
+ss_taste_generate_hooks() {
+  local repo_root
+  repo_root=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
+  local out_dir="${1:-${repo_root}/.specswarm/hooks/generated}"
+
+  [ -f "${__SS_TASTE_LIB}/constitution-parser.sh" ] || return 0
+  # shellcheck disable=SC1091
+  source "${__SS_TASTE_LIB}/constitution-parser.sh"
+
+  local f
+  while IFS= read -r f; do
+    [ -z "$f" ] && continue
+    case "$(basename "$f")" in feedback_*) ;; *) continue ;; esac
+    grep -q '<!-- specswarm-rule:' "$f" 2>/dev/null || continue
+    generate_constitutional_hooks "$f" "$out_dir" || true
+  done < <(__ss_taste_all_feedback)
+}
+
+ss_taste_judgment_paths() {
+  local f ctype
+  while IFS= read -r f; do
+    [ -z "$f" ] && continue
+    case "$(basename "$f")" in feedback_*) ;; *) continue ;; esac
+    ctype=$(grep -E '^[[:space:]]*check-type:' "$f" 2>/dev/null | head -n1 | sed -E 's/^[[:space:]]*check-type:[[:space:]]*//')
+    if [ -z "$ctype" ] || [ "$ctype" = "judgment" ]; then
+      echo "$f"
+    fi
+  done < <(__ss_taste_all_feedback)
 }
 
 ss_taste_index_update() {

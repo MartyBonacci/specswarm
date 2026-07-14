@@ -277,7 +277,7 @@ fi
        "AskUserQuestion /ss:decisions D<n> feature <FEATURE_ID>" \
        "<the rule>" "<why — what forced the decision>" "<how to apply next time>"
      ```
-     `check-type`: `deterministic` if mechanically checkable (grep/glob/command), else `judgment`. Duplicates are skipped automatically.
+     `check-type`: `deterministic` if mechanically checkable (grep/glob/command), else `judgment`. Duplicates are skipped automatically. For `deterministic` rules, pass the optional 8th arg — a `<!-- specswarm-rule: ... -->` block (constitution grammar) — and the edit-time hook is generated immediately (v7.15.0).
    - **One-off scope choice** — specific to this feature → do NOT distill; decision-sheet.md records it.
    Report how many rulings were distilled (with entry names) in Phase 8's summary.
 4. Delete the draft: `rm -f ${DRAFT_PATH}`.

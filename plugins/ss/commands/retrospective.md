@@ -312,6 +312,14 @@ ss_intervention_index_update \
 Then:
 
 ```bash
+# v7.15.0 (AUTO-MAGIC WS3): regenerate edit-time hooks from any deterministic
+# feedback entries carrying embedded specswarm-rule blocks — the intervention
+# captured in THIS chunk fires automatically in the NEXT chunk, no /ss:init
+# re-run required.
+# shellcheck disable=SC1091
+source "${PLUGIN_DIR}/lib/taste.sh"
+ss_taste_generate_hooks || true
+
 # Cleanup the context bundle once the agent is done
 rm -f "${REPO_ROOT}/.specswarm/retrospective/${FEATURE_ID}.context" 2>/dev/null
 

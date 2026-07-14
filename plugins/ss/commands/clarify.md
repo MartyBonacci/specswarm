@@ -309,6 +309,7 @@ Execution steps:
         "<how to apply next time>"
       ```
       `check-type`: `deterministic` if a grep/glob/command could enforce it mechanically; `judgment` if it needs a judging mind. Duplicates are skipped automatically — do not pre-check.
+      For `deterministic` rules, pass the optional 8th arg — a machine-enforceable `<!-- specswarm-rule: no-pattern|required-pattern|required-pair -->` block (constitution grammar: path-glob + pattern(s) + summary + severity) — and `ss_taste_add` generates the edit-time hook immediately (v7.15.0): today's ruling is enforced on the very next file write.
     - **One-off scope choice** — specific to this feature ("include the export button in v1") → do NOT distill; the spec records it.
     - Same rule applies to `overridden` assumptions from Step 2.6: a human correcting an auto-fill is the strongest taste signal there is — always distill the correction.
 

@@ -1,6 +1,6 @@
 {
   "name": "ss",
-  "version": "7.14.0",
+  "version": "7.15.0",
   "description": "SpecSwarm: complete software development toolkit. Spec-driven workflows, multi-agent orchestration, lifecycle management Build->Modify->Fix->Ship. Commands available at /ss:*.",
   "author": {
     "name": "Marty Bonacci",
