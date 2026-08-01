@@ -5,6 +5,7 @@ Technical documentation for SpecSwarm's advanced features and capabilities.
 ## Table of Contents
 
 - [The AUTO-MAGIC Loop (v7.13.0–v7.17.0)](#the-auto-magic-loop-v7130v7170)
+- [The Mentor→Builder Conduct Loop (v7.18.0)](#the-mentorbuilder-conduct-loop-v7180)
 - [Quality Validation System](#quality-validation-system)
 - [Tech Stack Management](#tech-stack-management)
 - [Multi-Framework Testing](#multi-framework-testing)
@@ -44,6 +45,18 @@ The implementer's self-report is never trusted:
 `/ss:overnight` and watchdog dispatches carry sync-gate + budget clauses ("run every gate synchronously; never background-and-await; nearing the limit → commit + honest partial report"). Failed runs are classified work-tree-aware (timeout-stranded / api-error / yield-await) and get one auto-authored resume dispatch that orders a critical self-review of the half-done diff before completing + committing.
 
 Full design provenance: [docs/designs/automagic-epic-plan.md](./designs/automagic-epic-plan.md) and the v7.13.0–v7.17.0 [CHANGELOG](../CHANGELOG.md) entries.
+
+---
+
+## The Mentor→Builder Conduct Loop (v7.18.0)
+
+Where `/ss:go` makes one session drive itself, the **conduct loop** splits the work across two instances: a **mentor** session (decisions, prompt authoring, verification — never writes app code) driving a **headless builder** (`claude --print` in the target repo — does ALL repo edits + commits). Extracted from a 7-week production pilot (~500 audited dispatches, ~6/day sustained) whose measured shape was **~9 independent verification commands per dispatch** — the verification is the load-bearing wall, not overhead.
+
+**`/ss:conduct`** — the loop itself. `lib/conduct/dispatch.sh` hardens every dispatch: per-tree flock lock (one builder per tree; a busy tree fails fast naming the holder), model pinned to opus (headless can't inherit session-roaming models), process-group TERM-then-KILL on timeout (a builder's node children once outlived a plain timeout by ~20 minutes and mutated the repo), survivor + orphan-listener sweeps, and a complete audit trail per run (`prompt.md`, `output.json`, `result.md`, `stderr.log`, `meta`, `exit-code`). The command teaches the proven prompt grammar (builder-verified preconditions, rulings with traps flagged, scope fence, synchronous targeted gates, budget + commit-per-item discipline, report with commit hashes) and the independent verification protocol — the builder's self-report is a claim; the mentor checks commit hashes against the tree, reads the real diff, and re-runs gates itself. Six incident-tested failure modes (timeout, API death, yield-await, zombie, verified-but-uncommitted, detached-HEAD) ship with their tells and resume recipes; recoveries are cheap because git commits are the durable record.
+
+**`/ss:mentor-init`** — scaffolds the mentor directory: standing role kickoff (injected by a SessionStart hook every session — role drift after `/clear` was the pilot's most persistent meta-problem), three-lane escalation boundary (self-resolve / fresh-context subagent / genuine human decision), verbatim-capture parking lot, and the conduct config.
+
+**Watchdog integration** — `/ss:watchdog` auto-detects `.specswarm/conduct/` and pushes run completions, deaths, the empty-result-clean-exit tell, and orphan test-server listeners. The human never has to ask "is anything running?"
 
 ---
 

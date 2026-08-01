@@ -2,7 +2,7 @@
 
 **Fast reference for common SpecSwarm commands and workflows.**
 
-**Version**: v7.17.0 | **Commands**: 21 visible + 11 internal = 32 total | **Language-Agnostic**
+**Version**: v7.18.0 | **Commands**: 23 visible + 11 internal = 34 total | **Language-Agnostic**
 
 **TL;DR (v7.17.0):** `/ss:init` once, then `/ss:go "<feature>"` — the full ladder runs itself, pausing only for the assumptions review, the batched decision sheet, sighted gates, and the ship blessing (`/ss:ship`).
 
@@ -19,7 +19,7 @@
 
 # Verify
 /plugin list
-# Should show: ss v7.17.0
+# Should show: ss v7.18.0
 ```
 
 ---
@@ -95,7 +95,7 @@
 | `/ss:modify --analyze-only` | Assess changes | `/ss:modify "Update React" --analyze-only` |
 | `/ss:analyze-quality` | Quality check | `/ss:analyze-quality` |
 
-### Autonomous Loop (v7.1.0–v7.17.0)
+### Autonomous Loop (v7.1.0–v7.18.0)
 
 | Command | Since | Use When | Example |
 |---------|-------|----------|---------|
@@ -111,6 +111,8 @@
 | `/ss:watchdog` | v7.9.0 | Background out-of-session monitor | `/ss:watchdog start` |
 | `/ss:overnight` | v7.10.0 | Autonomous unattended chunk run | `/ss:overnight check` |
 | `/ss:bakeoff` | v7.16.0 | Taste-heavy choice → N candidates → pinned winner | `/ss:bakeoff "hero palette" --candidates 3` |
+| `/ss:conduct` | v7.18.0 | Dispatch a headless builder + independently verify | `/ss:conduct ff2 --prompt-file prompts/ff2.md` |
+| `/ss:mentor-init` | v7.18.0 | Scaffold a mentor directory (role hook, lanes, parking lot) | `/ss:mentor-init "My App" --builder-dir ./my-app` |
 
 **Env knobs (v7.13.0+):** `SPECSWARM_SLICE_GATES=block|warn|off` (per-task build+lint gate, default `block`) · `SPECSWARM_VERIFY_QUEUE_LIST_MAX` (Stop-hook list threshold, default 8)
 
@@ -424,8 +426,8 @@ project-root/
 ## Version Information
 
 This cheat sheet is for:
-- **SpecSwarm**: v7.17.0
-  - **32 commands** (21 visible + 11 internal)
+- **SpecSwarm**: v7.18.0
+  - **34 commands** (23 visible + 11 internal)
   - **6 multi-agent subagents** with v7.7.0 explicit model assignments (5 opus, 1 haiku)
   - Natural language core (`build`, `fix`, `ship`, `modify`)
   - Language-agnostic
@@ -438,6 +440,7 @@ This cheat sheet is for:
   - Subagent-Driven Foundation File Generation — v7.0.0
   - **Autonomous Chunk Loop (v7.1.0–v7.10.0):** preflight, notify, intervention, verify (+ spec-mentor), retrospective (+ chunk-retrospective), decisions (+ decision-miner), dry-run (+ dry-run-simulator), watchdog daemon, overnight (cron/systemd/launchd)
   - **AUTO-MAGIC Epic (v7.13.0–v7.17.0):** taste model (distilled rulings that accrete automatically), assume-first clarify (provenance-cited `## Assumptions` ledger), per-task build+lint slice gates, NEEDS-SIGHTED gate on visual slices, ruling distiller (chunk N's catch fires in chunk N+1), overnight auto-resume, `/ss:bakeoff` calibration loop, `[DECIDED-BY-DATA]` markers, and `/ss:go` — the single entry point (≤4 human touchpoints per chunk)
+  - **CONDUCT (v7.18.0):** the mentor→builder loop extracted from ~500 production dispatches — `/ss:conduct` (hardened headless dispatch + independent verification protocol + six failure-mode resume recipes), `/ss:mentor-init` (mentor scaffold with SessionStart role hook), watchdog conduct-run monitoring
 
 Check your version:
 ```bash
