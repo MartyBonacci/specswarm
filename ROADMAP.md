@@ -73,6 +73,16 @@ Five releases in one day turning months of hand-run production loops (Custom Cul
 
 **Post-epic follow-ups:** run a real chunk through `/ss:go` (the prompt-level acceptance test); expect a sighted-classifier tuning pass after the first false-positive holds; consider `/ss:build` deprecation after /ss:go proves out.
 
+### ✅ v7.18.0 — CONDUCT: the four-minds extraction (2026-08-01)
+
+The mentor→builder loop that ran the Custom Cult v3 rebuild (~500 audited dispatches over 7 weeks, ~6/day) extracted into first-class machinery — the `/ss:conduct` extraction originally slated in the 2026-06-13 pilot record, finally landed.
+
+- **`/ss:conduct` + `lib/conduct/dispatch.sh`** — hardened dispatch (per-tree flock, process-group timeout kill, survivor + orphan-listener sweeps, opus pinning, audit runs) + the loop's discipline: prompt grammar, independent verification protocol, six failure modes with resume recipes.
+- **`/ss:mentor-init` + `templates/mentor/`** — mentor-directory scaffold; SessionStart hook makes the role structural (role drift after /clear was the pilot's most persistent meta-problem).
+- **Watchdog conduct monitoring** — push notifications for run completion/death/orphan-servers; zero-config.
+
+**Follow-up — conduct/overnight convergence:** both dispatch headless builders and share failure-mode DNA (`lib/overnight/resilience.sh` clauses), but serve different topologies (self-driving chunk vs. mentor-driven slices). Candidate v8 work: overnight's runner adopts `lib/conduct/dispatch.sh` as its execution substrate so the hardening lives in exactly one place.
+
 ## Pending — Core SS
 
 ### #3 Project-Level Phases (medium-high impact, medium implementation)

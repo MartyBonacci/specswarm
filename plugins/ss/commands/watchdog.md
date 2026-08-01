@@ -1,5 +1,5 @@
 ---
-description: Background watchdog daemon that monitors a SpecSwarm project for new commits, newly-checked tasks, and flagged verifications — pings Marty via ss_notify when something needs attention. Completes the autonomous-execution loop by surviving session restarts and detecting changes even when no Claude Code session is active.
+description: Background watchdog daemon that monitors a SpecSwarm project for new commits, newly-checked tasks, flagged verifications, and (v7.18.0) mentor→builder conduct runs — pings Marty via ss_notify when something needs attention. Completes the autonomous-execution loop by surviving session restarts and detecting changes even when no Claude Code session is active.
 effort: low
 args:
   - name: subcommand
@@ -230,6 +230,10 @@ esac
 | Pending grows | queue file count | log; ss_notify info on growth |
 | Flagged appears | `.specswarm/verify-queue/*.flagged` | **ss_notify urgent** (this is the high-signal Marty cares about) |
 | `--with-verify` on + pending exists | (above) plus opt-in | **headless `claude --print` dispatch of /ss:verify** (experimental) |
+| Conduct run finishes | `runs/<ts>-<name>/exit-code` appears | ss_notify success (exit 0 + result) / **urgent** (died, or clean-exit-empty-result — the uncommitted-work tell) |
+| Orphan listener, no run active | `WATCH_PORTS` in conduct config | **ss_notify urgent** — leftover server from a killed builder |
+
+**Conduct monitoring (v7.18.0)** is zero-config: it activates whenever `.specswarm/conduct/` exists in the watchdog's directory (created by `/ss:mentor-init`, used by `/ss:conduct`). On first start in an established mentor dir it seeds silently from prior runs — no history replay. This is the push status surface that answers "do we have a background process running?" before the human asks.
 
 The watchdog completes v7.4.0's verification loop by handling the "Claude session ended; nothing pending was processed" case. It surfaces accumulating work even when nothing's actively building.
 

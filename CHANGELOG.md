@@ -5,6 +5,24 @@ All notable changes to SpecSwarm and SpecSwarm plugins will be documented in thi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.18.0] - 2026-08-01 - CONDUCT: the mentor→builder loop, extracted (four-minds pilot)
+
+The pilot-then-extract pattern pays off again: ~7 weeks and ~500 audited dispatches of the Custom Cult v3 mentor→builder loop (June 12 – Aug 1) become first-class plugin machinery. Every hardening mechanism in this release exists because a real production incident demanded it.
+
+### Added
+
+- **`/ss:conduct`** (visible) — the mentor→builder headless dispatch loop. Teaches the proven prompt grammar (preconditions-verify → slice → rulings-with-traps → scope fence → targeted gates → budget/commit discipline → report-with-hashes + `DISPATCH_RESULT` sentinel), dispatches via `lib/conduct/dispatch.sh`, then walks the INDEPENDENT verification protocol — commit-hash check against the tree, real-diff read, self-run gates — because the builder's self-report is structurally untrustworthy (the pilot caught a builder reporting "everything green" with the entire diff uncommitted). Embeds the six incident-tested failure modes (timeout, API death, yield-await, zombie-races-next-dispatch, verified-but-uncommitted, detached-HEAD) with their tells and resume protocol.
+- **`lib/conduct/dispatch.sh`** — hardened dispatch wrapper extracted from the pilot: per-tree flock lock (one builder per tree, exit 3 fast-fail naming the holder), process-group leader + TERM-then-KILL group timeout (a builder's node children once survived a plain timeout and kept mutating the repo for ~20 minutes), ancestry-excluded survivor sweep, NEW orphan-listener sweep on `WATCH_PORTS`, full audit trail per run (`prompt.md`, `output.json`, `result.md`, `stderr.log`, `meta`, `exit-code`), model PINNED to opus by default (headless can't inherit session-roaming models), `bypassPermissions` default, ss_notify on terminal states. Config at `.specswarm/conduct/config`; flags override.
+- **`/ss:mentor-init`** (visible) — scaffolds a mentor directory: `MENTOR-KICKOFF.md` (standing role), `process/escalation-boundary.md` (three-lane human-escalation model — self-resolve / fresh-context subagent / genuine-human-decision), `process/PARKING-LOT.md` (verbatim idea capture — "the scarce wasted resource was ideas, not builder throughput"), conduct config, and a **SessionStart hook that injects the kickoff role every session** — role drift after `/clear` was the pilot's most persistent meta-problem; the role is now structural, not a paste ritual. Idempotent; merges (never clobbers) `.claude/settings.json` via `lib/conduct/scaffold.sh`.
+- **Watchdog conduct monitoring** — `check-cycle.sh` auto-detects `.specswarm/conduct/` and pushes: run completed (success notify), run died (urgent + builder-death checklist reminder), clean-exit-with-empty-result (urgent — the verified-but-uncommitted tell), and orphan listeners on watched ports when no dispatch is running. Seeds silently on first start (no history replay). The push status surface that answers "do we have a background process running?" before the human asks — the pilot human asked it six times in one week.
+- **`templates/mentor/`** — five templates: mentor-kickoff, escalation-boundary, parking-lot, conduct-config, mentor-role SessionStart hook.
+
+### Notes
+
+- Command surface: 23 visible + 11 internal = 34. All additive; `/ss:go`, `/ss:build`, `/ss:overnight` untouched.
+- Smoke-verified end-to-end: real haiku dispatch (lock → run → JSON parse → result.md → meta/exit-code), lock contention (exit 3), scaffold idempotency, hook output, watchdog seed/death/dedupe cycles.
+- ROADMAP: conduct/overnight convergence noted as a follow-up — they share failure-mode DNA (`lib/overnight/resilience.sh`) but serve different topologies (self-driving chunk vs. mentor-driven slices).
+
 ## [7.17.0] - 2026-07-13 - /ss:go — The Single Entry Point (AUTO-MAGIC Phase 6: WS9)
 
 The epic's capstone: one default command walks the full ladder, and the ~4-touchpoint chunk becomes the default instead of the reward for expertise.

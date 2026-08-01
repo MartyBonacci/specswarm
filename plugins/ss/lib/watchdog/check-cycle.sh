@@ -7,6 +7,8 @@
 #   - New commits (HEAD changed since last cycle)
 #   - Newly checked tasks (via existing detect-completion.sh)
 #   - Queue size changes (pending and flagged)
+#   - Conduct run completions/deaths + orphan listeners (v7.18.0, auto-enabled
+#     when .specswarm/conduct/ exists)
 #
 # Actions on detection:
 #   - Run preflight if plan.md was touched in the new commit(s)
@@ -166,7 +168,92 @@ ss_watchdog_check_cycle() {
     fi
   fi
 
-  # 4. Experimental: headless Claude dispatch for /ss:verify
+  # 4. Conduct runs (v7.18.0) — mentor→builder dispatch monitoring
+  # Auto-enabled when .specswarm/conduct/ exists (created by /ss:mentor-init).
+  # Pushes run completions/deaths so the human never has to ask "is anything
+  # running?" — the pilot human asked that six times in one week.
+  local conduct_dir="${repo_root}/.specswarm/conduct"
+  if [ -d "${conduct_dir}/runs" ]; then
+    local notified_file="${conduct_dir}/.watchdog-notified"
+    local conduct_running=""
+    local run rname ec
+
+    # First cycle ever: seed the notified list with already-finalized runs so
+    # starting the watchdog on an established mentor dir doesn't replay history.
+    if [ ! -f "$notified_file" ]; then
+      for run in "${conduct_dir}/runs"/*/; do
+        [ -f "${run}exit-code" ] && basename "$run"
+      done > "$notified_file" 2>/dev/null || true
+      ss_watchdog_log "conduct monitoring initialized ($(wc -l < "$notified_file" 2>/dev/null || echo 0) prior runs)"
+    fi
+
+    for run in "${conduct_dir}/runs"/*/; do
+      [ -d "$run" ] || continue
+      rname=$(basename "$run")
+      if [ ! -f "${run}exit-code" ]; then
+        conduct_running="${conduct_running}${rname} "
+        continue
+      fi
+      grep -qxF "$rname" "$notified_file" 2>/dev/null && continue
+      ec=$(cat "${run}exit-code" 2>/dev/null || echo "?")
+      if [ "$ec" = "0" ] && [ -s "${run}result.md" ]; then
+        ss_watchdog_log "conduct run completed: ${rname} (exit 0)"
+        if declare -f ss_notify >/dev/null 2>&1; then
+          ss_notify success "SpecSwarm conduct: run completed" "${rname} finished — independent verification is next (never trust the self-report)" || true
+        fi
+      elif [ "$ec" = "0" ]; then
+        # Clean exit, empty result.md — the verified-but-uncommitted tell
+        ss_watchdog_log "conduct run SUSPICIOUS: ${rname} (exit 0, empty result.md)"
+        if declare -f ss_notify >/dev/null 2>&1; then
+          ss_notify urgent "SpecSwarm conduct: empty result" "${rname} exited clean with an EMPTY result.md — check the builder tree for uncommitted work" || true
+        fi
+      else
+        ss_watchdog_log "conduct run DIED: ${rname} (exit ${ec})"
+        if declare -f ss_notify >/dev/null 2>&1; then
+          ss_notify urgent "SpecSwarm conduct: run died" "${rname} ended abnormally (exit ${ec}) — run the builder-death checklist (detached HEAD? uncommitted work? orphan servers?)" || true
+        fi
+      fi
+      echo "$rname" >> "$notified_file"
+    done
+
+    local last_conduct_running
+    last_conduct_running=$(ss_watchdog_get "conduct_running" || echo "")
+    if [ "$conduct_running" != "$last_conduct_running" ]; then
+      ss_watchdog_log "conduct running: ${conduct_running:-none}"
+      ss_watchdog_set "conduct_running" "$conduct_running"
+    fi
+
+    # Orphan-listener sweep: only meaningful when NO dispatch is running —
+    # a listener then is a leftover from a killed builder squatting a test port.
+    if [ -z "$conduct_running" ] && [ -f "${conduct_dir}/config" ]; then
+      local watch_ports
+      watch_ports=$(grep -E '^WATCH_PORTS=' "${conduct_dir}/config" 2>/dev/null | head -n1 | cut -d= -f2-)
+      local orphaned=""
+      local port
+      for port in $watch_ports; do
+        if command -v ss >/dev/null 2>&1; then
+          ss -tln 2>/dev/null | grep -qE ":${port}[[:space:]]" && orphaned="${orphaned}${port} "
+        elif command -v lsof >/dev/null 2>&1; then
+          lsof -iTCP:"$port" -sTCP:LISTEN >/dev/null 2>&1 && orphaned="${orphaned}${port} "
+        fi
+      done
+      local last_orphaned
+      last_orphaned=$(ss_watchdog_get "conduct_orphan_ports" || echo "")
+      if [ "$orphaned" != "$last_orphaned" ]; then
+        ss_watchdog_set "conduct_orphan_ports" "$orphaned"
+        if [ -n "$orphaned" ]; then
+          ss_watchdog_log "orphan listeners on watched ports (no dispatch running): ${orphaned}"
+          if declare -f ss_notify >/dev/null 2>&1; then
+            ss_notify urgent "SpecSwarm conduct: orphan servers" "listeners on port(s) ${orphaned}with no dispatch running — likely leftovers from a killed builder" || true
+          fi
+        else
+          ss_watchdog_log "orphan listeners cleared"
+        fi
+      fi
+    fi
+  fi
+
+  # 5. Experimental: headless Claude dispatch for /ss:verify
   local with_verify
   with_verify=$(ss_watchdog_get "with_verify" || echo "false")
   if [ "$with_verify" = "true" ] && [ "$pending" -gt 0 ]; then

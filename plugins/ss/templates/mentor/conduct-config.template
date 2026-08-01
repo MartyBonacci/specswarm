@@ -1,0 +1,22 @@
+# SpecSwarm conduct config (KEY=VALUE) — read by lib/conduct/dispatch.sh
+# Flags on the dispatch command line override these.
+
+# The builder git tree all dispatches target by default (required).
+BUILDER_DIR={{BUILDER_DIR}}
+
+# Model for headless builders. PINNED (not inherited from your session) because
+# session-roaming model aliases can be inaccessible headless.
+MODEL=opus
+
+# Builders need git commit/branch/push + package managers headlessly;
+# acceptEdits only covers file writes (gated git).
+PERM_MODE=bypassPermissions
+
+# Default wall-clock budget in seconds. e2e-heavy slices need ≥4500 (75 min)
+# or a TARGETED gate set in the prompt.
+TIMEOUT=3600
+
+# Space-separated ports your dev/e2e webservers use. Checked after every run
+# for orphaned listeners (timeout-killed builders leave servers squatting
+# test ports). Also watched by /ss:watchdog. Optional.
+WATCH_PORTS=

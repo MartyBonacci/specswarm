@@ -1,6 +1,6 @@
-# SpecSwarm v7.17.0
+# SpecSwarm v7.18.0
 
-Spec-driven development for Claude Code. Build → Fix → Modify → Ship, with quality gates, multi-agent orchestration, version-controlled specs, **autonomous chunk execution** (v7.1.0–v7.10.0), and the **AUTO-MAGIC loop** (v7.13.0–v7.17.0): a taste model that learns your rulings, assume-first clarification, adversarial verification with teeth, and `/ss:go` — a full feature ladder with a median of ≤4 human touchpoints.
+Spec-driven development for Claude Code. Build → Fix → Modify → Ship, with quality gates, multi-agent orchestration, version-controlled specs, **autonomous chunk execution** (v7.1.0–v7.10.0), and the **AUTO-MAGIC loop** (v7.13.0–v7.17.0): a taste model that learns your rulings, assume-first clarification, adversarial verification with teeth, and `/ss:go` — a full feature ladder with a median of ≤4 human touchpoints. v7.18.0 adds the **mentor→builder conduct loop** (`/ss:conduct` + `/ss:mentor-init`), extracted from ~500 audited production dispatches.
 
 ---
 
@@ -29,7 +29,7 @@ Restart Claude Code to activate the plugin. *(Upgrading from v5.x? See [Migratin
 | `/ss:modify` | Behavior change with impact analysis and backward-compat plan      |
 | `/ss:ship`   | Multi-agent review + quality gate + merge to parent branch         |
 
-## v7.1.0–v7.17.0 autonomous-loop commands
+## v7.1.0–v7.18.0 autonomous-loop commands
 
 The core commands above remain the canonical loop (with `/ss:go` as the v7.17.0 default entry point). The v7.1+ commands compose with them to enable single-session execution and unattended chunks. Each is optional; the core loop works without any of them.
 
@@ -45,8 +45,12 @@ The core commands above remain the canonical loop (with `/ss:go` as the v7.17.0 
 | `/ss:watchdog`      | v7.9.0  | Background daemon — out-of-session monitor; auto-queues verifications on new commits         |
 | `/ss:overnight`     | v7.10.0 | Run a chunk autonomously while you sleep (cron/systemd/launchd-compatible)                   |
 | `/ss:bakeoff`       | v7.16.0 | Calibration loop: N candidates → contact sheet → verdict → pinned winner + distilled ruling  |
+| `/ss:conduct`       | v7.18.0 | Mentor→builder headless dispatch loop: hardened dispatch + independent verification protocol |
+| `/ss:mentor-init`   | v7.18.0 | Scaffold a mentor directory (kickoff role + SessionStart hook, escalation lanes, parking lot) |
 
 Together these implement the **autonomous chunk loop**: pre-batch decisions at 9pm, schedule `/ss:overnight` via cron between 10pm-6am, wake to a phone notification (success or "needs review"). The dual mentor↔builder session pattern is now optional, not required. See [CHANGELOG.md](./CHANGELOG.md) for the full architectural story.
+
+**v7.18.0 — CONDUCT, the mentor→builder loop extracted.** The four-minds mentor pilot (Custom Cult v3: ~500 audited dispatches over 7 weeks, ~6/day sustained) becomes first-class machinery. `/ss:conduct` wraps the incident-hardened dispatch script — per-tree locks, process-group timeout kill, survivor + orphan-listener sweeps, opus-pinned headless builders, full per-run audit trail — and teaches the loop's real discipline: the proven prompt grammar and the independent verification protocol (~9 verification commands per dispatch was the pilot's measured ratio; the builder's self-report is a claim, not a fact). `/ss:mentor-init` scaffolds the mentor kit, with a SessionStart hook that makes the mentor role structural instead of a paste-after-every-/clear ritual. The watchdog now pushes conduct run completions/deaths/orphan-servers, answering "is anything running?" before you ask.
 
 **v7.17.0 — `/ss:go`, the single entry point.** The mind-reading loops (taste model, assume-first, adversarial verification, calibration) compose into one command: median ≤4 human touchpoints per shipped chunk — kickoff, one assumptions-review + decision-sheet sitting, sighted gates, ship blessing. Driven by a dedicated Stop hook (`go-loop-hook.sh`, state in `.specswarm/go-loop.state`); every phase command remains a standalone escape hatch and `/ss:build` is unchanged.
 
@@ -204,4 +208,4 @@ If you have the old `specswarm` plugin installed, install the canonical `ss` plu
 
 All commands have moved from `/specswarm:*` to `/ss:*`. Skill IDs renamed from `specswarm-*` to `ss-*`. The `.specswarm/` per-project state directory and the SpecSwarm name are unchanged — only the command prefix moved.
 
-The deprecated `specswarm` plugin still appears in the marketplace as a stub through v7.x. It's kept in lockstep version-wise (currently v7.17.0) so users who installed the old name see a clear migration message. Slated for full removal in v8.0.0.
+The deprecated `specswarm` plugin still appears in the marketplace as a stub through v7.x. It's kept in lockstep version-wise (currently v7.18.0) so users who installed the old name see a clear migration message. Slated for full removal in v8.0.0.

@@ -1,6 +1,6 @@
 # SpecSwarm Commands Reference
 
-Complete documentation for all SpecSwarm commands: **21 visible** + **11 internal** = **32 total**.
+Complete documentation for all SpecSwarm commands: **23 visible** + **11 internal** = **34 total**.
 
 **New in v7.17.0: `/ss:go` is the recommended default entry point** — it walks the full ladder (specify → assume-first clarify → plan+decisions → tasks → preflight → implement → verify → retrospective) pausing only for the assumptions review, the batched decision sheet, sighted gates, and the ship blessing. Everything below remains available as escape hatches.
 
@@ -10,7 +10,7 @@ Complete documentation for all SpecSwarm commands: **21 visible** + **11 interna
 |----------|----------|-------|
 | [Core Workflows](#core-workflows) | **go (v7.17.0)**, init, build, fix, modify, ship | 6 |
 | [Distinct Workflows](#distinct-workflows) | release, upgrade, rollback, status, metrics | 5 |
-| [Autonomous Loop (v7.1.0–v7.16.0)](#autonomous-loop-v710v7100) | preflight, notify, intervention, verify, retrospective, decisions, dry-run, watchdog, overnight, bakeoff | 10 |
+| [Autonomous Loop (v7.1.0–v7.18.0)](#autonomous-loop-v710v7100) | preflight, notify, intervention, verify, retrospective, decisions, dry-run, watchdog, overnight, bakeoff, conduct, mentor-init | 12 |
 | [Internal Commands](#internal-commands) | specify, clarify, plan, tasks, implement, validate, analyze-quality, bugfix, hotfix, complete, constitution | 11 |
 
 ---
@@ -455,6 +455,18 @@ Calibration loop for taste-heavy choices: generate N deliberately-diverse candid
 **Usage:** `/ss:bakeoff "<the taste-heavy choice>" [--candidates N] [--feature NUM]`
 
 **Related (v7.16.0, WS8):** specs may defer a fork to data with `[DECIDED-BY-DATA: <metric>, <review-when>]` — tracked by `/ss:metrics` (open-deferrals section) and the watchdog (notify on spec changes). The `ground-truth-bias` preflight check (7th) WARNs when a plan tunes against acceptance data without addressing whether that data was self-generated.
+
+### `/ss:conduct` (v7.18.0)
+
+The mentor→builder headless dispatch loop, extracted from the four-minds pilot (~500 audited dispatches). You operate as a **mentor** — decisions, prompt authoring, independent verification — and never write the builder repo's application code yourself. Dispatches run via `lib/conduct/dispatch.sh`: per-tree flock lock (one builder per tree; a busy tree fails fast with exit 3), opus-pinned headless `claude --print`, process-group TERM-then-KILL on timeout, survivor + orphan-listener sweeps, and a full audit trail per run in `.specswarm/conduct/runs/<ts>-<name>/`. The command doc teaches the proven prompt grammar (preconditions the builder must verify, rulings with traps, scope fence, targeted gates run SYNCHRONOUSLY, budget + commit-per-item discipline, report with commit hashes) and the non-negotiable independent verification protocol — plus the six incident-tested builder failure modes and their resume recipes. *Origin lesson: ~9 verification commands per dispatch was the pilot's measured ratio — the verification isn't overhead, it's the load-bearing wall.*
+
+**Usage:** `/ss:conduct <name> [--prompt-file F] [--dir TREE] [--resume ID] [--timeout SECS] [--model M]`
+
+### `/ss:mentor-init` (v7.18.0)
+
+Scaffolds the current directory as a mentor directory: `MENTOR-KICKOFF.md` (the standing role), `process/escalation-boundary.md` (three lanes: self-resolve / fresh-context subagent / genuine human decision), `process/PARKING-LOT.md` (verbatim idea capture), `.specswarm/conduct/config`, and a **SessionStart hook** that injects the kickoff role into every session — making the mentor role structural instead of a paste-after-every-`/clear` ritual. Idempotent; merges (never clobbers) existing `.claude/settings.json`. Restart the session after running so the hook fires; then `/ss:watchdog start` gives you push notifications for every dispatch's completion or death.
+
+**Usage:** `/ss:mentor-init "<project name>" --builder-dir <path-to-builder-repo>`
 
 ---
 
