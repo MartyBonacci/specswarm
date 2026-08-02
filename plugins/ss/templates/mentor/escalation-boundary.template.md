@@ -36,7 +36,7 @@ Each escalation is ONE well-formed message: the decision · the options · the r
 - Builder MAY commit locally, freely.
 - Builder MAY push freely to the **current feature/slice branch only** (the leaf it was dispatched onto).
 - Builder MAY run gates, tests, and read-only git/inspection freely.
-- Builder MAY **NEVER** push to or merge into any shared or protected branch (`main`, `dev`, `sprint/*`, or their equivalents). **Every promotion up the branch hierarchy is a human-blessed ship step** — no verification result, green gate, or standing rule overrides this.
+- Builder MAY **NEVER on its own initiative** push to or merge into any shared or protected branch (`main`, `dev`, `sprint/*`, or their equivalents). Shared-branch operations happen ONLY inside an explicit **ship dispatch** — a prompt the mentor authors after the human's blessing, naming the exact merge (`<leaf> → <parent>`). The builder executes it (the builder is the hands for ALL repo writes, merges included — the mentor never writes the repo); the human→mentor→dispatch chain is the authorization. No verification result, green gate, or standing rule substitutes for that chain.
 - Builder MAY NOT touch external services, deploy, or take destructive/irreversible actions without a Lane-3 escalation.
 
 **Branch hierarchy note:** this model composes with any layering (e.g. `main ← dev ← sprint ← feature`): builders live at the leaf; each arrow is a separate blessing. Define your hierarchy here so every dispatch prompt can name its leaf:

@@ -222,6 +222,6 @@ See [README: Version History](../README.md#version-history) for release notes an
 
 ---
 
-**SpecSwarm v7.19.1** — Documentation index (AUTO-MAGIC loop + conduct loop + 34 commands)
+**SpecSwarm v7.19.2** — Documentation index (AUTO-MAGIC loop + conduct loop + 34 commands)
 
 *Navigate confidently through SpecSwarm's comprehensive documentation.*

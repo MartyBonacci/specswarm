@@ -5,6 +5,14 @@ All notable changes to SpecSwarm and SpecSwarm plugins will be documented in thi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.19.2] - 2026-08-02 - Precision: the builder is the hands, the blessing chain is the authority
+
+Marty's second review pass caught that v7.19.1's "builder may NEVER push/merge to shared branches" reads as an absolute — which would forbid the ship dispatch itself. The pilot's actual model: the **builder executes ALL repo writes, merges included** (the mentor never writes the repo); what's forbidden is shared-branch action **on the builder's own initiative**. The safety property is the authorization chain: human blessing → mentor-authored ship dispatch naming the exact merge (`<leaf> → <parent>`) → builder executes.
+
+### Changed
+
+- **escalation-boundary template + `/ss:conduct` grammar** — shared-branch operations now correctly described as builder-executed but chain-authorized: never self-initiated, only inside an explicit human-blessed ship dispatch; no green gate substitutes for the chain.
+
 ## [7.19.1] - 2026-08-02 - Safe-by-default push authority in the mentor scaffold
 
 Marty's review of the escalation-boundary template caught an unsafe ambiguity: an unchecked "builder may push verified commits without per-push approval" line that could be read as covering shared branches. The pilot's actual (and correct) practice was never that — builders push freely to the **leaf feature branch only**, and every promotion up the hierarchy is a human-blessed ship step.
