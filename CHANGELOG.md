@@ -5,6 +5,15 @@ All notable changes to SpecSwarm and SpecSwarm plugins will be documented in thi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.19.1] - 2026-08-02 - Safe-by-default push authority in the mentor scaffold
+
+Marty's review of the escalation-boundary template caught an unsafe ambiguity: an unchecked "builder may push verified commits without per-push approval" line that could be read as covering shared branches. The pilot's actual (and correct) practice was never that — builders push freely to the **leaf feature branch only**, and every promotion up the hierarchy is a human-blessed ship step.
+
+### Changed
+
+- **`templates/mentor/escalation-boundary.template.md`** — Standing Authorizations rewritten safe-by-default: push freely to the current feature/slice branch only; **NEVER push to or merge into any shared/protected branch** (`main`, `dev`, `sprint/*`) — no green gate or verification result overrides this. Adds a branch-hierarchy declaration slot (e.g. `main ← dev ← sprint ← feature`) so every dispatch prompt can name its leaf; each arrow in the hierarchy is a separate blessing.
+- **`/ss:conduct` prompt grammar** — the budget/commit-discipline section now requires naming the exact leaf branch for any push, with shared-branch promotion explicitly reserved for human-blessed ship dispatches.
+
 ## [7.19.0] - 2026-08-02 - ss-status: the statusline is the status surface
 
 One day of production use of v7.18.0 surfaced a design lesson: the watchdog automated the question the human *asked* ("any background processes?") instead of the question they *meant* ("is it safe to shut down / close this session?"). An asked-question wants notifications; a meant-question of this shape wants a **glance surface**. And a daemon has a cost the very first morning proved: it dies on reboot and must be manually restarted.

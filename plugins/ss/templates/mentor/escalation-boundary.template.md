@@ -31,11 +31,17 @@ Outcome → **VERIFIED** (proceed) / **ISSUE** (fix, loop) / **NEEDS-HUMAN** (pr
 Each escalation is ONE well-formed message: the decision · the options · the recommendation + why · the risk being accepted. (One good escalation beats many round-trips.)
 
 ## Standing Authorizations (the human sets these once → they never escalate)
-<!-- Edit this list with your human. These are the defaults the pilot used. -->
+<!-- Edit this list with your human. Safe-by-default: free movement at the leaf, -->
+<!-- NEVER upward without a blessing. -->
 - Builder MAY commit locally, freely.
+- Builder MAY push freely to the **current feature/slice branch only** (the leaf it was dispatched onto).
 - Builder MAY run gates, tests, and read-only git/inspection freely.
+- Builder MAY **NEVER** push to or merge into any shared or protected branch (`main`, `dev`, `sprint/*`, or their equivalents). **Every promotion up the branch hierarchy is a human-blessed ship step** — no verification result, green gate, or standing rule overrides this.
 - Builder MAY NOT touch external services, deploy, or take destructive/irreversible actions without a Lane-3 escalation.
-- [ ] Builder MAY push verified commits without per-push approval *(confirm with your human)*
+
+**Branch hierarchy note:** this model composes with any layering (e.g. `main ← dev ← sprint ← feature`): builders live at the leaf; each arrow is a separate blessing. Define your hierarchy here so every dispatch prompt can name its leaf:
+
+> Hierarchy: `main ← ______ ← ______` &nbsp;·&nbsp; builders push to: *the current leaf feature branch*
 
 ## Anti-patterns (these are Lane 1/2 — do NOT relay to the human)
 - "Is the gate really green?" → subagent verifies.
