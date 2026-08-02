@@ -38,10 +38,11 @@ Run this after any change to command/skill/agent frontmatter or plugin.json. It 
 
 ### Version Bumping
 
-Three files must be bumped in sync:
+Four files must be bumped in sync (lockstep across all marketplace plugins):
 1. `plugins/ss/.claude-plugin/plugin.json` — `version`
-2. `plugins/specswarm/.claude-plugin/plugin.json` — `version` (kept in sync even though it's a stub)
-3. `.claude-plugin/marketplace.json` — both `plugins[].version` entries
+2. `plugins/ss-status/.claude-plugin/plugin.json` — `version` (v7.19.0+)
+3. `plugins/specswarm/.claude-plugin/plugin.json` — `version` (kept in sync even though it's a stub)
+4. `.claude-plugin/marketplace.json` — all three `plugins[].version` entries
 
 ### Testing After Changes
 
@@ -84,6 +85,12 @@ plugins/ss/
 │                    # v7.3.0 adds intervention.template.md
 │                    # v7.18.0 adds mentor/ (kickoff, escalation-boundary, parking-lot, conduct-config, role hook)
 └── .claude-plugin/  # plugin.json (name: "ss", version: matches marketplace.json)
+
+plugins/ss-status/   # v7.19.0: separate statusline plugin (install independently)
+├── commands/        # /ss-status:install (one-time, wraps existing statusline), /ss-status:uninstall
+├── statusline/      # base-statusline.sh (rich default), segment.sh (builder status), wrapper.sh (compose + cache)
+├── lib/install.sh   # deterministic installer/uninstaller (~/.claude/ss-status/, settings.json statusLine + refreshInterval)
+└── .claude-plugin/  # plugin.json (version in lockstep)
 
 plugins/specswarm/
 └── .claude-plugin/

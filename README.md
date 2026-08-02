@@ -1,4 +1,4 @@
-# SpecSwarm v7.18.0
+# SpecSwarm v7.19.0
 
 Spec-driven development for Claude Code. Build → Fix → Modify → Ship, with quality gates, multi-agent orchestration, version-controlled specs, **autonomous chunk execution** (v7.1.0–v7.10.0), and the **AUTO-MAGIC loop** (v7.13.0–v7.17.0): a taste model that learns your rulings, assume-first clarification, adversarial verification with teeth, and `/ss:go` — a full feature ladder with a median of ≤4 human touchpoints. v7.18.0 adds the **mentor→builder conduct loop** (`/ss:conduct` + `/ss:mentor-init`), extracted from ~500 audited production dispatches.
 
@@ -49,6 +49,8 @@ The core commands above remain the canonical loop (with `/ss:go` as the v7.17.0 
 | `/ss:mentor-init`   | v7.18.0 | Scaffold a mentor directory (kickoff role + SessionStart hook, escalation lanes, parking lot) |
 
 Together these implement the **autonomous chunk loop**: pre-batch decisions at 9pm, schedule `/ss:overnight` via cron between 10pm-6am, wake to a phone notification (success or "needs review"). The dual mentor↔builder session pattern is now optional, not required. See [CHANGELOG.md](./CHANGELOG.md) for the full architectural story.
+
+**v7.19.0 — ss-status: the statusline is the status surface.** A new separate plugin in this marketplace (`/plugin install ss-status@specswarm-marketplace`): a rich statusline plus a real-time background-builder segment for conduct projects — `🔨 building: <name> <elapsed>` / `💀 last build DIED` / `✓ builders idle — safe to close`. One-time `/ss-status:install` wraps whatever statusline you already have (yours keeps rendering, cached; the segment refreshes every 5s even while idle). Born from a day-one v7.18.0 lesson: "any background processes?" really meant "safe to shut down?" — a meant-question of that shape wants a glance surface, not a daemon's notifications, and a daemon dies on every reboot. The watchdog returns to its true niche: between-session monitoring.
 
 **v7.18.0 — CONDUCT, the mentor→builder loop extracted.** The four-minds mentor pilot (Custom Cult v3: ~500 audited dispatches over 7 weeks, ~6/day sustained) becomes first-class machinery. `/ss:conduct` wraps the incident-hardened dispatch script — per-tree locks, process-group timeout kill, survivor + orphan-listener sweeps, opus-pinned headless builders, full per-run audit trail — and teaches the loop's real discipline: the proven prompt grammar and the independent verification protocol (~9 verification commands per dispatch was the pilot's measured ratio; the builder's self-report is a claim, not a fact). `/ss:mentor-init` scaffolds the mentor kit, with a SessionStart hook that makes the mentor role structural instead of a paste-after-every-/clear ritual. The watchdog now pushes conduct run completions/deaths/orphan-servers, answering "is anything running?" before you ask.
 
@@ -208,4 +210,4 @@ If you have the old `specswarm` plugin installed, install the canonical `ss` plu
 
 All commands have moved from `/specswarm:*` to `/ss:*`. Skill IDs renamed from `specswarm-*` to `ss-*`. The `.specswarm/` per-project state directory and the SpecSwarm name are unchanged — only the command prefix moved.
 
-The deprecated `specswarm` plugin still appears in the marketplace as a stub through v7.x. It's kept in lockstep version-wise (currently v7.18.0) so users who installed the old name see a clear migration message. Slated for full removal in v8.0.0.
+The deprecated `specswarm` plugin still appears in the marketplace as a stub through v7.x. It's kept in lockstep version-wise (currently v7.19.0) so users who installed the old name see a clear migration message. Slated for full removal in v8.0.0.

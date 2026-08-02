@@ -83,6 +83,12 @@ The mentor→builder loop that ran the Custom Cult v3 rebuild (~500 audited disp
 
 **Follow-up — conduct/overnight convergence:** both dispatch headless builders and share failure-mode DNA (`lib/overnight/resilience.sh` clauses), but serve different topologies (self-driving chunk vs. mentor-driven slices). Candidate v8 work: overnight's runner adopts `lib/conduct/dispatch.sh` as its execution substrate so the hardening lives in exactly one place.
 
+### ✅ v7.19.0 — ss-status plugin: the statusline is the status surface (2026-08-02)
+
+Day-one v7.18.0 usage exposed a meant-vs-asked question mismatch: "any background processes?" meant "safe to shut down?" — a glance question, not an event question. New separate `ss-status` plugin: rich statusline + real-time builder segment (lock-probe ground truth, `refreshInterval`, wraps any existing statusline with a 60s base cache). Watchdog demoted to its between-sessions niche.
+
+**Design rule banked:** when a human asks the same status question repeatedly, capture the WHY before automating the answer — remove the question (ambient surface) rather than answering it louder (notifications). **Watchdog follow-up:** a systemd/launchd unit template remains worthwhile for the overnight niche where a daemon is genuinely required.
+
 ## Pending — Core SS
 
 ### #3 Project-Level Phases (medium-high impact, medium implementation)

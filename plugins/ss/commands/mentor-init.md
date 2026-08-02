@@ -50,7 +50,7 @@ bash "${CLAUDE_PLUGIN_ROOT}/lib/conduct/scaffold.sh" \
    - **Set `WATCH_PORTS`** in `.specswarm/conduct/config` if the project runs dev/e2e webservers.
    - **Restart the Claude Code session** in this directory so the SessionStart hook fires — from then on, every session opens already knowing it's the mentor.
    - First dispatch: `/ss:conduct` (it walks the prompt grammar).
-   - Optional but recommended: `/ss:watchdog start` here — it auto-detects `.specswarm/conduct/runs/` and pushes run completions/deaths/orphan-listener warnings via ss_notify.
+   - Recommended: install the **`ss-status` plugin** from this marketplace and run `/ss-status:install` once — the statusline then shows background-builder state in real time (`🔨 building` / `✓ safe to close`), answering "is anything running?" at a glance with no daemon to manage.
 
 ## Why the hook matters
 

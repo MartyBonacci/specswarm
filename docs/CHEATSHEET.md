@@ -2,7 +2,7 @@
 
 **Fast reference for common SpecSwarm commands and workflows.**
 
-**Version**: v7.18.0 | **Commands**: 23 visible + 11 internal = 34 total | **Language-Agnostic**
+**Version**: v7.19.0 | **Commands**: 23 visible + 11 internal = 34 total | **Language-Agnostic**
 
 **TL;DR (v7.17.0):** `/ss:init` once, then `/ss:go "<feature>"` — the full ladder runs itself, pausing only for the assumptions review, the batched decision sheet, sighted gates, and the ship blessing (`/ss:ship`).
 
@@ -19,7 +19,7 @@
 
 # Verify
 /plugin list
-# Should show: ss v7.18.0
+# Should show: ss v7.19.0
 ```
 
 ---
@@ -426,7 +426,7 @@ project-root/
 ## Version Information
 
 This cheat sheet is for:
-- **SpecSwarm**: v7.18.0
+- **SpecSwarm**: v7.19.0
   - **34 commands** (23 visible + 11 internal)
   - **6 multi-agent subagents** with v7.7.0 explicit model assignments (5 opus, 1 haiku)
   - Natural language core (`build`, `fix`, `ship`, `modify`)

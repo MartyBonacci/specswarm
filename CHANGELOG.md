@@ -5,6 +5,24 @@ All notable changes to SpecSwarm and SpecSwarm plugins will be documented in thi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.19.0] - 2026-08-02 - ss-status: the statusline is the status surface
+
+One day of production use of v7.18.0 surfaced a design lesson: the watchdog automated the question the human *asked* ("any background processes?") instead of the question they *meant* ("is it safe to shut down / close this session?"). An asked-question wants notifications; a meant-question of this shape wants a **glance surface**. And a daemon has a cost the very first morning proved: it dies on reboot and must be manually restarted.
+
+### Added
+
+- **`ss-status` plugin** (new, separate plugin in this marketplace) — a rich statusline (directory, git, model, effort, context bar, rate limits, session usage, CC version, platform status) plus a **real-time background-builder segment** for conduct projects: `🔨 building: <name> <elapsed>` while a dispatch runs, `💀 last build DIED (exit N)` when the latest run failed, `✓ builders idle — safe to close` otherwise, and total silence in non-conduct projects. Ground truth is the dispatch lock (flock probe) + per-run `exit-code` files — the same artifacts v7.18.0 introduced, no daemon anywhere.
+  - `/ss-status:install` (one-time): **wraps any existing statusline** — the user's own script is preserved as the base and keeps rendering exactly as before; `refreshInterval: 5` makes the segment update in real time even while the session idles. The wrapper caches the (potentially heavy) base for 60s while recomputing the cheap segment every tick, so real-time status adds no ccusage/npm/curl load. `/ss-status:uninstall` restores the exact pre-install configuration.
+  - Segment measured at ~22ms; composable standalone (`segment.sh`) for users who'd rather call it from their own statusline.
+
+### Changed
+
+- **Watchdog demoted from the conduct loop** — `/ss:conduct` and `/ss:mentor-init` now recommend the ss-status statusline as the status surface; `/ss:watchdog` keeps its genuine niche (monitoring a project *between* sessions: overnight runs, queue accumulation with no session open) and its conduct-monitoring code remains for that case.
+
+### Lesson (banked to memory)
+
+When a human asks the same status question repeatedly, capture *why* before automating the answer: a recurring question is a symptom. "Any background processes?" meant "safe to shut down?" — the fix was removing the question (ambient glance surface), not answering it louder (notifications).
+
 ## [7.18.0] - 2026-08-01 - CONDUCT: the mentor→builder loop, extracted (four-minds pilot)
 
 The pilot-then-extract pattern pays off again: ~7 weeks and ~500 audited dispatches of the Custom Cult v3 mentor→builder loop (June 12 – Aug 1) become first-class plugin machinery. Every hardening mechanism in this release exists because a real production incident demanded it.

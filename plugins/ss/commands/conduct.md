@@ -127,4 +127,4 @@ for r in "$PWD"/.specswarm/conduct/runs/*/; do
 done
 ```
 
-The `/ss:watchdog` daemon (v7.18.0) monitors this runs directory automatically when it exists — run completions, deaths, and orphan listeners get pushed via ss_notify, so the human never has to ask "is anything running?"
+**Status surface (v7.19.0): the `ss-status` statusline plugin** — install it once (`/ss-status:install`) and the statusline itself answers "is anything running / safe to close?" in real time: `🔨 building: <name> <elapsed>` while a dispatch runs, `💀 last build DIED` on a failed run, `✓ builders idle — safe to close` otherwise. No daemon, nothing to restart after reboots. (The `/ss:watchdog` daemon can also monitor this runs directory, but that's only worth it for out-of-session scenarios; for a live mentor session the statusline is the right surface.)

@@ -233,7 +233,9 @@ esac
 | Conduct run finishes | `runs/<ts>-<name>/exit-code` appears | ss_notify success (exit 0 + result) / **urgent** (died, or clean-exit-empty-result — the uncommitted-work tell) |
 | Orphan listener, no run active | `WATCH_PORTS` in conduct config | **ss_notify urgent** — leftover server from a killed builder |
 
-**Conduct monitoring (v7.18.0)** is zero-config: it activates whenever `.specswarm/conduct/` exists in the watchdog's directory (created by `/ss:mentor-init`, used by `/ss:conduct`). On first start in an established mentor dir it seeds silently from prior runs — no history replay. This is the push status surface that answers "do we have a background process running?" before the human asks.
+**Conduct monitoring (v7.18.0)** is zero-config: it activates whenever `.specswarm/conduct/` exists in the watchdog's directory (created by `/ss:mentor-init`, used by `/ss:conduct`). On first start in an established mentor dir it seeds silently from prior runs — no history replay.
+
+**v7.19.0 note — prefer the statusline for live sessions.** For the "is anything running / safe to close?" question during an active mentor session, the `ss-status` plugin's statusline segment is the better surface: glanceable, real-time (`refreshInterval`), and daemon-free — nothing to restart after a reboot (a daemon limitation a user hit the first morning after adopting the watchdog). Use the watchdog for what only a daemon can do: monitoring a project *between* sessions (overnight runs, verify-queue accumulation with no session open).
 
 The watchdog completes v7.4.0's verification loop by handling the "Claude session ended; nothing pending was processed" case. It surfaces accumulating work even when nothing's actively building.
 
