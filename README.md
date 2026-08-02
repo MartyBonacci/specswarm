@@ -1,4 +1,4 @@
-# SpecSwarm v7.19.2
+# SpecSwarm v7.19.3
 
 Spec-driven development for Claude Code. Build → Fix → Modify → Ship, with quality gates, multi-agent orchestration, version-controlled specs, **autonomous chunk execution** (v7.1.0–v7.10.0), and the **AUTO-MAGIC loop** (v7.13.0–v7.17.0): a taste model that learns your rulings, assume-first clarification, adversarial verification with teeth, and `/ss:go` — a full feature ladder with a median of ≤4 human touchpoints. v7.18.0 adds the **mentor→builder conduct loop** (`/ss:conduct` + `/ss:mentor-init`), extracted from ~500 audited production dispatches.
 
@@ -210,4 +210,4 @@ If you have the old `specswarm` plugin installed, install the canonical `ss` plu
 
 All commands have moved from `/specswarm:*` to `/ss:*`. Skill IDs renamed from `specswarm-*` to `ss-*`. The `.specswarm/` per-project state directory and the SpecSwarm name are unchanged — only the command prefix moved.
 
-The deprecated `specswarm` plugin still appears in the marketplace as a stub through v7.x. It's kept in lockstep version-wise (currently v7.19.2) so users who installed the old name see a clear migration message. Slated for full removal in v8.0.0.
+The deprecated `specswarm` plugin still appears in the marketplace as a stub through v7.x. It's kept in lockstep version-wise (currently v7.19.3) so users who installed the old name see a clear migration message. Slated for full removal in v8.0.0.

@@ -53,6 +53,70 @@ if [ -n "$running" ]; then
   exit 0
 fi
 
+# ── Session shells: work running INSIDE this session (gate suites, batteries).
+# These are children of this session's claude process and DIE WITH IT — so
+# "safe to close" must be false while any exist. The builder-lock check alone
+# missed this: 2026-08-02, the mentor's verification suite ran in a background
+# shell while the segment said "safe to close". Ancestry walk finds our claude
+# process; any OTHER descendant shell of it is live session work. Linux /proc
+# only (degrades gracefully elsewhere; deliberately detached processes —
+# setsid batteries — escape ancestry and correctly don't count).
+session_shells=0
+if [ -d /proc ]; then
+  ANC=" $$ "; claude_pid=""; _p=$$
+  while [ "${_p:-1}" -gt 1 ]; do
+    _p=$(awk '{print $4}' "/proc/$_p/stat" 2>/dev/null) || break
+    [ -n "$_p" ] || break
+    ANC="${ANC}${_p} "
+    # Match the claude BINARY itself (comm or argv0 basename) — matching the
+    # word "claude" anywhere in cmdline would false-match our own wrapper's
+    # ~/.claude/... path and root the walk at the wrong process.
+    if [ -z "$claude_pid" ]; then
+      _comm=$(cat "/proc/$_p/comm" 2>/dev/null)
+      _arg0=$(tr '\0' '\n' < "/proc/$_p/cmdline" 2>/dev/null | head -1)
+      case "${_comm}:${_arg0##*/}" in
+        claude:*|*:claude) claude_pid="$_p" ;;
+      esac
+    fi
+  done
+  if [ -n "$claude_pid" ]; then
+    # self_root = OUR branch's top-level pid directly under claude. Excluding
+    # its whole SUBTREE (not just the ancestor chain) keeps the statusline's
+    # own wrapper/segment/pipeline subshells from counting themselves.
+    self_root=""
+    for a in $ANC; do
+      appid=$(awk '{print $4}' "/proc/$a/stat" 2>/dev/null)
+      [ "$appid" = "$claude_pid" ] && { self_root="$a"; break; }
+    done
+    # Real Bash-tool shells carry a precise fingerprint: they source
+    # ~/.claude/shell-snapshots/snapshot-*. Persistent MCP server wrappers
+    # (sh -c "...-mcp") and other machinery don't — this is what separates
+    # "work in flight" from session plumbing.
+    session_shells=$(ps -eo pid=,ppid=,args= 2>/dev/null | awk -v root="$claude_pid" -v selfroot="$self_root" '
+      { pid=$1; par=$2; ppid[pid]=par; if (index($0, "shell-snapshots/snapshot-")) snap[pid]=1 }
+      END {
+        n=0
+        for (p in snap) {
+          q=p; d=0
+          while ((q in ppid) && d < 50) {
+            if (q == selfroot && selfroot != "") break   # our own subtree
+            q=ppid[q]; d++
+            if (q == root) { n++; break }
+          }
+        }
+        print n
+      }')
+  fi
+fi
+if [ "${session_shells:-0}" -gt 0 ]; then
+  if [ "$session_shells" -gt 1 ]; then
+    printf '⚙ %s%s session shells running — closing kills them%s' "$(C '38;5;222')" "$session_shells" "$RST"   # gold
+  else
+    printf '⚙ %ssession work running — closing kills it%s' "$(C '38;5;222')" "$RST"
+  fi
+  exit 0
+fi
+
 # ── Idle: report the most recent finalized run's outcome
 latest=""
 if [ -d "$CONDUCT/runs" ]; then

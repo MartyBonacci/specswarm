@@ -39,7 +39,7 @@ Restart Claude Code to activate the plugin.
 /plugin list
 
 # You should see:
-# ss@MartyBonacci v7.19.2
+# ss@MartyBonacci v7.19.3
 ```
 
 ---
@@ -645,4 +645,4 @@ jobs:
 
 ---
 
-**SpecSwarm v7.19.2** — Complete setup guide
+**SpecSwarm v7.19.3** — Complete setup guide

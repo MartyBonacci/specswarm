@@ -1,6 +1,6 @@
 {
   "name": "ss-status",
-  "version": "7.19.2",
+  "version": "7.19.3",
   "description": "SpecSwarm status line: a rich Claude Code statusline (directory, git, model, context, rate limits, session usage) plus a real-time background-builder segment for SpecSwarm conduct dispatches — answers 'is it safe to close / shut down?' at a glance, no daemon needed. Wraps your existing statusline if you have one. One-time /ss-status:install, then zero commands.",
   "author": {
     "name": "Marty Bonacci",

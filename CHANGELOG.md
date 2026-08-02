@@ -5,6 +5,15 @@ All notable changes to SpecSwarm and SpecSwarm plugins will be documented in thi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.19.3] - 2026-08-02 - ss-status: "safe to close" now sees session shells, not just builders
+
+Marty's screenshot caught the segment lying: "✓ builders idle — safe to close" while the mentor's verification suite ran in a session background shell (Claude Code's own UI showed "1 shell still running"). Builder locks were the segment's whole model of "work in flight" — but session shells die with the session, so they're exactly what "safe to close" is about.
+
+### Fixed
+
+- **`segment.sh` now detects live Bash-tool shells of the current session** and reports `⚙ session work running — closing kills it` (gold) before ever claiming safe-to-close. Detection: ancestry walk to this session's `claude` process (binary-name match — matching "claude" anywhere in cmdline would false-match the wrapper's own `~/.claude/...` path), then counting descendant shells that carry the Bash-tool fingerprint (they source `~/.claude/shell-snapshots/snapshot-*`) — which cleanly excludes persistent MCP server wrappers (`sh -c "...-mcp"`) — with the statusline's own subtree excluded so it never counts itself. Deliberately detached processes (setsid batteries) escape ancestry and correctly don't count: they survive a close. Linux `/proc`; degrades gracefully elsewhere. ~200ms, fine at a 5s tick.
+- Priority order: `🔨 building` (lock held) → `⚙ session work` → `💀 last build died` → `✓ safe to close`.
+
 ## [7.19.2] - 2026-08-02 - Precision: the builder is the hands, the blessing chain is the authority
 
 Marty's second review pass caught that v7.19.1's "builder may NEVER push/merge to shared branches" reads as an absolute — which would forbid the ship dispatch itself. The pilot's actual model: the **builder executes ALL repo writes, merges included** (the mentor never writes the repo); what's forbidden is shared-branch action **on the builder's own initiative**. The safety property is the authorization chain: human blessing → mentor-authored ship dispatch naming the exact merge (`<leaf> → <parent>`) → builder executes.
